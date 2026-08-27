@@ -75,12 +75,13 @@ button{cursor:pointer; border:none;}
 }
 .icon-btn-plain:active{background:var(--card2);}
 
-.drawer-overlay{position:fixed; inset:0; background:rgba(20,30,25,.28); z-index:14;}
+.drawer-overlay{position:fixed; inset:0; background:rgba(20,30,25,.28); z-index:14; touch-action:pan-y;}
 .drawer{
   position:fixed; top:0; left:0; bottom:0; width:78%; max-width:300px; z-index:15;
   background:var(--bg2); padding:26px 18px 18px; display:flex; flex-direction:column;
   transform:translateX(-100%); transition:transform .25s ease; box-shadow:var(--shadow);
   padding-top:calc(26px + env(safe-area-inset-top)); padding-bottom:calc(18px + env(safe-area-inset-bottom));
+  touch-action:pan-y; will-change:transform;
 }
 .drawer.open{transform:translateX(0);}
 .drawer-brand{font-size:20px; font-weight:800; letter-spacing:-.02em; margin-bottom:36px;}
@@ -93,9 +94,18 @@ button{cursor:pointer; border:none;}
 .drawer-link.active{background:rgba(18,135,94,.12); border-color:rgba(18,135,94,.35); color:var(--accent);}
 .drawer-link.active svg{color:var(--accent);}
 .drawer-footer{
-  display:flex; align-items:center; justify-content:space-between; padding-top:14px;
-  border-top:1px solid var(--border); font-size:14px; color:var(--muted);
+  display:flex; align-items:center; justify-content:space-between; gap:10px; padding-top:16px;
+  border-top:1px solid var(--border);
 }
+.drawer-profile{display:flex; align-items:center; gap:10px; min-width:0;}
+.drawer-avatar{
+  width:42px; height:42px; border-radius:50%; overflow:hidden; flex-shrink:0;
+  background:var(--card2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+}
+.drawer-avatar img{width:100%; height:100%; object-fit:cover;}
+.drawer-avatar-placeholder{font-weight:800; color:var(--accent); font-size:16px;}
+.drawer-username{font-size:16px; font-weight:800; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 
 .section-title{font-size:22px; font-weight:800; letter-spacing:-.01em; margin:2px 0 16px;}
 
@@ -132,7 +142,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .modal{position:fixed; inset:0; background:rgba(20,25,23,.4); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
 .modal-sheet{
   width:100%; max-width:560px; max-height:min(91vh, calc(100vh - 40px - env(safe-area-inset-top)));
-  overflow-y:auto; background:var(--bg2); touch-action:pan-y; overscroll-behavior:contain;
+  overflow-y:auto; background:var(--bg2); touch-action:pan-y; overscroll-behavior:contain; will-change:transform;
   border-radius:20px 20px 0 0; padding:18px 18px calc(18px + env(safe-area-inset-bottom));
 }
 .sheet-kicker{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:10px;}
@@ -284,7 +294,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .btn-mini{padding:7px 12px; border-radius:999px; background:var(--accent); color:#fff; font-size:12px; font-weight:700; flex-shrink:0;}
 .btn-mini-ghost{background:none; color:var(--muted); border:1px solid var(--border);}
 .chip-status{font-size:11px; color:var(--muted); background:var(--card2); padding:5px 10px; border-radius:999px; flex-shrink:0;}
-.shared-dish-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border);}
+.shared-dish-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:9px 4px; border-bottom:1px solid var(--border);}
 .shared-dish-row:last-child{border-bottom:none;}
 .shared-dish-thumb{width:44px; height:44px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--muted);}
 .shared-dish-info{flex:1; min-width:0;}
@@ -345,13 +355,18 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>Social</span>
       </button>
-      <button class="drawer-link" data-section="settings">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span>Configuración</span>
-      </button>
     </nav>
     <div class="drawer-footer">
-      <span id="drawer-username"></span>
+      <div class="drawer-profile" id="drawer-profile-btn">
+        <div class="drawer-avatar" id="drawer-avatar-wrap">
+          <img id="drawer-avatar-img" class="hidden" alt="">
+          <div class="drawer-avatar-placeholder" id="drawer-avatar-placeholder">?</div>
+        </div>
+        <span class="drawer-username" id="drawer-username"></span>
+      </div>
+      <button id="drawer-settings-btn" class="icon-btn-plain" aria-label="Configuración">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </aside>
 
@@ -562,8 +577,10 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </button>
       <button class="btn-primary" id="dish-save-btn">Guardar</button>
     </div>
-    <button class="btn-secondary hidden" id="dish-share-btn" style="width:100%; margin-top:6px;">Compartir con un amigo</button>
-    <button class="btn-danger hidden" id="dish-delete-btn" style="width:100%; margin-top:6px;">Eliminar plato</button>
+    <div class="modal-actions hidden" id="dish-secondary-actions">
+      <button class="btn-secondary hidden" id="dish-share-btn" style="flex:1; justify-content:center;">Compartir</button>
+      <button class="btn-danger hidden" id="dish-delete-btn" style="flex:1; text-align:center;">Eliminar plato</button>
+    </div>
   </div>
 </div>
 
@@ -751,6 +768,7 @@ function openDrawer(){ $('#drawer').classList.add('open'); $('#drawer-overlay').
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#drawer-overlay').classList.add('hidden'); }
 $('#menu-btn').onclick = openDrawer;
 $('#drawer-overlay').onclick = closeDrawer;
+$('#drawer-settings-btn').onclick = ()=>{ setSection('settings'); closeDrawer(); };
 $all('.drawer-link').forEach(btn=>{
   btn.onclick = ()=>{ setSection(btn.dataset.section); closeDrawer(); };
 });
@@ -758,8 +776,21 @@ $all('.drawer-link').forEach(btn=>{
 /* --- Gesto: abrir el menú deslizando desde el borde izquierdo, cerrarlo deslizando a la izquierda --- */
 function attachDrawerSwipe(){
   const drawer = $('#drawer'), overlay = $('#drawer-overlay');
-  let startX=0, startY=0, dx=0, dragging=false, mode=null, pointerId=null, width=300;
+  let startX=0, startY=0, dx=0, dragging=false, mode=null, pointerId=null, width=300, rafId=null;
 
+  function scheduleFrame(){
+    if(rafId) return;
+    rafId = requestAnimationFrame(()=>{
+      rafId = null;
+      if(mode==='open'){
+        drawer.style.transform = `translateX(${dx-width}px)`;
+        overlay.style.opacity = String(dx/width);
+      } else {
+        drawer.style.transform = `translateX(${dx}px)`;
+        overlay.style.opacity = String(1 + dx/width);
+      }
+    });
+  }
   function onMove(e){
     if(e.pointerId!==pointerId) return;
     const mdx=e.clientX-startX, mdy=e.clientY-startY;
@@ -772,18 +803,13 @@ function attachDrawerSwipe(){
       overlay.style.transition='none';
     }
     e.preventDefault();
-    if(mode==='open'){
-      dx = Math.min(width, Math.max(0, mdx));
-      drawer.style.transform = `translateX(${dx-width}px)`;
-      overlay.style.opacity = String(dx/width);
-    } else {
-      dx = Math.min(0, Math.max(-width, mdx));
-      drawer.style.transform = `translateX(${dx}px)`;
-      overlay.style.opacity = String(1 + dx/width);
-    }
+    if(mode==='open'){ dx = Math.min(width, Math.max(0, mdx)); }
+    else { dx = Math.min(0, Math.max(-width, mdx)); }
+    scheduleFrame();
   }
   function release(){
     document.removeEventListener('pointermove', onMove);
+    if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
     pointerId = null;
   }
   function onUp(){
@@ -905,6 +931,7 @@ function openDishModal(dish){
   $('#ingredients-list').innerHTML = '';
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : ['']).forEach(v=> addIngredientRow(v));
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
+  $('#dish-secondary-actions').classList.toggle('hidden', !dish);
   $('#dish-delete-btn').classList.toggle('hidden', !dish);
   $('#dish-share-btn').classList.toggle('hidden', !dish);
   $('#dish-modal').classList.remove('hidden');
@@ -917,8 +944,16 @@ function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-mo
    scrollear con normalidad — incluso empezando sobre los ingredientes. */
 function attachSwipeToCloseSheet(sheet, onClose){
   const hardBlocked = 'button, .pill-btn';
-  let startX=0, startY=0, dy=0, dragging=false, pointerId=null;
+  let startX=0, startY=0, dy=0, dragging=false, pointerId=null, rafId=null;
 
+  function scheduleFrame(){
+    if(rafId) return;
+    rafId = requestAnimationFrame(()=>{
+      rafId = null;
+      sheet.style.transform = `translateY(${dy}px)`;
+      sheet.style.opacity = String(Math.max(0.4, 1 - dy/380));
+    });
+  }
   function onMove(e){
     if(e.pointerId!==pointerId) return;
     const mdx=e.clientX-startX, mdy=e.clientY-startY;
@@ -933,8 +968,7 @@ function attachSwipeToCloseSheet(sheet, onClose){
     }
     e.preventDefault();
     dy = Math.max(0, mdy);
-    sheet.style.transform = `translateY(${dy}px)`;
-    sheet.style.opacity = String(Math.max(0.4, 1 - dy/380));
+    scheduleFrame();
   }
   function endDrag(shouldEval){
     if(pointerId!=null){
@@ -942,6 +976,7 @@ function attachSwipeToCloseSheet(sheet, onClose){
       try{ sheet.releasePointerCapture(pointerId); }catch(err){}
     }
     pointerId = null;
+    if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
     if(!dragging) return;
     if(shouldEval!==false && dy > 55){
       sheet.style.transition = 'transform .2s ease, opacity .2s ease';
@@ -1100,12 +1135,16 @@ $('#dish-delete-btn').onclick = async ()=>{
 /* ===================== CONFIGURACIÓN ===================== */
 function renderDrawerProfile(){
   $('#settings-username').textContent = '@'+currentUser.username;
+  $('#drawer-username').textContent = '@'+currentUser.username;
   const img = $('#avatar-preview'), ph = $('#avatar-placeholder');
+  const dImg = $('#drawer-avatar-img'), dPh = $('#drawer-avatar-placeholder');
+  const initial = (currentUser.username[0]||'?').toUpperCase();
   if(currentUser.avatar_url){
     img.src = currentUser.avatar_url; img.classList.remove('hidden'); ph.classList.add('hidden');
+    dImg.src = currentUser.avatar_url; dImg.classList.remove('hidden'); dPh.classList.add('hidden');
   } else {
-    img.classList.add('hidden'); ph.classList.remove('hidden');
-    ph.textContent = (currentUser.username[0]||'?').toUpperCase();
+    img.classList.add('hidden'); ph.classList.remove('hidden'); ph.textContent = initial;
+    dImg.classList.add('hidden'); dPh.classList.remove('hidden'); dPh.textContent = initial;
   }
   $('#toggle-fitness-btn').classList.toggle('on', currentUser.show_fitness);
 }
@@ -1257,10 +1296,12 @@ function renderSharedDishes(){
         <span class="name">${escapeHtml(d.name||'Receta')}</span>
         <span class="from">de @${escapeHtml((s.from&&s.from.username)||'?')}</span>
       </div>
-      ${s.added ? `<span class="chip-status">Añadida</span>` : `<button class="btn-mini" data-add-shared="${s.id}">Añadir a mis recetas</button>`}
+      <button class="btn-mini" data-add-shared="${s.id}">Añadir</button>
+      <button class="btn-mini btn-mini-ghost" data-reject-shared="${s.id}">Descartar</button>
     </div>`;
   }).join('');
   $all('[data-add-shared]').forEach(b=> b.onclick = ()=> addSharedDish(b.dataset.addShared));
+  $all('[data-reject-shared]').forEach(b=> b.onclick = ()=> rejectSharedDish(b.dataset.rejectShared));
 }
 async function addSharedDish(sharedId){
   const shared = sharedDishesReceived.find(s=>s.id===sharedId);
@@ -1272,12 +1313,18 @@ async function addSharedDish(sharedId){
     calories: d.calories||null, quality: d.quality||null
   });
   if(error){ alert(error.message); return; }
-  const { error: updErr } = await sb.from('shared_dishes').update({ added:true }).eq('id', sharedId);
-  if(updErr) console.error(updErr);
-  shared.added = true;
+  const { error: delErr } = await sb.from('shared_dishes').delete().eq('id', sharedId);
+  if(delErr) console.error(delErr);
+  sharedDishesReceived = sharedDishesReceived.filter(s=>s.id!==sharedId);
   renderSharedDishes();
   await loadDishes();
-};
+}
+async function rejectSharedDish(sharedId){
+  const { error } = await sb.from('shared_dishes').delete().eq('id', sharedId);
+  if(error){ alert(error.message); return; }
+  sharedDishesReceived = sharedDishesReceived.filter(s=>s.id!==sharedId);
+  renderSharedDishes();
+}
 
 /* --- Compartir un plato con un amigo --- */
 $('#dish-share-btn').onclick = ()=>{
@@ -1321,6 +1368,12 @@ async function loadFitnessProfile(){
     const days = fitnessProfile.training_days || [];
     $all('#days-toggle .day-btn').forEach(b=> b.classList.toggle('active', days.includes(Number(b.dataset.day))));
     renderSetupSummary(fitnessProfile);
+  } else {
+    // Usuario sin setup guardado todavía: el formulario debe quedar en blanco,
+    // no arrastrar los valores de la última persona que lo rellenó en este dispositivo.
+    $('#setup-form').reset();
+    $all('#days-toggle .day-btn').forEach(b=> b.classList.remove('active'));
+    $('#setup-summary').classList.add('hidden');
   }
 }
 
