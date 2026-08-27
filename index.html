@@ -131,8 +131,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 /* ---------- MODAL ---------- */
 .modal{position:fixed; inset:0; background:rgba(20,25,23,.4); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
 .modal-sheet{
-  width:100%; max-width:560px; max-height:min(86vh, calc(100vh - 70px - env(safe-area-inset-top)));
-  overflow-y:auto; background:var(--bg2); touch-action:pan-y;
+  width:100%; max-width:560px; max-height:min(91vh, calc(100vh - 40px - env(safe-area-inset-top)));
+  overflow-y:auto; background:var(--bg2); touch-action:pan-y; overscroll-behavior:contain;
   border-radius:20px 20px 0 0; padding:18px 18px calc(18px + env(safe-area-inset-bottom));
 }
 .sheet-kicker{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:10px;}
@@ -187,7 +187,12 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .meta-kcal input:focus{outline:none;}
 .meta-kcal-unit{font-size:9px; color:var(--muted); letter-spacing:.02em;}
 .dish-meta-row .pill-group{flex:1.7; gap:4px;}
-.dish-meta-row .pill-btn{padding:0; font-size:11px; border-radius:10px;}
+.dish-meta-row .pill-btn{
+  padding:4px 2px; font-size:10px; line-height:1.15; border-radius:10px;
+  white-space:normal; word-break:normal; text-align:center;
+  display:flex; align-items:center; justify-content:center; min-height:38px;
+}
+.desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
 .ingredient-row{position:relative; overflow:hidden; border-radius:10px; margin-bottom:8px;}
 .ingredient-delete-bg{
   position:absolute; inset:0; background:var(--bad); color:#fff; font-size:13px; font-weight:600;
@@ -414,6 +419,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     <input type="text" id="dish-name" class="dish-name-input"
       autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
 
+    <label class="desc-label">Descripción</label>
     <div class="dish-meta-row">
       <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc">
         <span id="dish-desc-preview">Descripción</span>
@@ -421,7 +427,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div class="pill-group" id="quality-group">
         <button type="button" class="pill-btn" data-q="bueno">Healthy</button>
         <button type="button" class="pill-btn" data-q="normal">Okey</button>
-        <button type="button" class="pill-btn" data-q="malo">Cheatmeal</button>
+        <button type="button" class="pill-btn" data-q="malo">Cheat meal</button>
       </div>
       <div class="meta-chip meta-kcal">
         <input type="number" id="dish-calories" autocomplete="off">
@@ -481,7 +487,7 @@ const MEAL_SPLIT = {desayuno:0.25, comida:0.35, merienda:0.10, cena:0.30};
 const DRINK_KCAL = {cerveza:110, vino:120, cubata:250, otro:150};
 const DRINK_LABELS = {cerveza:'Cerveza', vino:'Copa de vino', cubata:'Cubata/copa', otro:'Otro'};
 const DAY_NAMES = {1:'Lun',2:'Mar',3:'Mié',4:'Jue',5:'Vie',6:'Sáb',7:'Dom'};
-const QUALITY_LABELS = {bueno:'Healthy', normal:'Okey', malo:'Cheatmeal'};
+const QUALITY_LABELS = {bueno:'Healthy', normal:'Okey', malo:'Cheat meal'};
 
 /* ===================== UTIL ===================== */
 const $ = (sel) => document.querySelector(sel);
@@ -560,7 +566,6 @@ $all('.drawer-link').forEach(btn=>{
 /* --- Gesto: abrir el menú deslizando desde el borde izquierdo, cerrarlo deslizando a la izquierda --- */
 function attachDrawerSwipe(){
   const drawer = $('#drawer'), overlay = $('#drawer-overlay');
-  const blockedSelector = 'button, a, input, textarea, select';
   let startX=0, startY=0, dx=0, dragging=false, mode=null, pointerId=null, width=300;
 
   function onMove(e){
@@ -613,7 +618,6 @@ function attachDrawerSwipe(){
       if(e.clientX>28 || e.target.closest('.week-board')) return;
       mode='open';
     } else {
-      if(e.target.closest(blockedSelector)) return;
       if(!drawer.contains(e.target)) return;
       mode='close';
     }
@@ -665,8 +669,28 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||
 /* ===================== PLATOS: MODAL ===================== */
 $('#add-dish-btn').onclick = ()=> openDishModal(null);
 $('#dish-cancel-btn').onclick = ()=> closeDishModal();
+$('#dish-modal').addEventListener('click', e=>{ if(e.target.id==='dish-modal') closeDishModal(); });
+
+let bodyScrollY = 0;
+function lockBodyScroll(){
+  bodyScrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${bodyScrollY}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.width = '100%';
+}
+function unlockBodyScroll(){
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.width = '';
+  window.scrollTo(0, bodyScrollY);
+}
 
 function openDishModal(dish){
+  lockBodyScroll();
   editingDishId = dish ? dish.id : null;
   dishPhotoFile = null;
   selectedQuality = dish ? dish.quality : null;
@@ -687,11 +711,11 @@ function openDishModal(dish){
   $('#dish-delete-btn').classList.toggle('hidden', !dish);
   $('#dish-modal').classList.remove('hidden');
 }
-function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); }
+function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); unlockBodyScroll(); }
 
 /* --- Gesto: deslizar la ficha de plato (a la derecha o hacia abajo) para volver atrás --- */
 function attachSwipeToCloseSheet(sheet, onClose){
-  const blockedSelector = 'input, textarea, button, .ingredient-row, .dish-photo-wrap, .pill-btn';
+  const blockedSelector = 'input[type="number"], textarea, button, .ingredient-row, .pill-btn';
   let startX=0, startY=0, dx=0, dy=0, dir=null, dragging=false, pointerId=null;
 
   function onMove(e){
