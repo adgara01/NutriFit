@@ -405,8 +405,6 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 <!-- ================= DISH MODAL ================= -->
 <div id="dish-modal" class="modal hidden">
   <div class="modal-sheet">
-    <div class="sheet-kicker" id="dish-modal-title">Nuevo plato</div>
-
     <div class="dish-photo-wrap" id="dish-photo-wrap">
       <img id="dish-photo-preview" class="hidden" alt="">
       <div class="dish-photo-placeholder">
@@ -558,7 +556,7 @@ function setSection(section){
 function openDrawer(){ $('#drawer').classList.add('open'); $('#drawer-overlay').classList.remove('hidden'); }
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#drawer-overlay').classList.add('hidden'); }
 $('#menu-btn').onclick = openDrawer;
-// El menú no se puede cerrar tocando fuera: solo se cierra eligiendo una sección o con el gesto.
+$('#drawer-overlay').onclick = closeDrawer;
 $all('.drawer-link').forEach(btn=>{
   btn.onclick = ()=>{ setSection(btn.dataset.section); closeDrawer(); };
 });
@@ -615,7 +613,7 @@ function attachDrawerSwipe(){
     if(!$('#dish-modal').classList.contains('hidden') || !$('#desc-modal').classList.contains('hidden')) return;
     const isOpen = drawer.classList.contains('open');
     if(!isOpen){
-      if(e.clientX>28 || e.target.closest('.week-board')) return;
+      if(e.target.closest('.week-board')) return;
       mode='open';
     } else {
       if(!drawer.contains(e.target)) return;
@@ -694,7 +692,6 @@ function openDishModal(dish){
   editingDishId = dish ? dish.id : null;
   dishPhotoFile = null;
   selectedQuality = dish ? dish.quality : null;
-  $('#dish-modal-title').textContent = dish ? 'Editar plato' : 'Nuevo plato';
 
   const wrap = $('#dish-photo-wrap'), img = $('#dish-photo-preview');
   if(dish && dish.image_url){ img.src = dish.image_url; img.classList.remove('hidden'); wrap.classList.add('has-photo'); }
@@ -713,18 +710,27 @@ function openDishModal(dish){
 }
 function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); unlockBodyScroll(); }
 
-/* --- Gesto: deslizar la ficha de plato (a la derecha o hacia abajo) para volver atrás --- */
+/* --- Gesto: deslizar la ficha de plato (a la derecha o hacia abajo) para volver atrás ---
+   Los ingredientes tienen su propio swipe horizontal (borrar), así que desde ahí solo se
+   cede el gesto vertical (tirar hacia abajo estando arriba del todo) para volver al mosaico. */
 function attachSwipeToCloseSheet(sheet, onClose){
-  const blockedSelector = 'input[type="number"], textarea, button, .ingredient-row, .pill-btn';
-  let startX=0, startY=0, dx=0, dy=0, dir=null, dragging=false, pointerId=null;
+  const hardBlocked = 'input[type="number"], textarea, button, .pill-btn';
+  const softBlocked = '.ingredient-row';
+  let startX=0, startY=0, dx=0, dy=0, dir=null, dragging=false, pointerId=null, fromSoftBlocked=false;
 
   function onMove(e){
     if(e.pointerId!==pointerId) return;
     const mdx=e.clientX-startX, mdy=e.clientY-startY;
     if(!dragging){
       if(Math.abs(mdx)<10 && Math.abs(mdy)<10) return;
-      if(mdx>Math.abs(mdy)){ dir='right'; dragging=true; }
-      else if(mdy>Math.abs(mdx) && sheet.scrollTop<=0){ dir='down'; dragging=true; }
+      if(mdx>Math.abs(mdy)){
+        if(fromSoftBlocked){ endDrag(false); return; }
+        dir='right'; dragging=true;
+      }
+      else if(mdy>Math.abs(mdx) && sheet.scrollTop<=0){
+        dir='down'; dragging=true;
+        if(fromSoftBlocked){ try{ sheet.setPointerCapture(pointerId); }catch(err){} }
+      }
       else { endDrag(false); return; }
     }
     e.preventDefault();
@@ -741,7 +747,8 @@ function attachSwipeToCloseSheet(sheet, onClose){
     pointerId = null;
     if(!dragging){ dir=null; return; }
     const dist = dir==='right' ? dx : dy;
-    if(shouldEval!==false && dist > 90){
+    const threshold = dir==='down' ? 55 : 90;
+    if(shouldEval!==false && dist > threshold){
       sheet.style.transition = 'transform .2s ease, opacity .2s ease';
       sheet.style.transform = dir==='right' ? 'translateX(100%)' : 'translateY(100%)';
       sheet.style.opacity = '0';
@@ -755,10 +762,11 @@ function attachSwipeToCloseSheet(sheet, onClose){
     dragging = false; dir = null;
   }
   sheet.addEventListener('pointerdown', e=>{
-    if(e.target.closest(blockedSelector)) return;
+    if(e.target.closest(hardBlocked)) return;
+    fromSoftBlocked = !!e.target.closest(softBlocked);
     startX=e.clientX; startY=e.clientY; dx=0; dy=0; dir=null; dragging=false;
     pointerId = e.pointerId;
-    sheet.setPointerCapture(pointerId);
+    if(!fromSoftBlocked){ sheet.setPointerCapture(pointerId); }
     sheet.addEventListener('pointermove', onMove);
   });
   sheet.addEventListener('pointerup', ()=> endDrag());
