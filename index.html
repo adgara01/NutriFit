@@ -87,10 +87,10 @@ button{cursor:pointer; border:none;}
 .drawer-nav{display:flex; flex-direction:column; gap:8px; flex:1;}
 .drawer-link{
   display:flex; align-items:center; gap:16px; padding:18px 14px; border-radius:14px;
-  background:var(--card2); color:var(--text); font-size:20px; font-weight:800; text-align:left; width:100%;
+  background:var(--card2); border:1px solid var(--border); color:var(--text); font-size:20px; font-weight:800; text-align:left; width:100%;
 }
 .drawer-link svg{flex-shrink:0; color:var(--accent); width:26px; height:26px;}
-.drawer-link.active{background:rgba(18,135,94,.12); color:var(--accent);}
+.drawer-link.active{background:rgba(18,135,94,.12); border-color:rgba(18,135,94,.35); color:var(--accent);}
 .drawer-link.active svg{color:var(--accent);}
 .drawer-footer{
   display:flex; align-items:center; justify-content:space-between; padding-top:14px;
@@ -131,8 +131,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 /* ---------- MODAL ---------- */
 .modal{position:fixed; inset:0; background:rgba(20,25,23,.4); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
 .modal-sheet{
-  width:100%; max-width:560px; max-height:92vh; overflow-y:auto; background:var(--bg2);
-  border-radius:20px 20px 0 0; padding:18px 18px calc(24px + env(safe-area-inset-bottom));
+  width:100%; max-width:560px; max-height:min(86vh, calc(100vh - 70px - env(safe-area-inset-top)));
+  overflow-y:auto; background:var(--bg2); touch-action:pan-y;
+  border-radius:20px 20px 0 0; padding:18px 18px calc(18px + env(safe-area-inset-bottom));
 }
 .sheet-kicker{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:10px;}
 .field{margin-bottom:14px;}
@@ -418,9 +419,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <span id="dish-desc-preview">Descripción</span>
       </button>
       <div class="pill-group" id="quality-group">
-        <button type="button" class="pill-btn" data-q="bueno">Buena</button>
-        <button type="button" class="pill-btn" data-q="normal">Normal</button>
-        <button type="button" class="pill-btn" data-q="malo">Mala</button>
+        <button type="button" class="pill-btn" data-q="bueno">Healthy</button>
+        <button type="button" class="pill-btn" data-q="normal">Okey</button>
+        <button type="button" class="pill-btn" data-q="malo">Cheatmeal</button>
       </div>
       <div class="meta-chip meta-kcal">
         <input type="number" id="dish-calories" autocomplete="off">
@@ -480,6 +481,7 @@ const MEAL_SPLIT = {desayuno:0.25, comida:0.35, merienda:0.10, cena:0.30};
 const DRINK_KCAL = {cerveza:110, vino:120, cubata:250, otro:150};
 const DRINK_LABELS = {cerveza:'Cerveza', vino:'Copa de vino', cubata:'Cubata/copa', otro:'Otro'};
 const DAY_NAMES = {1:'Lun',2:'Mar',3:'Mié',4:'Jue',5:'Vie',6:'Sáb',7:'Dom'};
+const QUALITY_LABELS = {bueno:'Healthy', normal:'Okey', malo:'Cheatmeal'};
 
 /* ===================== UTIL ===================== */
 const $ = (sel) => document.querySelector(sel);
@@ -550,10 +552,80 @@ function setSection(section){
 function openDrawer(){ $('#drawer').classList.add('open'); $('#drawer-overlay').classList.remove('hidden'); }
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#drawer-overlay').classList.add('hidden'); }
 $('#menu-btn').onclick = openDrawer;
-// El menú no se puede cerrar tocando fuera: solo se cierra eligiendo una sección.
+// El menú no se puede cerrar tocando fuera: solo se cierra eligiendo una sección o con el gesto.
 $all('.drawer-link').forEach(btn=>{
   btn.onclick = ()=>{ setSection(btn.dataset.section); closeDrawer(); };
 });
+
+/* --- Gesto: abrir el menú deslizando desde el borde izquierdo, cerrarlo deslizando a la izquierda --- */
+function attachDrawerSwipe(){
+  const drawer = $('#drawer'), overlay = $('#drawer-overlay');
+  const blockedSelector = 'button, a, input, textarea, select';
+  let startX=0, startY=0, dx=0, dragging=false, mode=null, pointerId=null, width=300;
+
+  function onMove(e){
+    if(e.pointerId!==pointerId) return;
+    const mdx=e.clientX-startX, mdy=e.clientY-startY;
+    if(!dragging){
+      if(Math.abs(mdx)<10 && Math.abs(mdy)<10) return;
+      if(Math.abs(mdy)>Math.abs(mdx)){ release(); return; }
+      dragging=true;
+      drawer.style.transition='none';
+      overlay.classList.remove('hidden');
+      overlay.style.transition='none';
+    }
+    e.preventDefault();
+    if(mode==='open'){
+      dx = Math.min(width, Math.max(0, mdx));
+      drawer.style.transform = `translateX(${dx-width}px)`;
+      overlay.style.opacity = String(dx/width);
+    } else {
+      dx = Math.min(0, Math.max(-width, mdx));
+      drawer.style.transform = `translateX(${dx}px)`;
+      overlay.style.opacity = String(1 + dx/width);
+    }
+  }
+  function release(){
+    document.removeEventListener('pointermove', onMove);
+    pointerId = null;
+  }
+  function onUp(){
+    release();
+    if(!dragging){ mode=null; return; }
+    const willOpen = mode==='open' ? dx > width*0.35 : !(Math.abs(dx) > width*0.3);
+    drawer.style.transition='transform .22s ease';
+    overlay.style.transition='opacity .22s ease';
+    if(willOpen){ drawer.style.transform='translateX(0)'; overlay.style.opacity='1'; }
+    else { drawer.style.transform=`translateX(-${width}px)`; overlay.style.opacity='0'; }
+    setTimeout(()=>{
+      drawer.style.transition=''; drawer.style.transform='';
+      overlay.style.transition=''; overlay.style.opacity='';
+      drawer.classList.toggle('open', willOpen);
+      overlay.classList.toggle('hidden', !willOpen);
+    }, 220);
+    dragging=false; mode=null;
+  }
+  document.addEventListener('pointerdown', e=>{
+    if($('#app-view').classList.contains('hidden')) return;
+    if(!$('#dish-modal').classList.contains('hidden') || !$('#desc-modal').classList.contains('hidden')) return;
+    const isOpen = drawer.classList.contains('open');
+    if(!isOpen){
+      if(e.clientX>28 || e.target.closest('.week-board')) return;
+      mode='open';
+    } else {
+      if(e.target.closest(blockedSelector)) return;
+      if(!drawer.contains(e.target)) return;
+      mode='close';
+    }
+    startX=e.clientX; startY=e.clientY; dx=0; dragging=false;
+    pointerId=e.pointerId;
+    width = drawer.getBoundingClientRect().width || 300;
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp, {once:true});
+    document.addEventListener('pointercancel', onUp, {once:true});
+  });
+}
+attachDrawerSwipe();
 
 $all('.subtabs .subtab').forEach(btn=>{
   btn.onclick = ()=>{
@@ -580,7 +652,7 @@ function renderGallery(){
       ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
       <div class="dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
-        ${d.quality ? `<span class="quality-badge quality-${d.quality}">${d.quality}</span>` : ''}
+        ${d.quality ? `<span class="quality-badge quality-${d.quality}">${QUALITY_LABELS[d.quality]||d.quality}</span>` : ''}
       </div>
     </div>
   `).join('');
@@ -617,45 +689,56 @@ function openDishModal(dish){
 }
 function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); }
 
-/* --- Gesto: deslizar la ficha de plato de izquierda a derecha para volver atrás --- */
+/* --- Gesto: deslizar la ficha de plato (a la derecha o hacia abajo) para volver atrás --- */
 function attachSwipeToCloseSheet(sheet, onClose){
   const blockedSelector = 'input, textarea, button, .ingredient-row, .dish-photo-wrap, .pill-btn';
-  let startX=0, startY=0, dx=0, dragging=false, active=false;
-  sheet.addEventListener('pointerdown', e=>{
-    if(e.target.closest(blockedSelector)) return;
-    startX=e.clientX; startY=e.clientY; dx=0; dragging=false; active=true;
-  });
-  sheet.addEventListener('pointermove', e=>{
-    if(!active) return;
+  let startX=0, startY=0, dx=0, dy=0, dir=null, dragging=false, pointerId=null;
+
+  function onMove(e){
+    if(e.pointerId!==pointerId) return;
     const mdx=e.clientX-startX, mdy=e.clientY-startY;
     if(!dragging){
-      if(mdx>10 && mdx>Math.abs(mdy)){ dragging=true; }
-      else if(Math.abs(mdy)>10 || mdx<-10){ active=false; return; }
+      if(Math.abs(mdx)<10 && Math.abs(mdy)<10) return;
+      if(mdx>Math.abs(mdy)){ dir='right'; dragging=true; }
+      else if(mdy>Math.abs(mdx) && sheet.scrollTop<=0){ dir='down'; dragging=true; }
+      else { endDrag(false); return; }
     }
-    if(dragging){
-      dx = Math.max(0, mdx);
-      sheet.style.transform = `translateX(${dx}px)`;
-      sheet.style.opacity = String(Math.max(0.35, 1 - dx/380));
+    e.preventDefault();
+    if(dir==='right'){ dx = Math.max(0, mdx); sheet.style.transform = `translateX(${dx}px)`; }
+    else { dy = Math.max(0, mdy); sheet.style.transform = `translateY(${dy}px)`; }
+    const dist = dir==='right' ? dx : dy;
+    sheet.style.opacity = String(Math.max(0.4, 1 - dist/380));
+  }
+  function endDrag(shouldEval){
+    if(pointerId!=null){
+      sheet.removeEventListener('pointermove', onMove);
+      try{ sheet.releasePointerCapture(pointerId); }catch(err){}
     }
-  });
-  function endDrag(){
-    if(!active) return;
-    active = false;
-    if(dragging && dx > 100){
+    pointerId = null;
+    if(!dragging){ dir=null; return; }
+    const dist = dir==='right' ? dx : dy;
+    if(shouldEval!==false && dist > 90){
       sheet.style.transition = 'transform .2s ease, opacity .2s ease';
-      sheet.style.transform = 'translateX(100%)';
+      sheet.style.transform = dir==='right' ? 'translateX(100%)' : 'translateY(100%)';
       sheet.style.opacity = '0';
       setTimeout(()=>{ onClose(); sheet.style.transition=''; sheet.style.transform=''; sheet.style.opacity=''; }, 200);
-    } else if(dragging){
+    } else {
       sheet.style.transition = 'transform .18s ease, opacity .18s ease';
       sheet.style.transform = 'translateX(0)';
       sheet.style.opacity = '1';
       setTimeout(()=> sheet.style.transition = '', 180);
     }
-    dragging = false;
+    dragging = false; dir = null;
   }
-  sheet.addEventListener('pointerup', endDrag);
-  sheet.addEventListener('pointercancel', endDrag);
+  sheet.addEventListener('pointerdown', e=>{
+    if(e.target.closest(blockedSelector)) return;
+    startX=e.clientX; startY=e.clientY; dx=0; dy=0; dir=null; dragging=false;
+    pointerId = e.pointerId;
+    sheet.setPointerCapture(pointerId);
+    sheet.addEventListener('pointermove', onMove);
+  });
+  sheet.addEventListener('pointerup', ()=> endDrag());
+  sheet.addEventListener('pointercancel', ()=> endDrag(false));
 }
 attachSwipeToCloseSheet(document.querySelector('#dish-modal .modal-sheet'), closeDishModal);
 
