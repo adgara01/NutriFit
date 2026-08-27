@@ -8,20 +8,21 @@
 <!-- PWA / iOS fullscreen standalone -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="NutriFit">
-<meta name="theme-color" content="#0b5c4a">
+<meta name="theme-color" content="#f4f6f5">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
 
 <style>
 :root{
-  --bg:#0b1412; --bg2:#0f1c19; --card:#132824; --card2:#173330;
-  --border:#20423c; --text:#eef7f4; --muted:#8fada4;
-  --accent:#0d9488; --accent-l:#14b8a6; --accent2:#ea580c;
-  --good:#22c55e; --normal:#eab308; --bad:#ef4444;
+  --bg:#f4f6f5; --bg2:#ffffff; --card:#ffffff; --card2:#eef1ef;
+  --border:#e2e7e4; --text:#1b201d; --muted:#7c8983;
+  --accent:#12875e; --accent-l:#0e6b4b; --accent2:#22e3a0;
+  --good:#1f9d63; --normal:#c07a1f; --bad:#c9564a;
   --radius:16px;
+  --shadow:0 1px 2px rgba(20,30,25,.05), 0 10px 24px rgba(20,30,25,.08);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
@@ -32,6 +33,7 @@ body{
   overscroll-behavior:none;
 }
 input,select,textarea,button{font-family:inherit; color:inherit;}
+input[type=range], input[type=checkbox], input[type=radio]{accent-color:var(--accent);}
 .hidden{display:none !important;}
 button{cursor:pointer; border:none;}
 
@@ -44,6 +46,7 @@ button{cursor:pointer; border:none;}
   width:100%; padding:14px; border-radius:12px; border:1px solid var(--border);
   background:var(--card); font-size:16px; margin-bottom:12px;
 }
+#username-input:focus{outline:none; border-color:var(--accent);}
 #login-btn{
   width:100%; padding:14px; border-radius:12px; background:var(--accent);
   color:#fff; font-weight:600; font-size:16px;
@@ -55,24 +58,46 @@ button{cursor:pointer; border:none;}
 }
 
 /* ---------- APP SHELL ---------- */
-.topbar{
-  display:flex; align-items:center; gap:10px; padding:14px 16px;
-  border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg); z-index:5;
+.appbar{
+  display:flex; align-items:center; padding:14px 16px;
+  position:sticky; top:0; background:var(--bg); z-index:5;
 }
-.topbar .brand{font-weight:700; font-size:18px; flex:1;}
-.user-chip{font-size:13px; color:var(--muted);}
-#logout-btn{background:none; color:var(--muted); font-size:18px; padding:4px 6px;}
+.icon-btn-plain{
+  background:none; border:none; padding:8px; margin:-8px; border-radius:10px; color:var(--text);
+  display:flex; align-items:center; justify-content:center;
+}
+.icon-btn-plain:active{background:var(--card2);}
 
-.maintabs{display:flex; gap:0; border-bottom:1px solid var(--border); position:sticky; top:53px; background:var(--bg); z-index:4;}
-.maintabs .tab{
-  flex:1; padding:12px; background:none; color:var(--muted); font-size:15px; font-weight:600;
-  border-bottom:2px solid transparent;
+.drawer-overlay{position:fixed; inset:0; background:rgba(20,30,25,.28); z-index:14;}
+.drawer{
+  position:fixed; top:0; left:0; bottom:0; width:78%; max-width:300px; z-index:15;
+  background:var(--bg2); padding:26px 18px 18px; display:flex; flex-direction:column;
+  transform:translateX(-100%); transition:transform .25s ease; box-shadow:var(--shadow);
+  padding-top:calc(26px + env(safe-area-inset-top)); padding-bottom:calc(18px + env(safe-area-inset-bottom));
 }
-.maintabs .tab.active{color:var(--text); border-color:var(--accent);}
+.drawer.open{transform:translateX(0);}
+.drawer-brand{font-size:19px; font-weight:800; letter-spacing:-.02em; margin-bottom:26px;}
+.drawer-nav{display:flex; flex-direction:column; gap:4px; flex:1;}
+.drawer-link{
+  display:flex; align-items:center; gap:13px; padding:13px 12px; border-radius:12px;
+  background:none; color:var(--text); font-size:15px; font-weight:600; text-align:left; width:100%;
+}
+.drawer-link svg{flex-shrink:0; color:var(--accent);}
+.drawer-link.active{background:var(--card2);}
+.drawer-footer{
+  display:flex; align-items:center; justify-content:space-between; padding-top:14px;
+  border-top:1px solid var(--border); font-size:14px; color:var(--muted);
+}
+
+.home-wordmark{
+  min-height:58vh; display:flex; align-items:center; justify-content:center;
+  font-size:36px; font-weight:800; letter-spacing:-.02em; color:var(--text);
+}
+.section-title{font-size:22px; font-weight:800; letter-spacing:-.01em; margin:2px 0 16px;}
 
 main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
-.tabpanel{display:none;}
-.tabpanel.active{display:block;}
+.app-section{display:none;}
+.app-section.active{display:block;}
 
 /* ---------- GALLERY ---------- */
 .gallery{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px;}
@@ -82,49 +107,96 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 }
 .dish-thumb{
   width:100%; aspect-ratio:1/1; background:var(--card2); display:flex; align-items:center;
-  justify-content:center; color:var(--muted); font-size:28px; object-fit:cover;
+  justify-content:center; color:var(--muted); object-fit:cover;
 }
+.dish-thumb-empty svg{width:32px; height:32px;}
 .dish-info{padding:8px 10px;}
 .dish-info .name{font-weight:600; font-size:14px; display:block; margin-bottom:4px;}
 .quality-badge{font-size:11px; padding:2px 8px; border-radius:999px; font-weight:600;}
-.quality-bueno{background:rgba(34,197,94,.18); color:var(--good);}
-.quality-normal{background:rgba(234,179,8,.18); color:var(--normal);}
-.quality-malo{background:rgba(239,68,68,.18); color:var(--bad);}
+.quality-bueno{background:rgba(31,157,99,.13); color:var(--good);}
+.quality-normal{background:rgba(192,122,31,.13); color:var(--normal);}
+.quality-malo{background:rgba(201,86,74,.13); color:var(--bad);}
 
 .fab{
   position:fixed; right:20px; bottom:calc(24px + env(safe-area-inset-bottom));
-  width:56px; height:56px; border-radius:50%; background:var(--accent2); color:#fff;
-  font-size:28px; line-height:56px; text-align:center; box-shadow:0 6px 18px rgba(0,0,0,.4);
+  width:54px; height:54px; border-radius:50%; background:var(--accent2); color:#0a2e22;
+  display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow);
   z-index:6;
 }
 
 /* ---------- MODAL ---------- */
-.modal{position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
+.modal{position:fixed; inset:0; background:rgba(20,25,23,.4); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
 .modal-sheet{
   width:100%; max-width:560px; max-height:92vh; overflow-y:auto; background:var(--bg2);
   border-radius:20px 20px 0 0; padding:18px 18px calc(24px + env(safe-area-inset-bottom));
 }
-.modal-sheet h2{margin-top:0;}
+.sheet-kicker{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:10px;}
 .field{margin-bottom:14px;}
 .field label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px;}
 .field input[type=text], .field input[type=number], .field textarea, .field select{
   width:100%; padding:11px; border-radius:10px; border:1px solid var(--border); background:var(--card); font-size:15px;
 }
+.field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--accent);}
 .field textarea{min-height:80px; resize:vertical;}
-.ingredient-row{display:flex; gap:8px; margin-bottom:8px;}
-.ingredient-row input{flex:1;}
-.icon-btn{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0 12px; color:var(--muted);}
-.add-row-btn{background:none; border:1px dashed var(--border); color:var(--accent-l); width:100%; padding:10px; border-radius:10px;}
 .pill-group{display:flex; gap:8px;}
 .pill-btn{flex:1; padding:10px; border-radius:10px; background:var(--card); border:1px solid var(--border); color:var(--muted); font-weight:600;}
-.pill-btn.active[data-q="bueno"]{background:rgba(34,197,94,.2); border-color:var(--good); color:var(--good);}
-.pill-btn.active[data-q="normal"]{background:rgba(234,179,8,.2); border-color:var(--normal); color:var(--normal);}
-.pill-btn.active[data-q="malo"]{background:rgba(239,68,68,.2); border-color:var(--bad); color:var(--bad);}
+.pill-btn.active[data-q="bueno"]{background:rgba(31,157,99,.14); border-color:var(--good); color:var(--good);}
+.pill-btn.active[data-q="normal"]{background:rgba(192,122,31,.14); border-color:var(--normal); color:var(--normal);}
+.pill-btn.active[data-q="malo"]{background:rgba(201,86,74,.14); border-color:var(--bad); color:var(--bad);}
 .modal-actions{display:flex; gap:10px; margin-top:6px;}
 .btn-primary{flex:1; background:var(--accent); color:#fff; padding:13px; border-radius:12px; font-weight:600; font-size:15px;}
 .btn-secondary{background:var(--card); color:var(--muted); padding:13px 16px; border-radius:12px; border:1px solid var(--border);}
 .btn-danger{background:none; color:var(--bad); padding:13px; font-size:14px;}
-#dish-photo-preview{width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:12px; background:var(--card); margin-bottom:10px;}
+
+/* ---------- DISH SHEET ---------- */
+.visually-hidden{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;}
+.dish-photo-wrap{
+  position:relative; width:100%; aspect-ratio:4/3; border-radius:16px; overflow:hidden;
+  background:var(--card2); margin-bottom:14px; border:1px solid var(--border);
+}
+.dish-photo-wrap img{width:100%; height:100%; object-fit:cover; display:block;}
+.dish-photo-placeholder{
+  position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:8px; color:var(--muted); font-size:13px;
+}
+.dish-photo-wrap.has-photo .dish-photo-placeholder{display:none;}
+.dish-name-input{
+  width:100%; border:none; background:none; font-size:21px; font-weight:700; color:var(--text);
+  padding:4px 2px 12px; border-bottom:1px solid var(--border); margin-bottom:16px;
+}
+.dish-name-input:focus{outline:none; border-color:var(--accent);}
+.dish-meta-row{display:flex; gap:8px; margin-bottom:20px; align-items:stretch;}
+.meta-chip{
+  background:var(--card2); border:1px solid var(--border); border-radius:12px;
+  display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--muted);
+  padding:0 8px; text-align:center; min-width:0;
+}
+.meta-desc{flex:1.3;}
+.meta-desc span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;}
+.meta-desc.filled{color:var(--text);}
+.meta-kcal{flex:0.8; flex-direction:column; padding:6px 4px;}
+.meta-kcal input{width:100%; border:none; background:none; text-align:center; font-size:14px; color:var(--text); padding:4px 0 0;}
+.meta-kcal input:focus{outline:none;}
+.meta-kcal-unit{font-size:9px; color:var(--muted); letter-spacing:.02em;}
+.dish-meta-row .pill-group{flex:1.7; gap:4px;}
+.dish-meta-row .pill-btn{padding:0; font-size:11px; border-radius:10px;}
+.ingredient-row{position:relative; overflow:hidden; border-radius:10px; margin-bottom:8px;}
+.ingredient-delete-bg{
+  position:absolute; inset:0; background:var(--bad); color:#fff; font-size:13px; font-weight:600;
+  display:flex; align-items:center; justify-content:flex-end; padding-right:16px;
+}
+.ingredient-input{
+  position:relative; width:100%; background:var(--card2); border:1px solid var(--border);
+  border-radius:10px; padding:11px; font-size:15px; color:var(--text);
+}
+.ingredient-input:focus{outline:none; border-color:var(--accent);}
+
+.desc-modal-overlay{align-items:center; padding:24px; z-index:25;}
+.desc-modal-card{width:100%; max-width:420px; background:var(--bg2); border-radius:18px; padding:18px; box-shadow:var(--shadow);}
+.desc-modal-card textarea{
+  width:100%; min-height:220px; border:none; background:none; font-size:15px; color:var(--text);
+  resize:vertical; outline:none;
+}
 
 /* ---------- FITNESS ---------- */
 .subtabs{display:flex; gap:8px; margin-bottom:16px;}
@@ -137,8 +209,6 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .days-toggle{display:flex; gap:6px; flex-wrap:wrap;}
 .day-btn{width:40px; height:40px; border-radius:50%; background:var(--card2); border:1px solid var(--border); color:var(--muted); font-weight:600; font-size:13px;}
 .day-btn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
-.range-row{display:flex; align-items:center; gap:10px;}
-.range-row input[type=range]{flex:1;}
 .summary-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;}
 .summary-item{background:var(--card2); border-radius:12px; padding:10px 12px;}
 .summary-item .label{font-size:11px; color:var(--muted);}
@@ -149,7 +219,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .day-col.training{border-color:var(--accent2); box-shadow:0 0 0 1px var(--accent2) inset;}
 .day-col .day-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
 .day-col .day-name{font-weight:700; font-size:14px;}
-.day-col .day-badge{font-size:10px; color:var(--accent2); font-weight:700;}
+.day-col .day-badge{font-size:9px; font-weight:700; color:#0a6b47; background:rgba(34,197,94,.14); padding:2px 8px; border-radius:999px; letter-spacing:.03em;}
 .meal-row{margin-bottom:8px;}
 .meal-row label{font-size:11px; color:var(--muted); display:flex; justify-content:space-between;}
 .meal-row input{width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--card2); font-size:14px; margin-top:3px;}
@@ -179,7 +249,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   <div class="login-card">
     <h1>NutriFit</h1>
     <label class="user-label" for="username-input">Usuario</label>
-    <input id="username-input" type="text" placeholder="p.ej. adri" autocapitalize="off" autocorrect="off">
+    <input id="username-input" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
     <button id="login-btn">Entrar</button>
     <div id="known-users"></div>
   </div>
@@ -187,26 +257,51 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
 <!-- ================= APP ================= -->
 <div id="app-view" class="hidden">
-  <header class="topbar">
-    <span class="brand">NutriFit</span>
-    <span class="user-chip" id="user-chip"></span>
-    <button id="logout-btn" title="Cambiar usuario">⎋</button>
+  <header class="appbar">
+    <button id="menu-btn" class="icon-btn-plain" aria-label="Menú">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
   </header>
 
-  <nav class="maintabs">
-    <button class="tab active" data-tab="platos">🍽️ Platos</button>
-    <button class="tab" data-tab="fitness">💪 Fitness</button>
-  </nav>
+  <div id="drawer-overlay" class="drawer-overlay hidden"></div>
+  <aside id="drawer" class="drawer">
+    <div class="drawer-brand">NutriFit</div>
+    <nav class="drawer-nav">
+      <button class="drawer-link" data-section="platos">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+        <span>Platos y Recetas</span>
+      </button>
+      <button class="drawer-link" data-section="fitness">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg>
+        <span>Fitness</span>
+      </button>
+    </nav>
+    <div class="drawer-footer">
+      <span id="drawer-username"></span>
+      <button id="logout-btn" class="icon-btn-plain" aria-label="Cerrar sesión">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      </button>
+    </div>
+  </aside>
 
   <main>
+    <!-- HOME -->
+    <section id="section-home" class="app-section active">
+      <div class="home-wordmark">NutriFit</div>
+    </section>
+
     <!-- PLATOS -->
-    <section id="tab-platos" class="tabpanel active">
+    <section id="section-platos" class="app-section">
+      <div class="section-title">Platos y Recetas</div>
       <div class="gallery" id="gallery"></div>
-      <button class="fab" id="add-dish-btn">+</button>
+      <button class="fab" id="add-dish-btn" aria-label="Nuevo plato">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
     </section>
 
     <!-- FITNESS -->
-    <section id="tab-fitness" class="tabpanel">
+    <section id="section-fitness" class="app-section">
+      <div class="section-title">Fitness</div>
       <nav class="subtabs">
         <button class="subtab active" data-sub="setup">Setup</button>
         <button class="subtab" data-sub="week">Semana actual</button>
@@ -217,11 +312,11 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div id="sub-setup" class="subpanel active">
         <form id="setup-form" class="card">
           <div class="row2">
-            <div class="field"><label>Altura (cm)</label><input type="number" id="f-height" required></div>
-            <div class="field"><label>Peso (kg)</label><input type="number" step="0.1" id="f-weight" required></div>
+            <div class="field"><label>Altura (cm)</label><input type="number" id="f-height" autocomplete="off" required></div>
+            <div class="field"><label>Peso (kg)</label><input type="number" step="0.1" id="f-weight" autocomplete="off" required></div>
           </div>
           <div class="row2">
-            <div class="field"><label>Edad</label><input type="number" id="f-age" required></div>
+            <div class="field"><label>Edad</label><input type="number" id="f-age" autocomplete="off" required></div>
             <div class="field"><label>Sexo</label>
               <select id="f-sex"><option value="hombre">Hombre</option><option value="mujer">Mujer</option></select>
             </div>
@@ -242,10 +337,6 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
               <option value="ganar">Ganar músculo</option>
               <option value="recomposicion">Recomposición / mantener</option>
             </select>
-          </div>
-          <div class="field">
-            <label>Proteína objetivo: <span id="protein-value">2.0</span> g/kg</label>
-            <div class="range-row"><input type="range" id="f-protein" min="1.8" max="2.2" step="0.1" value="2.0"></div>
           </div>
           <div class="field">
             <label>Días de entreno</label>
@@ -269,7 +360,6 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
             <div class="summary-item"><div class="label">TMB</div><div class="value" id="sum-tmb">-</div></div>
             <div class="summary-item"><div class="label">Mantenimiento</div><div class="value" id="sum-maint">-</div></div>
             <div class="summary-item"><div class="label">Objetivo kcal/día</div><div class="value" id="sum-target">-</div></div>
-            <div class="summary-item"><div class="label">Proteína objetivo</div><div class="value" id="sum-protein">-</div></div>
             <div class="summary-item"><div class="label">Entrenos/semana</div><div class="value" id="sum-days">-</div></div>
           </div>
         </div>
@@ -285,7 +375,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div id="sub-log" class="subpanel">
         <div class="card">
           <div style="font-weight:700; margin-bottom:10px;">Cerrar semana actual</div>
-          <div class="field"><label>Peso actual (kg)</label><input type="number" step="0.1" id="close-weight"></div>
+          <div class="field"><label>Peso actual (kg)</label><input type="number" step="0.1" id="close-weight" autocomplete="off"></div>
           <button id="close-week-btn" class="btn-primary">Guardar semana</button>
         </div>
         <div class="card">
@@ -304,33 +394,53 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 <!-- ================= DISH MODAL ================= -->
 <div id="dish-modal" class="modal hidden">
   <div class="modal-sheet">
-    <h2 id="dish-modal-title">Nuevo plato</h2>
-    <img id="dish-photo-preview" src="" alt="">
-    <div class="field">
-      <label>Foto</label>
-      <input type="file" id="dish-photo-input" accept="image/*" capture="environment">
+    <div class="sheet-kicker" id="dish-modal-title">Nuevo plato</div>
+
+    <div class="dish-photo-wrap" id="dish-photo-wrap">
+      <img id="dish-photo-preview" class="hidden" alt="">
+      <div class="dish-photo-placeholder">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <span>Añadir foto</span>
+      </div>
     </div>
-    <div class="field"><label>Nombre del plato</label><input type="text" id="dish-name" required></div>
+    <input type="file" id="dish-photo-input" accept="image/*" capture="environment" class="visually-hidden">
+
+    <input type="text" id="dish-name" class="dish-name-input"
+      autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+
+    <div class="dish-meta-row">
+      <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc">
+        <span id="dish-desc-preview">Descripción</span>
+      </button>
+      <div class="pill-group" id="quality-group">
+        <button type="button" class="pill-btn" data-q="bueno">Buena</button>
+        <button type="button" class="pill-btn" data-q="normal">Normal</button>
+        <button type="button" class="pill-btn" data-q="malo">Mala</button>
+      </div>
+      <div class="meta-chip meta-kcal">
+        <input type="number" id="dish-calories" autocomplete="off">
+        <span class="meta-kcal-unit">kcal</span>
+      </div>
+    </div>
+
     <div class="field">
       <label>Ingredientes</label>
       <div id="ingredients-list"></div>
-      <button type="button" class="add-row-btn" id="add-ingredient-btn">+ Añadir ingrediente</button>
     </div>
-    <div class="field"><label>Descripción / pasos</label><textarea id="dish-desc" placeholder="Comentarios, receta..."></textarea></div>
-    <div class="field"><label>Calorías aproximadas</label><input type="number" id="dish-calories"></div>
-    <div class="field">
-      <label>Calidad del plato</label>
-      <div class="pill-group" id="quality-group">
-        <button type="button" class="pill-btn" data-q="bueno">Bueno</button>
-        <button type="button" class="pill-btn" data-q="normal">Normal</button>
-        <button type="button" class="pill-btn" data-q="malo">Malo</button>
-      </div>
-    </div>
+
     <div class="modal-actions">
       <button class="btn-secondary" id="dish-cancel-btn">Cancelar</button>
       <button class="btn-primary" id="dish-save-btn">Guardar</button>
     </div>
     <button class="btn-danger hidden" id="dish-delete-btn" style="width:100%; margin-top:6px;">Eliminar plato</button>
+  </div>
+</div>
+
+<!-- ================= DESCRIPCIÓN POP-UP ================= -->
+<div id="desc-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card">
+    <textarea id="dish-desc"
+      autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
   </div>
 </div>
 
@@ -370,6 +480,7 @@ const fmtDate = (d) => d.toISOString().slice(0,10);
 function isoWeekday(d){ return ((d.getDay()+6)%7)+1; }
 function getMonday(d){ const x=new Date(d); const diff=isoWeekday(x)-1; x.setDate(x.getDate()-diff); x.setHours(0,0,0,0); return x; }
 function uuid(){ return crypto.randomUUID(); }
+const ICON_PLATE = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>';
 
 /* ===================== LOGIN ===================== */
 async function init(){
@@ -402,9 +513,10 @@ async function loginWithUsername(username){
   }
   currentUser = { id: profile.id, username: profile.username };
   localStorage.setItem('nutrifit_username', username);
-  $('#user-chip').textContent = '@'+username;
+  $('#drawer-username').textContent = '@'+username;
   $('#login-view').classList.add('hidden');
   $('#app-view').classList.remove('hidden');
+  setSection('home');
   await Promise.all([loadDishes(), loadFitnessProfile()]);
   renderWeekBoard();
   loadWeeklyLogs();
@@ -414,20 +526,26 @@ $('#username-input').addEventListener('keydown', e=>{ if(e.key==='Enter') loginW
 $('#logout-btn').onclick = ()=>{
   localStorage.removeItem('nutrifit_username');
   currentUser = null;
+  closeDrawer();
   $('#app-view').classList.add('hidden');
   $('#login-view').classList.remove('hidden');
   loadKnownUsers();
 };
 
-/* ===================== TABS ===================== */
-$all('.maintabs .tab').forEach(btn=>{
-  btn.onclick = ()=>{
-    $all('.maintabs .tab').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    $all('.tabpanel').forEach(p=>p.classList.remove('active'));
-    $('#tab-'+btn.dataset.tab).classList.add('active');
-  };
+/* ===================== NAVEGACIÓN: DRAWER + SECCIONES ===================== */
+function setSection(section){
+  $all('.app-section').forEach(s=> s.classList.remove('active'));
+  $('#section-'+section).classList.add('active');
+  $all('.drawer-link').forEach(b=> b.classList.toggle('active', b.dataset.section===section));
+}
+function openDrawer(){ $('#drawer').classList.add('open'); $('#drawer-overlay').classList.remove('hidden'); }
+function closeDrawer(){ $('#drawer').classList.remove('open'); $('#drawer-overlay').classList.add('hidden'); }
+$('#menu-btn').onclick = openDrawer;
+$('#drawer-overlay').onclick = closeDrawer;
+$all('.drawer-link').forEach(btn=>{
+  btn.onclick = ()=>{ setSection(btn.dataset.section); closeDrawer(); };
 });
+
 $all('.subtabs .subtab').forEach(btn=>{
   btn.onclick = ()=>{
     $all('.subtabs .subtab').forEach(b=>b.classList.remove('active'));
@@ -450,7 +568,7 @@ function renderGallery(){
   if(dishes.length===0){ box.innerHTML = '<div class="empty-hint">Aún no hay platos. Pulsa "+" para añadir el primero.</div>'; return; }
   box.innerHTML = dishes.map(d=>`
     <div class="dish-card" data-id="${d.id}">
-      ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="">` : `<div class="dish-thumb">🍽️</div>`}
+      ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
       <div class="dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
         ${d.quality ? `<span class="quality-badge quality-${d.quality}">${d.quality}</span>` : ''}
@@ -472,28 +590,92 @@ function openDishModal(dish){
   dishPhotoFile = null;
   selectedQuality = dish ? dish.quality : null;
   $('#dish-modal-title').textContent = dish ? 'Editar plato' : 'Nuevo plato';
-  $('#dish-photo-preview').src = dish && dish.image_url ? dish.image_url : '';
-  $('#dish-photo-preview').style.display = dish && dish.image_url ? 'block' : 'none';
+
+  const wrap = $('#dish-photo-wrap'), img = $('#dish-photo-preview');
+  if(dish && dish.image_url){ img.src = dish.image_url; img.classList.remove('hidden'); wrap.classList.add('has-photo'); }
+  else { img.src = ''; img.classList.add('hidden'); wrap.classList.remove('has-photo'); }
   $('#dish-photo-input').value = '';
+
   $('#dish-name').value = dish ? dish.name : '';
   $('#dish-desc').value = dish ? (dish.description||'') : '';
+  updateDescPreview();
   $('#dish-calories').value = dish ? (dish.calories||'') : '';
   $('#ingredients-list').innerHTML = '';
-  (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : ['']).forEach(addIngredientRow);
+  (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : ['']).forEach(v=> addIngredientRow(v));
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
   $('#dish-delete-btn').classList.toggle('hidden', !dish);
   $('#dish-modal').classList.remove('hidden');
 }
-function closeDishModal(){ $('#dish-modal').classList.add('hidden'); }
+function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); }
 
-function addIngredientRow(value=''){
+/* --- Ingredientes: sin botón "+", Enter crea fila nueva, swipe a la izquierda borra --- */
+function addIngredientRow(value='', afterRow=null){
   const row = document.createElement('div');
   row.className = 'ingredient-row';
-  row.innerHTML = `<input type="text" value="${escapeHtml(value)}" placeholder="Ingrediente"><button type="button" class="icon-btn">✕</button>`;
-  row.querySelector('button').onclick = ()=> row.remove();
-  $('#ingredients-list').appendChild(row);
+  row.innerHTML = `
+    <div class="ingredient-delete-bg">Eliminar</div>
+    <input type="text" class="ingredient-input" value="${escapeHtml(value)}"
+      autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">`;
+  const input = row.querySelector('input');
+  input.addEventListener('keydown', e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      const newRow = addIngredientRow('', row);
+      newRow.querySelector('input').focus();
+    }
+  });
+  attachSwipeToDelete(row);
+  if(afterRow){ afterRow.after(row); } else { $('#ingredients-list').appendChild(row); }
+  return row;
 }
-$('#add-ingredient-btn').onclick = ()=> addIngredientRow('');
+function attachSwipeToDelete(row){
+  const input = row.querySelector('.ingredient-input');
+  input.style.touchAction = 'pan-y';
+  let startX=0, startY=0, dx=0, dragging=false, active=false;
+  input.addEventListener('pointerdown', e=>{
+    startX=e.clientX; startY=e.clientY; dx=0; dragging=false; active=true;
+  });
+  input.addEventListener('pointermove', e=>{
+    if(!active) return;
+    const mdx=e.clientX-startX, mdy=e.clientY-startY;
+    if(!dragging){
+      if(Math.abs(mdx)>8 && Math.abs(mdx)>Math.abs(mdy)){ dragging=true; input.blur(); }
+      else if(Math.abs(mdy)>8){ active=false; return; }
+    }
+    if(dragging){
+      dx = Math.min(0, mdx);
+      input.style.transform = `translateX(${dx}px)`;
+    }
+  });
+  function endDrag(){
+    if(!active) return;
+    active = false;
+    if(dragging && dx < -70){
+      input.style.transition = 'transform .18s ease, opacity .18s ease';
+      input.style.transform = 'translateX(-100%)';
+      input.style.opacity = '0';
+      setTimeout(()=> row.remove(), 180);
+    } else if(dragging){
+      input.style.transition = 'transform .18s ease';
+      input.style.transform = 'translateX(0)';
+      setTimeout(()=> input.style.transition = '', 180);
+    }
+    dragging = false;
+  }
+  input.addEventListener('pointerup', endDrag);
+  input.addEventListener('pointercancel', endDrag);
+}
+
+/* --- Descripción: chip abre pop-up, click fuera lo cierra --- */
+function updateDescPreview(){
+  const v = $('#dish-desc').value.trim();
+  $('#dish-desc-preview').textContent = v ? (v.length>26 ? v.slice(0,26)+'…' : v) : 'Descripción';
+  $('#dish-desc-trigger').classList.toggle('filled', !!v);
+}
+function openDescModal(){ $('#desc-modal').classList.remove('hidden'); $('#dish-desc').focus(); }
+function closeDescModal(){ $('#desc-modal').classList.add('hidden'); updateDescPreview(); }
+$('#dish-desc-trigger').onclick = openDescModal;
+$('#desc-modal').addEventListener('click', e=>{ if(e.target.id==='desc-modal') closeDescModal(); });
 
 $all('#quality-group .pill-btn').forEach(b=>{
   b.onclick = ()=>{
@@ -501,12 +683,17 @@ $all('#quality-group .pill-btn').forEach(b=>{
     $all('#quality-group .pill-btn').forEach(x=> x.classList.toggle('active', x.dataset.q===selectedQuality));
   };
 });
+$('#dish-photo-wrap').onclick = ()=> $('#dish-photo-input').click();
 $('#dish-photo-input').addEventListener('change', e=>{
   const file = e.target.files[0];
   if(!file) return;
   dishPhotoFile = file;
   const reader = new FileReader();
-  reader.onload = ev=>{ $('#dish-photo-preview').src = ev.target.result; $('#dish-photo-preview').style.display='block'; };
+  reader.onload = ev=>{
+    $('#dish-photo-preview').src = ev.target.result;
+    $('#dish-photo-preview').classList.remove('hidden');
+    $('#dish-photo-wrap').classList.add('has-photo');
+  };
   reader.readAsDataURL(file);
 });
 
@@ -552,7 +739,6 @@ $('#dish-delete-btn').onclick = async ()=>{
 };
 
 /* ===================== FITNESS: SETUP ===================== */
-$('#f-protein').addEventListener('input', e=> $('#protein-value').textContent = Number(e.target.value).toFixed(1));
 $all('#days-toggle .day-btn').forEach(b=> b.onclick = ()=> b.classList.toggle('active'));
 
 async function loadFitnessProfile(){
@@ -565,15 +751,13 @@ async function loadFitnessProfile(){
     $('#f-sex').value = fitnessProfile.sex;
     $('#f-activity').value = fitnessProfile.activity_level;
     $('#f-goal').value = fitnessProfile.goal;
-    $('#f-protein').value = fitnessProfile.protein_g_per_kg;
-    $('#protein-value').textContent = Number(fitnessProfile.protein_g_per_kg).toFixed(1);
     const days = fitnessProfile.training_days || [];
     $all('#days-toggle .day-btn').forEach(b=> b.classList.toggle('active', days.includes(Number(b.dataset.day))));
     renderSetupSummary(fitnessProfile);
   }
 }
 
-function computeFitness({height_cm, weight_kg, age, sex, activity_level, goal, protein_g_per_kg}){
+function computeFitness({height_cm, weight_kg, age, sex, activity_level, goal}){
   const heightM = height_cm/100;
   const bmi = weight_kg / (heightM*heightM);
   let tmb = sex==='hombre'
@@ -585,8 +769,7 @@ function computeFitness({height_cm, weight_kg, age, sex, activity_level, goal, p
   if(goal==='perder') target = maintenance - 400;      // rango -300/-500
   if(goal==='ganar') target = maintenance + 250;        // rango +200/+300
   if(goal==='recomposicion') target = maintenance;      // rango ±0-200
-  const targetProtein = protein_g_per_kg * weight_kg;
-  return { bmi, tmb, maintenance, target, targetProtein };
+  return { bmi, tmb, maintenance, target };
 }
 
 $('#setup-form').addEventListener('submit', async (e)=>{
@@ -599,14 +782,13 @@ $('#setup-form').addEventListener('submit', async (e)=>{
     sex: $('#f-sex').value,
     activity_level: $('#f-activity').value,
     goal: $('#f-goal').value,
-    protein_g_per_kg: Number($('#f-protein').value),
     training_days: trainingDays,
   };
   const calc = computeFitness(payload);
   const row = {
     user_id: currentUser.id, ...payload,
     bmi: calc.bmi, tmb: calc.tmb, maintenance_calories: calc.maintenance,
-    target_calories: calc.target, target_protein_g: calc.targetProtein,
+    target_calories: calc.target,
     updated_at: new Date().toISOString()
   };
   const { data, error } = await sb.from('fitness_profiles').upsert(row, {onConflict:'user_id'}).select().single();
@@ -622,7 +804,6 @@ function renderSetupSummary(p){
   $('#sum-tmb').textContent = Math.round(p.tmb)+' kcal';
   $('#sum-maint').textContent = Math.round(p.maintenance_calories)+' kcal';
   $('#sum-target').textContent = Math.round(p.target_calories)+' kcal';
-  $('#sum-protein').textContent = Math.round(p.target_protein_g)+' g';
   $('#sum-days').textContent = (p.training_days||[]).length;
 }
 
@@ -658,8 +839,8 @@ async function renderWeekBoard(){
       const entry = weekMeals[`${key}|${m}`];
       const target = fitnessProfile ? Math.round(fitnessProfile.target_calories * MEAL_SPLIT[m]) : null;
       return `<div class="meal-row">
-        <label><span>${MEAL_LABELS[m]}</span>${target?`<span>~${target}</span>`:''}</label>
-        <input type="number" data-date="${key}" data-meal="${m}" value="${entry?entry.calories:''}" placeholder="kcal">
+        <label><span>${MEAL_LABELS[m]}</span>${target?`<span>~${target} kcal</span>`:''}</label>
+        <input type="number" data-date="${key}" data-meal="${m}" value="${entry?entry.calories:''}">
       </div>`;
     }).join('');
     const drinksHtml = (weekDrinks[key]||[]).map(dr=>`
@@ -793,8 +974,8 @@ function renderWeightChart(){
   const range = (max-min)||1;
   const stepX = 300/(weights.length-1);
   const points = weights.map((w,i)=> `${i*stepX},${110 - ((w-min)/range)*100}`).join(' ');
-  svg.innerHTML = `<polyline points="${points}" fill="none" stroke="#14b8a6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` +
-    weights.map((w,i)=> `<circle cx="${i*stepX}" cy="${110 - ((w-min)/range)*100}" r="4" fill="#ea580c"/>`).join('');
+  svg.innerHTML = `<polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>` +
+    weights.map((w,i)=> `<circle cx="${i*stepX}" cy="${110 - ((w-min)/range)*100}" r="4.5" fill="var(--accent2)" stroke="#fff" stroke-width="2"/>`).join('');
 }
 
 init();
