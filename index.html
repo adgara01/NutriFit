@@ -29,16 +29,22 @@ html,body{height:100%;}
 body{
   margin:0; background:var(--bg); color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom);
+  padding-bottom:env(safe-area-inset-bottom);
   overscroll-behavior:none;
 }
+/* El padding-top de seguridad va en cada barra fija/sticky (no en body), porque
+   una vez el header se queda "pegado" arriba al hacer scroll, el padding del
+   body ya no cuenta y el contenido queda debajo del reloj/batería del iPhone. */
 input,select,textarea,button{font-family:inherit; color:inherit;}
 input[type=range], input[type=checkbox], input[type=radio]{accent-color:var(--accent);}
 .hidden{display:none !important;}
 button{cursor:pointer; border:none;}
 
 /* ---------- LOGIN ---------- */
-#login-view{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+#login-view{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:24px; padding-top:calc(24px + env(safe-area-inset-top)); padding-bottom:calc(24px + env(safe-area-inset-bottom));
+}
 .login-card{width:100%; max-width:360px; text-align:center;}
 .login-card h1{margin:0 0 28px; font-size:34px; font-weight:800; letter-spacing:-0.02em;}
 .login-card .user-label{display:block; text-align:left; font-size:13px; color:var(--muted); margin:0 0 6px;}
@@ -60,6 +66,7 @@ button{cursor:pointer; border:none;}
 /* ---------- APP SHELL ---------- */
 .appbar{
   display:flex; align-items:center; padding:14px 16px;
+  padding-top:calc(14px + env(safe-area-inset-top));
   position:sticky; top:0; background:var(--bg); z-index:5;
 }
 .icon-btn-plain{
@@ -76,23 +83,20 @@ button{cursor:pointer; border:none;}
   padding-top:calc(26px + env(safe-area-inset-top)); padding-bottom:calc(18px + env(safe-area-inset-bottom));
 }
 .drawer.open{transform:translateX(0);}
-.drawer-brand{font-size:19px; font-weight:800; letter-spacing:-.02em; margin-bottom:26px;}
-.drawer-nav{display:flex; flex-direction:column; gap:4px; flex:1;}
+.drawer-brand{font-size:20px; font-weight:800; letter-spacing:-.02em; margin-bottom:36px;}
+.drawer-nav{display:flex; flex-direction:column; gap:8px; flex:1;}
 .drawer-link{
-  display:flex; align-items:center; gap:13px; padding:13px 12px; border-radius:12px;
-  background:none; color:var(--text); font-size:15px; font-weight:600; text-align:left; width:100%;
+  display:flex; align-items:center; gap:16px; padding:18px 14px; border-radius:14px;
+  background:var(--card2); color:var(--text); font-size:20px; font-weight:800; text-align:left; width:100%;
 }
-.drawer-link svg{flex-shrink:0; color:var(--accent);}
-.drawer-link.active{background:var(--card2);}
+.drawer-link svg{flex-shrink:0; color:var(--accent); width:26px; height:26px;}
+.drawer-link.active{background:rgba(18,135,94,.12); color:var(--accent);}
+.drawer-link.active svg{color:var(--accent);}
 .drawer-footer{
   display:flex; align-items:center; justify-content:space-between; padding-top:14px;
   border-top:1px solid var(--border); font-size:14px; color:var(--muted);
 }
 
-.home-wordmark{
-  min-height:58vh; display:flex; align-items:center; justify-content:center;
-  font-size:36px; font-weight:800; letter-spacing:-.02em; color:var(--text);
-}
 .section-title{font-size:22px; font-weight:800; letter-spacing:-.01em; margin:2px 0 16px;}
 
 main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
@@ -145,7 +149,10 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .pill-btn.active[data-q="malo"]{background:rgba(201,86,74,.14); border-color:var(--bad); color:var(--bad);}
 .modal-actions{display:flex; gap:10px; margin-top:6px;}
 .btn-primary{flex:1; background:var(--accent); color:#fff; padding:13px; border-radius:12px; font-weight:600; font-size:15px;}
-.btn-secondary{background:var(--card); color:var(--muted); padding:13px 16px; border-radius:12px; border:1px solid var(--border);}
+.btn-secondary{
+  background:var(--card); color:var(--muted); padding:13px 16px; border-radius:12px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
 .btn-danger{background:none; color:var(--bad); padding:13px; font-size:14px;}
 
 /* ---------- DISH SHEET ---------- */
@@ -285,11 +292,6 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   </aside>
 
   <main>
-    <!-- HOME -->
-    <section id="section-home" class="app-section active">
-      <div class="home-wordmark">NutriFit</div>
-    </section>
-
     <!-- PLATOS -->
     <section id="section-platos" class="app-section">
       <div class="section-title">Platos y Recetas</div>
@@ -333,9 +335,12 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
           <div class="field">
             <label>Objetivo</label>
             <select id="f-goal">
-              <option value="perder">Perder peso</option>
-              <option value="ganar">Ganar músculo</option>
-              <option value="recomposicion">Recomposición / mantener</option>
+              <option value="perder_rapido">Perder peso (rápido)</option>
+              <option value="perder">Perder peso (moderado)</option>
+              <option value="mantener">Mantener peso</option>
+              <option value="recomposicion">Recomposición corporal</option>
+              <option value="ganar">Ganar músculo (moderado)</option>
+              <option value="ganar_rapido">Ganar músculo (rápido)</option>
             </select>
           </div>
           <div class="field">
@@ -429,7 +434,10 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     </div>
 
     <div class="modal-actions">
-      <button class="btn-secondary" id="dish-cancel-btn">Cancelar</button>
+      <button class="btn-secondary" id="dish-cancel-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Atrás
+      </button>
       <button class="btn-primary" id="dish-save-btn">Guardar</button>
     </div>
     <button class="btn-danger hidden" id="dish-delete-btn" style="width:100%; margin-top:6px;">Eliminar plato</button>
@@ -516,7 +524,8 @@ async function loginWithUsername(username){
   $('#drawer-username').textContent = '@'+username;
   $('#login-view').classList.add('hidden');
   $('#app-view').classList.remove('hidden');
-  setSection('home');
+  setSection('platos');
+  openDrawer();
   await Promise.all([loadDishes(), loadFitnessProfile()]);
   renderWeekBoard();
   loadWeeklyLogs();
@@ -541,7 +550,7 @@ function setSection(section){
 function openDrawer(){ $('#drawer').classList.add('open'); $('#drawer-overlay').classList.remove('hidden'); }
 function closeDrawer(){ $('#drawer').classList.remove('open'); $('#drawer-overlay').classList.add('hidden'); }
 $('#menu-btn').onclick = openDrawer;
-$('#drawer-overlay').onclick = closeDrawer;
+// El menú no se puede cerrar tocando fuera: solo se cierra eligiendo una sección.
 $all('.drawer-link').forEach(btn=>{
   btn.onclick = ()=>{ setSection(btn.dataset.section); closeDrawer(); };
 });
@@ -607,6 +616,48 @@ function openDishModal(dish){
   $('#dish-modal').classList.remove('hidden');
 }
 function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); }
+
+/* --- Gesto: deslizar la ficha de plato de izquierda a derecha para volver atrás --- */
+function attachSwipeToCloseSheet(sheet, onClose){
+  const blockedSelector = 'input, textarea, button, .ingredient-row, .dish-photo-wrap, .pill-btn';
+  let startX=0, startY=0, dx=0, dragging=false, active=false;
+  sheet.addEventListener('pointerdown', e=>{
+    if(e.target.closest(blockedSelector)) return;
+    startX=e.clientX; startY=e.clientY; dx=0; dragging=false; active=true;
+  });
+  sheet.addEventListener('pointermove', e=>{
+    if(!active) return;
+    const mdx=e.clientX-startX, mdy=e.clientY-startY;
+    if(!dragging){
+      if(mdx>10 && mdx>Math.abs(mdy)){ dragging=true; }
+      else if(Math.abs(mdy)>10 || mdx<-10){ active=false; return; }
+    }
+    if(dragging){
+      dx = Math.max(0, mdx);
+      sheet.style.transform = `translateX(${dx}px)`;
+      sheet.style.opacity = String(Math.max(0.35, 1 - dx/380));
+    }
+  });
+  function endDrag(){
+    if(!active) return;
+    active = false;
+    if(dragging && dx > 100){
+      sheet.style.transition = 'transform .2s ease, opacity .2s ease';
+      sheet.style.transform = 'translateX(100%)';
+      sheet.style.opacity = '0';
+      setTimeout(()=>{ onClose(); sheet.style.transition=''; sheet.style.transform=''; sheet.style.opacity=''; }, 200);
+    } else if(dragging){
+      sheet.style.transition = 'transform .18s ease, opacity .18s ease';
+      sheet.style.transform = 'translateX(0)';
+      sheet.style.opacity = '1';
+      setTimeout(()=> sheet.style.transition = '', 180);
+    }
+    dragging = false;
+  }
+  sheet.addEventListener('pointerup', endDrag);
+  sheet.addEventListener('pointercancel', endDrag);
+}
+attachSwipeToCloseSheet(document.querySelector('#dish-modal .modal-sheet'), closeDishModal);
 
 /* --- Ingredientes: sin botón "+", Enter crea fila nueva, swipe a la izquierda borra --- */
 function addIngredientRow(value='', afterRow=null){
@@ -757,6 +808,14 @@ async function loadFitnessProfile(){
   }
 }
 
+const GOAL_OFFSETS = {
+  perder_rapido: -500,   // pérdida rápida
+  perder: -350,          // pérdida moderada
+  mantener: 0,           // mantenimiento puro
+  recomposicion: -100,   // recomposición: déficit ligero + proteína/entreno
+  ganar: 250,            // ganancia muscular moderada
+  ganar_rapido: 450,     // ganancia muscular rápida
+};
 function computeFitness({height_cm, weight_kg, age, sex, activity_level, goal}){
   const heightM = height_cm/100;
   const bmi = weight_kg / (heightM*heightM);
@@ -765,10 +824,7 @@ function computeFitness({height_cm, weight_kg, age, sex, activity_level, goal}){
     : (10*weight_kg)+(6.25*height_cm)-(5*age)-161;
   const factors = {sedentario:1.2, ligero:1.375, moderado:1.55, alto:1.725};
   const maintenance = tmb * factors[activity_level];
-  let target = maintenance;
-  if(goal==='perder') target = maintenance - 400;      // rango -300/-500
-  if(goal==='ganar') target = maintenance + 250;        // rango +200/+300
-  if(goal==='recomposicion') target = maintenance;      // rango ±0-200
+  const target = maintenance + (GOAL_OFFSETS[goal] ?? 0);
   return { bmi, tmb, maintenance, target };
 }
 
