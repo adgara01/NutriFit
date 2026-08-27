@@ -253,6 +253,43 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .delta-up{color:var(--bad);} .delta-down{color:var(--good);}
 
 .empty-hint{color:var(--muted); text-align:center; padding:30px 10px; font-size:14px;}
+
+/* ---------- AUTH ---------- */
+.auth-tabs{display:flex; gap:8px; margin-bottom:20px;}
+.auth-tab{flex:1; padding:10px; border-radius:10px; background:var(--card); border:1px solid var(--border); color:var(--muted); font-weight:700; font-size:14px;}
+.auth-tab.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+.auth-error{background:rgba(201,86,74,.1); color:var(--bad); border-radius:10px; padding:10px 12px; font-size:13px; margin-bottom:12px; text-align:left;}
+.field input[type=password]{
+  width:100%; padding:11px; border-radius:10px; border:1px solid var(--border); background:var(--card); font-size:15px;
+}
+.field input[type=password]:focus{outline:none; border-color:var(--accent);}
+
+/* ---------- SETTINGS ---------- */
+.avatar-wrap{width:84px; height:84px; border-radius:50%; margin:0 auto; overflow:hidden; background:var(--card2); display:flex; align-items:center; justify-content:center; border:1px solid var(--border); position:relative;}
+.avatar-wrap img{width:100%; height:100%; object-fit:cover;}
+.avatar-placeholder{font-size:30px; font-weight:800; color:var(--accent);}
+.settings-row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.switch{width:46px; height:28px; border-radius:999px; background:var(--card2); border:1px solid var(--border); position:relative; flex-shrink:0;}
+.switch::after{content:''; position:absolute; top:2px; left:2px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .18s ease;}
+.switch.on{background:var(--accent); border-color:var(--accent);}
+.switch.on::after{transform:translateX(18px);}
+
+/* ---------- SOCIAL ---------- */
+.user-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border);}
+.user-row:last-child{border-bottom:none;}
+.user-row-btn{width:100%; text-align:left; background:none;}
+.user-row-avatar{width:32px; height:32px; border-radius:50%; object-fit:cover; flex-shrink:0;}
+.avatar-placeholder-sm{display:flex; align-items:center; justify-content:center; background:var(--card2); color:var(--accent); font-weight:700; font-size:13px;}
+.user-row-name{flex:1; font-size:14px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.btn-mini{padding:7px 12px; border-radius:999px; background:var(--accent); color:#fff; font-size:12px; font-weight:700; flex-shrink:0;}
+.btn-mini-ghost{background:none; color:var(--muted); border:1px solid var(--border);}
+.chip-status{font-size:11px; color:var(--muted); background:var(--card2); padding:5px 10px; border-radius:999px; flex-shrink:0;}
+.shared-dish-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border);}
+.shared-dish-row:last-child{border-bottom:none;}
+.shared-dish-thumb{width:44px; height:44px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--muted);}
+.shared-dish-info{flex:1; min-width:0;}
+.shared-dish-info .name{font-weight:600; font-size:13px; display:block;}
+.shared-dish-info .from{font-size:11px; color:var(--muted);}
 </style>
 </head>
 <body>
@@ -261,10 +298,26 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 <div id="login-view">
   <div class="login-card">
     <h1>NutriFit</h1>
-    <label class="user-label" for="username-input">Usuario</label>
-    <input id="username-input" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-    <button id="login-btn">Entrar</button>
-    <div id="known-users"></div>
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab active" data-tab="login">Entrar</button>
+      <button type="button" class="auth-tab" data-tab="signup">Crear cuenta</button>
+    </div>
+    <form id="auth-form">
+      <div class="field" style="text-align:left;">
+        <label for="auth-username">Usuario</label>
+        <input id="auth-username" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+      </div>
+      <div class="field" style="text-align:left;">
+        <label for="auth-password">Contraseña</label>
+        <input id="auth-password" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="field hidden" id="auth-confirm-wrap" style="text-align:left;">
+        <label for="auth-confirm">Repite la contraseña</label>
+        <input id="auth-confirm" type="password" autocomplete="new-password">
+      </div>
+      <div id="auth-error" class="auth-error hidden"></div>
+      <button type="submit" id="auth-submit-btn" class="btn-primary" style="width:100%;">Entrar</button>
+    </form>
   </div>
 </div>
 
@@ -288,12 +341,17 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg>
         <span>Fitness</span>
       </button>
+      <button class="drawer-link" data-section="social">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Social</span>
+      </button>
+      <button class="drawer-link" data-section="settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Configuración</span>
+      </button>
     </nav>
     <div class="drawer-footer">
       <span id="drawer-username"></span>
-      <button id="logout-btn" class="icon-btn-plain" aria-label="Cerrar sesión">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
-      </button>
     </div>
   </aside>
 
@@ -399,6 +457,65 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         </div>
       </div>
     </section>
+
+    <!-- SOCIAL -->
+    <section id="section-social" class="app-section">
+      <div class="section-title">Social</div>
+
+      <div class="card">
+        <div class="field" style="margin-bottom:8px;">
+          <label>Buscar usuarios</label>
+          <input type="text" id="social-search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        </div>
+        <div id="social-search-results"></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:6px;">Solicitudes recibidas</div>
+        <div id="incoming-requests-list"><div class="empty-hint">No tienes solicitudes pendientes.</div></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:6px;">Recetas recibidas</div>
+        <div id="shared-dishes-list"><div class="empty-hint">Nadie te ha compartido recetas todavía.</div></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:6px;">Amigos</div>
+        <div id="friends-list"><div class="empty-hint">Aún no tienes amigos añadidos.</div></div>
+      </div>
+    </section>
+
+    <!-- CONFIGURACIÓN -->
+    <section id="section-settings" class="app-section">
+      <div class="section-title">Configuración</div>
+
+      <div class="card" style="text-align:center;">
+        <div class="avatar-wrap" id="avatar-wrap">
+          <img id="avatar-preview" class="hidden" alt="">
+          <div class="avatar-placeholder" id="avatar-placeholder">?</div>
+        </div>
+        <input type="file" id="avatar-input" accept="image/*" class="visually-hidden">
+        <div style="margin-top:10px; font-weight:700; font-size:16px;" id="settings-username">@usuario</div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700; margin-bottom:10px;">Cambiar contraseña</div>
+        <div class="field"><label>Nueva contraseña</label><input type="password" id="new-password" autocomplete="new-password"></div>
+        <div class="field"><label>Repite la nueva contraseña</label><input type="password" id="new-password-confirm" autocomplete="new-password"></div>
+        <div id="password-msg" class="auth-error hidden"></div>
+        <button id="change-password-btn" class="btn-primary">Cambiar contraseña</button>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <span style="font-weight:600;">Mostrar apartado Fitness</span>
+          <button type="button" id="toggle-fitness-btn" class="switch" aria-label="Mostrar Fitness"></button>
+        </div>
+      </div>
+
+      <button id="settings-logout-btn" class="btn-secondary" style="width:100%; justify-content:center;">Cerrar sesión</button>
+    </section>
   </main>
 </div>
 
@@ -445,6 +562,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </button>
       <button class="btn-primary" id="dish-save-btn">Guardar</button>
     </div>
+    <button class="btn-secondary hidden" id="dish-share-btn" style="width:100%; margin-top:6px;">Compartir con un amigo</button>
     <button class="btn-danger hidden" id="dish-delete-btn" style="width:100%; margin-top:6px;">Eliminar plato</button>
   </div>
 </div>
@@ -454,6 +572,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   <div class="desc-modal-card">
     <textarea id="dish-desc"
       autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+  </div>
+</div>
+
+<!-- ================= COMPARTIR CON AMIGO POP-UP ================= -->
+<div id="share-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card">
+    <div style="font-weight:700; margin-bottom:12px;">Compartir con...</div>
+    <div id="share-friends-list"></div>
   </div>
 </div>
 
@@ -496,55 +622,123 @@ function getMonday(d){ const x=new Date(d); const diff=isoWeekday(x)-1; x.setDat
 function uuid(){ return crypto.randomUUID(); }
 const ICON_PLATE = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>';
 
-/* ===================== LOGIN ===================== */
-async function init(){
-  const saved = localStorage.getItem('nutrifit_username');
-  loadKnownUsers();
-  if(saved){
-    $('#username-input').value = saved;
-    await loginWithUsername(saved);
-  }
+/* ===================== LOGIN REAL (Supabase Auth) ===================== */
+let authMode = 'login';
+function fakeEmail(username){ return `${username}@nutrifit.local`; }
+function showAuthError(msg){ $('#auth-error').textContent = msg; $('#auth-error').classList.remove('hidden'); }
+function hideAuthError(){ $('#auth-error').classList.add('hidden'); }
+function translateAuthError(err){
+  const msg = (err && err.message) || '';
+  if(/already registered|already exists|duplicate/i.test(msg)) return 'Ese usuario ya está registrado.';
+  if(/invalid login credentials/i.test(msg)) return 'Usuario o contraseña incorrectos.';
+  if(/password.*(least|short|characters)/i.test(msg)) return 'La contraseña debe tener al menos 6 caracteres.';
+  if(/rate limit/i.test(msg)) return 'Demasiados intentos, espera un momento e inténtalo de nuevo.';
+  return msg || 'Ha ocurrido un error, inténtalo de nuevo.';
 }
-async function loadKnownUsers(){
-  const { data } = await sb.from('profiles').select('username').order('created_at', {ascending:false}).limit(8);
-  const box = $('#known-users');
-  box.innerHTML = '';
-  (data||[]).forEach(p=>{
-    const b = document.createElement('button');
-    b.className='user-pill'; b.textContent=p.username;
-    b.onclick = ()=>{ $('#username-input').value=p.username; loginWithUsername(p.username); };
-    box.appendChild(b);
-  });
-}
-async function loginWithUsername(username){
-  username = username.trim().toLowerCase();
-  if(!username) return;
-  let { data: profile } = await sb.from('profiles').select('*').eq('username', username).maybeSingle();
-  if(!profile){
-    const { data: created, error } = await sb.from('profiles').insert({ username }).select().single();
-    if(error){ alert('Error creando usuario: '+error.message); return; }
-    profile = created;
+
+$all('.auth-tab').forEach(btn=>{
+  btn.onclick = ()=>{
+    $all('.auth-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    authMode = btn.dataset.tab;
+    $('#auth-confirm-wrap').classList.toggle('hidden', authMode!=='signup');
+    $('#auth-password').setAttribute('autocomplete', authMode==='signup' ? 'new-password' : 'current-password');
+    $('#auth-submit-btn').textContent = authMode==='signup' ? 'Crear cuenta' : 'Entrar';
+    hideAuthError();
+  };
+});
+
+async function handleSignup(username, password){
+  const email = fakeEmail(username);
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if(error) throw error;
+  const authUser = data.user;
+  if(!authUser) throw new Error('No se pudo crear la cuenta.');
+  const { data: existing } = await sb.from('profiles').select('id,auth_user_id').eq('username', username).maybeSingle();
+  if(existing && !existing.auth_user_id){
+    // Perfil antiguo (sin contraseña) con este nombre: lo reclamamos para conservar sus datos.
+    const { data: claimed, error: claimErr } = await sb.from('profiles')
+      .update({ auth_user_id: authUser.id }).eq('id', existing.id).select().single();
+    if(claimErr) throw claimErr;
+    return claimed;
   }
-  currentUser = { id: profile.id, username: profile.username };
-  localStorage.setItem('nutrifit_username', username);
-  $('#drawer-username').textContent = '@'+username;
+  if(existing && existing.auth_user_id){
+    throw new Error('Ese usuario ya está registrado.');
+  }
+  const { data: created, error: createErr } = await sb.from('profiles')
+    .insert({ username, auth_user_id: authUser.id }).select().single();
+  if(createErr) throw createErr;
+  return created;
+}
+async function handleLogin(username, password){
+  const email = fakeEmail(username);
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if(error) throw error;
+  const { data: profile, error: profErr } = await sb.from('profiles').select('*').eq('auth_user_id', data.user.id).maybeSingle();
+  if(profErr) throw profErr;
+  if(!profile) throw new Error('No se encontró tu perfil.');
+  return profile;
+}
+
+$('#auth-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  hideAuthError();
+  const username = $('#auth-username').value.trim().toLowerCase();
+  const password = $('#auth-password').value;
+  if(!username || !password){ showAuthError('Rellena usuario y contraseña.'); return; }
+  if(!/^[a-z0-9_]{3,20}$/.test(username)){ showAuthError('El usuario solo puede tener letras, números y guion bajo (3-20 caracteres).'); return; }
+  if(authMode==='signup'){
+    if(password.length<6){ showAuthError('La contraseña debe tener al menos 6 caracteres.'); return; }
+    if(password !== $('#auth-confirm').value){ showAuthError('Las contraseñas no coinciden.'); return; }
+  }
+  const btn = $('#auth-submit-btn');
+  btn.disabled = true; btn.textContent = 'Un momento...';
+  try{
+    const profile = authMode==='signup' ? await handleSignup(username, password) : await handleLogin(username, password);
+    await enterApp(profile);
+  }catch(err){
+    showAuthError(translateAuthError(err));
+  }finally{
+    btn.disabled = false;
+    btn.textContent = authMode==='signup' ? 'Crear cuenta' : 'Entrar';
+  }
+});
+
+async function enterApp(profile){
+  currentUser = {
+    id: profile.id, username: profile.username,
+    avatar_url: profile.avatar_url || null,
+    show_fitness: profile.show_fitness !== false
+  };
+  $('#drawer-username').textContent = '@'+profile.username;
   $('#login-view').classList.add('hidden');
   $('#app-view').classList.remove('hidden');
+  renderDrawerProfile();
+  applyFitnessVisibility();
   setSection('platos');
   openDrawer();
-  await Promise.all([loadDishes(), loadFitnessProfile()]);
+  await Promise.all([loadDishes(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes()]);
   renderWeekBoard();
   loadWeeklyLogs();
 }
-$('#login-btn').onclick = ()=> loginWithUsername($('#username-input').value);
-$('#username-input').addEventListener('keydown', e=>{ if(e.key==='Enter') loginWithUsername(e.target.value); });
-$('#logout-btn').onclick = ()=>{
-  localStorage.removeItem('nutrifit_username');
+
+async function init(){
+  const { data } = await sb.auth.getSession();
+  const session = data && data.session;
+  if(session){
+    const { data: profile } = await sb.from('profiles').select('*').eq('auth_user_id', session.user.id).maybeSingle();
+    if(profile){ await enterApp(profile); return; }
+  }
+}
+
+$('#settings-logout-btn').onclick = async ()=>{
+  await sb.auth.signOut();
   currentUser = null;
   closeDrawer();
   $('#app-view').classList.add('hidden');
   $('#login-view').classList.remove('hidden');
-  loadKnownUsers();
+  $('#auth-username').value=''; $('#auth-password').value=''; $('#auth-confirm').value='';
+  hideAuthError();
 };
 
 /* ===================== NAVEGACIÓN: DRAWER + SECCIONES ===================== */
@@ -629,6 +823,12 @@ function attachDrawerSwipe(){
 }
 attachDrawerSwipe();
 
+function applyFitnessVisibility(){
+  const link = document.querySelector('.drawer-link[data-section="fitness"]');
+  if(link) link.classList.toggle('hidden', !currentUser.show_fitness);
+  if(!currentUser.show_fitness && $('#section-fitness').classList.contains('active')){ setSection('platos'); }
+}
+
 $all('.subtabs .subtab').forEach(btn=>{
   btn.onclick = ()=>{
     $all('.subtabs .subtab').forEach(b=>b.classList.remove('active'));
@@ -706,6 +906,7 @@ function openDishModal(dish){
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : ['']).forEach(v=> addIngredientRow(v));
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
   $('#dish-delete-btn').classList.toggle('hidden', !dish);
+  $('#dish-share-btn').classList.toggle('hidden', !dish);
   $('#dish-modal').classList.remove('hidden');
 }
 function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); unlockBodyScroll(); }
@@ -895,6 +1096,214 @@ $('#dish-delete-btn').onclick = async ()=>{
   closeDishModal();
   await loadDishes();
 };
+
+/* ===================== CONFIGURACIÓN ===================== */
+function renderDrawerProfile(){
+  $('#settings-username').textContent = '@'+currentUser.username;
+  const img = $('#avatar-preview'), ph = $('#avatar-placeholder');
+  if(currentUser.avatar_url){
+    img.src = currentUser.avatar_url; img.classList.remove('hidden'); ph.classList.add('hidden');
+  } else {
+    img.classList.add('hidden'); ph.classList.remove('hidden');
+    ph.textContent = (currentUser.username[0]||'?').toUpperCase();
+  }
+  $('#toggle-fitness-btn').classList.toggle('on', currentUser.show_fitness);
+}
+
+$('#avatar-wrap').onclick = ()=> $('#avatar-input').click();
+$('#avatar-input').addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const ext = (file.name.split('.').pop()||'jpg').toLowerCase();
+    const path = `${currentUser.id}/avatar.${ext}`;
+    const { error } = await sb.storage.from('profile-photos').upload(path, file, { upsert:true, contentType:file.type });
+    if(error) throw error;
+    const { data } = sb.storage.from('profile-photos').getPublicUrl(path);
+    const avatar_url = data.publicUrl + '?v=' + Date.now();
+    const { error: updErr } = await sb.from('profiles').update({ avatar_url }).eq('id', currentUser.id);
+    if(updErr) throw updErr;
+    currentUser.avatar_url = avatar_url;
+    renderDrawerProfile();
+  }catch(err){ alert('Error subiendo la foto: '+err.message); }
+  finally{ e.target.value = ''; }
+});
+
+$('#change-password-btn').onclick = async ()=>{
+  const p1 = $('#new-password').value, p2 = $('#new-password-confirm').value;
+  const msg = $('#password-msg');
+  msg.classList.add('hidden');
+  if(p1.length<6){ msg.textContent='La contraseña debe tener al menos 6 caracteres.'; msg.classList.remove('hidden'); return; }
+  if(p1!==p2){ msg.textContent='Las contraseñas no coinciden.'; msg.classList.remove('hidden'); return; }
+  const { error } = await sb.auth.updateUser({ password: p1 });
+  if(error){ msg.textContent = 'Error: '+error.message; msg.classList.remove('hidden'); return; }
+  $('#new-password').value=''; $('#new-password-confirm').value='';
+  alert('Contraseña actualizada.');
+};
+
+$('#toggle-fitness-btn').onclick = async ()=>{
+  const newVal = !currentUser.show_fitness;
+  const { error } = await sb.from('profiles').update({ show_fitness: newVal }).eq('id', currentUser.id);
+  if(error){ alert(error.message); return; }
+  currentUser.show_fitness = newVal;
+  renderDrawerProfile();
+  applyFitnessVisibility();
+};
+
+/* ===================== SOCIAL ===================== */
+let friends = [], incomingRequests = [], outgoingRequests = [], sharedDishesReceived = [];
+
+function avatarHtml(u){
+  return (u && u.avatar_url)
+    ? `<img class="user-row-avatar" src="${u.avatar_url}" alt="">`
+    : `<div class="user-row-avatar avatar-placeholder-sm">${escapeHtml(((u&&u.username)||'?')[0].toUpperCase())}</div>`;
+}
+function friendshipStatusWith(profileId){
+  if(friends.some(f=>f.id===profileId)) return 'friends';
+  if(outgoingRequests.some(r=>r.addressee_id===profileId)) return 'pending-out';
+  if(incomingRequests.some(r=>r.requester_id===profileId)) return 'pending-in';
+  return 'none';
+}
+
+async function loadFriendshipsState(){
+  const { data, error } = await sb.from('friendships')
+    .select('*, requester:requester_id(id,username,avatar_url), addressee:addressee_id(id,username,avatar_url)')
+    .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`);
+  if(error){ console.error(error); return; }
+  const rows = data||[];
+  friends = rows.filter(r=>r.status==='accepted').map(r=> r.requester_id===currentUser.id ? r.addressee : r.requester);
+  incomingRequests = rows.filter(r=> r.status==='pending' && r.addressee_id===currentUser.id);
+  outgoingRequests = rows.filter(r=> r.status==='pending' && r.requester_id===currentUser.id);
+  renderFriendsList();
+  renderIncomingRequests();
+}
+function renderFriendsList(){
+  const box = $('#friends-list');
+  if(!friends.length){ box.innerHTML = '<div class="empty-hint">Aún no tienes amigos añadidos.</div>'; return; }
+  box.innerHTML = friends.map(f=> `<div class="user-row">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></div>`).join('');
+}
+function renderIncomingRequests(){
+  const box = $('#incoming-requests-list');
+  if(!incomingRequests.length){ box.innerHTML = '<div class="empty-hint">No tienes solicitudes pendientes.</div>'; return; }
+  box.innerHTML = incomingRequests.map(r=> `
+    <div class="user-row">
+      ${avatarHtml(r.requester)}
+      <span class="user-row-name">@${escapeHtml(r.requester.username)}</span>
+      <button class="btn-mini" data-accept="${r.id}">Aceptar</button>
+      <button class="btn-mini btn-mini-ghost" data-reject="${r.id}">Rechazar</button>
+    </div>`).join('');
+  $all('[data-accept]').forEach(b=> b.onclick = ()=> respondFriendRequest(b.dataset.accept, true));
+  $all('[data-reject]').forEach(b=> b.onclick = ()=> respondFriendRequest(b.dataset.reject, false));
+}
+async function respondFriendRequest(id, accept){
+  if(accept){
+    const { error } = await sb.from('friendships').update({ status:'accepted' }).eq('id', id);
+    if(error){ alert(error.message); return; }
+  } else {
+    const { error } = await sb.from('friendships').delete().eq('id', id);
+    if(error){ alert(error.message); return; }
+  }
+  await loadFriendshipsState();
+}
+
+let socialSearchTimer = null;
+$('#social-search').addEventListener('input', e=>{
+  clearTimeout(socialSearchTimer);
+  const term = e.target.value.trim();
+  if(!term){ $('#social-search-results').innerHTML = ''; return; }
+  socialSearchTimer = setTimeout(()=> runUserSearch(term), 300);
+});
+async function runUserSearch(term){
+  const { data, error } = await sb.from('profiles').select('id,username,avatar_url')
+    .ilike('username', `%${term}%`).neq('id', currentUser.id).limit(15);
+  if(error){ $('#social-search-results').innerHTML = '<div class="empty-hint">Error buscando.</div>'; return; }
+  renderSearchResults(data||[]);
+}
+function renderSearchResults(list){
+  const box = $('#social-search-results');
+  if(!list.length){ box.innerHTML = '<div class="empty-hint">Sin resultados.</div>'; return; }
+  box.innerHTML = list.map(u=>{
+    const st = friendshipStatusWith(u.id);
+    let action = `<button class="btn-mini" data-add-friend="${u.id}">Añadir</button>`;
+    if(st==='friends') action = `<span class="chip-status">Amigos</span>`;
+    else if(st==='pending-out') action = `<span class="chip-status">Pendiente</span>`;
+    else if(st==='pending-in') action = `<span class="chip-status">Te ha escrito</span>`;
+    return `<div class="user-row">${avatarHtml(u)}<span class="user-row-name">@${escapeHtml(u.username)}</span>${action}</div>`;
+  }).join('');
+  $all('[data-add-friend]').forEach(btn=> btn.onclick = ()=> sendFriendRequest(btn.dataset.addFriend));
+}
+async function sendFriendRequest(profileId){
+  const { error } = await sb.from('friendships').insert({ requester_id: currentUser.id, addressee_id: profileId, status:'pending' });
+  if(error){ alert(error.message); return; }
+  await loadFriendshipsState();
+  runUserSearch($('#social-search').value.trim());
+}
+
+async function loadSharedDishes(){
+  const { data, error } = await sb.from('shared_dishes').select('*, from:from_user_id(username,avatar_url)')
+    .eq('to_user_id', currentUser.id).order('created_at', {ascending:false});
+  if(error){ console.error(error); return; }
+  sharedDishesReceived = data||[];
+  renderSharedDishes();
+}
+function renderSharedDishes(){
+  const box = $('#shared-dishes-list');
+  if(!sharedDishesReceived.length){ box.innerHTML = '<div class="empty-hint">Nadie te ha compartido recetas todavía.</div>'; return; }
+  box.innerHTML = sharedDishesReceived.map(s=>{
+    const d = s.dish_snapshot || {};
+    return `<div class="shared-dish-row">
+      ${d.image_url ? `<img class="shared-dish-thumb" src="${d.image_url}" alt="">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
+      <div class="shared-dish-info">
+        <span class="name">${escapeHtml(d.name||'Receta')}</span>
+        <span class="from">de @${escapeHtml((s.from&&s.from.username)||'?')}</span>
+      </div>
+      ${s.added ? `<span class="chip-status">Añadida</span>` : `<button class="btn-mini" data-add-shared="${s.id}">Añadir a mis recetas</button>`}
+    </div>`;
+  }).join('');
+  $all('[data-add-shared]').forEach(b=> b.onclick = ()=> addSharedDish(b.dataset.addShared));
+}
+async function addSharedDish(sharedId){
+  const shared = sharedDishesReceived.find(s=>s.id===sharedId);
+  if(!shared) return;
+  const d = shared.dish_snapshot || {};
+  const { error } = await sb.from('dishes').insert({
+    id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
+    image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
+    calories: d.calories||null, quality: d.quality||null
+  });
+  if(error){ alert(error.message); return; }
+  const { error: updErr } = await sb.from('shared_dishes').update({ added:true }).eq('id', sharedId);
+  if(updErr) console.error(updErr);
+  shared.added = true;
+  renderSharedDishes();
+  await loadDishes();
+};
+
+/* --- Compartir un plato con un amigo --- */
+$('#dish-share-btn').onclick = ()=>{
+  if(!friends.length){ alert('Todavía no tienes amigos añadidos. Ve a Social para buscar y añadir.'); return; }
+  $('#share-friends-list').innerHTML = friends.map(f=>
+    `<button type="button" class="user-row user-row-btn" data-share-to="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></button>`
+  ).join('');
+  $all('[data-share-to]').forEach(b=> b.onclick = ()=> shareDishWith(b.dataset.shareTo));
+  $('#share-modal').classList.remove('hidden');
+};
+$('#share-modal').addEventListener('click', e=>{ if(e.target.id==='share-modal') $('#share-modal').classList.add('hidden'); });
+async function shareDishWith(friendProfileId){
+  if(!editingDishId) return;
+  const dish = dishes.find(d=>d.id===editingDishId);
+  if(!dish) return;
+  const snapshot = {
+    name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
+    description: dish.description, calories: dish.calories, quality: dish.quality
+  };
+  const { error } = await sb.from('shared_dishes').insert({
+    dish_id: dish.id, from_user_id: currentUser.id, to_user_id: friendProfileId, dish_snapshot: snapshot
+  });
+  $('#share-modal').classList.add('hidden');
+  if(error){ alert('Error al compartir: '+error.message); return; }
+  alert('Receta compartida.');
+}
 
 /* ===================== FITNESS: SETUP ===================== */
 $all('#days-toggle .day-btn').forEach(b=> b.onclick = ()=> b.classList.toggle('active'));
