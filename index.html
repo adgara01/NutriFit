@@ -570,7 +570,7 @@ function attachDrawerSwipe(){
     if(e.pointerId!==pointerId) return;
     const mdx=e.clientX-startX, mdy=e.clientY-startY;
     if(!dragging){
-      if(Math.abs(mdx)<10 && Math.abs(mdy)<10) return;
+      if(Math.abs(mdx)<8 && Math.abs(mdy)<8) return;
       if(Math.abs(mdy)>Math.abs(mdx)){ release(); return; }
       dragging=true;
       drawer.style.transition='none';
@@ -595,7 +595,7 @@ function attachDrawerSwipe(){
   function onUp(){
     release();
     if(!dragging){ mode=null; return; }
-    const willOpen = mode==='open' ? dx > width*0.35 : !(Math.abs(dx) > width*0.3);
+    const willOpen = mode==='open' ? dx > width*0.28 : !(Math.abs(dx) > width*0.22);
     drawer.style.transition='transform .22s ease';
     overlay.style.transition='opacity .22s ease';
     if(willOpen){ drawer.style.transform='translateX(0)'; overlay.style.opacity='1'; }
@@ -616,7 +616,7 @@ function attachDrawerSwipe(){
       if(e.target.closest('.week-board')) return;
       mode='open';
     } else {
-      if(!drawer.contains(e.target)) return;
+      if(!drawer.contains(e.target) && e.target!==overlay) return;
       mode='close';
     }
     startX=e.clientX; startY=e.clientY; dx=0; dragging=false;
@@ -710,34 +710,30 @@ function openDishModal(dish){
 }
 function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); unlockBodyScroll(); }
 
-/* --- Gesto: deslizar la ficha de plato (a la derecha o hacia abajo) para volver atrás ---
-   Los ingredientes tienen su propio swipe horizontal (borrar), así que desde ahí solo se
-   cede el gesto vertical (tirar hacia abajo estando arriba del todo) para volver al mosaico. */
+/* --- Gesto: deslizar TODA la tarjeta del plato hacia abajo para volver al mosaico.
+   Único gesto (antes había también uno horizontal, se quita para que sea más predecible).
+   Solo actúa cuando el contenido está arriba del todo (scrollTop 0), si no, se deja
+   scrollear con normalidad — incluso empezando sobre los ingredientes. */
 function attachSwipeToCloseSheet(sheet, onClose){
-  const hardBlocked = 'input[type="number"], textarea, button, .pill-btn';
-  const softBlocked = '.ingredient-row';
-  let startX=0, startY=0, dx=0, dy=0, dir=null, dragging=false, pointerId=null, fromSoftBlocked=false;
+  const hardBlocked = 'button, .pill-btn';
+  let startX=0, startY=0, dy=0, dragging=false, pointerId=null;
 
   function onMove(e){
     if(e.pointerId!==pointerId) return;
     const mdx=e.clientX-startX, mdy=e.clientY-startY;
     if(!dragging){
-      if(Math.abs(mdx)<10 && Math.abs(mdy)<10) return;
-      if(mdx>Math.abs(mdy)){
-        if(fromSoftBlocked){ endDrag(false); return; }
-        dir='right'; dragging=true;
+      if(Math.abs(mdx)<8 && Math.abs(mdy)<8) return;
+      if(mdy>Math.abs(mdx) && sheet.scrollTop<=0){
+        dragging = true;
+        try{ sheet.setPointerCapture(pointerId); }catch(err){}
+      } else {
+        endDrag(false); return;
       }
-      else if(mdy>Math.abs(mdx) && sheet.scrollTop<=0){
-        dir='down'; dragging=true;
-        if(fromSoftBlocked){ try{ sheet.setPointerCapture(pointerId); }catch(err){} }
-      }
-      else { endDrag(false); return; }
     }
     e.preventDefault();
-    if(dir==='right'){ dx = Math.max(0, mdx); sheet.style.transform = `translateX(${dx}px)`; }
-    else { dy = Math.max(0, mdy); sheet.style.transform = `translateY(${dy}px)`; }
-    const dist = dir==='right' ? dx : dy;
-    sheet.style.opacity = String(Math.max(0.4, 1 - dist/380));
+    dy = Math.max(0, mdy);
+    sheet.style.transform = `translateY(${dy}px)`;
+    sheet.style.opacity = String(Math.max(0.4, 1 - dy/380));
   }
   function endDrag(shouldEval){
     if(pointerId!=null){
@@ -745,28 +741,24 @@ function attachSwipeToCloseSheet(sheet, onClose){
       try{ sheet.releasePointerCapture(pointerId); }catch(err){}
     }
     pointerId = null;
-    if(!dragging){ dir=null; return; }
-    const dist = dir==='right' ? dx : dy;
-    const threshold = dir==='down' ? 55 : 90;
-    if(shouldEval!==false && dist > threshold){
+    if(!dragging) return;
+    if(shouldEval!==false && dy > 55){
       sheet.style.transition = 'transform .2s ease, opacity .2s ease';
-      sheet.style.transform = dir==='right' ? 'translateX(100%)' : 'translateY(100%)';
+      sheet.style.transform = 'translateY(100%)';
       sheet.style.opacity = '0';
       setTimeout(()=>{ onClose(); sheet.style.transition=''; sheet.style.transform=''; sheet.style.opacity=''; }, 200);
     } else {
       sheet.style.transition = 'transform .18s ease, opacity .18s ease';
-      sheet.style.transform = 'translateX(0)';
+      sheet.style.transform = 'translateY(0)';
       sheet.style.opacity = '1';
       setTimeout(()=> sheet.style.transition = '', 180);
     }
-    dragging = false; dir = null;
+    dragging = false;
   }
   sheet.addEventListener('pointerdown', e=>{
     if(e.target.closest(hardBlocked)) return;
-    fromSoftBlocked = !!e.target.closest(softBlocked);
-    startX=e.clientX; startY=e.clientY; dx=0; dy=0; dir=null; dragging=false;
+    startX=e.clientX; startY=e.clientY; dy=0; dragging=false;
     pointerId = e.pointerId;
-    if(!fromSoftBlocked){ sheet.setPointerCapture(pointerId); }
     sheet.addEventListener('pointermove', onMove);
   });
   sheet.addEventListener('pointerup', ()=> endDrag());
