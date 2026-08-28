@@ -270,6 +270,15 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 }
 .dish-photo-wrap.photo-busy .photo-spinner{display:block; animation:spin .7s linear infinite;}
 @keyframes spin{ to{ transform:rotate(360deg); } }
+/* Marca de agua discreta en platos que llegaron por Compartir: de quién
+   vino, en cursiva, esquina inferior derecha de la foto. Solo se pinta si
+   el plato tiene shared_from_username (nunca en los propios). */
+.shared-watermark{
+  position:absolute; right:8px; bottom:8px; z-index:2; font-style:italic; font-size:11px;
+  font-weight:500; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.65); pointer-events:none;
+  letter-spacing:.2px;
+}
+.dish-thumb-wrap{position:relative;}
 .dish-name-input{
   width:100%; border:none; background:none; font-size:21px; font-weight:700; color:var(--text);
   padding:4px 2px 12px; border-bottom:1px solid var(--border); margin-bottom:16px;
@@ -687,6 +696,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <span>Añadir foto</span>
       </div>
       <div class="photo-spinner" id="dish-photo-spinner"></div>
+      <span class="shared-watermark hidden" id="dish-photo-watermark"></span>
     </div>
     <input type="file" id="dish-photo-input" accept="image/*" class="visually-hidden">
 
@@ -1102,7 +1112,10 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||
 function dishCardHtml(d){
   return `
     <div class="dish-card" data-id="${d.id}" data-type="dish">
-      ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="" draggable="false">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
+      <div class="dish-thumb-wrap">
+        ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="" draggable="false">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
+        ${d.shared_from_username ? `<span class="shared-watermark">@${escapeHtml(d.shared_from_username)}</span>` : ''}
+      </div>
       <div class="dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
         ${d.quality ? `<span class="quality-badge quality-${d.quality}">${QUALITY_LABELS[d.quality]||d.quality}</span>` : ''}
@@ -1558,6 +1571,11 @@ function openDishModal(dish){
   if(dish && dish.image_url){ img.src = dish.image_url; img.classList.remove('hidden'); wrap.classList.add('has-photo'); }
   else { img.src = ''; img.classList.add('hidden'); wrap.classList.remove('has-photo'); }
   $('#dish-photo-input').value = '';
+  // Marca de agua: solo en platos que llegaron por Compartir (tienen
+  // shared_from_username guardado desde que se aceptaron).
+  const wm = $('#dish-photo-watermark');
+  if(dish && dish.shared_from_username){ wm.textContent = '@'+dish.shared_from_username; wm.classList.remove('hidden'); }
+  else { wm.textContent = ''; wm.classList.add('hidden'); }
 
   $('#dish-name').value = dish ? dish.name : '';
   $('#dish-desc').value = dish ? (dish.description||'') : '';
@@ -2199,7 +2217,8 @@ async function addSharedDish(sharedId){
     const { error } = await sb.from('dishes').insert({
       id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
       image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
-      calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null
+      calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
+      shared_from_username: (shared.from && shared.from.username) || null
     });
     if(error){ alert(error.message); return; }
     const { error: delErr } = await sb.from('shared_dishes').delete().eq('id', sharedId);
