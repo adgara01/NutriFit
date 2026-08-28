@@ -108,6 +108,7 @@ button{cursor:pointer; border:none;}
 .drawer-username{font-size:16px; font-weight:800; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 
 .section-title{font-size:22px; font-weight:800; letter-spacing:-.01em; margin:2px 0 16px;}
+.section-title.editable{text-decoration:underline dashed var(--muted) 2px; text-underline-offset:4px; cursor:pointer;}
 .section-title-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;}
 .section-title-row .section-title{margin:0;}
 .section-actions{display:flex; gap:8px; flex-shrink:0;}
@@ -146,19 +147,27 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .dish-card.selected{box-shadow:inset 0 0 0 3px #3a3f3c;}
 .dish-card.dragging, .folder-card.dragging{animation:none !important; opacity:.92; box-shadow:var(--shadow); z-index:50; position:relative;}
 .folder-card.drop-hover{outline:3px solid var(--accent); outline-offset:-3px; background:rgba(18,135,94,.08);}
+/* Tratar toda la tarjeta como un bloque único al arrastrar: sin selección de texto,
+   sin el menú "Guardar imagen" de iOS, sin que la <img> se arrastre por su cuenta. */
+.dish-card, .folder-card{
+  -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
+}
+.dish-card img, .folder-card img, .folder-mini-thumb img{
+  -webkit-touch-callout:none; -webkit-user-drag:none; user-drag:none; pointer-events:none;
+}
 .folder-card{
-  background:transparent; border:1.5px dashed var(--border); border-radius:var(--radius);
+  background:transparent; border:1px solid var(--border); border-radius:var(--radius);
   overflow:hidden; display:flex; flex-direction:column; padding:8px;
 }
 .folder-preview-grid{
-  flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:4px; aspect-ratio:1/1;
+  width:100%; aspect-ratio:1/1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:4px;
 }
 .folder-mini-thumb{
-  border-radius:7px; overflow:hidden; background:var(--card2); color:var(--muted);
+  min-width:0; min-height:0; border-radius:7px; overflow:hidden; background:var(--card2); color:var(--muted);
   display:flex; align-items:center; justify-content:center;
 }
 .folder-mini-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
-.folder-mini-thumb.empty{background:transparent; border:1px dashed var(--border);}
+.folder-mini-thumb.empty{background:var(--card2);}
 .folder-mini-thumb.dish-thumb-empty svg{width:16px; height:16px;}
 .folder-name{padding-top:8px; font-size:12px; font-weight:700; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .folder-sheet{max-height:82vh;}
@@ -172,14 +181,21 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
 /* ---------- MODAL ---------- */
 .modal{position:fixed; inset:0; background:rgba(20,25,23,.4); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
+/* La ficha de un plato se puede abrir desde dentro del pop-up de una carpeta
+   (modal sobre modal) — debe quedar siempre por encima de ese pop-up. */
+#dish-modal{z-index:22;}
 .modal-sheet{
   position:relative;
   width:100%; max-width:560px; max-height:min(91vh, calc(100vh - 40px - env(safe-area-inset-top)));
   overflow-y:auto; background:var(--bg2); touch-action:pan-y; overscroll-behavior:contain; will-change:transform;
   border-radius:20px 20px 0 0; padding:18px 18px calc(18px + env(safe-area-inset-bottom));
 }
+/* Las hojas que llevan botón "X" (.sheet-with-close) reservan una franja
+   arriba para que el botón nunca quede encima de la foto ni de otro botón
+   (p.ej. "Editar") — evitamos depender de :has() por compatibilidad. */
+.modal-sheet.sheet-with-close{padding-top:44px;}
 .sheet-close-btn{
-  position:absolute; top:12px; right:12px; z-index:3; width:32px; height:32px; border-radius:50%;
+  position:absolute; top:8px; right:12px; z-index:3; width:32px; height:32px; border-radius:50%;
   background:rgba(20,25,23,.5); color:#fff; display:flex; align-items:center; justify-content:center;
 }
 .sheet-kicker{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:10px;}
@@ -229,20 +245,33 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   padding:10px 6px; text-align:center; min-width:0; min-height:56px;
 }
 .meta-value{font-size:15px; font-weight:600; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;}
-.meta-desc{flex:1.6;}
 .meta-desc.filled .meta-value{color:var(--text);}
 .meta-kcal, .meta-duration{flex:1;}
 .meta-kcal input.meta-value, .meta-duration input.meta-value{
   width:100%; border:none; background:none; text-align:center; padding:0; color:var(--text);
 }
 .meta-kcal input:focus, .meta-duration input:focus{outline:none;}
-.meta-kcal-unit{font-size:9px; color:var(--muted); letter-spacing:.02em; margin-top:3px;}
-.dish-meta-row .pill-group{gap:8px;}
-.dish-meta-row .pill-btn{
-  padding:12px 4px; font-size:13px; font-weight:700; line-height:1.15; border-radius:12px;
+.meta-kcal-unit{font-size:9px; color:var(--muted); letter-spacing:.02em; margin-top:3px; font-style:italic;}
+/* Distribución 2×2: descripción grande a la izquierda (ocupa las dos filas),
+   arriba a la derecha la calidad, abajo a la derecha calorías + duración. */
+.dish-meta-grid{
+  display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto;
+  gap:8px; margin-bottom:20px;
+}
+.meta-desc-big{
+  grid-column:1; grid-row:1 / 3; padding:14px 10px;
+}
+.meta-desc-big .meta-value{
+  font-size:16px; line-height:1.35; white-space:normal; overflow:hidden; text-overflow:clip;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4;
+}
+.meta-quality-cell{ grid-column:2; grid-row:1; gap:6px; }
+.meta-quality-cell .pill-btn{
+  padding:8px 3px; font-size:10.5px; font-weight:700; line-height:1.15; border-radius:10px;
   white-space:normal; word-break:normal; text-align:center;
   display:flex; align-items:center; justify-content:center; min-height:44px;
 }
+.meta-num-row{ grid-column:2; grid-row:2; display:flex; gap:8px; }
 .desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
 .ingredients-hint{font-size:12px; color:var(--muted); margin:-2px 0 10px; line-height:1.4;}
 .ingredient-row{position:relative; overflow:hidden; border-radius:10px; margin-bottom:8px;}
@@ -607,7 +636,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
 <!-- ================= DISH MODAL ================= -->
 <div id="dish-modal" class="modal hidden">
-  <div class="modal-sheet">
+  <div class="modal-sheet sheet-with-close">
     <button type="button" class="sheet-close-btn" id="dish-close-x" aria-label="Cerrar">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
@@ -623,26 +652,25 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     <input type="text" id="dish-name" class="dish-name-input"
       autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
 
-    <div class="dish-meta-row">
-      <div class="pill-group" id="quality-group">
+    <div class="meta-section-title">Descripción, calorías por plato y tiempo de elaboración</div>
+    <div class="dish-meta-grid">
+      <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc meta-desc-big">
+        <span id="dish-desc-preview" class="meta-value">Descripción</span>
+      </button>
+      <div class="pill-group meta-quality-cell" id="quality-group">
         <button type="button" class="pill-btn" data-q="bueno">Healthy</button>
         <button type="button" class="pill-btn" data-q="normal">Normal</button>
         <button type="button" class="pill-btn" data-q="malo">Cheat meal</button>
       </div>
-    </div>
-    <div class="meta-section-title">Descripción, calorías por plato y tiempo de elaboración</div>
-    <div class="dish-meta-row meta-row-2">
-      <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc">
-        <span id="dish-desc-preview" class="meta-value">Descripción</span>
-        <span class="meta-kcal-unit">descripción</span>
-      </button>
-      <div class="meta-chip meta-kcal">
-        <input type="number" id="dish-calories" class="meta-value" autocomplete="off">
-        <span class="meta-kcal-unit">kcal</span>
-      </div>
-      <div class="meta-chip meta-duration">
-        <input type="number" id="dish-duration" class="meta-value" autocomplete="off">
-        <span class="meta-kcal-unit">min. elaboración</span>
+      <div class="meta-num-row">
+        <div class="meta-chip meta-kcal">
+          <input type="number" id="dish-calories" class="meta-value" autocomplete="off">
+          <span class="meta-kcal-unit">kcal</span>
+        </div>
+        <div class="meta-chip meta-duration">
+          <input type="number" id="dish-duration" class="meta-value" autocomplete="off">
+          <span class="meta-kcal-unit">min. elaboración</span>
+        </div>
       </div>
     </div>
 
@@ -684,7 +712,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
 <!-- ================= CARPETA (POP-UP) ================= -->
 <div id="folder-modal" class="modal hidden">
-  <div class="modal-sheet folder-sheet">
+  <div class="modal-sheet folder-sheet sheet-with-close">
     <button type="button" class="sheet-close-btn" id="folder-close-x" aria-label="Cerrar">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
@@ -701,7 +729,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
 <!-- ================= VISTA PREVIA DE RECETA COMPARTIDA ================= -->
 <div id="shared-preview-modal" class="modal hidden">
-  <div class="modal-sheet">
+  <div class="modal-sheet sheet-with-close">
     <button type="button" class="sheet-close-btn" id="shared-preview-close" aria-label="Cerrar">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
@@ -1028,7 +1056,7 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||
 function dishCardHtml(d){
   return `
     <div class="dish-card" data-id="${d.id}" data-type="dish">
-      ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
+      ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="" draggable="false">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
       <div class="dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
         ${d.quality ? `<span class="quality-badge quality-${d.quality}">${QUALITY_LABELS[d.quality]||d.quality}</span>` : ''}
@@ -1041,7 +1069,7 @@ function folderCardHtml(f){
     const d = inside[i];
     if(!d) return `<div class="folder-mini-thumb empty"></div>`;
     return d.image_url
-      ? `<div class="folder-mini-thumb"><img src="${d.image_url}" alt=""></div>`
+      ? `<div class="folder-mini-thumb"><img src="${d.image_url}" alt="" draggable="false"></div>`
       : `<div class="folder-mini-thumb dish-thumb-empty">${ICON_PLATE}</div>`;
   }).join('');
   return `
@@ -1134,6 +1162,9 @@ $('#new-folder-btn').onclick = async ()=>{
 /* --- Arrastrar una tarjeta (o la selección entera) encima de una carpeta para archivarla --- */
 function attachCardDrag(card){
   let startX=0, startY=0, dragging=false;
+  // Red de seguridad extra: en modo editar, la tarjeta es un bloque — nunca se
+  // arrastra como imagen/texto nativo (evita el menú "Guardar imagen" de iOS).
+  card.addEventListener('dragstart', e=>{ if(galleryEditMode || folderEditMode) e.preventDefault(); });
   card.addEventListener('pointerdown', e=>{
     if(!galleryEditMode) return;
     startX = e.clientX; startY = e.clientY; dragging = false;
@@ -1147,6 +1178,7 @@ function attachCardDrag(card){
       dragging = true;
       card.classList.add('dragging');
     }
+    e.preventDefault();
     card.style.transform = `translate(${dx}px, ${dy}px) scale(1.06)`;
     card.style.pointerEvents = 'none';
     const under = document.elementFromPoint(e.clientX, e.clientY);
@@ -1221,6 +1253,7 @@ function renderFolderGallery(){
   $('#folder-edit-btn').textContent = folderEditMode ? 'Listo' : 'Editar';
   $('#folder-remove-btn').classList.toggle('hidden', !(folderEditMode && folderSelectedDishIds.size>0));
   $('#folder-remove-btn').textContent = `Sacar de la carpeta (${folderSelectedDishIds.size})`;
+  $('#folder-modal-title').classList.toggle('editable', folderEditMode);
 }
 $('#folder-close-x').onclick = closeFolderModal;
 $('#folder-modal').addEventListener('click', e=>{ if(e.target.id==='folder-modal') closeFolderModal(); });
@@ -1228,6 +1261,19 @@ $('#folder-edit-btn').onclick = ()=>{
   folderEditMode = !folderEditMode;
   if(!folderEditMode) folderSelectedDishIds.clear();
   renderFolderGallery();
+};
+$('#folder-modal-title').onclick = async ()=>{
+  if(!folderEditMode || !currentFolderId) return;
+  const folder = folders.find(f=>f.id===currentFolderId);
+  const newName = prompt('Nombre de la carpeta:', folder ? folder.name : '');
+  if(newName===null) return;
+  const trimmed = newName.trim();
+  if(!trimmed || !folder) return;
+  const { error } = await sb.from('dish_folders').update({ name: trimmed }).eq('id', currentFolderId);
+  if(error){ alert(error.message); return; }
+  folder.name = trimmed;
+  $('#folder-modal-title').textContent = trimmed;
+  renderGallery();
 };
 $('#folder-remove-btn').onclick = async ()=>{
   if(!folderSelectedDishIds.size) return;
@@ -1434,7 +1480,7 @@ function attachSwipeToDelete(row){
 /* --- Descripción: chip abre pop-up, click fuera lo cierra --- */
 function updateDescPreview(){
   const v = $('#dish-desc').value.trim();
-  $('#dish-desc-preview').textContent = v ? (v.length>26 ? v.slice(0,26)+'…' : v) : 'Descripción';
+  $('#dish-desc-preview').textContent = v ? (v.length>90 ? v.slice(0,90)+'…' : v) : 'Descripción';
   $('#dish-desc-trigger').classList.toggle('filled', !!v);
 }
 function openDescModal(){ $('#desc-modal').classList.remove('hidden'); $('#dish-desc').focus(); }
