@@ -649,7 +649,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
           <img id="avatar-preview" class="hidden" alt="">
           <div class="avatar-placeholder" id="avatar-placeholder">?</div>
         </div>
-        <input type="file" id="avatar-input" accept="image/*" capture="environment" class="visually-hidden">
+        <input type="file" id="avatar-input" accept="image/*" class="visually-hidden">
         <div style="margin-top:10px; font-weight:700; font-size:16px;" id="settings-username">@usuario</div>
       </div>
 
@@ -688,7 +688,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </div>
       <div class="photo-spinner" id="dish-photo-spinner"></div>
     </div>
-    <input type="file" id="dish-photo-input" accept="image/*" capture="environment" class="visually-hidden">
+    <input type="file" id="dish-photo-input" accept="image/*" class="visually-hidden">
 
     <input type="text" id="dish-name" class="dish-name-input"
       autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
@@ -726,11 +726,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         Atrás
       </button>
-      <button class="btn-primary hidden" id="dish-save-btn">Crear plato</button>
-    </div>
-    <div class="modal-actions hidden" id="dish-secondary-actions">
+      <button class="btn-primary hidden" id="dish-save-btn" style="flex:1;">Crear plato</button>
       <button class="btn-secondary hidden" id="dish-share-btn" style="flex:1; justify-content:center;">Compartir</button>
-      <button class="btn-danger hidden" id="dish-delete-btn" style="flex:1; text-align:center;">Eliminar plato</button>
+      <button class="btn-danger hidden" id="dish-delete-btn" style="flex:1; text-align:center;">Eliminar</button>
     </div>
   </div>
 </div>
@@ -1569,7 +1567,6 @@ function openDishModal(dish){
   $('#ingredients-list').innerHTML = '';
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : ['']).forEach(v=> addIngredientRow(v));
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
-  $('#dish-secondary-actions').classList.toggle('hidden', !dishExistsRemote);
   $('#dish-delete-btn').classList.toggle('hidden', !dishExistsRemote);
   $('#dish-share-btn').classList.toggle('hidden', !dishExistsRemote);
   // Un plato nuevo (aún sin fila en la BD) se crea con un botón explícito
@@ -1979,7 +1976,6 @@ $('#dish-save-btn').onclick = async ()=>{
   setDishClosingLocked(false);
   if(dishExistsRemote && snap.id===editingDishId){
     btn.classList.add('hidden');
-    $('#dish-secondary-actions').classList.remove('hidden');
     $('#dish-delete-btn').classList.remove('hidden');
     $('#dish-share-btn').classList.remove('hidden');
   } else {
