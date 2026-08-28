@@ -174,9 +174,15 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   -webkit-touch-callout:none; -webkit-user-drag:none; user-drag:none; pointer-events:none;
 }
 .folder-card{
+  position:relative;
   background:transparent; border:1px solid var(--border); border-radius:var(--radius);
   overflow:hidden; display:flex; flex-direction:column; padding:8px;
 }
+.folder-lock-badge{
+  position:absolute; top:6px; right:6px; width:20px; height:20px; border-radius:50%;
+  background:rgba(20,25,23,.55); color:#fff; display:flex; align-items:center; justify-content:center; z-index:1;
+}
+.folder-lock-badge svg{width:11px; height:11px;}
 .folder-preview-grid{
   width:100%; aspect-ratio:1/1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:4px;
 }
@@ -498,6 +504,13 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 /* ---------- SOCIAL ---------- */
 .user-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border);}
 .user-row:last-child{border-bottom:none;}
+.user-row-clickable{cursor:pointer;}
+.friend-profile-header{display:flex; align-items:center; gap:12px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border);}
+.friend-profile-header .user-row-avatar{width:44px; height:44px;}
+.friend-profile-header .fp-name{font-weight:700; font-size:16px;}
+.fp-back-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+.fp-back-btn{display:flex; align-items:center; gap:4px; background:none; color:var(--text); font-weight:600; font-size:13px; padding:4px 0;}
+.fp-back-btn svg{width:15px; height:15px;}
 .user-row-btn{width:100%; text-align:left; background:none;}
 .user-row-avatar{width:32px; height:32px; border-radius:50%; object-fit:cover; flex-shrink:0;}
 .avatar-placeholder-sm{display:flex; align-items:center; justify-content:center; background:var(--card2); color:var(--accent); font-weight:700; font-size:13px;}
@@ -811,6 +824,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </div>
 
       <div class="card">
+        <div class="settings-row">
+          <span style="font-weight:600;">Perfil público</span>
+          <button type="button" id="toggle-public-btn" class="switch" aria-label="Perfil público"></button>
+        </div>
+        <div class="settings-hint">Con el perfil público, tus amigos pueden entrar a cotillear tu repositorio de platos (tocando tu nombre en Social). Las carpetas que marques como privadas se quedan fuera de esa vista, aunque el perfil sea público. Compartir recetas 1 a 1 y el Muro no dependen de esto.</div>
+      </div>
+
+      <div class="card">
         <div style="font-weight:700; margin-bottom:10px;">Cambiar contraseña</div>
         <div class="field"><label>Nueva contraseña</label><input type="password" id="new-password" autocomplete="new-password"></div>
         <div class="field"><label>Repite la nueva contraseña</label><input type="password" id="new-password-confirm" autocomplete="new-password"></div>
@@ -984,8 +1005,23 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </div>
     </div>
     <button id="folder-remove-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Sacar de la carpeta (0)</button>
+    <div class="settings-row hidden" id="folder-privacy-row" style="margin-bottom:12px;">
+      <span style="font-weight:600; font-size:14px;">Carpeta privada</span>
+      <button type="button" id="folder-privacy-toggle" class="switch" aria-label="Carpeta privada"></button>
+    </div>
     <button id="folder-delete-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Eliminar carpeta</button>
     <div class="gallery" id="folder-gallery"></div>
+  </div>
+</div>
+
+<!-- ================= PERFIL DE UN AMIGO (solo lectura) ================= -->
+<div id="friend-profile-modal" class="modal hidden">
+  <div class="modal-sheet folder-sheet sheet-with-close">
+    <button type="button" class="sheet-close-btn" id="friend-profile-close" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="friend-profile-header" id="friend-profile-header"></div>
+    <div id="friend-profile-body"></div>
   </div>
 </div>
 
@@ -1097,6 +1133,8 @@ const ICON_HEART = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" 
 const ICON_COMMENT = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
 const ICON_PLUS_CIRCLE = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>';
 const ICON_TRASH = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg>';
+const ICON_LOCK = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>';
+const ICON_BACK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
 
 /* ===================== LOGIN REAL (Supabase Auth) ===================== */
 let authMode = 'login';
@@ -1187,7 +1225,8 @@ async function enterApp(profile){
     show_fitness: profile.show_fitness !== false,
     show_macros: profile.show_macros === true,
     suggest_meals: profile.suggest_meals === true,
-    last_seen_wall_at: profile.last_seen_wall_at || null
+    last_seen_wall_at: profile.last_seen_wall_at || null,
+    is_public: profile.is_public !== false
   };
   $('#drawer-username').textContent = '@'+profile.username;
   $('#login-view').classList.add('hidden');
@@ -1410,6 +1449,7 @@ function folderCardHtml(f){
   }).join('');
   return `
     <div class="folder-card" data-id="${f.id}" data-type="folder">
+      ${f.is_private ? `<span class="folder-lock-badge">${ICON_LOCK}</span>` : ''}
       <div class="folder-preview-grid">${cells}</div>
       <div class="folder-name">${escapeHtml(f.name)}</div>
     </div>`;
@@ -1734,6 +1774,11 @@ function renderFolderGallery(){
   // seleccionado (si no, competiría visualmente con "Sacar de la carpeta").
   $('#folder-delete-btn').classList.toggle('hidden', !(folderEditMode && folderSelectedDishIds.size===0));
   $('#folder-modal-title').classList.toggle('editable', folderEditMode);
+  // Igual que "Eliminar carpeta": solo tiene sentido en modo editar y sin
+  // selección (si no, compite visualmente con "Sacar de la carpeta").
+  $('#folder-privacy-row').classList.toggle('hidden', !(folderEditMode && folderSelectedDishIds.size===0));
+  const folderNow = folders.find(f=>f.id===currentFolderId);
+  $('#folder-privacy-toggle').classList.toggle('on', !!(folderNow && folderNow.is_private));
 }
 $('#folder-close-x').onclick = closeFolderModal;
 $('#folder-modal').addEventListener('click', e=>{ if(e.target.id==='folder-modal') closeFolderModal(); });
@@ -1799,6 +1844,22 @@ $('#folder-delete-btn').onclick = async ()=>{
   dishes.forEach(d=>{ if(d.folder_id===id) d.folder_id = null; });
   closeFolderModal();
   renderGallery();
+};
+$('#folder-privacy-toggle').onclick = async ()=>{
+  if(!currentFolderId) return;
+  const folder = folders.find(f=>f.id===currentFolderId);
+  if(!folder) return;
+  const newVal = !folder.is_private;
+  folder.is_private = newVal; // optimista
+  $('#folder-privacy-toggle').classList.toggle('on', newVal);
+  renderGallery();
+  const { error } = await sb.from('dish_folders').update({ is_private: newVal }).eq('id', currentFolderId);
+  if(error){
+    folder.is_private = !newVal;
+    $('#folder-privacy-toggle').classList.toggle('on', !newVal);
+    renderGallery();
+    alert(error.message);
+  }
 };
 
 /* ===================== PLATOS: MODAL ===================== */
@@ -2460,6 +2521,7 @@ function renderDrawerProfile(){
     dImg.classList.add('hidden'); dPh.classList.remove('hidden'); dPh.textContent = initial;
   }
   $('#toggle-fitness-btn').classList.toggle('on', currentUser.show_fitness);
+  $('#toggle-public-btn').classList.toggle('on', currentUser.is_public);
 }
 
 $('#avatar-wrap').onclick = ()=> $('#avatar-input').click();
@@ -2501,6 +2563,14 @@ $('#toggle-fitness-btn').onclick = async ()=>{
   renderDrawerProfile();
   applyFitnessVisibility();
   updateFitnessSettingsExtras(); // dishes ya están cargados a estas alturas, a diferencia del arranque
+};
+
+$('#toggle-public-btn').onclick = async ()=>{
+  const newVal = !currentUser.is_public;
+  const { error } = await sb.from('profiles').update({ is_public: newVal }).eq('id', currentUser.id);
+  if(error){ alert(error.message); return; }
+  currentUser.is_public = newVal;
+  renderDrawerProfile();
 };
 $('#toggle-macros-btn').onclick = async ()=>{
   const newVal = !currentUser.show_macros;
@@ -2552,7 +2622,7 @@ function friendshipStatusWith(profileId){
 
 async function loadFriendshipsState(){
   const { data, error } = await sb.from('friendships')
-    .select('*, requester:requester_id(id,username,avatar_url), addressee:addressee_id(id,username,avatar_url)')
+    .select('*, requester:requester_id(id,username,avatar_url,is_public), addressee:addressee_id(id,username,avatar_url,is_public)')
     .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`);
   if(error){ console.error(error); return; }
   const rows = data||[];
@@ -2566,7 +2636,13 @@ async function loadFriendshipsState(){
 function renderFriendsList(){
   const box = $('#friends-list');
   if(!friends.length){ box.innerHTML = '<div class="empty-hint">Aún no tienes amigos añadidos.</div>'; return; }
-  box.innerHTML = friends.map(f=> `<div class="user-row">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></div>`).join('');
+  box.innerHTML = friends.map(f=> `<div class="user-row user-row-clickable" data-friend-id="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></div>`).join('');
+  $all('#friends-list [data-friend-id]').forEach(row=>{
+    row.onclick = ()=>{
+      const f = friends.find(x=>x.id===row.dataset.friendId);
+      if(f) openFriendProfile(f);
+    };
+  });
 }
 function renderIncomingRequests(){
   const box = $('#incoming-requests-list');
@@ -2703,17 +2779,21 @@ async function rejectSharedDish(sharedId){
   }
 }
 
-/* --- Pop-up de vista previa de una receta compartida (desde Social) --- */
+/* --- Pop-up de vista previa de una receta (compartida, o vista en el
+   repositorio de un amigo) --- */
+// El mismo pop-up sirve para dos casos: 'shared' (viene de "Recetas
+// recibidas" en Social, dish_snapshot de shared_dishes, con Descartar+Añadir)
+// y 'friend' (viene de cotillear el repositorio de un amigo, un plato real
+// suyo -no un snapshot-, solo con Añadir). populateDishPreview() rellena los
+// campos comunes; cada modo decide qué botones mostrar y qué hace "Añadir".
 let previewingSharedId = null;
-function openSharedPreview(sharedId){
-  const shared = sharedDishesReceived.find(s=>s.id===sharedId);
-  if(!shared) return;
-  previewingSharedId = sharedId;
-  const d = shared.dish_snapshot || {};
+let previewMode = 'shared'; // 'shared' | 'friend'
+let previewingFriendDish = null;
+function populateDishPreview(d, fromLabel){
   const wrap = $('#shared-preview-photo-wrap'), img = $('#shared-preview-photo');
   if(d.image_url){ img.src = d.image_url; wrap.classList.remove('hidden'); } else { wrap.classList.add('hidden'); img.src=''; }
   $('#shared-preview-name').textContent = d.name || 'Receta';
-  $('#shared-preview-from').textContent = 'de @' + ((shared.from&&shared.from.username)||'?');
+  $('#shared-preview-from').textContent = fromLabel;
   const qBadge = $('#shared-preview-quality');
   if(d.quality){ qBadge.textContent = QUALITY_LABELS[d.quality]||d.quality; qBadge.className = 'quality-badge quality-'+d.quality; qBadge.classList.remove('hidden'); }
   else { qBadge.classList.add('hidden'); }
@@ -2725,6 +2805,27 @@ function openSharedPreview(sharedId){
   $('#shared-preview-ingredients').innerHTML = ingList.length
     ? ingList.map(i=>`<li>${escapeHtml(ingredientLineText(i))}</li>`).join('')
     : '<li class="empty-hint">Sin ingredientes.</li>';
+}
+function openSharedPreview(sharedId){
+  const shared = sharedDishesReceived.find(s=>s.id===sharedId);
+  if(!shared) return;
+  previewMode = 'shared';
+  previewingSharedId = sharedId;
+  previewingFriendDish = null;
+  const d = shared.dish_snapshot || {};
+  populateDishPreview(d, 'de @' + ((shared.from&&shared.from.username)||'?'));
+  $('#shared-preview-reject-btn').classList.remove('hidden');
+  $('#shared-preview-add-btn').textContent = 'Añadir a mis recetas';
+  lockBodyScroll();
+  $('#shared-preview-modal').classList.remove('hidden');
+}
+function openFriendDishPreview(dish){
+  previewMode = 'friend';
+  previewingSharedId = null;
+  previewingFriendDish = dish;
+  populateDishPreview(dish, 'de @' + (friendProfile ? friendProfile.username : '?'));
+  $('#shared-preview-reject-btn').classList.add('hidden');
+  $('#shared-preview-add-btn').textContent = 'Añadir a mi repositorio';
   lockBodyScroll();
   $('#shared-preview-modal').classList.remove('hidden');
 }
@@ -2732,11 +2833,116 @@ function closeSharedPreview(){
   $('#shared-preview-modal').classList.add('hidden');
   unlockBodyScroll();
   previewingSharedId = null;
+  previewingFriendDish = null;
+  $('#shared-preview-reject-btn').classList.remove('hidden'); // deja el pop-up listo para la próxima vez en modo 'shared'
 }
 $('#shared-preview-close').onclick = closeSharedPreview;
 $('#shared-preview-modal').addEventListener('click', e=>{ if(e.target.id==='shared-preview-modal') closeSharedPreview(); });
 $('#shared-preview-reject-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await rejectSharedDish(id); };
-$('#shared-preview-add-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await addSharedDish(id); };
+$('#shared-preview-add-btn').onclick = async ()=>{
+  if(previewMode==='friend'){
+    const dish = previewingFriendDish, fromUsername = friendProfile ? friendProfile.username : null;
+    closeSharedPreview();
+    if(dish) await addFriendDishToRepo(dish, fromUsername);
+    return;
+  }
+  const id=previewingSharedId; closeSharedPreview(); if(id) await addSharedDish(id);
+};
+
+/* --- Cotillear el repositorio de un amigo (desde Social → Amigos) --- */
+let friendProfile = null;       // { id, username, avatar_url, is_public }
+let friendRepoDishes = [];
+let friendRepoFolders = [];
+let friendProfileFolderId = null; // null = raíz del repositorio; si no, dentro de esa carpeta
+async function openFriendProfile(friend){
+  friendProfile = friend;
+  friendProfileFolderId = null;
+  friendRepoDishes = [];
+  friendRepoFolders = [];
+  $('#friend-profile-header').innerHTML = `${avatarHtml(friend)}<span class="fp-name">@${escapeHtml(friend.username)}</span>`;
+  $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>';
+  lockBodyScroll();
+  $('#friend-profile-modal').classList.remove('hidden');
+  await loadFriendRepo();
+}
+function closeFriendProfile(){
+  $('#friend-profile-modal').classList.add('hidden');
+  unlockBodyScroll();
+  friendProfile = null;
+  friendProfileFolderId = null;
+}
+async function loadFriendRepo(){
+  if(!friendProfile) return;
+  // Se relee is_public al vuelo (la lista de amigos puede llevar un rato
+  // cargada y el amigo pudo cambiar su privacidad mientras tanto).
+  const { data: freshProfile } = await sb.from('profiles').select('id,username,avatar_url,is_public').eq('id', friendProfile.id).maybeSingle();
+  if(freshProfile) friendProfile.is_public = freshProfile.is_public;
+  if(friendProfile.is_public === false){
+    $('#friend-profile-body').innerHTML = '<div class="empty-hint">Este perfil es privado — no puedes ver su repositorio.</div>';
+    return;
+  }
+  // Gracias a las políticas RLS de "amigo puede ver" (actualizar_privacidad.sql)
+  // estas dos consultas ya llegan filtradas solas: si el amigo tiene alguna
+  // carpeta privada, sus platos y la carpeta en sí simplemente no aparecen.
+  const [{ data: dData, error: dErr }, { data: fData, error: fErr }] = await Promise.all([
+    sb.from('dishes').select('*').eq('user_id', friendProfile.id).order('created_at', {ascending:true}),
+    sb.from('dish_folders').select('*').eq('user_id', friendProfile.id).order('created_at', {ascending:true})
+  ]);
+  if(dErr || fErr){ $('#friend-profile-body').innerHTML = '<div class="empty-hint">Error cargando el repositorio.</div>'; return; }
+  friendRepoDishes = dData||[];
+  friendRepoFolders = fData||[];
+  renderFriendProfileBody();
+}
+function renderFriendProfileBody(){
+  if(friendProfileFolderId){
+    const folder = friendRepoFolders.find(f=>f.id===friendProfileFolderId);
+    const inside = friendRepoDishes.filter(d=>d.folder_id===friendProfileFolderId);
+    $('#friend-profile-body').innerHTML = `
+      <div class="fp-back-row">
+        <button type="button" class="fp-back-btn" id="fp-back-btn">${ICON_BACK} Volver</button>
+        <span style="font-weight:700; font-size:13px;">${escapeHtml(folder ? folder.name : 'Carpeta')}</span>
+      </div>
+      <div class="gallery" id="friend-profile-gallery"></div>`;
+    $('#fp-back-btn').onclick = ()=>{ friendProfileFolderId = null; renderFriendProfileBody(); };
+    const box = $('#friend-profile-gallery');
+    if(inside.length) layoutMasonry(box, inside.map(d=>dishCardHtml(d)));
+    else box.innerHTML = '<div class="empty-hint">Carpeta vacía.</div>';
+    $all('#friend-profile-gallery .dish-card').forEach(card=>{
+      card.onclick = ()=> openFriendDishPreview(friendRepoDishes.find(d=>d.id===card.dataset.id));
+    });
+    return;
+  }
+  const unfiled = friendRepoDishes.filter(d=>!d.folder_id);
+  if(!friendRepoFolders.length && !unfiled.length){
+    $('#friend-profile-body').innerHTML = '<div class="empty-hint">Este repositorio todavía está vacío.</div>';
+    return;
+  }
+  $('#friend-profile-body').innerHTML = '<div class="gallery" id="friend-profile-gallery"></div>';
+  const box = $('#friend-profile-gallery');
+  const items = friendRepoFolders.map(f=>folderCardHtml(f)).concat(unfiled.map(d=>dishCardHtml(d)));
+  layoutMasonry(box, items);
+  $all('#friend-profile-gallery .dish-card').forEach(card=>{
+    card.onclick = ()=> openFriendDishPreview(friendRepoDishes.find(d=>d.id===card.dataset.id));
+  });
+  $all('#friend-profile-gallery .folder-card').forEach(card=>{
+    card.onclick = ()=>{ friendProfileFolderId = card.dataset.id; renderFriendProfileBody(); };
+  });
+}
+async function addFriendDishToRepo(dish, fromUsername){
+  const { error } = await sb.from('dishes').insert({
+    id: uuid(), user_id: currentUser.id, name: dish.name||'Receta',
+    image_url: dish.image_url||null, ingredients: dish.ingredients||[], description: dish.description||'',
+    calories: dish.calories||null, quality: dish.quality||null, duration_min: dish.duration_min||null,
+    shared_from_username: fromUsername || null,
+    protein_g: dish.protein_g||null, carbs_g: dish.carbs_g||null, fat_g: dish.fat_g||null, fiber_g: dish.fiber_g||null,
+    servings_base: dish.servings_base || 4
+  });
+  if(error){ alert(error.message); return; }
+  alert('Añadido a tu repositorio.');
+  await loadDishes();
+}
+$('#friend-profile-close').onclick = closeFriendProfile;
+$('#friend-profile-modal').addEventListener('click', e=>{ if(e.target.id==='friend-profile-modal') closeFriendProfile(); });
 
 /* --- Compartir un plato con un amigo (o publicarlo en el Muro) --- */
 $('#dish-share-btn').onclick = ()=>{
