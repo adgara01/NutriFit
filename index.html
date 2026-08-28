@@ -119,7 +119,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .app-section.active{display:block;}
 
 /* ---------- GALLERY ---------- */
-.gallery{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px;}
+/* Estilo Google Keep: cada columna empaqueta su propia altura (una tarjeta
+   con nombre largo no estira a su vecina de al lado). CSS grid de filas
+   fijas obligaba a todas las tarjetas de una fila a la misma altura; con
+   columnas multi-column cada una fluye según su propio contenido. */
+.gallery{column-width:150px; column-gap:12px;}
+.dish-card, .folder-card{
+  break-inside:avoid; -webkit-column-break-inside:avoid; margin-bottom:12px;
+}
 .dish-card{
   background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
   overflow:hidden; display:flex; flex-direction:column;
@@ -1187,29 +1194,63 @@ function attachCardDrag(card){
     const folderUnder = under && under.closest('.folder-card');
     if(folderUnder) folderUnder.classList.add('drop-hover');
   });
-  async function endDrag(e){
+  function endDrag(e){
     if(!dragging){ dragging = false; return; }
     dragging = false;
-    card.classList.remove('dragging');
-    card.style.pointerEvents = '';
+    // Igual que en pointermove: se excluye la propia tarjeta del hit-test
+    // ocultándola del todo para elementFromPoint, no basta con quitar la
+    // clase 'dragging' (su z-index/position ya no son de fiar en este punto).
+    card.style.pointerEvents = 'none';
     const under = document.elementFromPoint(e.clientX, e.clientY);
-    card.style.transform = '';
+    card.style.pointerEvents = '';
     $all('#gallery .folder-card.drop-hover').forEach(f=>f.classList.remove('drop-hover'));
     const folderUnder = under && under.closest('.folder-card');
     if(folderUnder){
+      // Al soltar encima de una carpeta: la tarjeta se encoge/desvanece justo
+      // donde está (no salta de vuelta a su sitio original primero) y el
+      // cambio se aplica al instante en memoria — sin esperar a la red — para
+      // que la animación termine en el mismo gesto, de un tirón.
       const folderId = folderUnder.dataset.id;
       const ids = (selectedDishIds.has(card.dataset.id) && selectedDishIds.size>1) ? [...selectedDishIds] : [card.dataset.id];
-      await moveDishesToFolder(ids, folderId);
+      card.style.transition = 'transform .12s ease, opacity .12s ease';
+      card.style.transform += ' scale(0.3)';
+      card.style.opacity = '0';
+      setTimeout(()=> moveDishesToFolder(ids, folderId), 120);
+    } else {
+      card.classList.remove('dragging');
+      card.style.transition = 'transform .18s ease';
+      card.style.transform = '';
+      setTimeout(()=>{ card.style.transition = ''; }, 180);
     }
   }
   card.addEventListener('pointerup', endDrag);
-  card.addEventListener('pointercancel', ()=>{ dragging=false; card.classList.remove('dragging'); card.style.transform=''; card.style.pointerEvents=''; });
+  card.addEventListener('pointercancel', ()=>{ dragging=false; card.classList.remove('dragging'); card.style.transition=''; card.style.transform=''; card.style.opacity=''; card.style.pointerEvents=''; });
 }
 async function moveDishesToFolder(dishIds, folderId){
-  const { error } = await sb.from('dishes').update({ folder_id: folderId }).in('id', dishIds);
-  if(error){ alert(error.message); return; }
+  // Actualización optimista: se aplica ya mismo en memoria y en pantalla
+  // (la carpeta "absorbe" el plato al instante); si la escritura en Supabase
+  // falla, se deshace y se avisa.
+  const prevFolderIds = new Map(dishIds.map(id=>{
+    const d = dishes.find(x=>x.id===id);
+    return [id, d ? d.folder_id : undefined];
+  }));
+  dishIds.forEach(id=>{
+    const d = dishes.find(x=>x.id===id);
+    if(d) d.folder_id = folderId;
+  });
   selectedDishIds.clear();
-  await loadDishes();
+  renderGallery();
+  if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
+  const { error } = await sb.from('dishes').update({ folder_id: folderId }).in('id', dishIds);
+  if(error){
+    alert(error.message);
+    dishIds.forEach(id=>{
+      const d = dishes.find(x=>x.id===id);
+      if(d && prevFolderIds.has(id)) d.folder_id = prevFolderIds.get(id);
+    });
+    renderGallery();
+    if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
+  }
 }
 
 /* --- Pop-up de carpeta: ver los platos de dentro, y "editar" para sacarlos --- */
@@ -1494,22 +1535,60 @@ $all('#quality-group .pill-btn').forEach(b=>{
     $all('#quality-group .pill-btn').forEach(x=> x.classList.toggle('active', x.dataset.q===selectedQuality));
   };
 });
+/* La foto del plato se "normaliza" siempre a JPEG antes de subirla: algunas
+   fotos de iPhone llegan en HEIC o con orientación EXIF que un <canvas>
+   ignora si no se decodifican bien — si eso ocurre, la subida "funciona"
+   (no da error) pero el navegador no puede pintar luego esa imagen, dando
+   la sensación de que la foto "se guarda pero se pierde". createImageBitmap
+   con imageOrientation:'from-image' decodifica el formato original y
+   respeta la rotación correctamente antes de reexportar. */
+async function normalizeImageFile(file){
+  let bitmap;
+  try{
+    bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  }catch(e){
+    bitmap = await createImageBitmap(file);
+  }
+  const maxDim = 1600;
+  let { width, height } = bitmap;
+  if(width > maxDim || height > maxDim){
+    const scale = maxDim / Math.max(width, height);
+    width = Math.round(width*scale); height = Math.round(height*scale);
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = width; canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, width, height);
+  if(bitmap.close) bitmap.close();
+  const blob = await new Promise((resolve, reject)=>{
+    canvas.toBlob(b=> b ? resolve(b) : reject(new Error('No se pudo procesar la imagen')), 'image/jpeg', 0.85);
+  });
+  return new File([blob], 'foto.jpg', { type:'image/jpeg' });
+}
+
 $('#dish-photo-wrap').onclick = ()=> $('#dish-photo-input').click();
-$('#dish-photo-input').addEventListener('change', e=>{
+$('#dish-photo-input').addEventListener('change', async e=>{
   const file = e.target.files[0];
   if(!file) return;
-  dishPhotoFile = file;
-  const reader = new FileReader();
-  reader.onload = ev=>{
-    $('#dish-photo-preview').src = ev.target.result;
-    $('#dish-photo-preview').classList.remove('hidden');
-    $('#dish-photo-wrap').classList.add('has-photo');
-  };
-  reader.readAsDataURL(file);
+  const wrap = $('#dish-photo-wrap');
+  wrap.classList.add('has-photo'); // evita el flash del placeholder mientras se procesa
+  try{
+    const normalized = await normalizeImageFile(file);
+    dishPhotoFile = normalized;
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      $('#dish-photo-preview').src = ev.target.result;
+      $('#dish-photo-preview').classList.remove('hidden');
+    };
+    reader.readAsDataURL(normalized);
+  }catch(err){
+    alert('No se pudo procesar esa foto, prueba con otra: '+err.message);
+    dishPhotoFile = null;
+  }
 });
 
 async function uploadDishPhoto(dishId, file){
-  const ext = (file.name.split('.').pop()||'jpg').toLowerCase();
+  const ext = 'jpg';
   const path = `${currentUser.id}/${dishId}.${ext}`;
   const { error } = await sb.storage.from('dish-photos').upload(path, file, { upsert:true, contentType:file.type });
   if(error) throw error;
