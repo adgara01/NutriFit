@@ -240,7 +240,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--accent);}
 .field textarea{min-height:80px; resize:vertical;}
 .pill-group{display:flex; gap:8px;}
-.pill-btn{flex:1; padding:10px; border-radius:10px; background:var(--card); border:1px solid var(--border); color:var(--muted); font-weight:600;}
+.pill-btn{flex:1; padding:10px; border-radius:10px; background:var(--card2); border:1px solid var(--border); color:var(--muted); font-weight:600;}
 .pill-btn.active[data-q="bueno"]{background:rgba(31,157,99,.14); border-color:var(--good); color:var(--good);}
 .pill-btn.active[data-q="normal"]{background:rgba(192,122,31,.14); border-color:var(--normal); color:var(--normal);}
 .pill-btn.active[data-q="malo"]{background:rgba(201,86,74,.14); border-color:var(--bad); color:var(--bad);}
@@ -352,18 +352,19 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 #dish-modal:not(.dish-view-locked) .ingredient-check{display:none;}
 .dish-view-locked .ingredient-input:disabled,
 .dish-view-locked .ingredient-qty:disabled{opacity:1; -webkit-text-fill-color:var(--text); color:var(--text);}
-/* En modo vista los campos bloqueados no deben parecer un recuadro donde se
-   podría escribir (fondo/borde fuera, queda como texto normal); en modo
-   creación/edición sí llevan un recuadro claro para que se note que ahí se
-   escribe. La lista de ingredientes queda fuera de esto a propósito (su caja
-   la necesita el tick, ver arriba). */
-.dish-view-locked #dish-name:disabled{border-bottom-color:transparent;}
-.dish-view-locked .meta-kcal, .dish-view-locked .meta-duration{background:none; border-color:transparent;}
-.dish-view-locked #dish-servings-base:disabled{opacity:1 !important; -webkit-text-fill-color:var(--text) !important; color:var(--text) !important; background:none !important; border-color:transparent !important;}
-.dish-view-locked #dish-desc-trigger:disabled, .dish-view-locked #dish-macros-btn:disabled, .dish-view-locked #quality-group .pill-btn:disabled{opacity:.6;}
-#dish-modal:not(.dish-view-locked) .dish-name-input{border-bottom-color:var(--accent);}
-#dish-modal:not(.dish-view-locked) .meta-kcal, #dish-modal:not(.dish-view-locked) .meta-duration{background:rgba(18,135,94,.07); border-color:var(--accent);}
-#dish-modal:not(.dish-view-locked) .servings-input{background:rgba(18,135,94,.07) !important; border-color:var(--accent) !important;}
+/* Dos cajas grises, no una caja verde y otra sin caja (así se veía "todo
+   super gris" y sin sentido en el iPhone real): en modo vista, un gris algo
+   más oscuro (--locked-bg) pero con el texto siempre bien legible; en modo
+   creación/edición, el mismo gris clarito que ya usa el resto de la app
+   (var(--card2)). Mismo borde gris en los dos casos. */
+.dish-view-locked #dish-name:disabled{border-bottom-color:var(--border);}
+.dish-view-locked .meta-kcal, .dish-view-locked .meta-duration{background:#e1e5e2; border-color:var(--border);}
+.dish-view-locked #dish-servings-base:disabled{opacity:1 !important; -webkit-text-fill-color:var(--text) !important; color:var(--text) !important; background:#e1e5e2 !important; border-color:var(--border) !important;}
+.dish-view-locked #dish-desc-trigger:disabled .meta-value, .dish-view-locked #dish-desc-trigger:disabled{background:#e1e5e2; opacity:1;}
+.dish-view-locked #quality-group .pill-btn:disabled{opacity:.6;}
+#dish-modal:not(.dish-view-locked) .dish-name-input{border-bottom-color:var(--border);}
+#dish-modal:not(.dish-view-locked) .meta-kcal, #dish-modal:not(.dish-view-locked) .meta-duration{background:var(--card2); border-color:var(--border);}
+#dish-modal:not(.dish-view-locked) .servings-input{background:var(--card2) !important; border-color:var(--border) !important;}
 /* Sin overflow oculto por defecto -si no, el desplegable de autocompletar,
    que aparece DEBAJO de la fila, se recorta y no se ve-. Solo se oculta el
    desbordamiento mientras se está deslizando de verdad (clase añadida por
@@ -371,7 +372,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .ingredient-row{position:relative; overflow:visible; border-radius:10px; margin-bottom:8px;}
 .ingredient-row.ingredient-row-clipping{overflow:hidden;}
 .ingredient-delete-bg{
-  position:absolute; inset:0; background:var(--bad); color:#fff; font-size:13px; font-weight:600;
+  position:absolute; inset:0; border-radius:10px; background:var(--bad); color:#fff; font-size:13px; font-weight:600;
   display:flex; align-items:center; justify-content:flex-end; padding-right:16px;
 }
 .ingredient-row-inner{
@@ -422,14 +423,10 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   font-size:15px; text-align:center; color:var(--text);
 }
 .servings-hint{font-size:13px; color:var(--muted);}
-.servings-scale-row{
-  display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color:var(--muted); flex-wrap:wrap;
-}
 .scale-btn{
   width:26px; height:26px; border-radius:50%; background:var(--card2); border:1px solid var(--border);
-  font-size:16px; font-weight:700; color:var(--text); display:flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:700; color:var(--text); display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
-#servings-scale-value{font-weight:700; color:var(--text); min-width:16px; text-align:center;}
 
 /* ---------- NEVERA ---------- */
 .fridge-add-row{display:flex; align-items:center; gap:8px;}
@@ -973,7 +970,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     <div class="field servings-field">
       <label>Raciones de la receta</label>
       <div class="servings-row">
+        <button type="button" id="servings-scale-minus" class="scale-btn hidden" aria-label="Menos raciones">−</button>
         <input type="number" id="dish-servings-base" min="1" step="1" autocomplete="off" class="servings-input">
+        <button type="button" id="servings-scale-plus" class="scale-btn hidden" aria-label="Más raciones">+</button>
         <span class="servings-hint">personas (las cantidades de abajo son para este número)</span>
       </div>
     </div>
@@ -982,13 +981,6 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <label>Ingredientes</label>
       <div class="ingredients-hint">Enter para añadir un ingrediente · desliza a la izquierda para eliminarlo · nombre, cantidad y unidad</div>
       <div id="ingredients-list"></div>
-      <div class="servings-scale-row">
-        <span>Ver cantidades para</span>
-        <button type="button" id="servings-scale-minus" class="scale-btn" aria-label="Menos raciones">−</button>
-        <span id="servings-scale-value">1</span>
-        <button type="button" id="servings-scale-plus" class="scale-btn" aria-label="Más raciones">+</button>
-        <span>personas</span>
-      </div>
     </div>
 
   <div class="modal-actions">
@@ -2001,7 +1993,8 @@ function openDishModal(dish){
   $('#ingredients-list').innerHTML = '';
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : [{}]).forEach(v=> addIngredientRow(normalizeIngredientItem(v)));
   captureIngredientBaselines();
-  resetServingsScale();
+  syncServingsBaseline();
+  updateIngredientTicks();
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
   // Un plato nuevo (aún sin fila en la BD) se crea con un botón explícito
   // "Crear plato", no en automático; en cuanto existe, todo pasa a
@@ -2024,10 +2017,11 @@ function applyDishModalButtons(){
   $('#dish-edit-save-btn').classList.toggle('hidden', !editing);
   $('#dish-delete-btn').classList.toggle('hidden', !editing);
   $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
-  // "Ver cantidades para X personas" solo tiene sentido viendo un plato ya
-  // hecho: ni creando uno nuevo (aún sin ingredientes reales) ni editando
-  // (ahí lo que se toca son las cantidades base, no un escalado de vista).
-  $('.servings-scale-row').classList.toggle('hidden', !viewing);
+  // El +/- de raciones (junto al propio campo) solo tiene sentido viendo un
+  // plato ya hecho: ni creando uno nuevo (aún sin ingredientes reales) ni
+  // editando (ahí lo que se toca son las cantidades base, tecleando).
+  $('#servings-scale-minus').classList.toggle('hidden', !viewing);
+  $('#servings-scale-plus').classList.toggle('hidden', !viewing);
 }
 // Bloquea/desbloquea todos los campos según dishFieldsLocked() — un plato
 // existente abierto en modo vista no se puede tocar hasta pulsar "Editar";
@@ -2040,7 +2034,9 @@ function applyDishFieldsLock(){
   $('#dish-duration').disabled = locked;
   $('#dish-servings-base').disabled = locked;
   $('#dish-desc-trigger').disabled = locked;
-  $('#dish-macros-btn').disabled = locked;
+  // Las macros se pueden VER siempre que el plato ya exista, también en modo
+  // vista (Adri: "que me deje ver las macros, que ahora no se puede") — solo
+  // se bloquean nombre/calorías/etc., el botón de macros no.
   $all('#quality-group .pill-btn').forEach(b=> b.disabled = locked);
   $all('#ingredients-list .ingredient-input, #ingredients-list .ingredient-qty').forEach(el=> el.disabled = locked);
 }
@@ -2199,11 +2195,7 @@ function addIngredientRow(item={}, afterRow=null){
   const input = row.querySelector('.ingredient-input');
   const qtyInput = row.querySelector('.ingredient-qty');
   qtyInput.dataset.orig = qtyInput.value; // cantidad real guardada, al margen de cualquier escalado de vista
-  row.querySelector('.ingredient-check').onclick = ()=>{
-    if(dishFieldsLocked()) return;
-    row.classList.toggle('checked');
-    row.querySelector('.ingredient-check').classList.toggle('checked');
-  };
+  // El tick ya no se marca a mano — se calcula solo contra la Nevera (ver updateIngredientTicks).
   input.addEventListener('keydown', e=>{
     if(e.key==='Enter'){
       e.preventDefault();
@@ -2283,29 +2275,62 @@ function attachSwipeToDelete(row){
    se guardan en dataset.orig de cada input y se restauran siempre que se
    entra en modo edición, para no guardar por error un valor escalado. --- */
 let dishScaleServings = 1;
-function currentServingsBase(){ return Math.max(1, Number($('#dish-servings-base').value)||1); }
+let dishTrueServingsBase = 1; // el nº real guardado — el campo, en modo vista, puede estar mostrando un escalado
+function currentServingsBase(){ return dishTrueServingsBase; }
 function captureIngredientBaselines(){
   $all('#ingredients-list .ingredient-qty').forEach(inp=> inp.dataset.orig = inp.value);
 }
 function restoreIngredientBaselines(){
   $all('#ingredients-list .ingredient-qty').forEach(inp=>{ if(inp.dataset.orig!==undefined) inp.value = inp.dataset.orig; });
 }
-function resetServingsScale(){
-  dishScaleServings = currentServingsBase();
-  $('#servings-scale-value').textContent = dishScaleServings;
+// Se llama solo cuando el campo de raciones muestra de verdad el valor real
+// guardado (al abrir la ficha, mientras se teclea en modo edición, o justo
+// tras guardar) — nunca mientras está mostrando un escalado de vista.
+function syncServingsBaseline(){
+  dishTrueServingsBase = Math.max(1, Number($('#dish-servings-base').value)||1);
+  dishScaleServings = dishTrueServingsBase;
 }
 function applyServingsScale(){
-  const base = currentServingsBase();
+  const base = dishTrueServingsBase;
   const scale = dishScaleServings/base;
   $all('#ingredients-list .ingredient-qty').forEach(inp=>{
     const orig = inp.dataset.orig!==undefined && inp.dataset.orig!=='' ? Number(inp.dataset.orig) : null;
     if(orig===null || isNaN(orig)) return; // sin cantidad guardada, no hay nada que escalar
     inp.value = Math.round(orig*scale*100)/100;
   });
+  $('#dish-servings-base').value = dishScaleServings; // el propio campo de raciones hace de contador, ya no hay una fila aparte
+  updateIngredientTicks();
 }
-$('#servings-scale-minus').onclick = ()=>{ dishScaleServings = Math.max(1, dishScaleServings-1); $('#servings-scale-value').textContent = dishScaleServings; applyServingsScale(); };
-$('#servings-scale-plus').onclick = ()=>{ dishScaleServings = dishScaleServings+1; $('#servings-scale-value').textContent = dishScaleServings; applyServingsScale(); };
-$('#dish-servings-base').addEventListener('input', ()=>{ scheduleDishAutosave(false); resetServingsScale(); });
+// Deshace cualquier escalado de vista y deja el campo mostrando el nº real
+// guardado — se llama justo antes de pasar a modo edición.
+function restoreServingsDisplay(){
+  dishScaleServings = dishTrueServingsBase;
+  $('#dish-servings-base').value = dishTrueServingsBase;
+}
+$('#servings-scale-minus').onclick = ()=>{ dishScaleServings = Math.max(1, dishScaleServings-1); applyServingsScale(); };
+$('#servings-scale-plus').onclick = ()=>{ dishScaleServings = dishScaleServings+1; applyServingsScale(); };
+$('#dish-servings-base').addEventListener('input', ()=>{ scheduleDishAutosave(false); syncServingsBaseline(); });
+
+/* --- Tick de ingredientes: ya no se marca a mano, se calcula solo comparando
+   con la Nevera (Adri: "se marcará el tick si esa cantidad de elementos está
+   en la nevera... si pongo más raciones y no hay tanta cantidad, el tick se
+   quita solo"). Un plato con cobertura 100% en "Sugerencias de la Nevera" se
+   verá ya con todos los ticks puestos al abrirlo. */
+function updateIngredientTicks(){
+  $all('#ingredients-list .ingredient-row').forEach(row=>{
+    const name = row.querySelector('.ingredient-input').value.trim();
+    const qtyStr = row.querySelector('.ingredient-qty').value;
+    const check = row.querySelector('.ingredient-check');
+    let has = false;
+    if(name){
+      const norm = stripAccents(name.toLowerCase());
+      const fi = fridgeItems.find(f=> stripAccents((f.name||'').toLowerCase())===norm);
+      if(fi) has = (qtyStr==='' || fi.quantity==null) ? true : Number(fi.quantity) >= Number(qtyStr);
+    }
+    row.classList.toggle('checked', has);
+    check.classList.toggle('checked', has);
+  });
+}
 
 /* --- Descripción: chip abre pop-up, click fuera lo cierra --- */
 function updateDescPreview(){
@@ -2606,7 +2631,7 @@ $('#dish-edit-btn').onclick = ()=>{
   // de dejar editar — lo que se edita son las cantidades base reales, nunca
   // un escalado de pantalla.
   restoreIngredientBaselines();
-  resetServingsScale();
+  restoreServingsDisplay();
   dishViewMode = false;
   applyDishModalButtons();
   applyDishFieldsLock();
@@ -2618,7 +2643,8 @@ $('#dish-edit-save-btn').onclick = async ()=>{
   if(dishSaveInFlight) await dishSaveInFlight;
   btn.disabled = false;
   captureIngredientBaselines();
-  resetServingsScale();
+  syncServingsBaseline();
+  updateIngredientTicks();
   dishViewMode = true;
   applyDishModalButtons();
   applyDishFieldsLock();
