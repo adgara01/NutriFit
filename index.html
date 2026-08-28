@@ -74,6 +74,12 @@ button{cursor:pointer; border:none;}
   display:flex; align-items:center; justify-content:center;
 }
 .icon-btn-plain:active{background:var(--card2);}
+/* Recuadro cuadrado para que se note que el icono de Ajustes es un botón
+   pulsable (mismo lenguaje visual que el disparador de macros del plato). */
+.icon-btn-boxed{
+  background:var(--card2); border:1px solid var(--border); border-radius:10px; margin:0; padding:8px;
+}
+.icon-btn-boxed:active{background:var(--card);}
 
 .drawer-overlay{position:fixed; inset:0; background:rgba(20,30,25,.28); z-index:14; touch-action:pan-y;}
 .drawer{
@@ -258,7 +264,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .dish-close-disabled{opacity:.35; pointer-events:none;}
 .btn-primary{flex:1; background:var(--accent); color:#fff; padding:13px; border-radius:12px; font-weight:600; font-size:15px;}
 .btn-secondary{
-  background:var(--card); color:var(--muted); padding:13px 16px; border-radius:12px; border:1px solid var(--border);
+  background:var(--card); color:var(--text); font-weight:600; padding:13px 16px; border-radius:12px; border:1.5px solid #8a978f;
   display:flex; align-items:center; justify-content:center; gap:6px;
 }
 .btn-danger{background:none; color:var(--bad); padding:13px; font-size:14px;}
@@ -266,7 +272,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 /* ---------- DISH SHEET ---------- */
 .visually-hidden{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;}
 .dish-photo-wrap{
-  position:relative; width:100%; aspect-ratio:4/3; border-radius:16px; overflow:hidden;
+  position:relative; width:100%; aspect-ratio:16/9; border-radius:16px; overflow:hidden;
   background:var(--card2); margin-bottom:14px; border:1px solid var(--border);
 }
 .dish-photo-wrap img{width:100%; height:100%; object-fit:cover; display:block;}
@@ -320,26 +326,32 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 }
 .meta-kcal input:focus, .meta-duration input:focus{outline:none;}
 .meta-kcal-unit{font-size:9px; color:var(--muted); letter-spacing:.02em; margin-top:3px; font-style:italic;}
-/* Distribución 2×2: descripción grande a la izquierda (ocupa las dos filas),
-   arriba a la derecha la calidad, abajo a la derecha calorías + duración. */
+/* Versión definitiva, 2×2 y compacta: columna izquierda = descripción arriba,
+   kcal+minutos debajo; columna derecha = calidad arriba, raciones debajo.
+   Las dos filas miden lo mismo (la altura la marca la fila 2, la más baja:
+   la descripción ya no necesita más sitio porque para leerla entera se abre
+   el pop-up de siempre — aquí solo se ve un adelanto de 2 líneas). */
 .dish-meta-grid{
-  display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto;
+  display:grid; grid-template-columns:1fr 1fr; grid-template-rows:66px 66px;
   gap:8px; margin-bottom:20px;
 }
 .meta-desc-big{
-  grid-column:1; grid-row:1 / 3; padding:14px 10px;
+  grid-column:1; grid-row:1; padding:10px 10px; overflow:hidden;
 }
 .meta-desc-big .meta-value{
-  font-size:16px; line-height:1.35; white-space:normal; overflow:hidden; text-overflow:clip;
-  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4;
+  font-size:13px; line-height:1.3; white-space:normal; overflow:hidden; text-overflow:clip;
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
 }
 .meta-quality-cell{ grid-column:2; grid-row:1; gap:6px; }
 .meta-quality-cell .pill-btn{
   padding:8px 3px; font-size:10.5px; font-weight:700; line-height:1.15; border-radius:10px;
   white-space:normal; word-break:normal; text-align:center;
-  display:flex; align-items:center; justify-content:center; min-height:44px;
+  display:flex; align-items:center; justify-content:center; min-height:0; height:100%;
 }
-.meta-num-row{ grid-column:2; grid-row:2; display:flex; gap:8px; }
+.meta-num-row{ grid-column:1; grid-row:2; display:flex; gap:8px; }
+.meta-num-row .meta-chip{ height:100%; }
+.meta-servings-cell{ grid-column:2; grid-row:2; }
+.meta-servings-cell .servings-row{display:flex; align-items:center; justify-content:center; gap:6px;}
 .desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
 .ingredients-hint{font-size:12px; color:var(--muted); margin:-2px 0 10px; line-height:1.4;}
 /* Modo MOSTRAR (vista) vs modo EDITAR — dos aspectos deliberadamente
@@ -355,6 +367,20 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
      var(--border)) en todos los campos, sin excepciones ni colores nuevos
      por campo. */
 .dish-view-locked .ingredients-hint{display:none;}
+/* En modo Mostrar la caja de descripción pierde su fondo (como el resto de
+   campos), así que sin nada más queda invisible/confusa — se le añade una
+   etiqueta propia "Descripción" pegada encima y una línea fina que la
+   delimite, solo en este modo. El título largo de arriba (que sirve para
+   todo el bloque en modo Editar) se oculta aquí para no duplicarlo, sin
+   tocar su texto ni su posición en modo Editar. */
+.meta-desc-label{display:none;}
+.dish-view-locked .meta-section-title{display:none;}
+.dish-view-locked .meta-chip.meta-desc-big{border-color:var(--border); position:relative; padding-top:19px; padding-bottom:4px;}
+.dish-view-locked .meta-desc-big .meta-value{-webkit-line-clamp:1;}
+.dish-view-locked .meta-desc-label{
+  display:block; position:absolute; top:6px; left:10px; font-size:9px; color:var(--muted);
+  font-style:italic; text-align:left;
+}
 /* El tick de "marcar ingrediente" solo tiene sentido viendo la receta ya
    hecha (tacharlos mientras cocinas) — creando o editando estorba. */
 #dish-modal:not(.dish-view-locked) .ingredient-check{display:none;}
@@ -427,15 +453,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .ingredient-suggest button:active{background:var(--card2);}
 
 /* ---------- RACIONES ---------- */
-.servings-field{margin-top:14px;}
-.servings-row{display:flex; align-items:center; gap:8px;}
+.servings-row{display:flex; align-items:center; gap:6px;}
 .servings-input{
-  width:64px !important; padding:9px !important; border-radius:10px; border:1px solid var(--border); background:var(--card2) !important;
+  width:44px !important; padding:6px !important; border-radius:10px; border:1px solid var(--border); background:var(--card2) !important;
   font-size:15px; text-align:center; color:var(--text);
 }
-.servings-hint{font-size:13px; color:var(--muted);}
+.servings-hint{display:block; font-size:9px; color:var(--muted); font-style:italic; letter-spacing:.02em; margin-top:3px; text-align:center;}
 .scale-btn{
-  width:26px; height:26px; border-radius:50%; background:var(--card2); border:1px solid var(--border);
+  width:24px; height:24px; border-radius:50%; background:var(--card2); border:1px solid var(--border);
   font-size:16px; font-weight:700; color:var(--text); display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
 
@@ -665,17 +690,13 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   <aside id="drawer" class="drawer">
     <div class="drawer-brand">NutriFit</div>
     <nav class="drawer-nav">
-      <button class="drawer-link" data-section="platos">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
-        <span>Platos y Recetas</span>
-      </button>
       <button class="drawer-link" data-section="nevera">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg>
         <span>Nevera</span>
       </button>
-      <button class="drawer-link" data-section="fitness">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg>
-        <span>Fitness</span>
+      <button class="drawer-link" data-section="platos">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+        <span>Platos y Recetas</span>
       </button>
       <button class="drawer-link" data-section="social">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -687,6 +708,10 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <span>Muro</span>
         <span id="wall-notif-badge" class="notif-badge hidden">0</span>
       </button>
+      <button class="drawer-link" data-section="fitness">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg>
+        <span>Fitness</span>
+      </button>
     </nav>
     <div class="drawer-footer">
       <div class="drawer-profile" id="drawer-profile-btn">
@@ -696,7 +721,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         </div>
         <span class="drawer-username" id="drawer-username"></span>
       </div>
-      <button id="drawer-settings-btn" class="icon-btn-plain" aria-label="Configuración">
+      <button id="drawer-settings-btn" class="icon-btn-plain icon-btn-boxed" aria-label="Configuración">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
@@ -959,6 +984,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     <div class="meta-section-title">Descripción, calorías por plato y tiempo de elaboración</div>
     <div class="dish-meta-grid">
       <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc meta-desc-big">
+        <span class="meta-desc-label">Descripción</span>
         <span id="dish-desc-preview" class="meta-value">Descripción</span>
       </button>
       <div class="pill-group meta-quality-cell" id="quality-group">
@@ -976,15 +1002,13 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
           <span class="meta-kcal-unit">min. elaboración</span>
         </div>
       </div>
-    </div>
-
-    <div class="field servings-field">
-      <label>Raciones de la receta</label>
-      <div class="servings-row">
-        <button type="button" id="servings-scale-minus" class="scale-btn hidden" aria-label="Menos raciones">−</button>
-        <input type="number" id="dish-servings-base" min="1" step="1" autocomplete="off" class="servings-input">
-        <button type="button" id="servings-scale-plus" class="scale-btn hidden" aria-label="Más raciones">+</button>
-        <span class="servings-hint">personas (las cantidades de abajo son para este número)</span>
+      <div class="meta-chip meta-servings-cell">
+        <div class="servings-row">
+          <button type="button" id="servings-scale-minus" class="scale-btn hidden" aria-label="Menos raciones">−</button>
+          <input type="number" id="dish-servings-base" min="1" step="1" autocomplete="off" class="servings-input">
+          <button type="button" id="servings-scale-plus" class="scale-btn hidden" aria-label="Más raciones">+</button>
+        </div>
+        <span class="servings-hint">Raciones</span>
       </div>
     </div>
 
