@@ -342,29 +342,40 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .meta-num-row{ grid-column:2; grid-row:2; display:flex; gap:8px; }
 .desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
 .ingredients-hint{font-size:12px; color:var(--muted); margin:-2px 0 10px; line-height:1.4;}
-/* Modo vista de la ficha de plato: los campos siguen ahí para leerlos, pero
-   no se pueden tocar hasta pulsar "Editar" — el estado :disabled del propio
-   navegador ya los atenúa; solo hace falta ocultar la pista de "Enter para
-   añadir..." y el checkbox de marcar, que en modo vista no pintan nada. */
+/* Modo MOSTRAR (vista) vs modo EDITAR — dos aspectos deliberadamente
+   distintos, nunca una versión "apagada" el uno del otro:
+   - MOSTRAR: información estática de verdad. Nada de caja, nada de borde de
+     input, nada que invite a tocar — el único control interactivo del plato
+     aquí son los +/- de raciones. El bloqueo es por `pointer-events:none`,
+     NUNCA por el atributo `disabled`: en iOS Safari un campo `disabled` se
+     difumina por su cuenta pese a cualquier color puesto por CSS (fue justo
+     el bug reportado) — sin `disabled`, el texto no tiene forma de verse
+     distinto entre un modo y otro.
+   - EDITAR: la misma caja de siempre (fondo var(--card2), borde
+     var(--border)) en todos los campos, sin excepciones ni colores nuevos
+     por campo. */
 .dish-view-locked .ingredients-hint{display:none;}
 /* El tick de "marcar ingrediente" solo tiene sentido viendo la receta ya
    hecha (tacharlos mientras cocinas) — creando o editando estorba. */
 #dish-modal:not(.dish-view-locked) .ingredient-check{display:none;}
-.dish-view-locked .ingredient-input:disabled,
-.dish-view-locked .ingredient-qty:disabled{opacity:1; -webkit-text-fill-color:var(--text); color:var(--text);}
-/* Dos cajas grises, no una caja verde y otra sin caja (así se veía "todo
-   super gris" y sin sentido en el iPhone real): en modo vista, un gris algo
-   más oscuro (--locked-bg) pero con el texto siempre bien legible; en modo
-   creación/edición, el mismo gris clarito que ya usa el resto de la app
-   (var(--card2)). Mismo borde gris en los dos casos. */
-.dish-view-locked #dish-name:disabled{border-bottom-color:var(--border);}
-.dish-view-locked .meta-kcal, .dish-view-locked .meta-duration{background:#e1e5e2; border-color:var(--border);}
-.dish-view-locked #dish-servings-base:disabled{opacity:1 !important; -webkit-text-fill-color:var(--text) !important; color:var(--text) !important; background:#e1e5e2 !important; border-color:var(--border) !important;}
-.dish-view-locked #dish-desc-trigger:disabled .meta-value, .dish-view-locked #dish-desc-trigger:disabled{background:#e1e5e2; opacity:1;}
-.dish-view-locked #quality-group .pill-btn:disabled{opacity:.6;}
-#dish-modal:not(.dish-view-locked) .dish-name-input{border-bottom-color:var(--border);}
-#dish-modal:not(.dish-view-locked) .meta-kcal, #dish-modal:not(.dish-view-locked) .meta-duration{background:var(--card2); border-color:var(--border);}
-#dish-modal:not(.dish-view-locked) .servings-input{background:var(--card2) !important; border-color:var(--border) !important;}
+.dish-view-locked #dish-name,
+.dish-view-locked #dish-calories,
+.dish-view-locked #dish-duration,
+.dish-view-locked #dish-servings-base,
+.dish-view-locked #quality-group .pill-btn,
+.dish-view-locked #ingredients-list .ingredient-input,
+.dish-view-locked #ingredients-list .ingredient-qty{
+  pointer-events:none;
+}
+.dish-view-locked #dish-name{background:none; border-bottom-color:transparent;}
+.dish-view-locked .meta-chip{background:none; border-color:transparent;}
+.dish-view-locked #dish-servings-base{background:none !important; border-color:transparent !important;}
+.dish-view-locked #ingredients-list .ingredient-row-inner{background:none; border-color:transparent;}
+/* Al quitar el fondo de la fila para que se vea como texto plano, el rojo
+   de "Eliminar" (debajo, para el deslizar) se transparentaba encima — se
+   oculta del todo en modo vista, donde deslizar para borrar ya está
+   desactivado de todas formas. */
+.dish-view-locked .ingredient-delete-bg{display:none;}
 /* Sin overflow oculto por defecto -si no, el desplegable de autocompletar,
    que aparece DEBAJO de la fila, se recorta y no se ve-. Solo se oculta el
    desbordamiento mientras se está deslizando de verdad (clase añadida por
@@ -2027,18 +2038,13 @@ function applyDishModalButtons(){
 // existente abierto en modo vista no se puede tocar hasta pulsar "Editar";
 // uno nuevo (todavía sin fila en la BD) siempre está editable.
 function applyDishFieldsLock(){
-  const locked = dishFieldsLocked();
-  $('#dish-modal').classList.toggle('dish-view-locked', locked);
-  $('#dish-name').disabled = locked;
-  $('#dish-calories').disabled = locked;
-  $('#dish-duration').disabled = locked;
-  $('#dish-servings-base').disabled = locked;
-  $('#dish-desc-trigger').disabled = locked;
-  // Las macros se pueden VER siempre que el plato ya exista, también en modo
-  // vista (Adri: "que me deje ver las macros, que ahora no se puede") — solo
-  // se bloquean nombre/calorías/etc., el botón de macros no.
-  $all('#quality-group .pill-btn').forEach(b=> b.disabled = locked);
-  $all('#ingredients-list .ingredient-input, #ingredients-list .ingredient-qty').forEach(el=> el.disabled = locked);
+  // El bloqueo real ya lo hace el CSS de arriba (pointer-events, según la
+  // clase .dish-view-locked) — nunca el atributo `disabled`, precisamente
+  // para que el texto se vea siempre igual en los dos modos. La foto, la
+  // descripción y las macros se pueden seguir viendo en modo Mostrar (solo
+  // "consultar" incluye leerlas); nombre/calorías/duración/raciones/
+  // calidad/ingredientes quedan bloqueados a través del CSS.
+  $('#dish-modal').classList.toggle('dish-view-locked', dishFieldsLocked());
 }
 function closeDishModal(){
   if(dishSaveInFlight) return; // no se puede salir mientras hay una escritura en curso de verdad
