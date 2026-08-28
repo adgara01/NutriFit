@@ -108,6 +108,10 @@ button{cursor:pointer; border:none;}
 .drawer-username{font-size:16px; font-weight:800; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 
 .section-title{font-size:22px; font-weight:800; letter-spacing:-.01em; margin:2px 0 16px;}
+.section-title-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;}
+.section-title-row .section-title{margin:0;}
+.section-actions{display:flex; gap:8px; flex-shrink:0;}
+.btn-mini-danger{background:var(--bad);}
 
 main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .app-section{display:none;}
@@ -131,6 +135,34 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .quality-normal{background:rgba(192,122,31,.13); color:var(--normal);}
 .quality-malo{background:rgba(201,86,74,.13); color:var(--bad);}
 
+/* ---------- CARPETAS / MODO EDITAR (arrastrar y soltar, estilo iPhone) ---------- */
+@keyframes dish-jiggle{
+  0%{transform:rotate(-1.2deg);}
+  50%{transform:rotate(1.2deg);}
+  100%{transform:rotate(-1.2deg);}
+}
+.dish-card.jiggle, .folder-card.jiggle{animation:dish-jiggle .24s infinite ease-in-out;}
+.dish-card.jiggle:nth-child(even), .folder-card.jiggle:nth-child(even){animation-delay:-.12s;}
+.dish-card.selected{box-shadow:inset 0 0 0 3px #3a3f3c;}
+.dish-card.dragging, .folder-card.dragging{animation:none !important; opacity:.92; box-shadow:var(--shadow); z-index:50; position:relative;}
+.folder-card.drop-hover{outline:3px solid var(--accent); outline-offset:-3px; background:rgba(18,135,94,.08);}
+.folder-card{
+  background:transparent; border:1.5px dashed var(--border); border-radius:var(--radius);
+  overflow:hidden; display:flex; flex-direction:column; padding:8px;
+}
+.folder-preview-grid{
+  flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:4px; aspect-ratio:1/1;
+}
+.folder-mini-thumb{
+  border-radius:7px; overflow:hidden; background:var(--card2); color:var(--muted);
+  display:flex; align-items:center; justify-content:center;
+}
+.folder-mini-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+.folder-mini-thumb.empty{background:transparent; border:1px dashed var(--border);}
+.folder-mini-thumb.dish-thumb-empty svg{width:16px; height:16px;}
+.folder-name{padding-top:8px; font-size:12px; font-weight:700; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.folder-sheet{max-height:82vh;}
+
 .fab{
   position:fixed; right:20px; bottom:calc(24px + env(safe-area-inset-bottom));
   width:54px; height:54px; border-radius:50%; background:var(--accent2); color:#0a2e22;
@@ -141,9 +173,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 /* ---------- MODAL ---------- */
 .modal{position:fixed; inset:0; background:rgba(20,25,23,.4); z-index:20; display:flex; align-items:flex-end; justify-content:center;}
 .modal-sheet{
+  position:relative;
   width:100%; max-width:560px; max-height:min(91vh, calc(100vh - 40px - env(safe-area-inset-top)));
   overflow-y:auto; background:var(--bg2); touch-action:pan-y; overscroll-behavior:contain; will-change:transform;
   border-radius:20px 20px 0 0; padding:18px 18px calc(18px + env(safe-area-inset-bottom));
+}
+.sheet-close-btn{
+  position:absolute; top:12px; right:12px; z-index:3; width:32px; height:32px; border-radius:50%;
+  background:rgba(20,25,23,.5); color:#fff; display:flex; align-items:center; justify-content:center;
 }
 .sheet-kicker{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:10px;}
 .field{margin-bottom:14px;}
@@ -185,23 +222,26 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .dish-name-input:focus{outline:none; border-color:var(--accent);}
 .dish-meta-row{display:flex; gap:8px; margin-bottom:10px; align-items:stretch;}
 .dish-meta-row.meta-row-2{margin-bottom:20px;}
+.meta-section-title{font-size:12px; color:var(--muted); font-style:italic; margin:-4px 0 8px;}
 .meta-chip{
   background:var(--card2); border:1px solid var(--border); border-radius:12px;
-  display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--muted);
-  padding:0 8px; text-align:center; min-width:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:10px 6px; text-align:center; min-width:0; min-height:56px;
 }
-.meta-desc{flex:1.3;}
-.meta-desc span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;}
-.meta-desc.filled{color:var(--text);}
-.meta-kcal, .meta-duration{flex:1; flex-direction:column; padding:6px 4px;}
-.meta-kcal input, .meta-duration input{width:100%; border:none; background:none; text-align:center; font-size:14px; color:var(--text); padding:4px 0 0;}
+.meta-value{font-size:15px; font-weight:600; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;}
+.meta-desc{flex:1.6;}
+.meta-desc.filled .meta-value{color:var(--text);}
+.meta-kcal, .meta-duration{flex:1;}
+.meta-kcal input.meta-value, .meta-duration input.meta-value{
+  width:100%; border:none; background:none; text-align:center; padding:0; color:var(--text);
+}
 .meta-kcal input:focus, .meta-duration input:focus{outline:none;}
-.meta-kcal-unit{font-size:9px; color:var(--muted); letter-spacing:.02em;}
-.dish-meta-row .pill-group{flex:1.7; gap:4px;}
+.meta-kcal-unit{font-size:9px; color:var(--muted); letter-spacing:.02em; margin-top:3px;}
+.dish-meta-row .pill-group{gap:8px;}
 .dish-meta-row .pill-btn{
-  padding:4px 2px; font-size:10px; line-height:1.15; border-radius:10px;
+  padding:12px 4px; font-size:13px; font-weight:700; line-height:1.15; border-radius:12px;
   white-space:normal; word-break:normal; text-align:center;
-  display:flex; align-items:center; justify-content:center; min-height:38px;
+  display:flex; align-items:center; justify-content:center; min-height:44px;
 }
 .desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
 .ingredients-hint{font-size:12px; color:var(--muted); margin:-2px 0 10px; line-height:1.4;}
@@ -317,6 +357,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .chip-status{font-size:11px; color:var(--muted); background:var(--card2); padding:5px 10px; border-radius:999px; flex-shrink:0;}
 .shared-dish-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:9px 4px; border-bottom:1px solid var(--border);}
 .shared-dish-row:last-child{border-bottom:none;}
+.shared-dish-row.busy{opacity:.5; pointer-events:none;}
 .shared-dish-thumb{width:44px; height:44px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--muted);}
 .shared-dish-info{flex:1; min-width:0;}
 .shared-dish-info .name{font-weight:600; font-size:13px; display:block;}
@@ -396,7 +437,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   <main>
     <!-- PLATOS -->
     <section id="section-platos" class="app-section">
-      <div class="section-title">Platos y Recetas</div>
+      <div class="section-title-row">
+        <div class="section-title">Platos y Recetas</div>
+        <div class="section-actions">
+          <button id="new-folder-btn" class="btn-mini btn-mini-ghost" type="button">+ Carpeta</button>
+          <button id="edit-gallery-btn" class="btn-mini btn-mini-ghost" type="button">Editar</button>
+        </div>
+      </div>
+      <button id="gallery-delete-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Eliminar (0)</button>
       <div class="gallery" id="gallery"></div>
       <button class="fab" id="add-dish-btn" aria-label="Nuevo plato">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -560,6 +608,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 <!-- ================= DISH MODAL ================= -->
 <div id="dish-modal" class="modal hidden">
   <div class="modal-sheet">
+    <button type="button" class="sheet-close-btn" id="dish-close-x" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
     <div class="dish-photo-wrap" id="dish-photo-wrap">
       <img id="dish-photo-preview" class="hidden" alt="">
       <div class="dish-photo-placeholder">
@@ -572,24 +623,25 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     <input type="text" id="dish-name" class="dish-name-input"
       autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
 
-    <label class="desc-label">Descripción</label>
     <div class="dish-meta-row">
-      <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc">
-        <span id="dish-desc-preview">Descripción</span>
-      </button>
       <div class="pill-group" id="quality-group">
         <button type="button" class="pill-btn" data-q="bueno">Healthy</button>
         <button type="button" class="pill-btn" data-q="normal">Normal</button>
         <button type="button" class="pill-btn" data-q="malo">Cheat meal</button>
       </div>
     </div>
+    <div class="meta-section-title">Descripción, calorías por plato y tiempo de elaboración</div>
     <div class="dish-meta-row meta-row-2">
+      <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc">
+        <span id="dish-desc-preview" class="meta-value">Descripción</span>
+        <span class="meta-kcal-unit">descripción</span>
+      </button>
       <div class="meta-chip meta-kcal">
-        <input type="number" id="dish-calories" autocomplete="off">
+        <input type="number" id="dish-calories" class="meta-value" autocomplete="off">
         <span class="meta-kcal-unit">kcal</span>
       </div>
       <div class="meta-chip meta-duration">
-        <input type="number" id="dish-duration" autocomplete="off">
+        <input type="number" id="dish-duration" class="meta-value" autocomplete="off">
         <span class="meta-kcal-unit">min. elaboración</span>
       </div>
     </div>
@@ -630,6 +682,62 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   </div>
 </div>
 
+<!-- ================= CARPETA (POP-UP) ================= -->
+<div id="folder-modal" class="modal hidden">
+  <div class="modal-sheet folder-sheet">
+    <button type="button" class="sheet-close-btn" id="folder-close-x" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="section-title-row">
+      <div class="section-title" id="folder-modal-title">Carpeta</div>
+      <div class="section-actions">
+        <button id="folder-edit-btn" class="btn-mini btn-mini-ghost" type="button">Editar</button>
+      </div>
+    </div>
+    <button id="folder-remove-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Sacar de la carpeta (0)</button>
+    <div class="gallery" id="folder-gallery"></div>
+  </div>
+</div>
+
+<!-- ================= VISTA PREVIA DE RECETA COMPARTIDA ================= -->
+<div id="shared-preview-modal" class="modal hidden">
+  <div class="modal-sheet">
+    <button type="button" class="sheet-close-btn" id="shared-preview-close" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="dish-photo-wrap hidden" id="shared-preview-photo-wrap">
+      <img id="shared-preview-photo" alt="">
+    </div>
+    <div class="dish-name-input" id="shared-preview-name" style="border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:12px;"></div>
+    <div class="dish-meta-row">
+      <span class="quality-badge hidden" id="shared-preview-quality"></span>
+      <span class="from" id="shared-preview-from" style="color:var(--muted); font-size:13px;"></span>
+    </div>
+    <div class="dish-meta-row meta-row-2">
+      <div class="meta-chip meta-kcal">
+        <span class="meta-value" id="shared-preview-kcal">–</span>
+        <span class="meta-kcal-unit">kcal</span>
+      </div>
+      <div class="meta-chip meta-duration">
+        <span class="meta-value" id="shared-preview-duration">–</span>
+        <span class="meta-kcal-unit">min. elaboración</span>
+      </div>
+    </div>
+    <div class="field" id="shared-preview-desc-field">
+      <label>Descripción</label>
+      <p id="shared-preview-desc" style="margin:0; font-size:14px; color:var(--text); line-height:1.4;"></p>
+    </div>
+    <div class="field">
+      <label>Ingredientes</label>
+      <ul id="shared-preview-ingredients" style="margin:0; padding-left:18px; font-size:14px; line-height:1.7; color:var(--text);"></ul>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="shared-preview-reject-btn" style="flex:1; justify-content:center;">Descartar</button>
+      <button class="btn-primary" id="shared-preview-add-btn" style="flex:1;">Añadir a mis recetas</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ===================== CONFIG ===================== */
@@ -642,6 +750,9 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 /* ===================== STATE ===================== */
 let currentUser = null;       // { id, username }
 let dishes = [];
+let folders = [];
+let galleryEditMode = false;
+let selectedDishIds = new Set();
 let editingDishId = null;
 let dishPhotoFile = null;
 let selectedQuality = null;
@@ -764,7 +875,7 @@ async function enterApp(profile){
   applyFitnessVisibility();
   setSection('platos');
   openDrawer();
-  await Promise.all([loadDishes(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes()]);
+  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes()]);
   renderWeekBoard();
   loadWeeklyLogs();
 }
@@ -864,6 +975,9 @@ function attachDrawerSwipe(){
     const isOpen = drawer.classList.contains('open');
     if(!isOpen){
       if(e.target.closest('.week-board')) return;
+      // en modo editar mosaico/carpeta, el arrastre horizontal es para archivar
+      // platos en carpetas, no para abrir el menú lateral
+      if((galleryEditMode || folderEditMode) && e.target.closest('#gallery, #folder-gallery')) return;
       mode='open';
     } else {
       if(!drawer.contains(e.target) && e.target!==overlay) return;
@@ -895,46 +1009,258 @@ $all('.subtabs .subtab').forEach(btn=>{
   };
 });
 
-/* ===================== PLATOS: GALERÍA ===================== */
+/* ===================== PLATOS: GALERÍA (con carpetas) ===================== */
 async function loadDishes(){
   const { data, error } = await sb.from('dishes').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false});
   if(error){ console.error(error); return; }
   dishes = data||[];
   renderGallery();
+  if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
 }
-function renderGallery(){
-  const box = $('#gallery');
-  if(dishes.length===0){ box.innerHTML = '<div class="empty-hint">Aún no hay platos. Pulsa "+" para añadir el primero.</div>'; return; }
-  box.innerHTML = dishes.map(d=>`
-    <div class="dish-card" data-id="${d.id}">
+async function loadFolders(){
+  const { data, error } = await sb.from('dish_folders').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:true});
+  if(error){ console.error(error); return; }
+  folders = data||[];
+  renderGallery();
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+function dishCardHtml(d){
+  return `
+    <div class="dish-card" data-id="${d.id}" data-type="dish">
       ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
       <div class="dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
         ${d.quality ? `<span class="quality-badge quality-${d.quality}">${QUALITY_LABELS[d.quality]||d.quality}</span>` : ''}
       </div>
-    </div>
-  `).join('');
-  $all('.dish-card').forEach(card=>{
-    card.onclick = ()=> openDishModal(dishes.find(d=>d.id===card.dataset.id));
+    </div>`;
+}
+function folderCardHtml(f){
+  const inside = dishes.filter(d=>d.folder_id===f.id);
+  const cells = [0,1,2,3].map(i=>{
+    const d = inside[i];
+    if(!d) return `<div class="folder-mini-thumb empty"></div>`;
+    return d.image_url
+      ? `<div class="folder-mini-thumb"><img src="${d.image_url}" alt=""></div>`
+      : `<div class="folder-mini-thumb dish-thumb-empty">${ICON_PLATE}</div>`;
+  }).join('');
+  return `
+    <div class="folder-card" data-id="${f.id}" data-type="folder">
+      <div class="folder-preview-grid">${cells}</div>
+      <div class="folder-name">${escapeHtml(f.name)}</div>
+    </div>`;
+}
+
+function renderGallery(){
+  const box = $('#gallery');
+  const unfiled = dishes.filter(d=>!d.folder_id);
+  if(!folders.length && !unfiled.length){
+    box.innerHTML = '<div class="empty-hint">Aún no hay platos. Pulsa "+" para añadir el primero.</div>';
+    return;
+  }
+  box.innerHTML = folders.map(f=>folderCardHtml(f)).join('') + unfiled.map(d=>dishCardHtml(d)).join('');
+  attachGalleryCardHandlers();
+  applyEditModeVisuals();
+}
+function attachGalleryCardHandlers(){
+  $all('#gallery .dish-card').forEach(card=>{
+    card.onclick = ()=>{
+      if(galleryEditMode){ toggleDishSelection(card.dataset.id); return; }
+      openDishModal(dishes.find(d=>d.id===card.dataset.id));
+    };
+    attachCardDrag(card);
+  });
+  $all('#gallery .folder-card').forEach(card=>{
+    card.onclick = ()=>{
+      if(galleryEditMode) return;
+      openFolderModal(card.dataset.id);
+    };
   });
 }
-function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+/* --- Modo editar: los platos vibran, se pueden seleccionar (varios) y
+   arrastrar dentro de una carpeta; tocar fuera de una tarjeta cierra el modo --- */
+function applyEditModeVisuals(){
+  $all('#gallery .dish-card, #gallery .folder-card').forEach(card=>{
+    card.classList.toggle('jiggle', galleryEditMode);
+    card.style.touchAction = galleryEditMode ? 'none' : 'auto';
+  });
+  $all('#gallery .dish-card').forEach(card=>{
+    card.classList.toggle('selected', selectedDishIds.has(card.dataset.id));
+  });
+  $('#edit-gallery-btn').textContent = galleryEditMode ? 'Listo' : 'Editar';
+  $('#gallery-delete-btn').classList.toggle('hidden', !(galleryEditMode && selectedDishIds.size>0));
+  $('#gallery-delete-btn').textContent = `Eliminar (${selectedDishIds.size})`;
+}
+function toggleDishSelection(id){
+  if(selectedDishIds.has(id)) selectedDishIds.delete(id); else selectedDishIds.add(id);
+  applyEditModeVisuals();
+}
+function exitGalleryEditMode(){
+  galleryEditMode = false;
+  selectedDishIds.clear();
+  applyEditModeVisuals();
+}
+$('#edit-gallery-btn').onclick = ()=>{
+  galleryEditMode = !galleryEditMode;
+  if(!galleryEditMode) selectedDishIds.clear();
+  applyEditModeVisuals();
+};
+$('#section-platos').addEventListener('click', e=>{
+  if(!galleryEditMode) return;
+  if(e.target.closest('.dish-card, .folder-card, .section-actions, #gallery-delete-btn, .fab')) return;
+  exitGalleryEditMode();
+});
+$('#gallery-delete-btn').onclick = async ()=>{
+  if(!selectedDishIds.size) return;
+  if(!confirm(`¿Eliminar ${selectedDishIds.size} plato(s)? Esta acción no se puede deshacer.`)) return;
+  const ids = [...selectedDishIds];
+  const { error } = await sb.from('dishes').delete().in('id', ids);
+  if(error){ alert(error.message); return; }
+  exitGalleryEditMode();
+  await loadDishes();
+};
+$('#new-folder-btn').onclick = async ()=>{
+  const name = prompt('Nombre de la carpeta:');
+  if(name===null) return;
+  const trimmed = name.trim();
+  if(!trimmed) return;
+  const { data, error } = await sb.from('dish_folders').insert({ id: uuid(), user_id: currentUser.id, name: trimmed }).select().single();
+  if(error){ alert(error.message); return; }
+  folders.push(data);
+  renderGallery();
+};
+
+/* --- Arrastrar una tarjeta (o la selección entera) encima de una carpeta para archivarla --- */
+function attachCardDrag(card){
+  let startX=0, startY=0, dragging=false;
+  card.addEventListener('pointerdown', e=>{
+    if(!galleryEditMode) return;
+    startX = e.clientX; startY = e.clientY; dragging = false;
+    card.setPointerCapture(e.pointerId);
+  });
+  card.addEventListener('pointermove', e=>{
+    if(!galleryEditMode || !card.hasPointerCapture(e.pointerId)) return;
+    const dx = e.clientX-startX, dy = e.clientY-startY;
+    if(!dragging){
+      if(Math.hypot(dx,dy) < 10) return;
+      dragging = true;
+      card.classList.add('dragging');
+    }
+    card.style.transform = `translate(${dx}px, ${dy}px) scale(1.06)`;
+    card.style.pointerEvents = 'none';
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    card.style.pointerEvents = '';
+    $all('#gallery .folder-card.drop-hover').forEach(f=>f.classList.remove('drop-hover'));
+    const folderUnder = under && under.closest('.folder-card');
+    if(folderUnder) folderUnder.classList.add('drop-hover');
+  });
+  async function endDrag(e){
+    if(!dragging){ dragging = false; return; }
+    dragging = false;
+    card.classList.remove('dragging');
+    card.style.pointerEvents = '';
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    card.style.transform = '';
+    $all('#gallery .folder-card.drop-hover').forEach(f=>f.classList.remove('drop-hover'));
+    const folderUnder = under && under.closest('.folder-card');
+    if(folderUnder){
+      const folderId = folderUnder.dataset.id;
+      const ids = (selectedDishIds.has(card.dataset.id) && selectedDishIds.size>1) ? [...selectedDishIds] : [card.dataset.id];
+      await moveDishesToFolder(ids, folderId);
+    }
+  }
+  card.addEventListener('pointerup', endDrag);
+  card.addEventListener('pointercancel', ()=>{ dragging=false; card.classList.remove('dragging'); card.style.transform=''; card.style.pointerEvents=''; });
+}
+async function moveDishesToFolder(dishIds, folderId){
+  const { error } = await sb.from('dishes').update({ folder_id: folderId }).in('id', dishIds);
+  if(error){ alert(error.message); return; }
+  selectedDishIds.clear();
+  await loadDishes();
+}
+
+/* --- Pop-up de carpeta: ver los platos de dentro, y "editar" para sacarlos --- */
+let currentFolderId = null;
+let folderEditMode = false;
+let folderSelectedDishIds = new Set();
+function openFolderModal(folderId){
+  currentFolderId = folderId;
+  folderEditMode = false;
+  folderSelectedDishIds.clear();
+  const folder = folders.find(f=>f.id===folderId);
+  $('#folder-modal-title').textContent = folder ? folder.name : 'Carpeta';
+  renderFolderGallery();
+  lockBodyScroll();
+  $('#folder-modal').classList.remove('hidden');
+}
+function closeFolderModal(){
+  $('#folder-modal').classList.add('hidden');
+  unlockBodyScroll();
+  currentFolderId = null;
+}
+function renderFolderGallery(){
+  if(!currentFolderId) return;
+  const box = $('#folder-gallery');
+  const inside = dishes.filter(d=>d.folder_id===currentFolderId);
+  box.innerHTML = inside.length ? inside.map(d=>dishCardHtml(d)).join('')
+    : '<div class="empty-hint">Carpeta vacía. Ciérrala y arrastra platos aquí desde el mosaico.</div>';
+  $all('#folder-gallery .dish-card').forEach(card=>{
+    card.classList.toggle('jiggle', folderEditMode);
+    card.classList.toggle('selected', folderSelectedDishIds.has(card.dataset.id));
+    card.onclick = ()=>{
+      if(folderEditMode){
+        const id = card.dataset.id;
+        if(folderSelectedDishIds.has(id)) folderSelectedDishIds.delete(id); else folderSelectedDishIds.add(id);
+        renderFolderGallery();
+        return;
+      }
+      openDishModal(dishes.find(d=>d.id===card.dataset.id));
+    };
+  });
+  $('#folder-edit-btn').textContent = folderEditMode ? 'Listo' : 'Editar';
+  $('#folder-remove-btn').classList.toggle('hidden', !(folderEditMode && folderSelectedDishIds.size>0));
+  $('#folder-remove-btn').textContent = `Sacar de la carpeta (${folderSelectedDishIds.size})`;
+}
+$('#folder-close-x').onclick = closeFolderModal;
+$('#folder-modal').addEventListener('click', e=>{ if(e.target.id==='folder-modal') closeFolderModal(); });
+$('#folder-edit-btn').onclick = ()=>{
+  folderEditMode = !folderEditMode;
+  if(!folderEditMode) folderSelectedDishIds.clear();
+  renderFolderGallery();
+};
+$('#folder-remove-btn').onclick = async ()=>{
+  if(!folderSelectedDishIds.size) return;
+  const ids = [...folderSelectedDishIds];
+  const { error } = await sb.from('dishes').update({ folder_id: null }).in('id', ids);
+  if(error){ alert(error.message); return; }
+  folderSelectedDishIds.clear();
+  await loadDishes();
+  renderFolderGallery();
+};
 
 /* ===================== PLATOS: MODAL ===================== */
 $('#add-dish-btn').onclick = ()=> openDishModal(null);
 $('#dish-cancel-btn').onclick = ()=> closeDishModal();
+$('#dish-close-x').onclick = ()=> closeDishModal();
 $('#dish-modal').addEventListener('click', e=>{ if(e.target.id==='dish-modal') closeDishModal(); });
 
 let bodyScrollY = 0;
+let scrollLockDepth = 0; // permite abrir un modal encima de otro (p.ej. un plato dentro de una carpeta) sin perder la posición de scroll original
 function lockBodyScroll(){
-  bodyScrollY = window.scrollY;
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${bodyScrollY}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
-  document.body.style.width = '100%';
+  if(scrollLockDepth === 0){
+    bodyScrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${bodyScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+  }
+  scrollLockDepth++;
 }
 function unlockBodyScroll(){
+  scrollLockDepth = Math.max(0, scrollLockDepth-1);
+  if(scrollLockDepth > 0) return;
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.left = '';
@@ -1346,7 +1672,7 @@ function renderSharedDishes(){
   if(!sharedDishesReceived.length){ box.innerHTML = '<div class="empty-hint">Nadie te ha compartido recetas todavía.</div>'; return; }
   box.innerHTML = sharedDishesReceived.map(s=>{
     const d = s.dish_snapshot || {};
-    return `<div class="shared-dish-row">
+    return `<div class="shared-dish-row" data-id="${s.id}">
       ${d.image_url ? `<img class="shared-dish-thumb" src="${d.image_url}" alt="">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
       <div class="shared-dish-info">
         <span class="name">${escapeHtml(d.name||'Receta')}</span>
@@ -1356,33 +1682,92 @@ function renderSharedDishes(){
       <button class="btn-mini btn-mini-ghost" data-reject-shared="${s.id}">Descartar</button>
     </div>`;
   }).join('');
-  $all('[data-add-shared]').forEach(b=> b.onclick = ()=> addSharedDish(b.dataset.addShared));
-  $all('[data-reject-shared]').forEach(b=> b.onclick = ()=> rejectSharedDish(b.dataset.rejectShared));
+  $all('.shared-dish-row').forEach(row=>{
+    row.onclick = e=>{ if(e.target.closest('button')) return; openSharedPreview(row.dataset.id); };
+  });
+  $all('[data-add-shared]').forEach(b=> b.onclick = e=>{ e.stopPropagation(); addSharedDish(b.dataset.addShared); });
+  $all('[data-reject-shared]').forEach(b=> b.onclick = e=>{ e.stopPropagation(); rejectSharedDish(b.dataset.rejectShared); });
+}
+/* Evita altas/rechazos duplicados si el usuario pulsa varias veces mientras
+   la petición está en curso (p.ej. con lag de red) */
+const sharedActionInFlight = new Set();
+function setSharedRowBusy(sharedId, busy){
+  const row = document.querySelector(`.shared-dish-row[data-id="${sharedId}"]`);
+  if(row) row.classList.toggle('busy', busy);
 }
 async function addSharedDish(sharedId){
-  const shared = sharedDishesReceived.find(s=>s.id===sharedId);
-  if(!shared) return;
-  const d = shared.dish_snapshot || {};
-  const { error } = await sb.from('dishes').insert({
-    id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
-    image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
-    calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null
-  });
-  if(error){ alert(error.message); return; }
-  const { error: delErr } = await sb.from('shared_dishes').delete().eq('id', sharedId);
-  if(delErr) console.error(delErr);
-  sharedDishesReceived = sharedDishesReceived.filter(s=>s.id!==sharedId);
-  renderSharedDishes();
-  updateNotifBadges();
-  await loadDishes();
+  if(sharedActionInFlight.has(sharedId)) return;
+  sharedActionInFlight.add(sharedId);
+  setSharedRowBusy(sharedId, true);
+  try{
+    const shared = sharedDishesReceived.find(s=>s.id===sharedId);
+    if(!shared) return;
+    const d = shared.dish_snapshot || {};
+    const { error } = await sb.from('dishes').insert({
+      id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
+      image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
+      calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null
+    });
+    if(error){ alert(error.message); return; }
+    const { error: delErr } = await sb.from('shared_dishes').delete().eq('id', sharedId);
+    if(delErr) console.error(delErr);
+    sharedDishesReceived = sharedDishesReceived.filter(s=>s.id!==sharedId);
+    renderSharedDishes();
+    updateNotifBadges();
+    await loadDishes();
+  } finally {
+    sharedActionInFlight.delete(sharedId);
+  }
 }
 async function rejectSharedDish(sharedId){
-  const { error } = await sb.from('shared_dishes').delete().eq('id', sharedId);
-  if(error){ alert(error.message); return; }
-  sharedDishesReceived = sharedDishesReceived.filter(s=>s.id!==sharedId);
-  renderSharedDishes();
-  updateNotifBadges();
+  if(sharedActionInFlight.has(sharedId)) return;
+  sharedActionInFlight.add(sharedId);
+  setSharedRowBusy(sharedId, true);
+  try{
+    const { error } = await sb.from('shared_dishes').delete().eq('id', sharedId);
+    if(error){ alert(error.message); return; }
+    sharedDishesReceived = sharedDishesReceived.filter(s=>s.id!==sharedId);
+    renderSharedDishes();
+    updateNotifBadges();
+  } finally {
+    sharedActionInFlight.delete(sharedId);
+  }
 }
+
+/* --- Pop-up de vista previa de una receta compartida (desde Social) --- */
+let previewingSharedId = null;
+function openSharedPreview(sharedId){
+  const shared = sharedDishesReceived.find(s=>s.id===sharedId);
+  if(!shared) return;
+  previewingSharedId = sharedId;
+  const d = shared.dish_snapshot || {};
+  const wrap = $('#shared-preview-photo-wrap'), img = $('#shared-preview-photo');
+  if(d.image_url){ img.src = d.image_url; wrap.classList.remove('hidden'); } else { wrap.classList.add('hidden'); img.src=''; }
+  $('#shared-preview-name').textContent = d.name || 'Receta';
+  $('#shared-preview-from').textContent = 'de @' + ((shared.from&&shared.from.username)||'?');
+  const qBadge = $('#shared-preview-quality');
+  if(d.quality){ qBadge.textContent = QUALITY_LABELS[d.quality]||d.quality; qBadge.className = 'quality-badge quality-'+d.quality; qBadge.classList.remove('hidden'); }
+  else { qBadge.classList.add('hidden'); }
+  $('#shared-preview-kcal').textContent = d.calories ? d.calories : '–';
+  $('#shared-preview-duration').textContent = d.duration_min ? d.duration_min : '–';
+  $('#shared-preview-desc-field').classList.toggle('hidden', !d.description);
+  $('#shared-preview-desc').textContent = d.description || '';
+  const ingList = d.ingredients||[];
+  $('#shared-preview-ingredients').innerHTML = ingList.length
+    ? ingList.map(i=>`<li>${escapeHtml(i)}</li>`).join('')
+    : '<li class="empty-hint">Sin ingredientes.</li>';
+  lockBodyScroll();
+  $('#shared-preview-modal').classList.remove('hidden');
+}
+function closeSharedPreview(){
+  $('#shared-preview-modal').classList.add('hidden');
+  unlockBodyScroll();
+  previewingSharedId = null;
+}
+$('#shared-preview-close').onclick = closeSharedPreview;
+$('#shared-preview-modal').addEventListener('click', e=>{ if(e.target.id==='shared-preview-modal') closeSharedPreview(); });
+$('#shared-preview-reject-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await rejectSharedDish(id); };
+$('#shared-preview-add-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await addSharedDish(id); };
 
 /* --- Compartir un plato con un amigo --- */
 $('#dish-share-btn').onclick = ()=>{
