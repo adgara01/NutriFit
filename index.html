@@ -279,11 +279,16 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   letter-spacing:.2px;
 }
 .dish-thumb-wrap{position:relative;}
+.dish-title-row{display:flex; align-items:center; gap:8px; margin-bottom:16px;}
 .dish-name-input{
-  width:100%; border:none; background:none; font-size:21px; font-weight:700; color:var(--text);
-  padding:4px 2px 12px; border-bottom:1px solid var(--border); margin-bottom:16px;
+  width:100%; flex:1; min-width:0; border:none; background:none; font-size:21px; font-weight:700; color:var(--text);
+  padding:4px 2px 12px; border-bottom:1px solid var(--border); margin-bottom:0;
 }
 .dish-name-input:focus{outline:none; border-color:var(--accent);}
+.macros-trigger{
+  flex-shrink:0; width:34px; height:34px; border-radius:10px; background:var(--card2);
+  border:1px solid var(--border); color:var(--muted); display:flex; align-items:center; justify-content:center;
+}
 .dish-meta-row{display:flex; gap:8px; margin-bottom:10px; align-items:stretch;}
 .dish-meta-row.meta-row-2{margin-bottom:20px;}
 .meta-section-title{font-size:12px; color:var(--muted); font-style:italic; margin:-4px 0 8px;}
@@ -375,15 +380,26 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .summary-item .label{font-size:11px; color:var(--muted);}
 .summary-item .value{font-size:18px; font-weight:700;}
 
-.week-board{display:flex; gap:10px; overflow-x:auto; padding-bottom:8px;}
-.day-col{min-width:190px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:12px; flex:0 0 auto;}
+/* Cada día es ahora una franja horizontal (nombre + las 4 comidas en fila) y
+   las franjas se apilan verticalmente (scroll hacia abajo) — antes era al
+   revés: tarjetas verticales en fila con scroll lateral. Así se aprovecha el
+   alto de pantalla del móvil en vez de tener que arrastrar a los lados. */
+.week-board{display:flex; flex-direction:column; gap:12px;}
+.day-col{width:100%; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:12px;}
 .day-col.training{border-color:var(--accent2); box-shadow:0 0 0 1px var(--accent2) inset;}
 .day-col .day-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
 .day-col .day-name{font-weight:700; font-size:14px;}
 .day-col .day-badge{font-size:9px; font-weight:700; color:#0a6b47; background:rgba(34,197,94,.14); padding:2px 8px; border-radius:999px; letter-spacing:.03em;}
-.meal-row{margin-bottom:8px;}
-.meal-row label{font-size:11px; color:var(--muted); display:flex; justify-content:space-between;}
-.meal-row input{width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--card2); font-size:14px; margin-top:3px;}
+.day-meals-row{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px;}
+.meal-row{min-width:0;}
+.meal-row label{font-size:10px; color:var(--muted); display:flex; flex-direction:column; gap:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.meal-row input{width:100%; padding:7px 3px; border-radius:8px; border:1px solid var(--border); background:var(--card2); font-size:13px; margin-top:3px; text-align:center;}
+/* Sugerencias de plato por comida (Ajustes → Fitness → "Sugerir platos") */
+.suggest-list{margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:5px;}
+.suggest-row{display:flex; align-items:center; gap:8px;}
+.suggest-text{flex:1; min-width:0; text-align:left; background:none; border:none; padding:0; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.suggest-text i{font-style:italic; color:var(--text);}
+.suggest-refresh{flex-shrink:0; background:none; border:none; font-size:15px; line-height:1; padding:2px 4px; color:var(--muted);}
 .day-total{margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-size:13px; display:flex; justify-content:space-between; font-weight:700;}
 .drinks-box{margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);}
 .drinks-box .label{font-size:11px; color:var(--muted); margin-bottom:6px;}
@@ -421,6 +437,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .switch::after{content:''; position:absolute; top:2px; left:2px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .18s ease;}
 .switch.on{background:var(--accent); border-color:var(--accent);}
 .switch.on::after{transform:translateX(18px);}
+.settings-subrow{margin-top:14px; padding-top:14px; border-top:1px solid var(--border);}
+.settings-hint{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.4;}
+.switch-disabled{opacity:.4; pointer-events:none;}
 
 /* ---------- SOCIAL ---------- */
 .user-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border);}
@@ -675,6 +694,20 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
           <span style="font-weight:600;">Mostrar apartado Fitness</span>
           <button type="button" id="toggle-fitness-btn" class="switch" aria-label="Mostrar Fitness"></button>
         </div>
+        <!-- Estas dos opciones solo tienen sentido con Fitness activo, así que
+             viven en la misma tarjeta, debajo, y se ocultan si Fitness está apagado. -->
+        <div id="fitness-extra-options" class="hidden">
+          <div class="settings-row settings-subrow">
+            <span style="font-weight:600;">Sugerir platos para la semana</span>
+            <button type="button" id="toggle-suggest-btn" class="switch" aria-label="Sugerir platos"></button>
+          </div>
+          <div class="settings-hint" id="suggest-meals-hint"></div>
+
+          <div class="settings-row settings-subrow">
+            <span style="font-weight:600;">Activar macros en los platos</span>
+            <button type="button" id="toggle-macros-btn" class="switch" aria-label="Activar macros"></button>
+          </div>
+        </div>
       </div>
 
       <button id="settings-logout-btn" class="btn-secondary" style="width:100%; justify-content:center;">Cerrar sesión</button>
@@ -700,8 +733,13 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     </div>
     <input type="file" id="dish-photo-input" accept="image/*" class="visually-hidden">
 
-    <input type="text" id="dish-name" class="dish-name-input"
-      autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+    <div class="dish-title-row">
+      <input type="text" id="dish-name" class="dish-name-input"
+        autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+      <button type="button" id="dish-macros-btn" class="macros-trigger hidden" aria-label="Macros del plato">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
 
     <div class="meta-section-title">Descripción, calorías por plato y tiempo de elaboración</div>
     <div class="dish-meta-grid">
@@ -756,6 +794,17 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   <div class="desc-modal-card">
     <div style="font-weight:700; margin-bottom:12px;">Compartir con...</div>
     <div id="share-friends-list"></div>
+  </div>
+</div>
+
+<!-- ================= MACROS DEL PLATO (POP-UP) ================= -->
+<div id="macros-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card">
+    <div style="font-weight:700; margin-bottom:12px;">Macros del plato</div>
+    <div class="field"><label>Proteínas (g)</label><input type="number" id="macro-protein" autocomplete="off"></div>
+    <div class="field"><label>Hidratos (g)</label><input type="number" id="macro-carbs" autocomplete="off"></div>
+    <div class="field"><label>Grasas (g)</label><input type="number" id="macro-fat" autocomplete="off"></div>
+    <div class="field" style="margin-bottom:0;"><label>Fibra (g)</label><input type="number" id="macro-fiber" autocomplete="off"></div>
   </div>
 </div>
 
@@ -950,7 +999,9 @@ async function enterApp(profile){
   currentUser = {
     id: profile.id, username: profile.username,
     avatar_url: profile.avatar_url || null,
-    show_fitness: profile.show_fitness !== false
+    show_fitness: profile.show_fitness !== false,
+    show_macros: profile.show_macros === true,
+    suggest_meals: profile.suggest_meals === true
   };
   $('#drawer-username').textContent = '@'+profile.username;
   $('#login-view').classList.add('hidden');
@@ -1081,6 +1132,38 @@ function applyFitnessVisibility(){
   const link = document.querySelector('.drawer-link[data-section="fitness"]');
   if(link) link.classList.toggle('hidden', !currentUser.show_fitness);
   if(!currentUser.show_fitness && $('#section-fitness').classList.contains('active')){ setSection('platos'); }
+  // "Sugerir platos"/"Activar macros" solo tienen sentido con Fitness activo,
+  // así que su tarjeta se oculta con él. Esto no depende de "dishes", así que
+  // es seguro hacerlo aquí (a diferencia del gating de abajo — ver más abajo).
+  $('#fitness-extra-options').classList.toggle('hidden', !currentUser.show_fitness);
+  $('#toggle-macros-btn').classList.toggle('on', currentUser.show_macros);
+}
+// "Sugerir platos" necesita además un mínimo de repositorio para poder
+// proponer algo con sentido. OJO: esto SÍ depende de "dishes", así que no se
+// puede llamar en el arranque antes de que loadDishes() lo haya rellenado (lo
+// apagaría, y lo persistiría, aunque el usuario tenga de sobra) — se llama en
+// su lugar dentro de renderGallery() (cada vez que la lista de platos cambia,
+// dishes ya está actualizado en ese punto) y tras tocar los interruptores.
+function updateFitnessSettingsExtras(){
+  const eligible = dishes.filter(d=> typeof d.calories==='number' && d.calories>0).length;
+  const hint = $('#suggest-meals-hint');
+  const suggestBtn = $('#toggle-suggest-btn');
+  if(eligible > 10){
+    hint.textContent = '';
+    suggestBtn.classList.remove('switch-disabled');
+    suggestBtn.classList.toggle('on', currentUser.suggest_meals);
+  } else {
+    hint.textContent = 'No tienes suficiente repositorio con platos con calorías indicadas como para que la app te sugiera platos en el planning.';
+    suggestBtn.classList.add('switch-disabled');
+    suggestBtn.classList.remove('on');
+    // Si estaba activado y el repositorio se ha quedado corto (p.ej. borraste
+    // platos), se apaga solo — no tiene sentido dejarlo "encendido" sin poder
+    // funcionar, y así la próxima vez que suba de 10 vuelve a partir de cero.
+    if(currentUser.suggest_meals){
+      currentUser.suggest_meals = false;
+      sb.from('profiles').update({ suggest_meals: false }).eq('id', currentUser.id);
+    }
+  }
 }
 
 $all('.subtabs .subtab').forEach(btn=>{
@@ -1179,6 +1262,7 @@ function layoutMasonry(container, htmlItems){
   });
 }
 function renderGallery(){
+  updateFitnessSettingsExtras(); // la elegibilidad de "Sugerir platos" depende del nº de platos con calorías
   const box = $('#gallery');
   const unfiled = dishes.filter(d=>!d.folder_id);
   if(!folders.length && !unfiled.length){
@@ -1582,6 +1666,13 @@ function openDishModal(dish){
   updateDescPreview();
   $('#dish-calories').value = dish ? (dish.calories||'') : '';
   $('#dish-duration').value = dish ? (dish.duration_min||'') : '';
+  $('#macro-protein').value = dish ? (dish.protein_g||'') : '';
+  $('#macro-carbs').value = dish ? (dish.carbs_g||'') : '';
+  $('#macro-fat').value = dish ? (dish.fat_g||'') : '';
+  $('#macro-fiber').value = dish ? (dish.fiber_g||'') : '';
+  // El botón de macros solo aparece con el interruptor de Ajustes activo y en
+  // un plato que ya existe de verdad (igual que Compartir/Eliminar).
+  $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
   $('#ingredients-list').innerHTML = '';
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : ['']).forEach(v=> addIngredientRow(v));
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
@@ -1760,6 +1851,18 @@ $('#dish-desc').addEventListener('input', ()=>{ updateDescPreview(); scheduleDis
 $('#dish-calories').addEventListener('input', ()=> scheduleDishAutosave(false));
 $('#dish-duration').addEventListener('input', ()=> scheduleDishAutosave(false));
 
+// Macros: solo visible con el interruptor de Ajustes activo, y solo en un
+// plato que ya existe (igual que Compartir/Eliminar) — sin id fijo en la BD
+// todavía no hay dónde autoguardar los macros.
+function openMacrosModal(){ $('#macros-modal').classList.remove('hidden'); }
+function closeMacrosModal(){ $('#macros-modal').classList.add('hidden'); }
+$('#dish-macros-btn').onclick = openMacrosModal;
+$('#macros-modal').addEventListener('click', e=>{ if(e.target.id==='macros-modal') closeMacrosModal(); });
+$('#macro-protein').addEventListener('input', ()=> scheduleDishAutosave(false));
+$('#macro-carbs').addEventListener('input', ()=> scheduleDishAutosave(false));
+$('#macro-fat').addEventListener('input', ()=> scheduleDishAutosave(false));
+$('#macro-fiber').addEventListener('input', ()=> scheduleDishAutosave(false));
+
 $all('#quality-group .pill-btn').forEach(b=>{
   b.onclick = ()=>{
     selectedQuality = (selectedQuality===b.dataset.q) ? null : b.dataset.q;
@@ -1887,6 +1990,10 @@ function captureDishSnapshot(){
     quality: selectedQuality,
     photoFile: dishPhotoFile,
     prevImageUrl: dishCurrentImageUrl,
+    protein_g: $('#macro-protein').value ? Number($('#macro-protein').value) : null,
+    carbs_g: $('#macro-carbs').value ? Number($('#macro-carbs').value) : null,
+    fat_g: $('#macro-fat').value ? Number($('#macro-fat').value) : null,
+    fiber_g: $('#macro-fiber').value ? Number($('#macro-fiber').value) : null,
   };
 }
 function setAutosaveStatus(text, forThisDishId){
@@ -1952,7 +2059,8 @@ async function doSaveDishSnapshot(snap){
       id: snap.id, user_id: currentUser.id, name: snap.name,
       ingredients: snap.ingredients, description: snap.description,
       calories: snap.calories, duration_min: snap.duration_min,
-      quality: snap.quality, image_url
+      quality: snap.quality, image_url,
+      protein_g: snap.protein_g, carbs_g: snap.carbs_g, fat_g: snap.fat_g, fiber_g: snap.fiber_g
     };
     const { error } = await updateWithRetry(()=> sb.from('dishes').upsert(payload));
     if(error) throw error;
@@ -1996,6 +2104,7 @@ $('#dish-save-btn').onclick = async ()=>{
     btn.classList.add('hidden');
     $('#dish-delete-btn').classList.remove('hidden');
     $('#dish-share-btn').classList.remove('hidden');
+    $('#dish-macros-btn').classList.toggle('hidden', !currentUser.show_macros);
   } else {
     // no se pudo crear (p.ej. sin red): se deja reintentar con el mismo botón
     btn.disabled = false;
@@ -2070,6 +2179,27 @@ $('#toggle-fitness-btn').onclick = async ()=>{
   currentUser.show_fitness = newVal;
   renderDrawerProfile();
   applyFitnessVisibility();
+  updateFitnessSettingsExtras(); // dishes ya están cargados a estas alturas, a diferencia del arranque
+};
+$('#toggle-macros-btn').onclick = async ()=>{
+  const newVal = !currentUser.show_macros;
+  const { error } = await sb.from('profiles').update({ show_macros: newVal }).eq('id', currentUser.id);
+  if(error){ alert(error.message); return; }
+  currentUser.show_macros = newVal;
+  applyFitnessVisibility();
+  // Si la ficha de un plato está abierta ahora mismo, refleja el cambio al instante.
+  if(!$('#dish-modal').classList.contains('hidden')){
+    $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
+  }
+};
+$('#toggle-suggest-btn').onclick = async ()=>{
+  if($('#toggle-suggest-btn').classList.contains('switch-disabled')) return;
+  const newVal = !currentUser.suggest_meals;
+  const { error } = await sb.from('profiles').update({ suggest_meals: newVal }).eq('id', currentUser.id);
+  if(error){ alert(error.message); return; }
+  currentUser.suggest_meals = newVal;
+  updateFitnessSettingsExtras();
+  renderWeekBoard();
 };
 
 /* ===================== SOCIAL ===================== */
@@ -2218,7 +2348,8 @@ async function addSharedDish(sharedId){
       id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
       image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
       calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
-      shared_from_username: (shared.from && shared.from.username) || null
+      shared_from_username: (shared.from && shared.from.username) || null,
+      protein_g: d.protein_g||null, carbs_g: d.carbs_g||null, fat_g: d.fat_g||null, fiber_g: d.fiber_g||null
     });
     if(error){ alert(error.message); return; }
     const { error: delErr } = await sb.from('shared_dishes').delete().eq('id', sharedId);
@@ -2298,7 +2429,8 @@ async function shareDishWith(friendProfileId){
   const snapshot = {
     name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
     description: dish.description, calories: dish.calories, quality: dish.quality,
-    duration_min: dish.duration_min
+    duration_min: dish.duration_min,
+    protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g
   };
   const { error } = await sb.from('shared_dishes').insert({
     dish_id: dish.id, from_user_id: currentUser.id, to_user_id: friendProfileId, dish_snapshot: snapshot
@@ -2404,6 +2536,48 @@ async function loadWeekData(){
   weekDrinks = {}; weekDates.forEach(d=> weekDrinks[fmtDate(d)] = []);
   (drinks||[]).forEach(dr=> { (weekDrinks[dr.log_date] ||= []).push(dr); });
 }
+// ===== Sugerencias de comidas (Ajustes → Fitness → "Sugerir platos") =====
+// Estable por día+comida (no cambia solo con recargar la página) pero varía
+// de una comida a otra dentro de la semana, gracias a un pequeño hash del
+// texto "fecha|comida". El botón ↻ avanza al siguiente candidato más cercano
+// en calorías; ese avance se guarda solo en memoria (se pierde al recargar).
+let suggestionCycle = {};
+function hashStr(s){
+  let h = 0;
+  for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; }
+  return Math.abs(h);
+}
+function suggestibleDishes(){
+  return dishes.filter(d=> typeof d.calories==='number' && d.calories>0);
+}
+function suggestDishForMeal(dateKey, meal){
+  if(!fitnessProfile || !fitnessProfile.target_calories) return null;
+  const pool = suggestibleDishes();
+  if(pool.length <= 10) return null; // mismo umbral que el interruptor de Ajustes
+  const target = fitnessProfile.target_calories * MEAL_SPLIT[meal];
+  // Se prefieren platos Healthy/Normal; "Cheat meal" solo entra si no hay otra opción.
+  const preferred = pool.filter(d=> d.quality!=='malo');
+  const candidates = (preferred.length ? preferred : pool).slice()
+    .sort((a,b)=> Math.abs(a.calories-target) - Math.abs(b.calories-target));
+  if(!candidates.length) return null;
+  const key = `${dateKey}|${meal}`;
+  const baseOffset = hashStr(key) % candidates.length;
+  const cycle = suggestionCycle[key] || 0;
+  return candidates[(baseOffset + cycle) % candidates.length];
+}
+function suggestionsHtmlForDate(dateKey){
+  if(!currentUser.suggest_meals) return '';
+  const rows = MEALS.map(m=>{
+    const dish = suggestDishForMeal(dateKey, m);
+    if(!dish) return '';
+    return `<div class="suggest-row">
+      <button type="button" class="suggest-text" data-suggest-open="${dish.id}">${MEAL_LABELS[m]}: <i>${escapeHtml(dish.name)} (${dish.calories} kcal)</i></button>
+      <button type="button" class="suggest-refresh" data-suggest-refresh="${dateKey}|${m}" aria-label="Otra sugerencia">↻</button>
+    </div>`;
+  }).join('');
+  return rows ? `<div class="suggest-list">${rows}</div>` : '';
+}
+
 async function renderWeekBoard(){
   await loadWeekData();
   const trainingDays = fitnessProfile ? (fitnessProfile.training_days||[]) : [];
@@ -2434,7 +2608,8 @@ async function renderWeekBoard(){
         <span class="day-name">${DAY_NAMES[iso]} ${d.getDate()}/${d.getMonth()+1}</span>
         ${isTraining?'<span class="day-badge">ENTRENO</span>':''}
       </div>
-      ${mealsHtml}
+      <div class="day-meals-row">${mealsHtml}</div>
+      ${suggestionsHtmlForDate(key)}
       <div class="day-total"><span>Total</span><span data-total="${key}">- kcal</span></div>
       <div class="drinks-box">
         <div class="label">Bebidas</div>
@@ -2456,6 +2631,11 @@ async function renderWeekBoard(){
   $all('.meal-row input').forEach(inp=> inp.addEventListener('change', onMealInputChange));
   $all('[data-add-drink]').forEach(btn=> btn.onclick = ()=> addDrink(btn.dataset.addDrink));
   $all('[data-del-drink]').forEach(btn=> btn.onclick = ()=> deleteDrink(btn.dataset.delDrink));
+  $all('[data-suggest-open]').forEach(btn=> btn.onclick = ()=> openDishModal(dishes.find(dd=>dd.id===btn.dataset.suggestOpen)));
+  $all('[data-suggest-refresh]').forEach(btn=> btn.onclick = ()=>{
+    suggestionCycle[btn.dataset.suggestRefresh] = (suggestionCycle[btn.dataset.suggestRefresh]||0) + 1;
+    renderWeekBoard();
+  });
   weekDates.forEach(d=> updateDayTotal(fmtDate(d)));
 }
 
