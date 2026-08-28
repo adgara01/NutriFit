@@ -120,13 +120,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
 /* ---------- GALLERY ---------- */
 /* Estilo Google Keep: cada columna empaqueta su propia altura (una tarjeta
-   con nombre largo no estira a su vecina de al lado). CSS grid de filas
-   fijas obligaba a todas las tarjetas de una fila a la misma altura; con
-   columnas multi-column cada una fluye según su propio contenido. */
-.gallery{column-width:150px; column-gap:12px;}
-.dish-card, .folder-card{
-  break-inside:avoid; -webkit-column-break-inside:avoid; margin-bottom:12px;
-}
+   con nombre largo no estira a su vecina de al lado). El CSS multi-column
+   (column-width) se descartó porque rellena una columna entera antes de
+   pasar a la siguiente (orden de lectura raro); ahora es JS (layoutMasonry)
+   quien reparte las tarjetas en el orden real de los datos, colocando cada
+   una en la columna que en ese momento tenga menos altura — así se reparte
+   por filas y cada columna sigue empaquetando su propia altura. */
+.masonry-cols{display:flex; align-items:flex-start; gap:12px;}
+.masonry-col{flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:12px;}
 .dish-card{
   background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
   overflow:hidden; display:flex; flex-direction:column;
@@ -1086,6 +1087,40 @@ function folderCardHtml(f){
     </div>`;
 }
 
+/* Reparte una lista de tarjetas (HTML ya construido, en el orden real de los
+   datos) en columnas estilo Google Keep: cada tarjeta va a la columna que en
+   ese momento tenga menos altura acumulada, así se rellena por filas (no una
+   columna entera antes de la siguiente) y cada columna sigue empaquetando su
+   propia altura sin estirar a las vecinas. Las medidas de altura son fiables
+   al instante porque las miniaturas usan aspect-ratio en CSS (reservan su
+   hueco sin esperar a que la imagen cargue). */
+function layoutMasonry(container, htmlItems){
+  container.innerHTML = '';
+  if(!htmlItems.length) return;
+  const colWidth = 150, gap = 12;
+  const availWidth = container.clientWidth || container.getBoundingClientRect().width || 320;
+  const numCols = Math.max(1, Math.min(htmlItems.length, Math.floor((availWidth + gap) / (colWidth + gap))));
+  const wrap = document.createElement('div');
+  wrap.className = 'masonry-cols';
+  const cols = [];
+  for(let i=0;i<numCols;i++){
+    const col = document.createElement('div');
+    col.className = 'masonry-col';
+    wrap.appendChild(col);
+    cols.push({ el: col, height: 0 });
+  }
+  container.appendChild(wrap);
+  htmlItems.forEach(html=>{
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html.trim();
+    const node = tmp.firstElementChild;
+    if(!node) return;
+    let target = cols[0];
+    for(const c of cols) if(c.height < target.height) target = c;
+    target.el.appendChild(node);
+    target.height += node.offsetHeight + gap;
+  });
+}
 function renderGallery(){
   const box = $('#gallery');
   const unfiled = dishes.filter(d=>!d.folder_id);
@@ -1093,7 +1128,8 @@ function renderGallery(){
     box.innerHTML = '<div class="empty-hint">Aún no hay platos. Pulsa "+" para añadir el primero.</div>';
     return;
   }
-  box.innerHTML = folders.map(f=>folderCardHtml(f)).join('') + unfiled.map(d=>dishCardHtml(d)).join('');
+  const items = folders.map(f=>folderCardHtml(f)).concat(unfiled.map(d=>dishCardHtml(d)));
+  layoutMasonry(box, items);
   attachGalleryCardHandlers();
   applyEditModeVisuals();
 }
@@ -1226,6 +1262,17 @@ function attachCardDrag(card){
   card.addEventListener('pointerup', endDrag);
   card.addEventListener('pointercancel', ()=>{ dragging=false; card.classList.remove('dragging'); card.style.transition=''; card.style.transform=''; card.style.opacity=''; card.style.pointerEvents=''; });
 }
+/* Reintenta una escritura de Supabase una vez si falla (un corte de red de
+   un instante no debería deshacer un gesto que el usuario ya vio completarse
+   en pantalla) antes de darla por fallida de verdad. */
+async function updateWithRetry(fn){
+  let { error } = await fn();
+  if(error){
+    await new Promise(r=> setTimeout(r, 700));
+    ({ error } = await fn());
+  }
+  return { error };
+}
 async function moveDishesToFolder(dishIds, folderId){
   // Actualización optimista: se aplica ya mismo en memoria y en pantalla
   // (la carpeta "absorbe" el plato al instante); si la escritura en Supabase
@@ -1241,7 +1288,7 @@ async function moveDishesToFolder(dishIds, folderId){
   selectedDishIds.clear();
   renderGallery();
   if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
-  const { error } = await sb.from('dishes').update({ folder_id: folderId }).in('id', dishIds);
+  const { error } = await updateWithRetry(()=> sb.from('dishes').update({ folder_id: folderId }).in('id', dishIds));
   if(error){
     alert(error.message);
     dishIds.forEach(id=>{
@@ -1276,8 +1323,8 @@ function renderFolderGallery(){
   if(!currentFolderId) return;
   const box = $('#folder-gallery');
   const inside = dishes.filter(d=>d.folder_id===currentFolderId);
-  box.innerHTML = inside.length ? inside.map(d=>dishCardHtml(d)).join('')
-    : '<div class="empty-hint">Carpeta vacía. Ciérrala y arrastra platos aquí desde el mosaico.</div>';
+  if(inside.length) layoutMasonry(box, inside.map(d=>dishCardHtml(d)));
+  else box.innerHTML = '<div class="empty-hint">Carpeta vacía. Ciérrala y arrastra platos aquí desde el mosaico.</div>';
   $all('#folder-gallery .dish-card').forEach(card=>{
     card.classList.toggle('jiggle', folderEditMode);
     card.classList.toggle('selected', folderSelectedDishIds.has(card.dataset.id));
@@ -1317,13 +1364,32 @@ $('#folder-modal-title').onclick = async ()=>{
   renderGallery();
 };
 $('#folder-remove-btn').onclick = async ()=>{
+  // Igual que arrastrar a una carpeta: se saca de la carpeta al instante en
+  // memoria y en pantalla (antes se esperaba a la respuesta de la red, lo
+  // que se notaba como lag), y si la escritura falla se deshace y se avisa.
   if(!folderSelectedDishIds.size) return;
   const ids = [...folderSelectedDishIds];
-  const { error } = await sb.from('dishes').update({ folder_id: null }).in('id', ids);
-  if(error){ alert(error.message); return; }
+  const prevFolderIds = new Map(ids.map(id=>{
+    const d = dishes.find(x=>x.id===id);
+    return [id, d ? d.folder_id : undefined];
+  }));
+  ids.forEach(id=>{
+    const d = dishes.find(x=>x.id===id);
+    if(d) d.folder_id = null;
+  });
   folderSelectedDishIds.clear();
-  await loadDishes();
   renderFolderGallery();
+  renderGallery();
+  const { error } = await updateWithRetry(()=> sb.from('dishes').update({ folder_id: null }).in('id', ids));
+  if(error){
+    alert(error.message);
+    ids.forEach(id=>{
+      const d = dishes.find(x=>x.id===id);
+      if(d && prevFolderIds.has(id)) d.folder_id = prevFolderIds.get(id);
+    });
+    renderFolderGallery();
+    renderGallery();
+  }
 };
 
 /* ===================== PLATOS: MODAL ===================== */
@@ -1587,13 +1653,32 @@ $('#dish-photo-input').addEventListener('change', async e=>{
   }
 });
 
-async function uploadDishPhoto(dishId, file){
-  const ext = 'jpg';
-  const path = `${currentUser.id}/${dishId}.${ext}`;
-  const { error } = await sb.storage.from('dish-photos').upload(path, file, { upsert:true, contentType:file.type });
+/* Antes se subía siempre a la MISMA ruta (${id}.jpg) con upsert:true y se
+   intentaba "romper" la caché añadiendo ?v=timestamp a la URL. En la
+   práctica el CDN delante del bucket de Supabase puede seguir sirviendo el
+   archivo antiguo para esa ruta (cachea por ruta, no siempre distingue la
+   query string) — de ahí que la foto se guardase pero no se viese
+   actualizada. Ahora cada foto sube a una ruta ÚNICA (con timestamp en el
+   nombre de archivo, no en la query), así nunca hay una ruta repetida que
+   pueda servir bytes antiguos; la foto anterior se borra del bucket a
+   continuación, de forma silenciosa (si falla el borrado no importa, es
+   solo limpieza). */
+async function uploadDishPhoto(dishId, file, prevUrl){
+  const path = `${currentUser.id}/${dishId}-${Date.now()}.jpg`;
+  const { error } = await sb.storage.from('dish-photos').upload(path, file, { upsert:false, contentType:file.type, cacheControl:'31536000' });
   if(error) throw error;
   const { data } = sb.storage.from('dish-photos').getPublicUrl(path);
-  return data.publicUrl + '?v=' + Date.now();
+  if(prevUrl){
+    try{
+      const marker = '/dish-photos/';
+      const idx = prevUrl.indexOf(marker);
+      if(idx>=0){
+        const oldPath = decodeURIComponent(prevUrl.slice(idx+marker.length).split('?')[0]);
+        if(oldPath && oldPath!==path) await sb.storage.from('dish-photos').remove([oldPath]);
+      }
+    }catch(e){ /* limpieza best-effort, no crítico */ }
+  }
+  return data.publicUrl;
 }
 
 $('#dish-save-btn').onclick = async ()=>{
@@ -1601,10 +1686,11 @@ $('#dish-save-btn').onclick = async ()=>{
   if(!name){ alert('Ponle un nombre al plato'); return; }
   const ingredients = $all('#ingredients-list input').map(i=>i.value.trim()).filter(Boolean);
   const id = editingDishId || uuid();
-  let image_url = editingDishId ? (dishes.find(d=>d.id===editingDishId)||{}).image_url : null;
+  const existingUrl = editingDishId ? (dishes.find(d=>d.id===editingDishId)||{}).image_url : null;
+  let image_url = existingUrl;
   $('#dish-save-btn').textContent = 'Guardando...';
   try{
-    if(dishPhotoFile){ image_url = await uploadDishPhoto(id, dishPhotoFile); }
+    if(dishPhotoFile){ image_url = await uploadDishPhoto(id, dishPhotoFile, existingUrl); }
     const payload = {
       id, user_id: currentUser.id, name,
       ingredients, description: $('#dish-desc').value.trim(),
