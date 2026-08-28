@@ -182,6 +182,15 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   position:absolute; top:6px; right:6px; width:20px; height:20px; border-radius:50%;
   background:rgba(20,25,23,.55); color:#fff; display:flex; align-items:center; justify-content:center; z-index:1;
 }
+/* Chip único (icono+texto) que hace de interruptor de "carpeta privada": se
+   pega justo debajo del título de la carpeta (antes había un interruptor
+   suelto muy lejos del texto, en el otro extremo de la fila, y confundía). */
+.folder-privacy-chip{
+  display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:999px;
+  background:var(--card2); border:1px solid var(--border); color:var(--muted); font-size:13px; font-weight:700;
+}
+.folder-privacy-chip svg{width:13px; height:13px; flex-shrink:0;}
+.folder-privacy-chip.is-private{background:var(--accent); border-color:var(--accent); color:#fff;}
 .folder-lock-badge svg{width:11px; height:11px;}
 .folder-preview-grid{
   width:100%; aspect-ratio:1/1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:4px;
@@ -337,15 +346,30 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
    no se pueden tocar hasta pulsar "Editar" — el estado :disabled del propio
    navegador ya los atenúa; solo hace falta ocultar la pista de "Enter para
    añadir..." y el checkbox de marcar, que en modo vista no pintan nada. */
-.dish-view-locked .ingredients-hint,
-.dish-view-locked .ingredient-check{display:none;}
+.dish-view-locked .ingredients-hint{display:none;}
+/* El tick de "marcar ingrediente" solo tiene sentido viendo la receta ya
+   hecha (tacharlos mientras cocinas) — creando o editando estorba. */
+#dish-modal:not(.dish-view-locked) .ingredient-check{display:none;}
 .dish-view-locked .ingredient-input:disabled,
-.dish-view-locked .ingredient-qty:disabled,
-.dish-view-locked #dish-name:disabled,
-.dish-view-locked #dish-calories:disabled,
-.dish-view-locked #dish-duration:disabled,
-.dish-view-locked #dish-servings-base:disabled{opacity:1; -webkit-text-fill-color:var(--text); color:var(--text);}
-.ingredient-row{position:relative; overflow:hidden; border-radius:10px; margin-bottom:8px;}
+.dish-view-locked .ingredient-qty:disabled{opacity:1; -webkit-text-fill-color:var(--text); color:var(--text);}
+/* En modo vista los campos bloqueados no deben parecer un recuadro donde se
+   podría escribir (fondo/borde fuera, queda como texto normal); en modo
+   creación/edición sí llevan un recuadro claro para que se note que ahí se
+   escribe. La lista de ingredientes queda fuera de esto a propósito (su caja
+   la necesita el tick, ver arriba). */
+.dish-view-locked #dish-name:disabled{border-bottom-color:transparent;}
+.dish-view-locked .meta-kcal, .dish-view-locked .meta-duration{background:none; border-color:transparent;}
+.dish-view-locked #dish-servings-base:disabled{opacity:1 !important; -webkit-text-fill-color:var(--text) !important; color:var(--text) !important; background:none !important; border-color:transparent !important;}
+.dish-view-locked #dish-desc-trigger:disabled, .dish-view-locked #dish-macros-btn:disabled, .dish-view-locked #quality-group .pill-btn:disabled{opacity:.6;}
+#dish-modal:not(.dish-view-locked) .dish-name-input{border-bottom-color:var(--accent);}
+#dish-modal:not(.dish-view-locked) .meta-kcal, #dish-modal:not(.dish-view-locked) .meta-duration{background:rgba(18,135,94,.07); border-color:var(--accent);}
+#dish-modal:not(.dish-view-locked) .servings-input{background:rgba(18,135,94,.07) !important; border-color:var(--accent) !important;}
+/* Sin overflow oculto por defecto -si no, el desplegable de autocompletar,
+   que aparece DEBAJO de la fila, se recorta y no se ve-. Solo se oculta el
+   desbordamiento mientras se está deslizando de verdad (clase añadida por
+   JS en attachSwipeToDelete), que es lo único que lo necesita. */
+.ingredient-row{position:relative; overflow:visible; border-radius:10px; margin-bottom:8px;}
+.ingredient-row.ingredient-row-clipping{overflow:hidden;}
 .ingredient-delete-bg{
   position:absolute; inset:0; background:var(--bad); color:#fff; font-size:13px; font-weight:600;
   display:flex; align-items:center; justify-content:flex-end; padding-right:16px;
@@ -406,9 +430,6 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   font-size:16px; font-weight:700; color:var(--text); display:flex; align-items:center; justify-content:center;
 }
 #servings-scale-value{font-weight:700; color:var(--text); min-width:16px; text-align:center;}
-.servings-scale-preview{
-  margin-top:8px; padding:10px 12px; background:var(--card2); border-radius:10px; font-size:13px; color:var(--text); line-height:1.6;
-}
 
 /* ---------- NEVERA ---------- */
 .fridge-add-row{display:flex; align-items:center; gap:8px;}
@@ -968,7 +989,6 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <button type="button" id="servings-scale-plus" class="scale-btn" aria-label="Más raciones">+</button>
         <span>personas</span>
       </div>
-      <div id="servings-scale-preview" class="servings-scale-preview hidden"></div>
     </div>
 
   <div class="modal-actions">
@@ -1043,10 +1063,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </div>
     </div>
     <button id="folder-remove-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Sacar de la carpeta (0)</button>
-    <div class="settings-row hidden" id="folder-privacy-row" style="margin-bottom:12px;">
-      <span style="font-weight:600; font-size:14px;">Carpeta privada</span>
-      <button type="button" id="folder-privacy-toggle" class="switch" aria-label="Carpeta privada"></button>
-    </div>
+    <button type="button" id="folder-privacy-toggle" class="folder-privacy-chip hidden" style="margin-bottom:12px;">
+      <span id="folder-privacy-icon"></span><span id="folder-privacy-label">Carpeta pública</span>
+    </button>
     <button id="folder-delete-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Eliminar carpeta</button>
     <div class="gallery" id="folder-gallery"></div>
   </div>
@@ -1177,6 +1196,7 @@ const ICON_COMMENT = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none
 const ICON_PLUS_CIRCLE = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>';
 const ICON_TRASH = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg>';
 const ICON_LOCK = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>';
+const ICON_UNLOCK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 9.5-3.5"/></svg>';
 const ICON_BACK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
 
 /* ===================== LOGIN REAL (Supabase Auth) ===================== */
@@ -1819,9 +1839,14 @@ function renderFolderGallery(){
   $('#folder-modal-title').classList.toggle('editable', folderEditMode);
   // Igual que "Eliminar carpeta": solo tiene sentido en modo editar y sin
   // selección (si no, compite visualmente con "Sacar de la carpeta").
-  $('#folder-privacy-row').classList.toggle('hidden', !(folderEditMode && folderSelectedDishIds.size===0));
+  $('#folder-privacy-toggle').classList.toggle('hidden', !(folderEditMode && folderSelectedDishIds.size===0));
   const folderNow = folders.find(f=>f.id===currentFolderId);
-  $('#folder-privacy-toggle').classList.toggle('on', !!(folderNow && folderNow.is_private));
+  setFolderPrivacyChip(!!(folderNow && folderNow.is_private));
+}
+function setFolderPrivacyChip(isPrivate){
+  $('#folder-privacy-toggle').classList.toggle('is-private', isPrivate);
+  $('#folder-privacy-icon').innerHTML = isPrivate ? ICON_LOCK : ICON_UNLOCK;
+  $('#folder-privacy-label').textContent = isPrivate ? 'Carpeta privada' : 'Carpeta pública';
 }
 $('#folder-close-x').onclick = closeFolderModal;
 $('#folder-modal').addEventListener('click', e=>{ if(e.target.id==='folder-modal') closeFolderModal(); });
@@ -1894,12 +1919,12 @@ $('#folder-privacy-toggle').onclick = async ()=>{
   if(!folder) return;
   const newVal = !folder.is_private;
   folder.is_private = newVal; // optimista
-  $('#folder-privacy-toggle').classList.toggle('on', newVal);
+  setFolderPrivacyChip(newVal);
   renderGallery();
   const { error } = await sb.from('dish_folders').update({ is_private: newVal }).eq('id', currentFolderId);
   if(error){
     folder.is_private = !newVal;
-    $('#folder-privacy-toggle').classList.toggle('on', !newVal);
+    setFolderPrivacyChip(!newVal);
     renderGallery();
     alert(error.message);
   }
@@ -1975,13 +2000,9 @@ function openDishModal(dish){
   $('#dish-servings-base').value = dish ? (dish.servings_base || 1) : 1;
   $('#ingredients-list').innerHTML = '';
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : [{}]).forEach(v=> addIngredientRow(normalizeIngredientItem(v)));
+  captureIngredientBaselines();
   resetServingsScale();
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
-  // El selector "Ver cantidades para X personas" solo tiene sentido en un
-  // plato que ya existe (mientras se está creando uno nuevo, previsualizar
-  // un escalado de una receta que aún ni tiene ingredientes reales no aporta).
-  $('.servings-scale-row').classList.toggle('hidden', !dishExistsRemote);
-  if(!dishExistsRemote) $('#servings-scale-preview').classList.add('hidden');
   // Un plato nuevo (aún sin fila en la BD) se crea con un botón explícito
   // "Crear plato", no en automático; en cuanto existe, todo pasa a
   // autoguardarse solo y este botón desaparece para siempre en esta ficha.
@@ -2003,6 +2024,10 @@ function applyDishModalButtons(){
   $('#dish-edit-save-btn').classList.toggle('hidden', !editing);
   $('#dish-delete-btn').classList.toggle('hidden', !editing);
   $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
+  // "Ver cantidades para X personas" solo tiene sentido viendo un plato ya
+  // hecho: ni creando uno nuevo (aún sin ingredientes reales) ni editando
+  // (ahí lo que se toca son las cantidades base, no un escalado de vista).
+  $('.servings-scale-row').classList.toggle('hidden', !viewing);
 }
 // Bloquea/desbloquea todos los campos según dishFieldsLocked() — un plato
 // existente abierto en modo vista no se puede tocar hasta pulsar "Editar";
@@ -2169,10 +2194,11 @@ function addIngredientRow(item={}, afterRow=null){
         <div class="ingredient-suggest hidden"></div>
       </div>
       <input type="number" inputmode="decimal" class="ingredient-qty" placeholder="Cant." value="${it.quantity!=null?it.quantity:''}">
-      <span class="ingredient-unit-badge">${escapeHtml(it.unit||'')}</span>
+      <span class="ingredient-unit-badge">${escapeHtml(it.unit||lookupDefaultUnit(it.name)||'')}</span>
     </div>`;
   const input = row.querySelector('.ingredient-input');
   const qtyInput = row.querySelector('.ingredient-qty');
+  qtyInput.dataset.orig = qtyInput.value; // cantidad real guardada, al margen de cualquier escalado de vista
   row.querySelector('.ingredient-check').onclick = ()=>{
     if(dishFieldsLocked()) return;
     row.classList.toggle('checked');
@@ -2186,23 +2212,21 @@ function addIngredientRow(item={}, afterRow=null){
       newRow.querySelector('input').focus();
     }
   });
-  input.addEventListener('input', ()=>{ scheduleDishAutosave(false); renderServingsScalePreview(); });
+  input.addEventListener('input', ()=>{ scheduleDishAutosave(false); });
   input.addEventListener('blur', ()=>{
     // fila vacía y no es la única: se limpia sola, no se queda un hueco muerto
-    if(!input.value.trim() && $all('.ingredient-row').length>1){ row.remove(); scheduleDishAutosave(false); renderServingsScalePreview(); return; }
+    if(!input.value.trim() && $all('.ingredient-row').length>1){ row.remove(); scheduleDishAutosave(false); return; }
     // La unidad nunca se elige a mano: si el nombre coincide de verdad con
     // algo del catálogo, se adopta su unidad por defecto sin preguntar.
     const u = lookupDefaultUnit(input.value);
     row.querySelector('.ingredient-unit-badge').textContent = u || '';
-    renderServingsScalePreview();
   });
   wireIngredientAutocomplete(input, row.querySelector('.ingredient-suggest'), (name, unit)=>{
     input.value = name;
     row.querySelector('.ingredient-unit-badge').textContent = unit || lookupDefaultUnit(name) || '';
     scheduleDishAutosave(false);
-    renderServingsScalePreview();
   });
-  qtyInput.addEventListener('input', ()=>{ scheduleDishAutosave(false); renderServingsScalePreview(); });
+  qtyInput.addEventListener('input', ()=>{ scheduleDishAutosave(false); qtyInput.dataset.orig = qtyInput.value; });
   attachSwipeToDelete(row);
   if(afterRow){ afterRow.after(row); } else { $('#ingredients-list').appendChild(row); }
   return row;
@@ -2220,7 +2244,7 @@ function attachSwipeToDelete(row){
     if(!active) return;
     const mdx=e.clientX-startX, mdy=e.clientY-startY;
     if(!dragging){
-      if(Math.abs(mdx)>8 && Math.abs(mdx)>Math.abs(mdy)){ dragging=true; inner.querySelector('.ingredient-input').blur(); }
+      if(Math.abs(mdx)>8 && Math.abs(mdx)>Math.abs(mdy)){ dragging=true; inner.querySelector('.ingredient-input').blur(); row.classList.add('ingredient-row-clipping'); }
       else if(Math.abs(mdy)>8){ active=false; return; }
     }
     if(dragging){
@@ -2243,7 +2267,9 @@ function attachSwipeToDelete(row){
     } else if(dragging){
       inner.style.transition = 'transform .18s ease';
       inner.style.transform = 'translateX(0)';
-      setTimeout(()=> inner.style.transition = '', 180);
+      setTimeout(()=>{ inner.style.transition = ''; row.classList.remove('ingredient-row-clipping'); }, 180);
+    } else {
+      row.classList.remove('ingredient-row-clipping');
     }
     dragging = false;
   }
@@ -2251,39 +2277,34 @@ function attachSwipeToDelete(row){
   inner.addEventListener('pointercancel', endDrag);
 }
 
-/* --- Raciones: se muestra el nº base guardado; el selector "Ver cantidades
-   para" es solo una vista (no toca lo guardado) que recalcula y enseña las
-   cantidades escaladas debajo, sin tocar los campos editables de arriba. --- */
+/* --- Raciones: en modo vista, "Ver cantidades para" con +/- recalcula y
+   pone las cantidades escaladas DIRECTAMENTE en la lista de ingredientes de
+   arriba (no hay una segunda lista aparte). Las cantidades reales guardadas
+   se guardan en dataset.orig de cada input y se restauran siempre que se
+   entra en modo edición, para no guardar por error un valor escalado. --- */
 let dishScaleServings = 1;
 function currentServingsBase(){ return Math.max(1, Number($('#dish-servings-base').value)||1); }
+function captureIngredientBaselines(){
+  $all('#ingredients-list .ingredient-qty').forEach(inp=> inp.dataset.orig = inp.value);
+}
+function restoreIngredientBaselines(){
+  $all('#ingredients-list .ingredient-qty').forEach(inp=>{ if(inp.dataset.orig!==undefined) inp.value = inp.dataset.orig; });
+}
 function resetServingsScale(){
   dishScaleServings = currentServingsBase();
   $('#servings-scale-value').textContent = dishScaleServings;
-  $('#servings-scale-preview').classList.add('hidden');
-  $('#servings-scale-preview').innerHTML = '';
 }
-function renderServingsScalePreview(){
+function applyServingsScale(){
   const base = currentServingsBase();
-  if(dishScaleServings === base){
-    $('#servings-scale-preview').classList.add('hidden');
-    $('#servings-scale-preview').innerHTML = '';
-    return;
-  }
   const scale = dishScaleServings/base;
-  const rows = $all('#ingredients-list .ingredient-row').map(row=>{
-    const name = row.querySelector('.ingredient-input').value.trim();
-    const qty = row.querySelector('.ingredient-qty').value;
-    const unit = row.querySelector('.ingredient-unit-badge').textContent;
-    if(!name || qty==='') return null;
-    const scaled = Math.round(Number(qty)*scale*100)/100;
-    return `<div>${escapeHtml(name)}: <strong>${scaled}${unit?(' '+escapeHtml(unit)):''}</strong></div>`;
-  }).filter(Boolean);
-  const box = $('#servings-scale-preview');
-  box.innerHTML = rows.length ? rows.join('') : 'Añade cantidades a los ingredientes para ver el cálculo.';
-  box.classList.remove('hidden');
+  $all('#ingredients-list .ingredient-qty').forEach(inp=>{
+    const orig = inp.dataset.orig!==undefined && inp.dataset.orig!=='' ? Number(inp.dataset.orig) : null;
+    if(orig===null || isNaN(orig)) return; // sin cantidad guardada, no hay nada que escalar
+    inp.value = Math.round(orig*scale*100)/100;
+  });
 }
-$('#servings-scale-minus').onclick = ()=>{ dishScaleServings = Math.max(1, dishScaleServings-1); $('#servings-scale-value').textContent = dishScaleServings; renderServingsScalePreview(); };
-$('#servings-scale-plus').onclick = ()=>{ dishScaleServings = dishScaleServings+1; $('#servings-scale-value').textContent = dishScaleServings; renderServingsScalePreview(); };
+$('#servings-scale-minus').onclick = ()=>{ dishScaleServings = Math.max(1, dishScaleServings-1); $('#servings-scale-value').textContent = dishScaleServings; applyServingsScale(); };
+$('#servings-scale-plus').onclick = ()=>{ dishScaleServings = dishScaleServings+1; $('#servings-scale-value').textContent = dishScaleServings; applyServingsScale(); };
 $('#dish-servings-base').addEventListener('input', ()=>{ scheduleDishAutosave(false); resetServingsScale(); });
 
 /* --- Descripción: chip abre pop-up, click fuera lo cierra --- */
@@ -2581,6 +2602,11 @@ $('#dish-save-btn').onclick = async ()=>{
 };
 
 $('#dish-edit-btn').onclick = ()=>{
+  // Si se había escalado la vista (p.ej. "para 4 personas"), se deshace antes
+  // de dejar editar — lo que se edita son las cantidades base reales, nunca
+  // un escalado de pantalla.
+  restoreIngredientBaselines();
+  resetServingsScale();
   dishViewMode = false;
   applyDishModalButtons();
   applyDishFieldsLock();
@@ -2591,6 +2617,8 @@ $('#dish-edit-save-btn').onclick = async ()=>{
   flushDishAutosave();
   if(dishSaveInFlight) await dishSaveInFlight;
   btn.disabled = false;
+  captureIngredientBaselines();
+  resetServingsScale();
   dishViewMode = true;
   applyDishModalButtons();
   applyDishFieldsLock();
