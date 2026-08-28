@@ -333,6 +333,18 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .meta-num-row{ grid-column:2; grid-row:2; display:flex; gap:8px; }
 .desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
 .ingredients-hint{font-size:12px; color:var(--muted); margin:-2px 0 10px; line-height:1.4;}
+/* Modo vista de la ficha de plato: los campos siguen ahí para leerlos, pero
+   no se pueden tocar hasta pulsar "Editar" — el estado :disabled del propio
+   navegador ya los atenúa; solo hace falta ocultar la pista de "Enter para
+   añadir..." y el checkbox de marcar, que en modo vista no pintan nada. */
+.dish-view-locked .ingredients-hint,
+.dish-view-locked .ingredient-check{display:none;}
+.dish-view-locked .ingredient-input:disabled,
+.dish-view-locked .ingredient-qty:disabled,
+.dish-view-locked #dish-name:disabled,
+.dish-view-locked #dish-calories:disabled,
+.dish-view-locked #dish-duration:disabled,
+.dish-view-locked #dish-servings-base:disabled{opacity:1; -webkit-text-fill-color:var(--text); color:var(--text);}
 .ingredient-row{position:relative; overflow:hidden; border-radius:10px; margin-bottom:8px;}
 .ingredient-delete-bg{
   position:absolute; inset:0; background:var(--bad); color:#fff; font-size:13px; font-weight:600;
@@ -365,13 +377,11 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   border-radius:0 !important; padding:11px 2px !important; font-size:13px !important; text-align:center; color:var(--text); -moz-appearance:textfield;
 }
 .ingredient-qty::-webkit-outer-spin-button, .ingredient-qty::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
-.ingredient-qty:focus, .ingredient-unit:focus{outline:none;}
-.ingredient-unit{
-  width:44px !important; flex:0 0 44px !important; background:none !important; border:none !important; border-radius:0 !important;
-  font-size:11px !important; color:var(--muted); padding:11px 0 11px 2px !important;
-  -webkit-appearance:none; -moz-appearance:none; appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237c8983' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; background-position:right 1px center; padding-right:12px !important;
+.ingredient-qty:focus{outline:none;}
+/* La unidad ya no se elige a mano (siempre es la del catálogo) — es solo una
+   etiqueta de solo lectura junto a la cantidad, no un campo. */
+.ingredient-unit-badge{
+  flex:0 0 auto; font-size:11px; color:var(--muted); padding:0 10px 0 6px; white-space:nowrap;
 }
 .ingredient-suggest{
   position:absolute; left:0; right:0; top:100%; margin-top:4px; background:var(--card); border:1px solid var(--border);
@@ -401,7 +411,33 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 }
 
 /* ---------- NEVERA ---------- */
-.fridge-add-row{display:flex; align-items:center; gap:6px; background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:0 6px 0 10px;}
+.fridge-add-row{display:flex; align-items:center; gap:8px;}
+.fridge-add-row .ingredient-name-wrap{
+  background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:0 10px;
+}
+.fridge-add-row .ingredient-name-wrap input{width:100%; background:none; border:none; padding:11px 0; font-size:15px; color:var(--text);}
+.fridge-add-row .ingredient-name-wrap input:focus{outline:none;}
+/* Este campo necesita su propio recuadro bien visible (fondo + borde propios,
+   distintos del contenedor) para que se note que es un sitio donde escribir
+   — antes compartía fondo con la fila y parecía que no había nada que tocar. */
+.fridge-qty-input{
+  flex:0 0 72px; width:72px; background:var(--card2); border:1px solid var(--border); border-radius:10px;
+  padding:11px 8px; font-size:15px; text-align:center; color:var(--text); -moz-appearance:textfield;
+}
+.fridge-qty-input:focus{outline:none; border-color:var(--accent);}
+.fridge-qty-input::-webkit-outer-spin-button, .fridge-qty-input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+.fridge-add-row .ingredient-unit-badge{padding:0; min-width:22px;}
+.fridge-item-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border);}
+.fridge-item-row:last-child{border-bottom:none;}
+.fridge-item-name{flex:1; font-size:14px; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.fridge-item-qty-input{
+  flex:0 0 58px; width:58px; background:var(--card2); border:1px solid var(--border); border-radius:8px;
+  padding:7px; font-size:13px; text-align:center; color:var(--text); -moz-appearance:textfield;
+}
+.fridge-item-qty-input:focus{outline:none; border-color:var(--accent);}
+.fridge-item-qty-input::-webkit-outer-spin-button, .fridge-item-qty-input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+.fridge-item-unit{font-size:12px; color:var(--muted); flex:0 0 auto; min-width:18px;}
+.fridge-item-del{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--card2); color:var(--muted); display:flex; align-items:center; justify-content:center;}
 
 /* ---------- NOTIFICACIONES ---------- */
 .notif-badge{
@@ -666,8 +702,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
             <div class="ingredient-suggest hidden" id="fridge-add-suggest"></div>
           </div>
-          <input type="number" id="fridge-add-qty" placeholder="Cant." inputmode="decimal" class="ingredient-qty">
-          <select id="fridge-add-unit" class="ingredient-unit"></select>
+          <input type="number" id="fridge-add-qty" placeholder="Cant." inputmode="decimal" class="fridge-qty-input">
+          <span class="ingredient-unit-badge" id="fridge-add-unit-badge"></span>
         </div>
         <button type="button" id="fridge-add-btn" class="btn-primary" style="width:100%; justify-content:center; margin-top:10px;">Añadir</button>
       </div>
@@ -928,7 +964,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div class="servings-scale-row">
         <span>Ver cantidades para</span>
         <button type="button" id="servings-scale-minus" class="scale-btn" aria-label="Menos raciones">−</button>
-        <span id="servings-scale-value">4</span>
+        <span id="servings-scale-value">1</span>
         <button type="button" id="servings-scale-plus" class="scale-btn" aria-label="Más raciones">+</button>
         <span>personas</span>
       </div>
@@ -942,6 +978,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </button>
       <button class="btn-primary hidden" id="dish-save-btn" style="flex:1;">Crear plato</button>
       <button class="btn-secondary hidden" id="dish-share-btn" style="flex:1; justify-content:center;">Compartir</button>
+      <button class="btn-secondary hidden" id="dish-edit-btn" style="flex:1; justify-content:center;">Editar</button>
+      <button class="btn-primary hidden" id="dish-edit-save-btn" style="flex:1;">Guardar</button>
       <button class="btn-danger hidden" id="dish-delete-btn" style="flex:1; text-align:center;">Eliminar</button>
     </div>
   </div>
@@ -1099,6 +1137,11 @@ let galleryEditMode = false;
 let selectedDishIds = new Set();
 let editingDishId = null;
 let dishExistsRemote = false;   // false mientras el plato que se está editando aún no tiene fila en la BD
+// Un plato ya existente se abre en modo "vista" (solo lectura) por defecto;
+// hay que tocar "Editar" para poder tocar nada. Un plato nuevo (todavía sin
+// fila en la BD) no pasa por esto — siempre está "editable" mientras se crea.
+let dishViewMode = true;
+function dishFieldsLocked(){ return dishExistsRemote && dishViewMode; }
 let dishCurrentImageUrl = null; // última foto guardada de verdad (para poder limpiarla al subir otra)
 let dishPhotoFile = null;
 let selectedQuality = null;
@@ -1900,6 +1943,7 @@ function openDishModal(dish){
   // al que apuntar desde el primer cambio, sea texto, foto o lo que sea.
   editingDishId = dish ? dish.id : uuid();
   dishExistsRemote = !!dish;
+  dishViewMode = true; // un plato ya existente se abre siempre en modo vista, hay que tocar "Editar"
   dishCurrentImageUrl = dish ? (dish.image_url||null) : null;
   dishPhotoFile = null;
   selectedQuality = dish ? dish.quality : null;
@@ -1928,21 +1972,52 @@ function openDishModal(dish){
   $('#macro-fiber').value = dish ? (dish.fiber_g||'') : '';
   // El botón de macros solo aparece con el interruptor de Ajustes activo y en
   // un plato que ya existe de verdad (igual que Compartir/Eliminar).
-  $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
-  $('#dish-servings-base').value = dish ? (dish.servings_base || 4) : 4;
+  $('#dish-servings-base').value = dish ? (dish.servings_base || 1) : 1;
   $('#ingredients-list').innerHTML = '';
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : [{}]).forEach(v=> addIngredientRow(normalizeIngredientItem(v)));
   resetServingsScale();
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
-  $('#dish-delete-btn').classList.toggle('hidden', !dishExistsRemote);
-  $('#dish-share-btn').classList.toggle('hidden', !dishExistsRemote);
+  // El selector "Ver cantidades para X personas" solo tiene sentido en un
+  // plato que ya existe (mientras se está creando uno nuevo, previsualizar
+  // un escalado de una receta que aún ni tiene ingredientes reales no aporta).
+  $('.servings-scale-row').classList.toggle('hidden', !dishExistsRemote);
+  if(!dishExistsRemote) $('#servings-scale-preview').classList.add('hidden');
   // Un plato nuevo (aún sin fila en la BD) se crea con un botón explícito
   // "Crear plato", no en automático; en cuanto existe, todo pasa a
   // autoguardarse solo y este botón desaparece para siempre en esta ficha.
   $('#dish-save-btn').classList.toggle('hidden', dishExistsRemote);
   $('#dish-save-btn').disabled = false;
   $('#dish-save-btn').textContent = 'Crear plato';
+  applyDishModalButtons();
+  applyDishFieldsLock();
   $('#dish-modal').classList.remove('hidden');
+}
+// Botones de la ficha según el estado: plato nuevo -> Atrás + Crear plato;
+// plato existente en modo vista -> Atrás + Compartir + Editar; plato
+// existente en modo edición -> Atrás + Guardar + Eliminar.
+function applyDishModalButtons(){
+  const editing = dishExistsRemote && !dishViewMode;
+  const viewing = dishExistsRemote && dishViewMode;
+  $('#dish-share-btn').classList.toggle('hidden', !viewing);
+  $('#dish-edit-btn').classList.toggle('hidden', !viewing);
+  $('#dish-edit-save-btn').classList.toggle('hidden', !editing);
+  $('#dish-delete-btn').classList.toggle('hidden', !editing);
+  $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
+}
+// Bloquea/desbloquea todos los campos según dishFieldsLocked() — un plato
+// existente abierto en modo vista no se puede tocar hasta pulsar "Editar";
+// uno nuevo (todavía sin fila en la BD) siempre está editable.
+function applyDishFieldsLock(){
+  const locked = dishFieldsLocked();
+  $('#dish-modal').classList.toggle('dish-view-locked', locked);
+  $('#dish-name').disabled = locked;
+  $('#dish-calories').disabled = locked;
+  $('#dish-duration').disabled = locked;
+  $('#dish-servings-base').disabled = locked;
+  $('#dish-desc-trigger').disabled = locked;
+  $('#dish-macros-btn').disabled = locked;
+  $all('#quality-group .pill-btn').forEach(b=> b.disabled = locked);
+  $all('#ingredients-list .ingredient-input, #ingredients-list .ingredient-qty').forEach(el=> el.disabled = locked);
 }
 function closeDishModal(){
   if(dishSaveInFlight) return; // no se puede salir mientras hay una escritura en curso de verdad
@@ -2021,10 +2096,6 @@ attachSwipeToCloseSheet(document.querySelector('#dish-modal .modal-sheet'), clos
    Cada ingrediente es ahora {ingredient_id, name, quantity, unit} en vez de solo texto,
    para poder cruzarlo con la Nevera y escalar cantidades por raciones. */
 const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
-const UNITS = ['g','kg','ml','l','ud','diente','cda','cdta','pizca','taza','lata','paquete'];
-function unitOptionsHtml(selected){
-  return '<option value=""></option>' + UNITS.map(u=> `<option value="${u}"${u===selected?' selected':''}>${u}</option>`).join('');
-}
 function stripAccents(s){ return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,''); }
 function normalizeIngredientItem(item){
   // Compatibilidad con recetas antiguas (texto suelto) mientras la migración
@@ -2045,7 +2116,15 @@ function ingredientLineText(i){
 function findIngredientMatches(term){
   const t = stripAccents((term||'').trim().toLowerCase());
   if(!t) return [];
-  return ingredientCatalog.filter(ic=> stripAccents(ic.name.toLowerCase()).includes(t)).slice(0,6);
+  // Empieza por lo escrito (no "contiene"): escribir "a" sugiere "arroz",
+  // "aceite"... no cualquier ingrediente que lleve una "a" en medio.
+  return ingredientCatalog.filter(ic=> stripAccents(ic.name.toLowerCase()).startsWith(t)).slice(0,6);
+}
+function lookupDefaultUnit(name){
+  const norm = stripAccents((name||'').trim().toLowerCase());
+  if(!norm) return null;
+  const found = ingredientCatalog.find(ic=> stripAccents(ic.name.toLowerCase())===norm);
+  return found ? (found.default_unit||null) : null;
 }
 async function resolveIngredientId(name){
   const norm = (name||'').trim().toLowerCase();
@@ -2090,12 +2169,12 @@ function addIngredientRow(item={}, afterRow=null){
         <div class="ingredient-suggest hidden"></div>
       </div>
       <input type="number" inputmode="decimal" class="ingredient-qty" placeholder="Cant." value="${it.quantity!=null?it.quantity:''}">
-      <select class="ingredient-unit">${unitOptionsHtml(it.unit)}</select>
+      <span class="ingredient-unit-badge">${escapeHtml(it.unit||'')}</span>
     </div>`;
   const input = row.querySelector('.ingredient-input');
   const qtyInput = row.querySelector('.ingredient-qty');
-  const unitSelect = row.querySelector('.ingredient-unit');
   row.querySelector('.ingredient-check').onclick = ()=>{
+    if(dishFieldsLocked()) return;
     row.classList.toggle('checked');
     row.querySelector('.ingredient-check').classList.toggle('checked');
   };
@@ -2110,16 +2189,20 @@ function addIngredientRow(item={}, afterRow=null){
   input.addEventListener('input', ()=>{ scheduleDishAutosave(false); renderServingsScalePreview(); });
   input.addEventListener('blur', ()=>{
     // fila vacía y no es la única: se limpia sola, no se queda un hueco muerto
-    if(!input.value.trim() && $all('.ingredient-row').length>1){ row.remove(); scheduleDishAutosave(false); renderServingsScalePreview(); }
+    if(!input.value.trim() && $all('.ingredient-row').length>1){ row.remove(); scheduleDishAutosave(false); renderServingsScalePreview(); return; }
+    // La unidad nunca se elige a mano: si el nombre coincide de verdad con
+    // algo del catálogo, se adopta su unidad por defecto sin preguntar.
+    const u = lookupDefaultUnit(input.value);
+    row.querySelector('.ingredient-unit-badge').textContent = u || '';
+    renderServingsScalePreview();
   });
   wireIngredientAutocomplete(input, row.querySelector('.ingredient-suggest'), (name, unit)=>{
     input.value = name;
-    if(unit) unitSelect.value = unit;
+    row.querySelector('.ingredient-unit-badge').textContent = unit || lookupDefaultUnit(name) || '';
     scheduleDishAutosave(false);
     renderServingsScalePreview();
   });
   qtyInput.addEventListener('input', ()=>{ scheduleDishAutosave(false); renderServingsScalePreview(); });
-  unitSelect.addEventListener('change', ()=>{ scheduleDishAutosave(false); renderServingsScalePreview(); });
   attachSwipeToDelete(row);
   if(afterRow){ afterRow.after(row); } else { $('#ingredients-list').appendChild(row); }
   return row;
@@ -2130,6 +2213,7 @@ function attachSwipeToDelete(row){
   let startX=0, startY=0, dx=0, dragging=false, active=false;
   inner.addEventListener('pointerdown', e=>{
     if(e.target.closest('.ingredient-check')) return;
+    if(dishFieldsLocked()) return; // en modo vista no se puede borrar ingredientes
     startX=e.clientX; startY=e.clientY; dx=0; dragging=false; active=true;
   });
   inner.addEventListener('pointermove', e=>{
@@ -2170,7 +2254,7 @@ function attachSwipeToDelete(row){
 /* --- Raciones: se muestra el nº base guardado; el selector "Ver cantidades
    para" es solo una vista (no toca lo guardado) que recalcula y enseña las
    cantidades escaladas debajo, sin tocar los campos editables de arriba. --- */
-let dishScaleServings = 4;
+let dishScaleServings = 1;
 function currentServingsBase(){ return Math.max(1, Number($('#dish-servings-base').value)||1); }
 function resetServingsScale(){
   dishScaleServings = currentServingsBase();
@@ -2189,7 +2273,7 @@ function renderServingsScalePreview(){
   const rows = $all('#ingredients-list .ingredient-row').map(row=>{
     const name = row.querySelector('.ingredient-input').value.trim();
     const qty = row.querySelector('.ingredient-qty').value;
-    const unit = row.querySelector('.ingredient-unit').value;
+    const unit = row.querySelector('.ingredient-unit-badge').textContent;
     if(!name || qty==='') return null;
     const scaled = Math.round(Number(qty)*scale*100)/100;
     return `<div>${escapeHtml(name)}: <strong>${scaled}${unit?(' '+escapeHtml(unit)):''}</strong></div>`;
@@ -2267,7 +2351,7 @@ async function normalizeImageFile(file){
   return new File([blob], 'foto.jpg', { type:'image/jpeg' });
 }
 
-$('#dish-photo-wrap').onclick = ()=> $('#dish-photo-input').click();
+$('#dish-photo-wrap').onclick = ()=>{ if(dishFieldsLocked()) return; $('#dish-photo-input').click(); };
 $('#dish-photo-input').addEventListener('change', async e=>{
   const file = e.target.files[0];
   if(!file) return;
@@ -2356,10 +2440,10 @@ function captureDishSnapshot(){
       return {
         name,
         quantity: qtyVal!=='' ? Number(qtyVal) : null,
-        unit: row.querySelector('.ingredient-unit').value || null
+        unit: row.querySelector('.ingredient-unit-badge').textContent.trim() || null
       };
     }).filter(Boolean),
-    servings_base: $('#dish-servings-base').value ? Number($('#dish-servings-base').value) : 4,
+    servings_base: $('#dish-servings-base').value ? Number($('#dish-servings-base').value) : 1,
     description: $('#dish-desc').value.trim(),
     calories: $('#dish-calories').value ? Number($('#dish-calories').value) : null,
     duration_min: $('#dish-duration').value ? Number($('#dish-duration').value) : null,
@@ -2439,7 +2523,7 @@ async function doSaveDishSnapshot(snap){
     })));
     const payload = {
       id: snap.id, user_id: currentUser.id, name: snap.name,
-      ingredients: resolvedIngredients, servings_base: snap.servings_base || 4, description: snap.description,
+      ingredients: resolvedIngredients, servings_base: snap.servings_base || 1, description: snap.description,
       calories: snap.calories, duration_min: snap.duration_min,
       quality: snap.quality, image_url,
       protein_g: snap.protein_g, carbs_g: snap.carbs_g, fat_g: snap.fat_g, fiber_g: snap.fiber_g
@@ -2484,14 +2568,32 @@ $('#dish-save-btn').onclick = async ()=>{
   setDishClosingLocked(false);
   if(dishExistsRemote && snap.id===editingDishId){
     btn.classList.add('hidden');
-    $('#dish-delete-btn').classList.remove('hidden');
-    $('#dish-share-btn').classList.remove('hidden');
-    $('#dish-macros-btn').classList.toggle('hidden', !currentUser.show_macros);
+    // Recién creado: seguimos en modo edición (no tiene sentido bloquear los
+    // campos justo después de rellenarlos) — "Guardar" lo pasa a modo vista.
+    dishViewMode = false;
+    applyDishModalButtons();
+    applyDishFieldsLock();
   } else {
     // no se pudo crear (p.ej. sin red): se deja reintentar con el mismo botón
     btn.disabled = false;
     btn.textContent = 'Crear plato';
   }
+};
+
+$('#dish-edit-btn').onclick = ()=>{
+  dishViewMode = false;
+  applyDishModalButtons();
+  applyDishFieldsLock();
+};
+$('#dish-edit-save-btn').onclick = async ()=>{
+  const btn = $('#dish-edit-save-btn');
+  btn.disabled = true;
+  flushDishAutosave();
+  if(dishSaveInFlight) await dishSaveInFlight;
+  btn.disabled = false;
+  dishViewMode = true;
+  applyDishModalButtons();
+  applyDishFieldsLock();
 };
 
 $('#dish-delete-btn').onclick = async ()=>{
@@ -2751,7 +2853,7 @@ async function addSharedDish(sharedId){
       calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
       shared_from_username: (shared.from && shared.from.username) || null,
       protein_g: d.protein_g||null, carbs_g: d.carbs_g||null, fat_g: d.fat_g||null, fiber_g: d.fiber_g||null,
-      servings_base: d.servings_base || 4
+      servings_base: d.servings_base || 1
     });
     if(error){ alert(error.message); return; }
     const { error: delErr } = await sb.from('shared_dishes').delete().eq('id', sharedId);
@@ -2935,7 +3037,7 @@ async function addFriendDishToRepo(dish, fromUsername){
     calories: dish.calories||null, quality: dish.quality||null, duration_min: dish.duration_min||null,
     shared_from_username: fromUsername || null,
     protein_g: dish.protein_g||null, carbs_g: dish.carbs_g||null, fat_g: dish.fat_g||null, fiber_g: dish.fiber_g||null,
-    servings_base: dish.servings_base || 4
+    servings_base: dish.servings_base || 1
   });
   if(error){ alert(error.message); return; }
   alert('Añadido a tu repositorio.');
@@ -2960,7 +3062,7 @@ async function shareDishWith(friendProfileId){
   const snapshot = {
     name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
     description: dish.description, calories: dish.calories, quality: dish.quality,
-    duration_min: dish.duration_min, servings_base: dish.servings_base || 4,
+    duration_min: dish.duration_min, servings_base: dish.servings_base || 1,
     protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g
   };
   const { error } = await sb.from('shared_dishes').insert({
@@ -2986,7 +3088,7 @@ $('#wall-publish-confirm').onclick = async ()=>{
   const snapshot = {
     name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
     description: dish.description, calories: dish.calories, quality: dish.quality,
-    duration_min: dish.duration_min, servings_base: dish.servings_base || 4,
+    duration_min: dish.duration_min, servings_base: dish.servings_base || 1,
     protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g
   };
   const caption = $('#wall-publish-caption').value.trim();
@@ -3144,7 +3246,7 @@ async function addWallDishToRepo(postId){
     calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
     shared_from_username: (post.author && post.author.username) || null,
     protein_g: d.protein_g||null, carbs_g: d.carbs_g||null, fat_g: d.fat_g||null, fiber_g: d.fiber_g||null,
-    servings_base: d.servings_base || 4
+    servings_base: d.servings_base || 1
   });
   if(error){ alert(error.message); return; }
   alert('Añadido a tu repositorio.');
@@ -3226,18 +3328,36 @@ async function loadFridgeItems(){
 function renderFridgeList(){
   const box = $('#fridge-list');
   if(!fridgeItems.length){ box.innerHTML = '<div class="empty-hint">Tu nevera está vacía.</div>'; return; }
-  box.innerHTML = fridgeItems.map(f=> `<div class="user-row">
-    <span class="user-row-name">${escapeHtml(f.name)}${f.quantity!=null?` — ${f.quantity}${f.unit?' '+escapeHtml(f.unit):''}`:''}</span>
-    <button type="button" class="btn-mini btn-mini-ghost" data-fridge-del="${f.id}">Quitar</button>
+  box.innerHTML = fridgeItems.map(f=> `<div class="fridge-item-row" data-fridge-id="${f.id}">
+    <span class="fridge-item-name">${escapeHtml(f.name)}</span>
+    <input type="number" inputmode="decimal" class="fridge-item-qty-input" placeholder="Cant." value="${f.quantity!=null?f.quantity:''}">
+    <span class="fridge-item-unit">${escapeHtml(f.unit||'')}</span>
+    <button type="button" class="fridge-item-del" data-fridge-del="${f.id}" aria-label="Quitar">${ICON_TRASH}</button>
   </div>`).join('');
   $all('[data-fridge-del]').forEach(b=> b.onclick = ()=> removeFridgeItem(b.dataset.fridgeDel));
+  // La cantidad se puede modificar directamente en la lista (antes solo se
+  // podía quitar y volver a añadir) — se guarda sola al salir del campo.
+  $all('.fridge-item-row').forEach(row=>{
+    const id = row.dataset.fridgeId;
+    const qtyInput = row.querySelector('.fridge-item-qty-input');
+    qtyInput.addEventListener('change', ()=> updateFridgeItemQty(id, qtyInput.value));
+  });
+}
+async function updateFridgeItemQty(id, qtyVal){
+  const item = fridgeItems.find(f=> f.id===id);
+  if(!item) return;
+  const quantity = qtyVal!=='' ? Number(qtyVal) : null;
+  item.quantity = quantity; // optimista
+  const { error } = await sb.from('fridge_items').update({ quantity }).eq('id', id);
+  if(error){ alert(error.message); return; }
+  renderNeveraSuggestions();
 }
 async function addFridgeItem(){
   const nameInput = $('#fridge-add-name');
   const name = nameInput.value.trim();
   if(!name) return;
   const qtyVal = $('#fridge-add-qty').value;
-  const unit = $('#fridge-add-unit').value || null;
+  const unit = $('#fridge-add-unit-badge').textContent.trim() || lookupDefaultUnit(name);
   const btn = $('#fridge-add-btn');
   btn.disabled = true;
   try{
@@ -3247,7 +3367,7 @@ async function addFridgeItem(){
     }).select().single();
     if(error){ alert(error.message); return; }
     fridgeItems.push(data);
-    nameInput.value = ''; $('#fridge-add-qty').value = ''; $('#fridge-add-unit').value = '';
+    nameInput.value = ''; $('#fridge-add-qty').value = ''; $('#fridge-add-unit-badge').textContent = '';
     renderFridgeList();
     renderNeveraSuggestions();
   } finally {
@@ -3263,11 +3383,14 @@ async function removeFridgeItem(id){
 }
 $('#fridge-add-btn').onclick = addFridgeItem;
 $('#fridge-add-name').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addFridgeItem(); } });
+$('#fridge-add-name').addEventListener('blur', ()=>{
+  const u = lookupDefaultUnit($('#fridge-add-name').value);
+  if(u) $('#fridge-add-unit-badge').textContent = u;
+});
 wireIngredientAutocomplete($('#fridge-add-name'), $('#fridge-add-suggest'), (name, unit)=>{
   $('#fridge-add-name').value = name;
-  if(unit) $('#fridge-add-unit').value = unit;
+  $('#fridge-add-unit-badge').textContent = unit || lookupDefaultUnit(name) || '';
 });
-$('#fridge-add-unit').innerHTML = unitOptionsHtml('');
 
 // Cruce nevera × repositorio: por cada plato con ingredientes con nombre,
 // cuenta cuántos de esos ingredientes están ya en la nevera (por id de
