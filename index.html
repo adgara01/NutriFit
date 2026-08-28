@@ -230,8 +230,17 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .pill-btn.active[data-q="normal"]{background:rgba(192,122,31,.14); border-color:var(--normal); color:var(--normal);}
 .pill-btn.active[data-q="malo"]{background:rgba(201,86,74,.14); border-color:var(--bad); color:var(--bad);}
 .modal-actions{display:flex; gap:10px; margin-top:6px;}
-.dish-actions-row{justify-content:space-between; align-items:center;}
-.autosave-status{font-size:12px; color:var(--muted); font-style:italic;}
+/* Indicador de autoguardado: discreto, en una esquina junto a la X — no
+   compite con los botones de abajo, que ahora son solo "Atrás" (y, para un
+   plato nuevo sin crear todavía, "Crear plato"). */
+.autosave-status{
+  position:absolute; top:10px; left:12px; z-index:3; font-size:11px; font-style:italic; color:#fff;
+  background:rgba(20,25,23,.55); padding:5px 10px; border-radius:999px; pointer-events:none; max-width:60%;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+/* Mientras se está guardando de verdad (petición de red en curso), salir de
+   la ficha se bloquea: Atrás y la X se atenúan y dejan de responder. */
+.dish-close-disabled{opacity:.35; pointer-events:none;}
 .btn-primary{flex:1; background:var(--accent); color:#fff; padding:13px; border-radius:12px; font-weight:600; font-size:15px;}
 .btn-secondary{
   background:var(--card); color:var(--muted); padding:13px 16px; border-radius:12px; border:1px solid var(--border);
@@ -251,6 +260,16 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   gap:8px; color:var(--muted); font-size:13px;
 }
 .dish-photo-wrap.has-photo .dish-photo-placeholder{display:none;}
+/* Mientras se procesa (normaliza/orienta) o se sube la foto: un spinner
+   discreto encima, para que se note que está pasando algo — antes, en ese
+   rato, la miniatura se quedaba en blanco sin ninguna pista. */
+.dish-photo-wrap.photo-busy::after{content:''; position:absolute; inset:0; background:rgba(20,25,23,.25); z-index:1;}
+.photo-spinner{
+  display:none; position:absolute; top:50%; left:50%; width:28px; height:28px; margin:-14px 0 0 -14px;
+  border:3px solid rgba(255,255,255,.35); border-top-color:#fff; border-radius:50%; z-index:2;
+}
+.dish-photo-wrap.photo-busy .photo-spinner{display:block; animation:spin .7s linear infinite;}
+@keyframes spin{ to{ transform:rotate(360deg); } }
 .dish-name-input{
   width:100%; border:none; background:none; font-size:21px; font-weight:700; color:var(--text);
   padding:4px 2px 12px; border-bottom:1px solid var(--border); margin-bottom:16px;
@@ -630,7 +649,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
           <img id="avatar-preview" class="hidden" alt="">
           <div class="avatar-placeholder" id="avatar-placeholder">?</div>
         </div>
-        <input type="file" id="avatar-input" accept="image/*" class="visually-hidden">
+        <input type="file" id="avatar-input" accept="image/*" capture="environment" class="visually-hidden">
         <div style="margin-top:10px; font-weight:700; font-size:16px;" id="settings-username">@usuario</div>
       </div>
 
@@ -660,14 +679,16 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     <button type="button" class="sheet-close-btn" id="dish-close-x" aria-label="Cerrar">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
+    <span class="autosave-status hidden" id="dish-autosave-status"></span>
     <div class="dish-photo-wrap" id="dish-photo-wrap">
       <img id="dish-photo-preview" class="hidden" alt="">
       <div class="dish-photo-placeholder">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
         <span>Añadir foto</span>
       </div>
+      <div class="photo-spinner" id="dish-photo-spinner"></div>
     </div>
-    <input type="file" id="dish-photo-input" accept="image/*" class="visually-hidden">
+    <input type="file" id="dish-photo-input" accept="image/*" capture="environment" class="visually-hidden">
 
     <input type="text" id="dish-name" class="dish-name-input"
       autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
@@ -700,12 +721,12 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div id="ingredients-list"></div>
     </div>
 
-    <div class="modal-actions dish-actions-row">
-      <button class="btn-secondary" id="dish-cancel-btn">
+    <div class="modal-actions">
+      <button class="btn-secondary" id="dish-cancel-btn" style="flex:1; justify-content:center;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         Atrás
       </button>
-      <span class="autosave-status" id="dish-autosave-status"></span>
+      <button class="btn-primary hidden" id="dish-save-btn">Crear plato</button>
     </div>
     <div class="modal-actions hidden" id="dish-secondary-actions">
       <button class="btn-secondary hidden" id="dish-share-btn" style="flex:1; justify-content:center;">Compartir</button>
@@ -1531,9 +1552,11 @@ function openDishModal(dish){
   dishCurrentImageUrl = dish ? (dish.image_url||null) : null;
   dishPhotoFile = null;
   selectedQuality = dish ? dish.quality : null;
-  $('#dish-autosave-status').textContent = '';
+  setAutosaveStatus('');
+  setDishClosingLocked(false);
 
   const wrap = $('#dish-photo-wrap'), img = $('#dish-photo-preview');
+  wrap.classList.remove('photo-busy');
   if(dish && dish.image_url){ img.src = dish.image_url; img.classList.remove('hidden'); wrap.classList.add('has-photo'); }
   else { img.src = ''; img.classList.add('hidden'); wrap.classList.remove('has-photo'); }
   $('#dish-photo-input').value = '';
@@ -1549,9 +1572,16 @@ function openDishModal(dish){
   $('#dish-secondary-actions').classList.toggle('hidden', !dishExistsRemote);
   $('#dish-delete-btn').classList.toggle('hidden', !dishExistsRemote);
   $('#dish-share-btn').classList.toggle('hidden', !dishExistsRemote);
+  // Un plato nuevo (aún sin fila en la BD) se crea con un botón explícito
+  // "Crear plato", no en automático; en cuanto existe, todo pasa a
+  // autoguardarse solo y este botón desaparece para siempre en esta ficha.
+  $('#dish-save-btn').classList.toggle('hidden', dishExistsRemote);
+  $('#dish-save-btn').disabled = false;
+  $('#dish-save-btn').textContent = 'Crear plato';
   $('#dish-modal').classList.remove('hidden');
 }
 function closeDishModal(){
+  if(dishSaveInFlight) return; // no se puede salir mientras hay una escritura en curso de verdad
   flushDishAutosave();
   $('#dish-modal').classList.add('hidden');
   $('#desc-modal').classList.add('hidden');
@@ -1562,7 +1592,7 @@ function closeDishModal(){
    Único gesto (antes había también uno horizontal, se quita para que sea más predecible).
    Solo actúa cuando el contenido está arriba del todo (scrollTop 0), si no, se deja
    scrollear con normalidad — incluso empezando sobre los ingredientes. */
-function attachSwipeToCloseSheet(sheet, onClose){
+function attachSwipeToCloseSheet(sheet, onClose, isLocked){
   const hardBlocked = 'button, .pill-btn';
   let startX=0, startY=0, dy=0, dragging=false, pointerId=null, rafId=null;
 
@@ -1612,6 +1642,7 @@ function attachSwipeToCloseSheet(sheet, onClose){
     dragging = false;
   }
   sheet.addEventListener('pointerdown', e=>{
+    if(isLocked && isLocked()) return; // p.ej. guardando de verdad: no se puede empezar a deslizar para cerrar
     if(e.target.closest(hardBlocked)) return;
     startX=e.clientX; startY=e.clientY; dy=0; dragging=false;
     pointerId = e.pointerId;
@@ -1620,7 +1651,7 @@ function attachSwipeToCloseSheet(sheet, onClose){
   sheet.addEventListener('pointerup', ()=> endDrag());
   sheet.addEventListener('pointercancel', ()=> endDrag(false));
 }
-attachSwipeToCloseSheet(document.querySelector('#dish-modal .modal-sheet'), closeDishModal);
+attachSwipeToCloseSheet(document.querySelector('#dish-modal .modal-sheet'), closeDishModal, ()=> !!dishSaveInFlight);
 
 /* --- Ingredientes: sin botón "+", Enter crea fila nueva, swipe a la izquierda borra --- */
 const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
@@ -1679,7 +1710,11 @@ function attachSwipeToDelete(row){
   function endDrag(){
     if(!active) return;
     active = false;
-    if(dragging && dx < -70){
+    // La última fila que queda no se puede borrar por swipe (si no, no
+    // habría ningún input donde dar a Enter para volver a añadir un
+    // ingrediente) — simplemente rebota de vuelta, igual que un swipe corto.
+    const canDelete = $all('.ingredient-row').length > 1;
+    if(dragging && dx < -70 && canDelete){
       inner.style.transition = 'transform .18s ease, opacity .18s ease';
       inner.style.transform = 'translateX(-100%)';
       inner.style.opacity = '0';
@@ -1753,20 +1788,33 @@ $('#dish-photo-input').addEventListener('change', async e=>{
   const file = e.target.files[0];
   if(!file) return;
   const wrap = $('#dish-photo-wrap');
-  wrap.classList.add('has-photo'); // evita el flash del placeholder mientras se procesa
+  // Ojo: antes se ocultaba el placeholder ("Añadir foto") de inmediato, antes
+  // de que la nueva imagen estuviera lista — eso dejaba un hueco en blanco
+  // durante el procesado. Ahora el placeholder se queda hasta que la nueva
+  // foto está de verdad lista para pintarse, y mientras tanto se ve un
+  // spinner discreto encima para que quede claro que está pasando algo.
+  wrap.classList.add('photo-busy');
   try{
     const normalized = await normalizeImageFile(file);
     dishPhotoFile = normalized;
-    const reader = new FileReader();
-    reader.onload = ev=>{
-      $('#dish-photo-preview').src = ev.target.result;
-      $('#dish-photo-preview').classList.remove('hidden');
-    };
-    reader.readAsDataURL(normalized);
-    scheduleDishAutosave(true); // la foto se guarda sola, no hace falta pulsar nada
+    // Se espera a que el FileReader termine de verdad (no solo a que se
+    // lance) antes de quitar el spinner, así el spinner nunca desaparece
+    // un instante antes de que la miniatura esté lista para pintarse.
+    const dataUrl = await new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onload = ev=> resolve(ev.target.result);
+      reader.onerror = ()=> reject(new Error('No se pudo leer la imagen'));
+      reader.readAsDataURL(normalized);
+    });
+    $('#dish-photo-preview').src = dataUrl;
+    $('#dish-photo-preview').classList.remove('hidden');
+    wrap.classList.add('has-photo');
+    scheduleDishAutosave(true); // la foto se guarda sola, no hace falta pulsar nada (salvo en un plato nuevo, ver "Crear plato")
   }catch(err){
     alert('No se pudo procesar esa foto, prueba con otra: '+err.message);
     dishPhotoFile = null;
+  }finally{
+    wrap.classList.remove('photo-busy');
   }
 });
 
@@ -1833,10 +1881,18 @@ function setAutosaveStatus(text, forThisDishId){
   const el = $('#dish-autosave-status');
   if(!el) return;
   el.textContent = text;
+  el.classList.toggle('hidden', !text);
   if(autosaveStatusTimer) clearTimeout(autosaveStatusTimer);
   if(text==='Guardado'){
-    autosaveStatusTimer = setTimeout(()=>{ if(el.textContent==='Guardado') el.textContent=''; }, 1500);
+    autosaveStatusTimer = setTimeout(()=>{ if(el.textContent==='Guardado'){ el.textContent=''; el.classList.add('hidden'); } }, 1500);
   }
+}
+// Mientras hay una escritura de verdad en curso (no solo el debounce
+// esperando), no se puede salir de la ficha — Atrás y la X se atenúan y
+// dejan de responder (clic y gesto de deslizar hacia abajo incluidos).
+function setDishClosingLocked(locked){
+  $('#dish-cancel-btn').classList.toggle('dish-close-disabled', locked);
+  $('#dish-close-x').classList.toggle('dish-close-disabled', locked);
 }
 function scheduleDishAutosave(immediate){
   if(dishSaveTimer){ clearTimeout(dishSaveTimer); dishSaveTimer=null; }
@@ -1847,18 +1903,25 @@ function flushDishAutosave(){
   if(dishSaveTimer){ clearTimeout(dishSaveTimer); dishSaveTimer=null; runDishAutosave(captureDishSnapshot()); }
 }
 function runDishAutosave(snap){
-  if(!snap.name) return; // como antes: sin nombre no hay nada que guardar todavía
+  // Un plato nuevo (sin fila todavía en la BD) NO se autoguarda solo — se
+  // crea de forma explícita con el botón "Crear plato". Autoguardar aquí
+  // sería crear entradas a medio rellenar sin que el usuario lo pidiera.
+  if(!snap.wasExisting) return;
+  if(!snap.name) return;
   if(dishPhotoFile===snap.photoFile) dishPhotoFile = null; // esta foto ya queda "recogida" en este guardado
   if(dishSaveInFlight){
     dishSaveQueuedSnapshot = snap; // solo interesa la versión más reciente pendiente
     return;
   }
+  setDishClosingLocked(true);
   dishSaveInFlight = doSaveDishSnapshot(snap).finally(()=>{
     dishSaveInFlight = null;
     if(dishSaveQueuedSnapshot){
       const next = dishSaveQueuedSnapshot; dishSaveQueuedSnapshot = null;
-      runDishAutosave(next);
+      runDishAutosave(next); // vuelve a bloquear al instante — sin parpadeo intermedio
+      return;
     }
+    setDishClosingLocked(false);
   });
 }
 async function doSaveDishSnapshot(snap){
@@ -1866,8 +1929,9 @@ async function doSaveDishSnapshot(snap){
   let image_url = snap.prevImageUrl;
   try{
     if(snap.photoFile){
+      if(snap.id===editingDishId) $('#dish-photo-wrap').classList.add('photo-busy');
       image_url = await uploadDishPhoto(snap.id, snap.photoFile, snap.prevImageUrl);
-      if(snap.id===editingDishId) dishCurrentImageUrl = image_url;
+      if(snap.id===editingDishId){ dishCurrentImageUrl = image_url; $('#dish-photo-wrap').classList.remove('photo-busy'); }
     }
     const payload = {
       id: snap.id, user_id: currentUser.id, name: snap.name,
@@ -1879,25 +1943,54 @@ async function doSaveDishSnapshot(snap){
     if(error) throw error;
     const idx = dishes.findIndex(d=>d.id===snap.id);
     if(idx>=0) Object.assign(dishes[idx], payload); else dishes.unshift(payload);
-    if(!snap.wasExisting && snap.id===editingDishId){
-      // primer guardado con éxito de un plato nuevo: ya existe de verdad,
-      // así que aparecen los botones de compartir/eliminar
-      dishExistsRemote = true;
-      $('#dish-secondary-actions').classList.remove('hidden');
-      $('#dish-delete-btn').classList.remove('hidden');
-      $('#dish-share-btn').classList.remove('hidden');
-    }
+    // A partir de aquí el plato existe de verdad en la BD — importa sobre
+    // todo para el flujo de "Crear plato": es lo que le dice a ese botón
+    // que ya puede desaparecer y ceder el paso al autoguardado silencioso.
+    if(snap.id===editingDishId) dishExistsRemote = true;
     renderGallery();
     if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
     setAutosaveStatus('Guardado', snap.id);
   }catch(err){
     console.error(err);
+    if(snap.id===editingDishId) $('#dish-photo-wrap').classList.remove('photo-busy');
     setAutosaveStatus('No se pudo guardar (sin conexión?)', snap.id);
   }
 }
 
+// Crear un plato nuevo es una acción explícita (botón "Crear plato"), no
+// autoguardado — así no aparecen platos a medias en el mosaico mientras
+// todavía estás decidiendo qué escribir. En cuanto se crea con éxito, el
+// resto de cambios en esta misma ficha ya pasan a guardarse solos.
+$('#dish-save-btn').onclick = async ()=>{
+  const name = $('#dish-name').value.trim();
+  if(!name){ alert('Ponle un nombre al plato'); return; }
+  if(dishSaveInFlight) return;
+  const btn = $('#dish-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Creando...';
+  setDishClosingLocked(true);
+  const snap = captureDishSnapshot();
+  // Se apoya en el mismo "dishSaveInFlight" que usa el autoguardado, para
+  // que cerrar la ficha (X, Atrás, deslizar, tocar fuera) quede bloqueado
+  // exactamente igual mientras se está creando el plato.
+  dishSaveInFlight = doSaveDishSnapshot(snap);
+  await dishSaveInFlight;
+  dishSaveInFlight = null;
+  setDishClosingLocked(false);
+  if(dishExistsRemote && snap.id===editingDishId){
+    btn.classList.add('hidden');
+    $('#dish-secondary-actions').classList.remove('hidden');
+    $('#dish-delete-btn').classList.remove('hidden');
+    $('#dish-share-btn').classList.remove('hidden');
+  } else {
+    // no se pudo crear (p.ej. sin red): se deja reintentar con el mismo botón
+    btn.disabled = false;
+    btn.textContent = 'Crear plato';
+  }
+};
+
 $('#dish-delete-btn').onclick = async ()=>{
-  if(!dishExistsRemote) return;
+  if(!dishExistsRemote || dishSaveInFlight) return;
   if(!confirm('¿Eliminar este plato?')) return;
   // Cancela cualquier autoguardado pendiente de este plato — si no, al
   // cerrar la ficha ese guardado "resucitaría" el plato recién borrado.
