@@ -465,6 +465,37 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .shared-dish-info{flex:1; min-width:0;}
 .shared-dish-info .name{font-weight:600; font-size:13px; display:block;}
 .shared-dish-info .from{font-size:11px; color:var(--muted);}
+
+/* ---------- MURO ---------- */
+.wall-post{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:16px; overflow:hidden;}
+.wall-post-header{display:flex; align-items:center; gap:10px; padding:12px 14px;}
+.wall-post-user{font-weight:700; font-size:14px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.wall-post-time{font-size:12px; color:var(--muted); flex-shrink:0;}
+.wall-post-photo{width:100%; aspect-ratio:4/3; background:var(--card2);}
+.wall-post-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+.wall-post-body{padding:12px 14px 4px;}
+.wall-post-dish{font-weight:700; font-size:15px;}
+.wall-post-caption{font-size:14px; color:var(--text); margin-top:4px; line-height:1.4;}
+.wall-post-actions{display:flex; align-items:center; padding:10px 14px 14px; gap:10px;}
+.wall-action-left{display:flex; align-items:center; gap:16px;}
+.wall-action-right{margin-left:auto; display:flex; align-items:center; gap:10px;}
+.wall-action-btn{
+  display:flex; align-items:center; gap:5px; background:none; border:none; color:var(--muted);
+  font-size:13px; font-weight:700; padding:4px;
+}
+.wall-action-btn svg{flex-shrink:0;}
+.wall-action-btn.liked{color:var(--bad);}
+.wall-action-btn.liked svg{fill:var(--bad); stroke:var(--bad);}
+.wall-action-btn.wall-danger{color:var(--bad);}
+
+.wall-comment-row{display:flex; gap:9px; padding:8px 0; border-bottom:1px solid var(--border);}
+.wall-comment-row:last-child{border-bottom:none;}
+.wall-comment-body{flex:1; min-width:0; font-size:13px; line-height:1.4;}
+.wall-comment-user{font-weight:700; margin-right:6px;}
+.wall-comment-text{color:var(--text);}
+.wall-comment-input-row{display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);}
+#wall-comment-input{flex:1; min-width:0; border:1px solid var(--border); border-radius:999px; padding:9px 14px; font-size:14px; background:var(--card2);}
+#wall-comments-list{max-height:50vh; overflow-y:auto;}
 </style>
 </head>
 <body>
@@ -521,6 +552,11 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>Social</span>
         <span id="social-notif-badge" class="notif-badge hidden">0</span>
+      </button>
+      <button class="drawer-link" data-section="muro">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Muro</span>
+        <span id="wall-notif-badge" class="notif-badge hidden">0</span>
       </button>
     </nav>
     <div class="drawer-footer">
@@ -675,6 +711,12 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </div>
     </section>
 
+    <!-- MURO -->
+    <section id="section-muro" class="app-section">
+      <div class="section-title">Muro</div>
+      <div id="wall-feed"><div class="empty-hint">Cargando...</div></div>
+    </section>
+
     <!-- CONFIGURACIÓN -->
     <section id="section-settings" class="app-section">
       <div class="section-title">Configuración</div>
@@ -796,11 +838,29 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   </div>
 </div>
 
-<!-- ================= COMPARTIR CON AMIGO POP-UP ================= -->
+<!-- ================= COMPARTIR CON AMIGO / MURO POP-UP ================= -->
 <div id="share-modal" class="modal desc-modal-overlay hidden">
   <div class="desc-modal-card">
-    <div style="font-weight:700; margin-bottom:12px;">Compartir con...</div>
+    <div style="font-weight:700; margin-bottom:12px;">Compartir</div>
+    <button type="button" id="share-to-wall-btn" class="btn-primary" style="width:100%; justify-content:center; margin-bottom:16px;">Publicar en el Muro</button>
+    <div style="font-weight:700; margin-bottom:6px; font-size:13px; color:var(--muted);">O enviar solo a...</div>
     <div id="share-friends-list"></div>
+  </div>
+</div>
+
+<!-- ================= PUBLICAR EN EL MURO (POP-UP) ================= -->
+<div id="wall-publish-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card">
+    <div style="font-weight:700; margin-bottom:12px;">Publicar en el Muro</div>
+    <div class="field" style="margin-bottom:0;">
+      <label>Comentario (opcional)</label>
+      <textarea id="wall-publish-caption" rows="3" autocomplete="off" autocapitalize="off" autocorrect="off"
+        style="width:100%; border:1px solid var(--border); border-radius:10px; padding:10px; font-size:14px; resize:vertical; background:var(--card2);"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="wall-publish-cancel" style="flex:1; justify-content:center;">Cancelar</button>
+      <button class="btn-primary" id="wall-publish-confirm" style="flex:1;">Publicar</button>
+    </div>
   </div>
 </div>
 
@@ -872,6 +932,22 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   </div>
 </div>
 
+<!-- ================= COMENTARIOS DE UNA PUBLICACIÓN DEL MURO ================= -->
+<div id="wall-comments-modal" class="modal hidden">
+  <div class="modal-sheet sheet-with-close">
+    <button type="button" class="sheet-close-btn" id="wall-comments-close" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div style="font-weight:700; margin-bottom:14px;">Comentarios</div>
+    <div id="wall-comments-list"></div>
+    <div class="wall-comment-input-row">
+      <input type="text" id="wall-comment-input" placeholder="Escribe un comentario..."
+        autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button type="button" id="wall-comment-send" class="btn-mini">Enviar</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ===================== CONFIG ===================== */
@@ -919,6 +995,10 @@ function isoWeekday(d){ return ((d.getDay()+6)%7)+1; }
 function getMonday(d){ const x=new Date(d); const diff=isoWeekday(x)-1; x.setDate(x.getDate()-diff); x.setHours(0,0,0,0); return x; }
 function uuid(){ return crypto.randomUUID(); }
 const ICON_PLATE = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>';
+const ICON_HEART = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+const ICON_COMMENT = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
+const ICON_PLUS_CIRCLE = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>';
+const ICON_TRASH = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg>';
 
 /* ===================== LOGIN REAL (Supabase Auth) ===================== */
 let authMode = 'login';
@@ -1008,7 +1088,8 @@ async function enterApp(profile){
     avatar_url: profile.avatar_url || null,
     show_fitness: profile.show_fitness !== false,
     show_macros: profile.show_macros === true,
-    suggest_meals: profile.suggest_meals === true
+    suggest_meals: profile.suggest_meals === true,
+    last_seen_wall_at: profile.last_seen_wall_at || null
   };
   $('#drawer-username').textContent = '@'+profile.username;
   $('#login-view').classList.add('hidden');
@@ -1017,9 +1098,10 @@ async function enterApp(profile){
   applyFitnessVisibility();
   setSection('platos');
   openDrawer();
-  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes()]);
+  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed()]);
   renderWeekBoard();
   loadWeeklyLogs();
+  subscribeWallRealtime();
 }
 
 async function init(){
@@ -1053,7 +1135,11 @@ $('#menu-btn').onclick = openDrawer;
 $('#drawer-overlay').onclick = closeDrawer;
 $('#drawer-settings-btn').onclick = ()=>{ setSection('settings'); closeDrawer(); };
 $all('.drawer-link').forEach(btn=>{
-  btn.onclick = ()=>{ setSection(btn.dataset.section); closeDrawer(); };
+  btn.onclick = ()=>{
+    setSection(btn.dataset.section);
+    closeDrawer();
+    if(btn.dataset.section==='muro') openWallSection();
+  };
 });
 
 /* --- Gesto: abrir el menú deslizando desde el borde izquierdo, cerrarlo deslizando a la izquierda --- */
@@ -2212,12 +2298,16 @@ $('#toggle-suggest-btn').onclick = async ()=>{
 /* ===================== SOCIAL ===================== */
 let friends = [], incomingRequests = [], outgoingRequests = [], sharedDishesReceived = [];
 
+function setBadge(el, count){
+  if(!el) return;
+  el.textContent = count > 9 ? '9+' : String(count);
+  el.classList.toggle('hidden', count === 0);
+}
 function updateNotifBadges(){
-  const count = incomingRequests.length + sharedDishesReceived.length;
-  $all('.notif-badge').forEach(el=>{
-    el.textContent = count > 9 ? '9+' : String(count);
-    el.classList.toggle('hidden', count === 0);
-  });
+  const socialCount = incomingRequests.length + sharedDishesReceived.length;
+  setBadge($('#social-notif-badge'), socialCount);
+  setBadge($('#wall-notif-badge'), wallUnreadCount);
+  setBadge($('#menu-notif-badge'), socialCount + wallUnreadCount);
 }
 
 function avatarHtml(u){
@@ -2419,12 +2509,11 @@ $('#shared-preview-modal').addEventListener('click', e=>{ if(e.target.id==='shar
 $('#shared-preview-reject-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await rejectSharedDish(id); };
 $('#shared-preview-add-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await addSharedDish(id); };
 
-/* --- Compartir un plato con un amigo --- */
+/* --- Compartir un plato con un amigo (o publicarlo en el Muro) --- */
 $('#dish-share-btn').onclick = ()=>{
-  if(!friends.length){ alert('Todavía no tienes amigos añadidos. Ve a Social para buscar y añadir.'); return; }
-  $('#share-friends-list').innerHTML = friends.map(f=>
-    `<button type="button" class="user-row user-row-btn" data-share-to="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></button>`
-  ).join('');
+  $('#share-friends-list').innerHTML = friends.length
+    ? friends.map(f=> `<button type="button" class="user-row user-row-btn" data-share-to="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></button>`).join('')
+    : '<div class="empty-hint">Todavía no tienes amigos añadidos.</div>';
   $all('[data-share-to]').forEach(b=> b.onclick = ()=> shareDishWith(b.dataset.shareTo));
   $('#share-modal').classList.remove('hidden');
 };
@@ -2445,6 +2534,226 @@ async function shareDishWith(friendProfileId){
   $('#share-modal').classList.add('hidden');
   if(error){ alert('Error al compartir: '+error.message); return; }
   alert('Receta compartida.');
+}
+
+/* --- Publicar en el Muro (desde el mismo pop-up de Compartir) --- */
+$('#share-to-wall-btn').onclick = ()=>{
+  $('#share-modal').classList.add('hidden');
+  $('#wall-publish-caption').value = '';
+  $('#wall-publish-modal').classList.remove('hidden');
+};
+$('#wall-publish-cancel').onclick = ()=> $('#wall-publish-modal').classList.add('hidden');
+$('#wall-publish-modal').addEventListener('click', e=>{ if(e.target.id==='wall-publish-modal') $('#wall-publish-modal').classList.add('hidden'); });
+$('#wall-publish-confirm').onclick = async ()=>{
+  if(!editingDishId) return;
+  const dish = dishes.find(d=>d.id===editingDishId);
+  if(!dish) return;
+  const snapshot = {
+    name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
+    description: dish.description, calories: dish.calories, quality: dish.quality,
+    duration_min: dish.duration_min,
+    protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g
+  };
+  const caption = $('#wall-publish-caption').value.trim();
+  $('#wall-publish-modal').classList.add('hidden');
+  const { error } = await sb.from('wall_posts').insert({
+    user_id: currentUser.id, dish_id: dish.id, dish_snapshot: snapshot, caption: caption || null
+  });
+  if(error){ alert('Error al publicar: '+error.message); return; }
+  alert('Publicado en el Muro.');
+  loadWallFeed();
+};
+
+/* ===================== MURO ===================== */
+let wallPosts = [], wallLikes = [], wallComments = [], wallUnreadCount = 0;
+let openingCommentsForPost = null;
+
+function timeAgo(iso){
+  const diff = (Date.now() - new Date(iso).getTime())/1000;
+  if(diff < 60) return 'ahora';
+  if(diff < 3600) return Math.floor(diff/60)+'m';
+  if(diff < 86400) return Math.floor(diff/3600)+'h';
+  if(diff < 604800) return Math.floor(diff/86400)+'d';
+  return new Date(iso).toLocaleDateString('es-ES', {day:'numeric', month:'short'});
+}
+
+async function loadWallFeed(){
+  const { data: posts, error } = await sb.from('wall_posts')
+    .select('*, author:user_id(id,username,avatar_url)')
+    .order('created_at', {ascending:false})
+    .limit(150);
+  if(error){ console.error(error); return; }
+  wallPosts = posts||[];
+  const ids = wallPosts.map(p=>p.id);
+  if(ids.length){
+    const [{data: likes, error: likesErr}, {data: comments, error: commentsErr}] = await Promise.all([
+      sb.from('wall_likes').select('*').in('post_id', ids),
+      sb.from('wall_comments').select('*, author:user_id(username,avatar_url)').in('post_id', ids).order('created_at', {ascending:true})
+    ]);
+    if(likesErr) console.error(likesErr);
+    if(commentsErr) console.error(commentsErr);
+    wallLikes = likes||[];
+    wallComments = comments||[];
+  } else {
+    wallLikes = []; wallComments = [];
+  }
+  renderWallFeed();
+  updateWallUnreadCount();
+  if(openingCommentsForPost) renderWallCommentsList();
+}
+
+function updateWallUnreadCount(){
+  const lastSeen = currentUser.last_seen_wall_at ? new Date(currentUser.last_seen_wall_at).getTime() : 0;
+  wallUnreadCount = wallPosts.filter(p=> p.user_id !== currentUser.id && new Date(p.created_at).getTime() > lastSeen).length;
+  updateNotifBadges();
+}
+
+function renderWallFeed(){
+  const box = $('#wall-feed');
+  if(!wallPosts.length){ box.innerHTML = '<div class="empty-hint">Todavía no hay nada en el Muro. ¡Publica tu primera receta desde su ficha!</div>'; return; }
+  box.innerHTML = wallPosts.map(p=>{
+    const d = p.dish_snapshot || {};
+    const liked = wallLikes.some(l=> l.post_id===p.id && l.user_id===currentUser.id);
+    const likeCount = wallLikes.filter(l=> l.post_id===p.id).length;
+    const commentCount = wallComments.filter(c=> c.post_id===p.id).length;
+    const isOwn = p.user_id === currentUser.id;
+    const rightBtn = isOwn
+      ? `<button type="button" class="wall-action-btn wall-danger" data-wall-delete="${p.id}" aria-label="Eliminar publicación">${ICON_TRASH}</button>`
+      : `<button type="button" class="wall-action-btn" data-wall-add="${p.id}">${ICON_PLUS_CIRCLE}<span>Añadir</span></button>`;
+    return `<div class="wall-post" data-post="${p.id}">
+      <div class="wall-post-header">
+        ${avatarHtml(p.author)}
+        <span class="wall-post-user">@${escapeHtml((p.author&&p.author.username)||'?')}</span>
+        <span class="wall-post-time">${timeAgo(p.created_at)}</span>
+      </div>
+      ${d.image_url ? `<div class="wall-post-photo"><img src="${d.image_url}" alt=""></div>` : ''}
+      <div class="wall-post-body">
+        <div class="wall-post-dish">${escapeHtml(d.name||'Receta')}${d.calories?` · ${d.calories} kcal`:''}</div>
+        ${p.caption ? `<div class="wall-post-caption">${escapeHtml(p.caption)}</div>` : ''}
+      </div>
+      <div class="wall-post-actions">
+        <div class="wall-action-left">
+          <button type="button" class="wall-action-btn ${liked?'liked':''}" data-wall-like="${p.id}" aria-label="Me gusta">${ICON_HEART}${likeCount?`<span>${likeCount}</span>`:''}</button>
+          <button type="button" class="wall-action-btn" data-wall-comment="${p.id}" aria-label="Comentarios">${ICON_COMMENT}${commentCount?`<span>${commentCount}</span>`:''}</button>
+        </div>
+        <div class="wall-action-right">${rightBtn}</div>
+      </div>
+    </div>`;
+  }).join('');
+  $all('[data-wall-like]').forEach(b=> b.onclick = ()=> toggleWallLike(b.dataset.wallLike));
+  $all('[data-wall-comment]').forEach(b=> b.onclick = ()=> openWallComments(b.dataset.wallComment));
+  $all('[data-wall-add]').forEach(b=> b.onclick = ()=> addWallDishToRepo(b.dataset.wallAdd));
+  $all('[data-wall-delete]').forEach(b=> b.onclick = ()=> deleteWallPost(b.dataset.wallDelete));
+}
+
+async function toggleWallLike(postId){
+  const existing = wallLikes.find(l=> l.post_id===postId && l.user_id===currentUser.id);
+  if(existing){
+    wallLikes = wallLikes.filter(l=> l!==existing);
+    renderWallFeed();
+    const { error } = await sb.from('wall_likes').delete().eq('id', existing.id);
+    if(error){ console.error(error); await loadWallFeed(); }
+  } else {
+    const optimistic = { id: 'tmp-'+uuid(), post_id: postId, user_id: currentUser.id, created_at: new Date().toISOString() };
+    wallLikes.push(optimistic);
+    renderWallFeed();
+    const { data, error } = await sb.from('wall_likes').insert({ post_id: postId, user_id: currentUser.id }).select().single();
+    if(error){ wallLikes = wallLikes.filter(l=> l!==optimistic); renderWallFeed(); console.error(error); return; }
+    optimistic.id = data.id;
+  }
+}
+
+function renderWallCommentsList(){
+  const list = wallComments.filter(c=> c.post_id===openingCommentsForPost);
+  const box = $('#wall-comments-list');
+  box.innerHTML = list.length
+    ? list.map(c=> `<div class="wall-comment-row">${avatarHtml(c.author)}<div class="wall-comment-body"><span class="wall-comment-user">@${escapeHtml((c.author&&c.author.username)||'?')}</span><span class="wall-comment-text">${escapeHtml(c.text)}</span></div></div>`).join('')
+    : '<div class="empty-hint">Sé el primero en comentar.</div>';
+}
+function openWallComments(postId){
+  openingCommentsForPost = postId;
+  renderWallCommentsList();
+  $('#wall-comment-input').value = '';
+  lockBodyScroll();
+  $('#wall-comments-modal').classList.remove('hidden');
+}
+function closeWallComments(){
+  $('#wall-comments-modal').classList.add('hidden');
+  unlockBodyScroll();
+  openingCommentsForPost = null;
+}
+$('#wall-comments-close').onclick = closeWallComments;
+async function sendWallComment(){
+  const postId = openingCommentsForPost;
+  const text = $('#wall-comment-input').value.trim();
+  if(!postId || !text) return;
+  $('#wall-comment-input').value = '';
+  const { data, error } = await sb.from('wall_comments')
+    .insert({ post_id: postId, user_id: currentUser.id, text })
+    .select('*, author:user_id(username,avatar_url)').single();
+  if(error){ alert(error.message); return; }
+  wallComments.push(data);
+  renderWallCommentsList();
+  renderWallFeed();
+}
+$('#wall-comment-send').onclick = sendWallComment;
+$('#wall-comment-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); sendWallComment(); } });
+
+async function addWallDishToRepo(postId){
+  const post = wallPosts.find(p=> p.id===postId);
+  if(!post) return;
+  const d = post.dish_snapshot || {};
+  const { error } = await sb.from('dishes').insert({
+    id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
+    image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
+    calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
+    shared_from_username: (post.author && post.author.username) || null,
+    protein_g: d.protein_g||null, carbs_g: d.carbs_g||null, fat_g: d.fat_g||null, fiber_g: d.fiber_g||null
+  });
+  if(error){ alert(error.message); return; }
+  alert('Añadido a tu repositorio.');
+  await loadDishes();
+}
+
+async function deleteWallPost(postId){
+  if(!confirm('¿Eliminar esta publicación del Muro?')) return;
+  const { error } = await sb.from('wall_posts').delete().eq('id', postId);
+  if(error){ alert(error.message); return; }
+  wallPosts = wallPosts.filter(p=> p.id!==postId);
+  wallLikes = wallLikes.filter(l=> l.post_id!==postId);
+  wallComments = wallComments.filter(c=> c.post_id!==postId);
+  renderWallFeed();
+}
+
+async function markWallSeen(){
+  const now = new Date().toISOString();
+  currentUser.last_seen_wall_at = now;
+  wallUnreadCount = 0;
+  updateNotifBadges();
+  const { error } = await sb.from('profiles').update({ last_seen_wall_at: now }).eq('id', currentUser.id);
+  if(error) console.error(error);
+}
+function openWallSection(){
+  markWallSeen();
+  loadWallFeed();
+}
+
+/* Aviso en vivo (campanita) mientras la app está abierta: si Supabase Realtime
+   no está activado en el proyecto (falta correr actualizar_muro.sql), esto
+   simplemente no hace nada — el Muro se sigue actualizando al entrar en la
+   sección de todos modos, así que no es una dependencia dura. */
+function subscribeWallRealtime(){
+  try{
+    sb.channel('wall-posts-live')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'wall_posts' }, payload=>{
+        const row = payload && payload.new;
+        if(!row || row.user_id === currentUser.id) return;
+        if(!friends.some(f=> f.id===row.user_id)) return;
+        if($('#section-muro').classList.contains('active')){ loadWallFeed(); markWallSeen(); }
+        else { wallUnreadCount++; updateNotifBadges(); }
+      })
+      .subscribe();
+  }catch(e){ console.error('Realtime del Muro no disponible', e); }
 }
 
 /* ===================== FITNESS: SETUP ===================== */
