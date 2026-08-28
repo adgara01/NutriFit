@@ -394,12 +394,19 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .meal-row{min-width:0;}
 .meal-row label{font-size:10px; color:var(--muted); display:flex; flex-direction:column; gap:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .meal-row input{width:100%; padding:7px 3px; border-radius:8px; border:1px solid var(--border); background:var(--card2); font-size:13px; margin-top:3px; text-align:center;}
-/* Sugerencias de plato por comida (Ajustes → Fitness → "Sugerir platos") */
-.suggest-list{margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:5px;}
-.suggest-row{display:flex; align-items:center; gap:8px;}
-.suggest-text{flex:1; min-width:0; text-align:left; background:none; border:none; padding:0; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.suggest-text i{font-style:italic; color:var(--text);}
-.suggest-refresh{flex-shrink:0; background:none; border:none; font-size:15px; line-height:1; padding:2px 4px; color:var(--muted);}
+/* Sugerencias de plato por comida (Ajustes → Fitness → "Sugerir platos").
+   Una única franja "Sugerencias" agrupa las 4 — cada sugerencia va justo
+   debajo de su casilla de calorías correspondiente, en la misma columna del
+   grid de 4, con el nombre haciendo wrap si no cabe en una línea. */
+.suggest-list{margin-top:8px; padding-top:8px; border-top:1px dashed var(--border);}
+.suggest-heading{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px;}
+.suggest-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px;}
+.suggest-cell{display:flex; flex-direction:column; align-items:center; gap:2px; min-width:0;}
+.suggest-text{
+  background:none; border:none; padding:0; font-size:11px; font-style:italic; color:var(--text);
+  text-align:center; white-space:normal; word-break:break-word; line-height:1.25;
+}
+.suggest-refresh{background:none; border:none; font-size:13px; line-height:1; padding:1px 4px; color:var(--muted);}
 .day-total{margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-size:13px; display:flex; justify-content:space-between; font-weight:700;}
 .drinks-box{margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);}
 .drinks-box .label{font-size:11px; color:var(--muted); margin-bottom:6px;}
@@ -2567,15 +2574,22 @@ function suggestDishForMeal(dateKey, meal){
 }
 function suggestionsHtmlForDate(dateKey){
   if(!currentUser.suggest_meals) return '';
-  const rows = MEALS.map(m=>{
-    const dish = suggestDishForMeal(dateKey, m);
-    if(!dish) return '';
-    return `<div class="suggest-row">
-      <button type="button" class="suggest-text" data-suggest-open="${dish.id}">${MEAL_LABELS[m]}: <i>${escapeHtml(dish.name)} (${dish.calories} kcal)</i></button>
+  // Una celda por comida, alineada bajo su columna del grid de 4 casillas —
+  // el nombre del plato ya deja claro a qué comida pertenece por su posición,
+  // así que aquí no hace falta repetir "Desayuno:"/"Comida:" como antes.
+  const results = MEALS.map(m=> ({ m, dish: suggestDishForMeal(dateKey, m) }));
+  if(!results.some(r=>r.dish)) return '';
+  const cells = results.map(({m, dish})=>{
+    if(!dish) return '<div class="suggest-cell"></div>';
+    return `<div class="suggest-cell">
+      <button type="button" class="suggest-text" data-suggest-open="${dish.id}">${escapeHtml(dish.name)} (${dish.calories} kcal)</button>
       <button type="button" class="suggest-refresh" data-suggest-refresh="${dateKey}|${m}" aria-label="Otra sugerencia">↻</button>
     </div>`;
   }).join('');
-  return rows ? `<div class="suggest-list">${rows}</div>` : '';
+  return `<div class="suggest-list">
+    <div class="suggest-heading">Sugerencias</div>
+    <div class="suggest-grid">${cells}</div>
+  </div>`;
 }
 
 async function renderWeekBoard(){
