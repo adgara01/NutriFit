@@ -155,6 +155,16 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .dish-card.selected{box-shadow:inset 0 0 0 3px #3a3f3c;}
 .dish-card.dragging, .folder-card.dragging{animation:none !important; opacity:.92; box-shadow:var(--shadow); z-index:50; position:relative;}
 .folder-card.drop-hover{outline:3px solid var(--accent); outline-offset:-3px; background:rgba(18,135,94,.08);}
+/* Arrastre en grupo (varios platos seleccionados a la vez, estilo iPhone):
+   las tarjetas que van "de acompañantes" se atenúan en su sitio mientras
+   dura el gesto, y un par de fichas fantasma quedan apiladas y vibrando
+   justo detrás de la que llevas bajo el dedo. */
+.dish-card.drag-group-dim{opacity:.35; transition:opacity .12s ease;}
+.drag-ghost{
+  position:fixed; background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  box-shadow:var(--shadow); pointer-events:none; z-index:49; opacity:.85;
+  animation:dish-jiggle .22s infinite ease-in-out;
+}
 /* Tratar toda la tarjeta como un bloque único al arrastrar: sin selección de texto,
    sin el menú "Guardar imagen" de iOS, sin que la <img> se arrastre por su cuenta. */
 .dish-card, .folder-card{
@@ -220,6 +230,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .pill-btn.active[data-q="normal"]{background:rgba(192,122,31,.14); border-color:var(--normal); color:var(--normal);}
 .pill-btn.active[data-q="malo"]{background:rgba(201,86,74,.14); border-color:var(--bad); color:var(--bad);}
 .modal-actions{display:flex; gap:10px; margin-top:6px;}
+.dish-actions-row{justify-content:space-between; align-items:center;}
+.autosave-status{font-size:12px; color:var(--muted); font-style:italic;}
 .btn-primary{flex:1; background:var(--accent); color:#fff; padding:13px; border-radius:12px; font-weight:600; font-size:15px;}
 .btn-secondary{
   background:var(--card); color:var(--muted); padding:13px 16px; border-radius:12px; border:1px solid var(--border);
@@ -688,12 +700,12 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div id="ingredients-list"></div>
     </div>
 
-    <div class="modal-actions">
+    <div class="modal-actions dish-actions-row">
       <button class="btn-secondary" id="dish-cancel-btn">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         Atrás
       </button>
-      <button class="btn-primary" id="dish-save-btn">Guardar</button>
+      <span class="autosave-status" id="dish-autosave-status"></span>
     </div>
     <div class="modal-actions hidden" id="dish-secondary-actions">
       <button class="btn-secondary hidden" id="dish-share-btn" style="flex:1; justify-content:center;">Compartir</button>
@@ -731,6 +743,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </div>
     </div>
     <button id="folder-remove-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Sacar de la carpeta (0)</button>
+    <button id="folder-delete-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Eliminar carpeta</button>
     <div class="gallery" id="folder-gallery"></div>
   </div>
 </div>
@@ -790,8 +803,14 @@ let folders = [];
 let galleryEditMode = false;
 let selectedDishIds = new Set();
 let editingDishId = null;
+let dishExistsRemote = false;   // false mientras el plato que se está editando aún no tiene fila en la BD
+let dishCurrentImageUrl = null; // última foto guardada de verdad (para poder limpiarla al subir otra)
 let dishPhotoFile = null;
 let selectedQuality = null;
+let dishSaveTimer = null;
+let dishSaveInFlight = null;
+let dishSaveQueuedSnapshot = null;
+let autosaveStatusTimer = null;
 
 let fitnessProfile = null;    // row from fitness_profiles
 let weekDates = [];           // 7 Date objects, Mon..Sun
@@ -1099,7 +1118,13 @@ function layoutMasonry(container, htmlItems){
   if(!htmlItems.length) return;
   const colWidth = 150, gap = 12;
   const availWidth = container.clientWidth || container.getBoundingClientRect().width || 320;
-  const numCols = Math.max(1, Math.min(htmlItems.length, Math.floor((availWidth + gap) / (colWidth + gap))));
+  // OJO: el número de columnas NO depende de cuántas tarjetas hay que
+  // colocar, solo del ancho disponible — si se limitaba al nº de tarjetas,
+  // con una sola tarjeta salía una única columna que ocupaba TODO el ancho
+  // (la tarjeta se veía a doble tamaño, como si fuera un 2x2). Con las
+  // columnas fijas de siempre, una tarjeta suelta simplemente cae en la
+  // primera y dejas la segunda vacía — el tamaño no cambia haya 1 o 20.
+  const numCols = Math.max(1, Math.floor((availWidth + gap) / (colWidth + gap)));
   const wrap = document.createElement('div');
   wrap.className = 'masonry-cols';
   const cols = [];
@@ -1178,6 +1203,7 @@ $('#edit-gallery-btn').onclick = ()=>{
   applyEditModeVisuals();
 };
 $('#section-platos').addEventListener('click', e=>{
+  if(suppressNextSectionClick){ suppressNextSectionClick = false; return; }
   if(!galleryEditMode) return;
   if(e.target.closest('.dish-card, .folder-card, .section-actions, #gallery-delete-btn, .fab')) return;
   exitGalleryEditMode();
@@ -1202,9 +1228,43 @@ $('#new-folder-btn').onclick = async ()=>{
   renderGallery();
 };
 
-/* --- Arrastrar una tarjeta (o la selección entera) encima de una carpeta para archivarla --- */
+/* --- Arrastrar una tarjeta (o la selección entera, apiladas, estilo iPhone) encima
+   de una carpeta para archivarla --- */
+// Justo después de soltar un arrastre real, el siguiente "click" (sintetizado
+// por el navegador tras el pointerup) se ignora una vez — si no, ese click
+// se cuela hasta el listener de #section-platos y sale del modo editar solo.
+let suppressNextSectionClick = false;
+function buildDragGhostStack(card, n){
+  const rect = card.getBoundingClientRect();
+  const stack = [];
+  for(let i=0;i<n;i++){
+    const ghost = document.createElement('div');
+    ghost.className = 'drag-ghost';
+    ghost.style.width = rect.width+'px';
+    ghost.style.height = rect.height+'px';
+    ghost.style.left = rect.left+'px';
+    ghost.style.top = rect.top+'px';
+    ghost.style.setProperty('--rot', ((i%2===0?-1:1) * (5+i*3))+'deg');
+    document.body.appendChild(ghost);
+    stack.push(ghost);
+  }
+  return stack;
+}
+function positionDragGhostStack(stack, dx, dy){
+  stack.forEach((ghost, i)=>{
+    const off = 5 + i*5;
+    ghost.style.transform = `translate(${dx+off}px, ${dy+off}px) rotate(var(--rot)) scale(1.05)`;
+  });
+}
 function attachCardDrag(card){
   let startX=0, startY=0, dragging=false;
+  let ghostStack = [], dimmedEls = [];
+  function cleanupGroupVisuals(){
+    ghostStack.forEach(g=> g.remove());
+    ghostStack = [];
+    dimmedEls.forEach(el=> el.classList.remove('drag-group-dim'));
+    dimmedEls = [];
+  }
   // Red de seguridad extra: en modo editar, la tarjeta es un bloque — nunca se
   // arrastra como imagen/texto nativo (evita el menú "Guardar imagen" de iOS).
   card.addEventListener('dragstart', e=>{ if(galleryEditMode || folderEditMode) e.preventDefault(); });
@@ -1220,9 +1280,20 @@ function attachCardDrag(card){
       if(Math.hypot(dx,dy) < 10) return;
       dragging = true;
       card.classList.add('dragging');
+      // Si el plato forma parte de una selección múltiple, se arrastra el
+      // grupo entero: las demás tarjetas seleccionadas se atenúan en su
+      // sitio y aparecen un par de "fichas" fantasma apiladas y vibrando
+      // justo detrás de la que llevas bajo el dedo.
+      if(selectedDishIds.has(card.dataset.id) && selectedDishIds.size>1){
+        const others = [...selectedDishIds].filter(id=>id!==card.dataset.id);
+        dimmedEls = $all('#gallery .dish-card').filter(el=> others.includes(el.dataset.id));
+        dimmedEls.forEach(el=> el.classList.add('drag-group-dim'));
+        ghostStack = buildDragGhostStack(card, Math.min(2, others.length));
+      }
     }
     e.preventDefault();
     card.style.transform = `translate(${dx}px, ${dy}px) scale(1.06)`;
+    if(ghostStack.length) positionDragGhostStack(ghostStack, dx, dy);
     card.style.pointerEvents = 'none';
     const under = document.elementFromPoint(e.clientX, e.clientY);
     card.style.pointerEvents = '';
@@ -1233,6 +1304,8 @@ function attachCardDrag(card){
   function endDrag(e){
     if(!dragging){ dragging = false; return; }
     dragging = false;
+    suppressNextSectionClick = true;
+    setTimeout(()=>{ suppressNextSectionClick = false; }, 400); // red de seguridad si no llega ningún click
     // Igual que en pointermove: se excluye la propia tarjeta del hit-test
     // ocultándola del todo para elementFromPoint, no basta con quitar la
     // clase 'dragging' (su z-index/position ya no son de fiar en este punto).
@@ -1241,6 +1314,7 @@ function attachCardDrag(card){
     card.style.pointerEvents = '';
     $all('#gallery .folder-card.drop-hover').forEach(f=>f.classList.remove('drop-hover'));
     const folderUnder = under && under.closest('.folder-card');
+    cleanupGroupVisuals();
     if(folderUnder){
       // Al soltar encima de una carpeta: la tarjeta se encoge/desvanece justo
       // donde está (no salta de vuelta a su sitio original primero) y el
@@ -1260,7 +1334,11 @@ function attachCardDrag(card){
     }
   }
   card.addEventListener('pointerup', endDrag);
-  card.addEventListener('pointercancel', ()=>{ dragging=false; card.classList.remove('dragging'); card.style.transition=''; card.style.transform=''; card.style.opacity=''; card.style.pointerEvents=''; });
+  card.addEventListener('pointercancel', ()=>{
+    dragging=false; card.classList.remove('dragging');
+    card.style.transition=''; card.style.transform=''; card.style.opacity=''; card.style.pointerEvents='';
+    cleanupGroupVisuals();
+  });
 }
 /* Reintenta una escritura de Supabase una vez si falla (un corte de red de
    un instante no debería deshacer un gesto que el usuario ya vio completarse
@@ -1341,6 +1419,9 @@ function renderFolderGallery(){
   $('#folder-edit-btn').textContent = folderEditMode ? 'Listo' : 'Editar';
   $('#folder-remove-btn').classList.toggle('hidden', !(folderEditMode && folderSelectedDishIds.size>0));
   $('#folder-remove-btn').textContent = `Sacar de la carpeta (${folderSelectedDishIds.size})`;
+  // "Eliminar carpeta" solo se muestra en modo editar y cuando no hay nada
+  // seleccionado (si no, competiría visualmente con "Sacar de la carpeta").
+  $('#folder-delete-btn').classList.toggle('hidden', !(folderEditMode && folderSelectedDishIds.size===0));
   $('#folder-modal-title').classList.toggle('editable', folderEditMode);
 }
 $('#folder-close-x').onclick = closeFolderModal;
@@ -1391,6 +1472,23 @@ $('#folder-remove-btn').onclick = async ()=>{
     renderGallery();
   }
 };
+$('#folder-delete-btn').onclick = async ()=>{
+  // Borrar la carpeta NO borra los platos de dentro: la base de datos tiene
+  // dishes.folder_id con "on delete set null" (actualizar_carpetas.sql), así
+  // que al eliminar la fila de la carpeta los platos simplemente vuelven al
+  // mosaico principal sin carpeta.
+  if(!currentFolderId) return;
+  const folder = folders.find(f=>f.id===currentFolderId);
+  const name = folder ? folder.name : 'esta carpeta';
+  if(!confirm(`¿Eliminar la carpeta "${name}"? Los platos de dentro no se borran, vuelven al mosaico.`)) return;
+  const id = currentFolderId;
+  const { error } = await updateWithRetry(()=> sb.from('dish_folders').delete().eq('id', id));
+  if(error){ alert(error.message); return; }
+  folders = folders.filter(f=>f.id!==id);
+  dishes.forEach(d=>{ if(d.folder_id===id) d.folder_id = null; });
+  closeFolderModal();
+  renderGallery();
+};
 
 /* ===================== PLATOS: MODAL ===================== */
 $('#add-dish-btn').onclick = ()=> openDishModal(null);
@@ -1423,10 +1521,17 @@ function unlockBodyScroll(){
 }
 
 function openDishModal(dish){
+  flushDishAutosave(); // por si veníamos de otro plato con un cambio aún sin disparar
   lockBodyScroll();
-  editingDishId = dish ? dish.id : null;
+  // El id se reserva desde YA (incluso para un plato nuevo que aún no existe
+  // en la base de datos) para que el autoguardado tenga siempre un id fijo
+  // al que apuntar desde el primer cambio, sea texto, foto o lo que sea.
+  editingDishId = dish ? dish.id : uuid();
+  dishExistsRemote = !!dish;
+  dishCurrentImageUrl = dish ? (dish.image_url||null) : null;
   dishPhotoFile = null;
   selectedQuality = dish ? dish.quality : null;
+  $('#dish-autosave-status').textContent = '';
 
   const wrap = $('#dish-photo-wrap'), img = $('#dish-photo-preview');
   if(dish && dish.image_url){ img.src = dish.image_url; img.classList.remove('hidden'); wrap.classList.add('has-photo'); }
@@ -1441,12 +1546,17 @@ function openDishModal(dish){
   $('#ingredients-list').innerHTML = '';
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : ['']).forEach(v=> addIngredientRow(v));
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
-  $('#dish-secondary-actions').classList.toggle('hidden', !dish);
-  $('#dish-delete-btn').classList.toggle('hidden', !dish);
-  $('#dish-share-btn').classList.toggle('hidden', !dish);
+  $('#dish-secondary-actions').classList.toggle('hidden', !dishExistsRemote);
+  $('#dish-delete-btn').classList.toggle('hidden', !dishExistsRemote);
+  $('#dish-share-btn').classList.toggle('hidden', !dishExistsRemote);
   $('#dish-modal').classList.remove('hidden');
 }
-function closeDishModal(){ $('#dish-modal').classList.add('hidden'); $('#desc-modal').classList.add('hidden'); unlockBodyScroll(); }
+function closeDishModal(){
+  flushDishAutosave();
+  $('#dish-modal').classList.add('hidden');
+  $('#desc-modal').classList.add('hidden');
+  unlockBodyScroll();
+}
 
 /* --- Gesto: deslizar TODA la tarjeta del plato hacia abajo para volver al mosaico.
    Único gesto (antes había también uno horizontal, se quita para que sea más predecible).
@@ -1537,9 +1647,10 @@ function addIngredientRow(value='', afterRow=null){
       newRow.querySelector('input').focus();
     }
   });
+  input.addEventListener('input', ()=> scheduleDishAutosave(false));
   input.addEventListener('blur', ()=>{
     // fila vacía y no es la única: se limpia sola, no se queda un hueco muerto
-    if(!input.value.trim() && $all('.ingredient-row').length>1){ row.remove(); }
+    if(!input.value.trim() && $all('.ingredient-row').length>1){ row.remove(); scheduleDishAutosave(false); }
   });
   attachSwipeToDelete(row);
   if(afterRow){ afterRow.after(row); } else { $('#ingredients-list').appendChild(row); }
@@ -1572,7 +1683,7 @@ function attachSwipeToDelete(row){
       inner.style.transition = 'transform .18s ease, opacity .18s ease';
       inner.style.transform = 'translateX(-100%)';
       inner.style.opacity = '0';
-      setTimeout(()=> row.remove(), 180);
+      setTimeout(()=>{ row.remove(); scheduleDishAutosave(false); }, 180);
     } else if(dragging){
       inner.style.transition = 'transform .18s ease';
       inner.style.transform = 'translateX(0)';
@@ -1594,11 +1705,16 @@ function openDescModal(){ $('#desc-modal').classList.remove('hidden'); $('#dish-
 function closeDescModal(){ $('#desc-modal').classList.add('hidden'); updateDescPreview(); }
 $('#dish-desc-trigger').onclick = openDescModal;
 $('#desc-modal').addEventListener('click', e=>{ if(e.target.id==='desc-modal') closeDescModal(); });
+$('#dish-name').addEventListener('input', ()=> scheduleDishAutosave(false));
+$('#dish-desc').addEventListener('input', ()=>{ updateDescPreview(); scheduleDishAutosave(false); });
+$('#dish-calories').addEventListener('input', ()=> scheduleDishAutosave(false));
+$('#dish-duration').addEventListener('input', ()=> scheduleDishAutosave(false));
 
 $all('#quality-group .pill-btn').forEach(b=>{
   b.onclick = ()=>{
     selectedQuality = (selectedQuality===b.dataset.q) ? null : b.dataset.q;
     $all('#quality-group .pill-btn').forEach(x=> x.classList.toggle('active', x.dataset.q===selectedQuality));
+    scheduleDishAutosave(true);
   };
 });
 /* La foto del plato se "normaliza" siempre a JPEG antes de subirla: algunas
@@ -1647,6 +1763,7 @@ $('#dish-photo-input').addEventListener('change', async e=>{
       $('#dish-photo-preview').classList.remove('hidden');
     };
     reader.readAsDataURL(normalized);
+    scheduleDishAutosave(true); // la foto se guarda sola, no hace falta pulsar nada
   }catch(err){
     alert('No se pudo procesar esa foto, prueba con otra: '+err.message);
     dishPhotoFile = null;
@@ -1681,34 +1798,110 @@ async function uploadDishPhoto(dishId, file, prevUrl){
   return data.publicUrl;
 }
 
-$('#dish-save-btn').onclick = async ()=>{
-  const name = $('#dish-name').value.trim();
-  if(!name){ alert('Ponle un nombre al plato'); return; }
-  const ingredients = $all('#ingredients-list input').map(i=>i.value.trim()).filter(Boolean);
-  const id = editingDishId || uuid();
-  const existingUrl = editingDishId ? (dishes.find(d=>d.id===editingDishId)||{}).image_url : null;
-  let image_url = existingUrl;
-  $('#dish-save-btn').textContent = 'Guardando...';
+/* ===================== AUTOGUARDADO DE LA FICHA DE PLATO =====================
+   Ya no hay botón "Guardar": cualquier cambio (nombre, descripción, foto,
+   calorías, minutos, calidad, ingredientes) se guarda solo. Los campos de
+   texto/número van con un pequeño debounce (para no lanzar una escritura en
+   cada pulsación); la foto y la calidad se guardan al instante porque son
+   cambios discretos, no hace falta esperar a que "dejes de escribir".
+
+   Para que un cambio de plato a mitad de un guardado pendiente nunca acabe
+   mezclando datos de dos platos distintos, cada guardado se lanza con una
+   "foto fija" (snapshot) de los campos tomada de forma SÍNCRONA en el mismo
+   instante en que se dispara — antes de cualquier `await` — así, aunque el
+   usuario cierre la ficha y abra otro plato mientras la escritura anterior
+   sigue en el aire, esa escritura sigue usando los datos correctos del
+   plato al que pertenecía. */
+function captureDishSnapshot(){
+  return {
+    id: editingDishId,
+    wasExisting: dishExistsRemote,
+    name: $('#dish-name').value.trim(),
+    ingredients: $all('#ingredients-list input').map(i=>i.value.trim()).filter(Boolean),
+    description: $('#dish-desc').value.trim(),
+    calories: $('#dish-calories').value ? Number($('#dish-calories').value) : null,
+    duration_min: $('#dish-duration').value ? Number($('#dish-duration').value) : null,
+    quality: selectedQuality,
+    photoFile: dishPhotoFile,
+    prevImageUrl: dishCurrentImageUrl,
+  };
+}
+function setAutosaveStatus(text, forThisDishId){
+  // Si mientras se guardaba el usuario ya pasó a otro plato, no toques el
+  // indicador — pertenece a la ficha que esté abierta ahora, no a la vieja.
+  if(forThisDishId!==undefined && forThisDishId!==editingDishId) return;
+  const el = $('#dish-autosave-status');
+  if(!el) return;
+  el.textContent = text;
+  if(autosaveStatusTimer) clearTimeout(autosaveStatusTimer);
+  if(text==='Guardado'){
+    autosaveStatusTimer = setTimeout(()=>{ if(el.textContent==='Guardado') el.textContent=''; }, 1500);
+  }
+}
+function scheduleDishAutosave(immediate){
+  if(dishSaveTimer){ clearTimeout(dishSaveTimer); dishSaveTimer=null; }
+  if(immediate){ runDishAutosave(captureDishSnapshot()); return; }
+  dishSaveTimer = setTimeout(()=>{ dishSaveTimer=null; runDishAutosave(captureDishSnapshot()); }, 500);
+}
+function flushDishAutosave(){
+  if(dishSaveTimer){ clearTimeout(dishSaveTimer); dishSaveTimer=null; runDishAutosave(captureDishSnapshot()); }
+}
+function runDishAutosave(snap){
+  if(!snap.name) return; // como antes: sin nombre no hay nada que guardar todavía
+  if(dishPhotoFile===snap.photoFile) dishPhotoFile = null; // esta foto ya queda "recogida" en este guardado
+  if(dishSaveInFlight){
+    dishSaveQueuedSnapshot = snap; // solo interesa la versión más reciente pendiente
+    return;
+  }
+  dishSaveInFlight = doSaveDishSnapshot(snap).finally(()=>{
+    dishSaveInFlight = null;
+    if(dishSaveQueuedSnapshot){
+      const next = dishSaveQueuedSnapshot; dishSaveQueuedSnapshot = null;
+      runDishAutosave(next);
+    }
+  });
+}
+async function doSaveDishSnapshot(snap){
+  setAutosaveStatus('Guardando…', snap.id);
+  let image_url = snap.prevImageUrl;
   try{
-    if(dishPhotoFile){ image_url = await uploadDishPhoto(id, dishPhotoFile, existingUrl); }
+    if(snap.photoFile){
+      image_url = await uploadDishPhoto(snap.id, snap.photoFile, snap.prevImageUrl);
+      if(snap.id===editingDishId) dishCurrentImageUrl = image_url;
+    }
     const payload = {
-      id, user_id: currentUser.id, name,
-      ingredients, description: $('#dish-desc').value.trim(),
-      calories: $('#dish-calories').value ? Number($('#dish-calories').value) : null,
-      duration_min: $('#dish-duration').value ? Number($('#dish-duration').value) : null,
-      quality: selectedQuality, image_url
+      id: snap.id, user_id: currentUser.id, name: snap.name,
+      ingredients: snap.ingredients, description: snap.description,
+      calories: snap.calories, duration_min: snap.duration_min,
+      quality: snap.quality, image_url
     };
-    const { error } = await sb.from('dishes').upsert(payload);
+    const { error } = await updateWithRetry(()=> sb.from('dishes').upsert(payload));
     if(error) throw error;
-    closeDishModal();
-    await loadDishes();
-  }catch(err){ alert('Error guardando: '+err.message); }
-  finally{ $('#dish-save-btn').textContent = 'Guardar'; }
-};
+    const idx = dishes.findIndex(d=>d.id===snap.id);
+    if(idx>=0) Object.assign(dishes[idx], payload); else dishes.unshift(payload);
+    if(!snap.wasExisting && snap.id===editingDishId){
+      // primer guardado con éxito de un plato nuevo: ya existe de verdad,
+      // así que aparecen los botones de compartir/eliminar
+      dishExistsRemote = true;
+      $('#dish-secondary-actions').classList.remove('hidden');
+      $('#dish-delete-btn').classList.remove('hidden');
+      $('#dish-share-btn').classList.remove('hidden');
+    }
+    renderGallery();
+    if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
+    setAutosaveStatus('Guardado', snap.id);
+  }catch(err){
+    console.error(err);
+    setAutosaveStatus('No se pudo guardar (sin conexión?)', snap.id);
+  }
+}
 
 $('#dish-delete-btn').onclick = async ()=>{
-  if(!editingDishId) return;
+  if(!dishExistsRemote) return;
   if(!confirm('¿Eliminar este plato?')) return;
+  // Cancela cualquier autoguardado pendiente de este plato — si no, al
+  // cerrar la ficha ese guardado "resucitaría" el plato recién borrado.
+  if(dishSaveTimer){ clearTimeout(dishSaveTimer); dishSaveTimer=null; }
   const { error } = await sb.from('dishes').delete().eq('id', editingDishId);
   if(error){ alert(error.message); return; }
   closeDishModal();
