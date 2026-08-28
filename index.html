@@ -70,7 +70,7 @@ button{cursor:pointer; border:none;}
   position:sticky; top:0; background:var(--bg); z-index:5;
 }
 .icon-btn-plain{
-  background:none; border:none; padding:8px; margin:-8px; border-radius:10px; color:var(--text);
+  position:relative; background:none; border:none; padding:8px; margin:-8px; border-radius:10px; color:var(--text);
   display:flex; align-items:center; justify-content:center;
 }
 .icon-btn-plain:active{background:var(--card2);}
@@ -87,7 +87,7 @@ button{cursor:pointer; border:none;}
 .drawer-brand{font-size:20px; font-weight:800; letter-spacing:-.02em; margin-bottom:36px;}
 .drawer-nav{display:flex; flex-direction:column; gap:8px; flex:1;}
 .drawer-link{
-  display:flex; align-items:center; gap:16px; padding:18px 14px; border-radius:14px;
+  position:relative; display:flex; align-items:center; gap:16px; padding:18px 14px; border-radius:14px;
   background:var(--card2); border:1px solid var(--border); color:var(--text); font-size:20px; font-weight:800; text-align:left; width:100%;
 }
 .drawer-link svg{flex-shrink:0; color:var(--accent); width:26px; height:26px;}
@@ -183,7 +183,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   padding:4px 2px 12px; border-bottom:1px solid var(--border); margin-bottom:16px;
 }
 .dish-name-input:focus{outline:none; border-color:var(--accent);}
-.dish-meta-row{display:flex; gap:8px; margin-bottom:20px; align-items:stretch;}
+.dish-meta-row{display:flex; gap:8px; margin-bottom:10px; align-items:stretch;}
+.dish-meta-row.meta-row-2{margin-bottom:20px;}
 .meta-chip{
   background:var(--card2); border:1px solid var(--border); border-radius:12px;
   display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--muted);
@@ -192,9 +193,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .meta-desc{flex:1.3;}
 .meta-desc span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;}
 .meta-desc.filled{color:var(--text);}
-.meta-kcal{flex:0.8; flex-direction:column; padding:6px 4px;}
-.meta-kcal input{width:100%; border:none; background:none; text-align:center; font-size:14px; color:var(--text); padding:4px 0 0;}
-.meta-kcal input:focus{outline:none;}
+.meta-kcal, .meta-duration{flex:1; flex-direction:column; padding:6px 4px;}
+.meta-kcal input, .meta-duration input{width:100%; border:none; background:none; text-align:center; font-size:14px; color:var(--text); padding:4px 0 0;}
+.meta-kcal input:focus, .meta-duration input:focus{outline:none;}
 .meta-kcal-unit{font-size:9px; color:var(--muted); letter-spacing:.02em;}
 .dish-meta-row .pill-group{flex:1.7; gap:4px;}
 .dish-meta-row .pill-btn{
@@ -203,16 +204,36 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   display:flex; align-items:center; justify-content:center; min-height:38px;
 }
 .desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
+.ingredients-hint{font-size:12px; color:var(--muted); margin:-2px 0 10px; line-height:1.4;}
 .ingredient-row{position:relative; overflow:hidden; border-radius:10px; margin-bottom:8px;}
 .ingredient-delete-bg{
   position:absolute; inset:0; background:var(--bad); color:#fff; font-size:13px; font-weight:600;
   display:flex; align-items:center; justify-content:flex-end; padding-right:16px;
 }
-.ingredient-input{
-  position:relative; width:100%; background:var(--card2); border:1px solid var(--border);
-  border-radius:10px; padding:11px; font-size:15px; color:var(--text);
+.ingredient-row-inner{
+  position:relative; display:flex; align-items:center; gap:6px;
+  background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:0 6px 0 8px;
 }
-.ingredient-input:focus{outline:none; border-color:var(--accent);}
+.ingredient-check{
+  width:22px; height:22px; border-radius:50%; flex-shrink:0; background:var(--card);
+  border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center;
+}
+.ingredient-check svg{opacity:0; width:13px; height:13px; color:#fff;}
+.ingredient-check.checked{background:#a9dcc0; border-color:#8fceac;}
+.ingredient-check.checked svg{opacity:1;}
+.ingredient-input{
+  position:relative; flex:1; min-width:0; width:100%; background:none; border:none;
+  border-radius:10px; padding:11px 4px; font-size:15px; color:var(--text);
+}
+.ingredient-input:focus{outline:none;}
+.ingredient-row.checked .ingredient-input{color:#7fbf9c; font-style:italic;}
+
+/* ---------- NOTIFICACIONES ---------- */
+.notif-badge{
+  position:absolute; top:-3px; right:-3px; min-width:17px; height:17px; padding:0 4px;
+  border-radius:999px; background:var(--bad); color:#fff; font-size:10px; font-weight:800;
+  display:flex; align-items:center; justify-content:center; line-height:1; box-shadow:0 0 0 2px var(--bg2);
+}
 
 .desc-modal-overlay{align-items:center; padding:24px; z-index:25;}
 .desc-modal-card{width:100%; max-width:420px; background:var(--bg2); border-radius:18px; padding:18px; box-shadow:var(--shadow);}
@@ -336,6 +357,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   <header class="appbar">
     <button id="menu-btn" class="icon-btn-plain" aria-label="Menú">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <span id="menu-notif-badge" class="notif-badge hidden">0</span>
     </button>
   </header>
 
@@ -354,6 +376,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <button class="drawer-link" data-section="social">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>Social</span>
+        <span id="social-notif-badge" class="notif-badge hidden">0</span>
       </button>
     </nav>
     <div class="drawer-footer">
@@ -556,17 +579,24 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       </button>
       <div class="pill-group" id="quality-group">
         <button type="button" class="pill-btn" data-q="bueno">Healthy</button>
-        <button type="button" class="pill-btn" data-q="normal">Okey</button>
+        <button type="button" class="pill-btn" data-q="normal">Normal</button>
         <button type="button" class="pill-btn" data-q="malo">Cheat meal</button>
       </div>
+    </div>
+    <div class="dish-meta-row meta-row-2">
       <div class="meta-chip meta-kcal">
         <input type="number" id="dish-calories" autocomplete="off">
         <span class="meta-kcal-unit">kcal</span>
+      </div>
+      <div class="meta-chip meta-duration">
+        <input type="number" id="dish-duration" autocomplete="off">
+        <span class="meta-kcal-unit">min. elaboración</span>
       </div>
     </div>
 
     <div class="field">
       <label>Ingredientes</label>
+      <div class="ingredients-hint">Enter para añadir un ingrediente · desliza a la izquierda para eliminarlo</div>
       <div id="ingredients-list"></div>
     </div>
 
@@ -628,7 +658,7 @@ const MEAL_SPLIT = {desayuno:0.25, comida:0.35, merienda:0.10, cena:0.30};
 const DRINK_KCAL = {cerveza:110, vino:120, cubata:250, otro:150};
 const DRINK_LABELS = {cerveza:'Cerveza', vino:'Copa de vino', cubata:'Cubata/copa', otro:'Otro'};
 const DAY_NAMES = {1:'Lun',2:'Mar',3:'Mié',4:'Jue',5:'Vie',6:'Sáb',7:'Dom'};
-const QUALITY_LABELS = {bueno:'Healthy', normal:'Okey', malo:'Cheat meal'};
+const QUALITY_LABELS = {bueno:'Healthy', normal:'Normal', malo:'Cheat meal'};
 
 /* ===================== UTIL ===================== */
 const $ = (sel) => document.querySelector(sel);
@@ -928,6 +958,7 @@ function openDishModal(dish){
   $('#dish-desc').value = dish ? (dish.description||'') : '';
   updateDescPreview();
   $('#dish-calories').value = dish ? (dish.calories||'') : '';
+  $('#dish-duration').value = dish ? (dish.duration_min||'') : '';
   $('#ingredients-list').innerHTML = '';
   (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : ['']).forEach(v=> addIngredientRow(v));
   $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
@@ -1003,61 +1034,75 @@ function attachSwipeToCloseSheet(sheet, onClose){
 attachSwipeToCloseSheet(document.querySelector('#dish-modal .modal-sheet'), closeDishModal);
 
 /* --- Ingredientes: sin botón "+", Enter crea fila nueva, swipe a la izquierda borra --- */
+const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
 function addIngredientRow(value='', afterRow=null){
   const row = document.createElement('div');
   row.className = 'ingredient-row';
   row.innerHTML = `
     <div class="ingredient-delete-bg">Eliminar</div>
-    <input type="text" class="ingredient-input" value="${escapeHtml(value)}"
-      autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">`;
-  const input = row.querySelector('input');
+    <div class="ingredient-row-inner">
+      <button type="button" class="ingredient-check" aria-label="Marcar ingrediente">${ICON_CHECK}</button>
+      <input type="text" class="ingredient-input" value="${escapeHtml(value)}"
+        autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>`;
+  const input = row.querySelector('.ingredient-input');
+  row.querySelector('.ingredient-check').onclick = ()=>{
+    row.classList.toggle('checked');
+    row.querySelector('.ingredient-check').classList.toggle('checked');
+  };
   input.addEventListener('keydown', e=>{
     if(e.key==='Enter'){
       e.preventDefault();
+      if(!input.value.trim()) return; // no crear filas vacías a base de dar a Enter
       const newRow = addIngredientRow('', row);
       newRow.querySelector('input').focus();
     }
+  });
+  input.addEventListener('blur', ()=>{
+    // fila vacía y no es la única: se limpia sola, no se queda un hueco muerto
+    if(!input.value.trim() && $all('.ingredient-row').length>1){ row.remove(); }
   });
   attachSwipeToDelete(row);
   if(afterRow){ afterRow.after(row); } else { $('#ingredients-list').appendChild(row); }
   return row;
 }
 function attachSwipeToDelete(row){
-  const input = row.querySelector('.ingredient-input');
-  input.style.touchAction = 'pan-y';
+  const inner = row.querySelector('.ingredient-row-inner');
+  inner.style.touchAction = 'pan-y';
   let startX=0, startY=0, dx=0, dragging=false, active=false;
-  input.addEventListener('pointerdown', e=>{
+  inner.addEventListener('pointerdown', e=>{
+    if(e.target.closest('.ingredient-check')) return;
     startX=e.clientX; startY=e.clientY; dx=0; dragging=false; active=true;
   });
-  input.addEventListener('pointermove', e=>{
+  inner.addEventListener('pointermove', e=>{
     if(!active) return;
     const mdx=e.clientX-startX, mdy=e.clientY-startY;
     if(!dragging){
-      if(Math.abs(mdx)>8 && Math.abs(mdx)>Math.abs(mdy)){ dragging=true; input.blur(); }
+      if(Math.abs(mdx)>8 && Math.abs(mdx)>Math.abs(mdy)){ dragging=true; inner.querySelector('.ingredient-input').blur(); }
       else if(Math.abs(mdy)>8){ active=false; return; }
     }
     if(dragging){
       dx = Math.min(0, mdx);
-      input.style.transform = `translateX(${dx}px)`;
+      inner.style.transform = `translateX(${dx}px)`;
     }
   });
   function endDrag(){
     if(!active) return;
     active = false;
     if(dragging && dx < -70){
-      input.style.transition = 'transform .18s ease, opacity .18s ease';
-      input.style.transform = 'translateX(-100%)';
-      input.style.opacity = '0';
+      inner.style.transition = 'transform .18s ease, opacity .18s ease';
+      inner.style.transform = 'translateX(-100%)';
+      inner.style.opacity = '0';
       setTimeout(()=> row.remove(), 180);
     } else if(dragging){
-      input.style.transition = 'transform .18s ease';
-      input.style.transform = 'translateX(0)';
-      setTimeout(()=> input.style.transition = '', 180);
+      inner.style.transition = 'transform .18s ease';
+      inner.style.transform = 'translateX(0)';
+      setTimeout(()=> inner.style.transition = '', 180);
     }
     dragging = false;
   }
-  input.addEventListener('pointerup', endDrag);
-  input.addEventListener('pointercancel', endDrag);
+  inner.addEventListener('pointerup', endDrag);
+  inner.addEventListener('pointercancel', endDrag);
 }
 
 /* --- Descripción: chip abre pop-up, click fuera lo cierra --- */
@@ -1113,6 +1158,7 @@ $('#dish-save-btn').onclick = async ()=>{
       id, user_id: currentUser.id, name,
       ingredients, description: $('#dish-desc').value.trim(),
       calories: $('#dish-calories').value ? Number($('#dish-calories').value) : null,
+      duration_min: $('#dish-duration').value ? Number($('#dish-duration').value) : null,
       quality: selectedQuality, image_url
     };
     const { error } = await sb.from('dishes').upsert(payload);
@@ -1192,6 +1238,14 @@ $('#toggle-fitness-btn').onclick = async ()=>{
 /* ===================== SOCIAL ===================== */
 let friends = [], incomingRequests = [], outgoingRequests = [], sharedDishesReceived = [];
 
+function updateNotifBadges(){
+  const count = incomingRequests.length + sharedDishesReceived.length;
+  $all('.notif-badge').forEach(el=>{
+    el.textContent = count > 9 ? '9+' : String(count);
+    el.classList.toggle('hidden', count === 0);
+  });
+}
+
 function avatarHtml(u){
   return (u && u.avatar_url)
     ? `<img class="user-row-avatar" src="${u.avatar_url}" alt="">`
@@ -1215,6 +1269,7 @@ async function loadFriendshipsState(){
   outgoingRequests = rows.filter(r=> r.status==='pending' && r.requester_id===currentUser.id);
   renderFriendsList();
   renderIncomingRequests();
+  updateNotifBadges();
 }
 function renderFriendsList(){
   const box = $('#friends-list');
@@ -1284,6 +1339,7 @@ async function loadSharedDishes(){
   if(error){ console.error(error); return; }
   sharedDishesReceived = data||[];
   renderSharedDishes();
+  updateNotifBadges();
 }
 function renderSharedDishes(){
   const box = $('#shared-dishes-list');
@@ -1310,13 +1366,14 @@ async function addSharedDish(sharedId){
   const { error } = await sb.from('dishes').insert({
     id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
     image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
-    calories: d.calories||null, quality: d.quality||null
+    calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null
   });
   if(error){ alert(error.message); return; }
   const { error: delErr } = await sb.from('shared_dishes').delete().eq('id', sharedId);
   if(delErr) console.error(delErr);
   sharedDishesReceived = sharedDishesReceived.filter(s=>s.id!==sharedId);
   renderSharedDishes();
+  updateNotifBadges();
   await loadDishes();
 }
 async function rejectSharedDish(sharedId){
@@ -1324,6 +1381,7 @@ async function rejectSharedDish(sharedId){
   if(error){ alert(error.message); return; }
   sharedDishesReceived = sharedDishesReceived.filter(s=>s.id!==sharedId);
   renderSharedDishes();
+  updateNotifBadges();
 }
 
 /* --- Compartir un plato con un amigo --- */
@@ -1342,7 +1400,8 @@ async function shareDishWith(friendProfileId){
   if(!dish) return;
   const snapshot = {
     name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
-    description: dish.description, calories: dish.calories, quality: dish.quality
+    description: dish.description, calories: dish.calories, quality: dish.quality,
+    duration_min: dish.duration_min
   };
   const { error } = await sb.from('shared_dishes').insert({
     dish_id: dish.id, from_user_id: currentUser.id, to_user_id: friendProfileId, dish_snapshot: snapshot
