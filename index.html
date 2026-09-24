@@ -4056,37 +4056,38 @@ $('#push-test-btn').onclick = async ()=>{
   if(btn.disabled) return;
   btn.disabled = true;
   out.classList.remove('hidden');
-  out.textContent = 'Enviando… quédate en la app: en unos 5 segundos te llegará el aviso arriba y aquí verás el resultado.';
-  // Si la app se va al fondo mientras espera, iOS corta la conexión ("Load
-  // failed") aunque el aviso sí se haya enviado — se avisa de eso en vez de
-  // dar un error que confunde.
-  let wentBackground = false;
-  const onVis = ()=>{ if(document.visibilityState==='hidden') wentBackground = true; };
-  document.addEventListener('visibilitychange', onVis);
+  out.textContent = 'Enviando… quédate en la app: en unos segundos te llegará el aviso arriba y aquí verás el resultado.';
   try{
-    const { data } = await sb.auth.getSession();
-    const token = data && data.session && data.session.access_token;
-    const res = await fetch(SUPABASE_URL + '/functions/v1/send-push', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token, 'apikey': SUPABASE_ANON_KEY },
-      body: JSON.stringify({ test: true })
-    });
+    // La base de datos llama a la función send-push (el mismo camino que usan
+    // los avisos de verdad) y guarda su respuesta; aquí solo se lee.
+    const { data: rid, error } = await sb.rpc('send_test_push');
+    if(error){
+      out.textContent = /send_test_push|function|schema cache/i.test(error.message)
+        ? 'Falta ejecutar prueba_avisos.sql en Supabase (SQL Editor → Run).'
+        : 'Error: '+error.message;
+      return;
+    }
+    let row = null;
+    for(let i=0; i<20 && !row; i++){
+      await new Promise(r=> setTimeout(r, 1500));
+      const { data } = await sb.rpc('push_test_result', { p_id: rid });
+      if(data && data.length) row = data[0];
+    }
+    if(!row){ out.textContent = 'La función no ha respondido en 30 segundos. Mira en Supabase → Edge Functions → send-push → Logs.'; return; }
+    if(row.timed_out || row.error_msg){ out.textContent = 'La base de datos no pudo contactar con la función: '+(row.error_msg || 'tiempo agotado'); return; }
     let r = {};
-    try{ r = await res.json(); }catch(e){}
-    if(res.status===404) out.textContent = 'La función "send-push" no está desplegada en Supabase (o tiene otro nombre).';
-    else if(!res.ok) out.textContent = 'Error '+res.status+': '+(r.error || r.msg || r.message || 'la función respondió con un error.');
+    try{ r = JSON.parse(row.content || '{}'); }catch(e){}
+    if(row.status_code===404) out.textContent = 'La función "send-push" no existe en Supabase (o tiene otro nombre).';
+    else if(row.status_code>=400) out.textContent = 'La función respondió '+row.status_code+': '+(r.error || r.msg || r.message || row.content || '');
     else if(!r.subscriptions) out.textContent = 'Este móvil no está registrado. Apaga y vuelve a encender el interruptor de arriba y prueba otra vez.';
-    else if(r.sent) out.textContent = 'Enviada correctamente'+(r.errors && r.errors.length ? ' (y '+r.errors.length+' dispositivo antiguo ya no válido)' : '')+'. Si no la ves, revisa Ajustes del iPhone → Notificaciones → NutriFit (Permitir, Pantalla bloqueada, Centro de notificaciones y Tiras) y que no tengas un modo Concentración activo.';
+    else if(r.sent) out.textContent = 'Enviada correctamente ('+r.sent+' dispositivo'+(r.sent>1?'s':'')+'). Si no la has visto, revisa Ajustes del iPhone → Notificaciones → NutriFit (Permitir, Pantalla bloqueada, Centro de notificaciones y Tiras) y que no tengas un modo Concentración activo.';
     else {
       const e0 = (r.errors||[])[0] || {};
       out.textContent = 'El servicio de avisos ('+(e0.host||'?')+') la rechazó: '+e0.status+' '+(e0.body||'')+'.';
     }
   }catch(e){
-    out.textContent = wentBackground
-      ? 'Saliste de la app antes de recibir la respuesta, así que aquí no se puede ver el resultado. Si te llegó el aviso, todo funciona. Si no, vuelve a probar sin salir de la app.'
-      : 'No se pudo contactar con la función: '+(e && e.message ? e.message : e);
+    out.textContent = 'Error: '+(e && e.message ? e.message : e);
   }finally{
-    document.removeEventListener('visibilitychange', onVis);
     btn.disabled = false;
   }
 };
