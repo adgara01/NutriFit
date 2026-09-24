@@ -635,6 +635,42 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .pick-row.picked .pick-check svg{opacity:1;}
 .group-pick-list{max-height:45vh; overflow-y:auto; margin:4px 0;}
 
+/* ---------- PANTALLA DE GRUPO ---------- */
+.chat-header.is-group{cursor:pointer;}
+.chat-header.is-group .chat-title::after{content:' ›'; color:var(--muted); font-weight:700;}
+.group-avatar img, .group-photo img{width:100%; height:100%; object-fit:cover; border-radius:50%; display:block;}
+.group-hero{display:flex; flex-direction:column; align-items:center; gap:8px; padding-bottom:14px; border-bottom:1px solid var(--border);}
+.group-photo{
+  position:relative; width:92px; height:92px; border-radius:50%; background:rgba(18,135,94,.12); color:var(--accent);
+  display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid var(--border);
+}
+.group-photo svg{width:40px; height:40px;}
+.group-photo-edit{
+  position:absolute; left:0; right:0; bottom:0; padding:4px 0 6px; font-size:11px; font-weight:700;
+  background:rgba(20,25,23,.55); color:#fff; text-align:center;
+}
+.group-photo.busy{opacity:.5;}
+.group-name-edit{
+  width:100%; max-width:280px; text-align:center; font-size:19px; font-weight:800; color:var(--text);
+  background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:8px 10px;
+}
+.group-name-edit:focus{outline:none; border-color:var(--accent);}
+.group-name-static{font-size:19px; font-weight:800; text-align:center;}
+.group-count{font-size:12px; color:var(--muted);}
+.member-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border);}
+.member-row:last-child{border-bottom:none;}
+.admin-chip{font-size:10px; font-weight:800; color:var(--accent); background:rgba(18,135,94,.12); padding:3px 8px; border-radius:999px; flex-shrink:0;}
+.member-del{width:30px; height:30px; border-radius:8px; background:var(--card2); border:1px solid var(--border); color:var(--bad); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.member-del svg{width:15px; height:15px;}
+
+/* ---------- EXPLORAR ---------- */
+.explore-input-wrap{background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:0 12px;}
+.explore-input-wrap input{width:100%; background:none; border:none; padding:12px 0; font-size:16px; color:var(--text);}
+.explore-input-wrap input:focus{outline:none;}
+#explore-chips:empty{display:none;}
+.explore-chip-x{font-weight:800; margin-left:2px; color:var(--muted);}
+.explore-match{color:var(--accent); font-weight:700;}
+
 /* ---------- NOTIFICACIONES ---------- */
 .notif-badge{
   position:absolute; top:-3px; right:-3px; min-width:17px; height:17px; padding:0 4px;
@@ -745,7 +781,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .user-row-clickable{cursor:pointer;}
 .friend-profile-header{display:flex; align-items:center; gap:12px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border);}
 .friend-profile-header .user-row-avatar{width:44px; height:44px;}
-.friend-profile-header .fp-name{font-weight:700; font-size:16px;}
+.friend-profile-header .fp-name{font-weight:700; font-size:16px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis;}
+.fp-unfriend{color:var(--bad); border-color:rgba(201,86,74,.45);}
 .fp-back-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
 .fp-back-btn{display:flex; align-items:center; gap:4px; background:none; color:var(--text); font-weight:600; font-size:13px; padding:4px 0;}
 .fp-back-btn svg{width:15px; height:15px;}
@@ -847,6 +884,10 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
         <span>Platos y Recetas</span>
       </button>
+      <button class="drawer-link" data-section="explorar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>
+        <span>Explorar</span>
+      </button>
       <button class="drawer-link" data-section="carrito">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg>
         <span>Carrito</span>
@@ -924,6 +965,27 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div class="card">
         <div style="font-weight:700; margin-bottom:6px;">Sugerencia de platos</div>
         <div id="nevera-suggestions"><div class="empty-hint">Añade cosas a la nevera para ver sugerencias.</div></div>
+      </div>
+    </section>
+
+    <!-- EXPLORAR -->
+    <section id="section-explorar" class="app-section">
+      <div class="section-title">Explorar</div>
+      <div class="card">
+        <nav class="subtabs" style="margin-bottom:12px;">
+          <button type="button" class="subtab active" data-explore-mode="amigos">Amigos</button>
+          <button type="button" class="subtab" data-explore-mode="publico">Público</button>
+        </nav>
+        <div class="ingredient-name-wrap explore-input-wrap">
+          <input type="text" id="explore-input" placeholder="Añade ingredientes: pollo, arroz…"
+            autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+          <div class="ingredient-suggest hidden" id="explore-suggest"></div>
+        </div>
+        <div class="missing-chips" id="explore-chips"></div>
+        <div class="settings-hint" id="explore-hint"></div>
+      </div>
+      <div class="card" id="explore-results-card">
+        <div id="explore-results"></div>
       </div>
     </section>
 
@@ -1089,6 +1151,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
           <button type="button" id="toggle-public-btn" class="switch" aria-label="Perfil público"></button>
         </div>
         <div class="settings-hint">Con el perfil público, tus amigos pueden entrar a cotillear tu repositorio de platos (tocando tu nombre en Social). Las carpetas que marques como privadas se quedan fuera de esa vista, aunque el perfil sea público. Compartir recetas 1 a 1 y el Muro no dependen de esto.</div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <span style="font-weight:600;">Mis platos en Explorar</span>
+          <button type="button" id="toggle-explore-btn" class="switch" aria-label="Mis platos en Explorar"></button>
+        </div>
+        <div class="settings-hint">Tus platos pueden salir en Explorar → Público <b>sin tu nombre</b>, para que otros usuarios de la app encuentren ideas. Las carpetas privadas no salen nunca.</div>
       </div>
 
       <div class="card">
@@ -1303,13 +1373,12 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     <button type="button" class="sheet-close-btn" id="chat-close" aria-label="Cerrar">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
-    <div class="chat-header">
+    <div class="chat-header" id="chat-header">
       <div id="chat-header-avatar"></div>
       <div class="chat-header-info">
         <div class="chat-title" id="chat-title"></div>
         <div class="chat-subtitle" id="chat-subtitle"></div>
       </div>
-      <button type="button" class="btn-mini btn-mini-ghost hidden" id="chat-group-info-btn">Grupo</button>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input-row">
@@ -1339,20 +1408,29 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   </div>
 </div>
 
-<!-- ================= INFO DE UN GRUPO ================= -->
-<div id="group-info-modal" class="modal desc-modal-overlay hidden">
-  <div class="desc-modal-card">
-    <div class="desc-modal-head">
-      <span id="group-info-title">Grupo</span>
-      <button type="button" class="desc-modal-close" id="group-info-close" aria-label="Cerrar">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+<!-- ================= PANTALLA DE UN GRUPO (foto, nombre, miembros, admins) ================= -->
+<div id="group-info-modal" class="modal hidden">
+  <div class="modal-sheet sheet-with-close">
+    <button type="button" class="sheet-close-btn" id="group-info-close" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="group-hero">
+      <button type="button" class="group-photo" id="group-photo-btn" aria-label="Foto del grupo">
+        <span id="group-photo-inner"></span>
+        <span class="group-photo-edit" id="group-photo-edit">Cambiar</span>
       </button>
+      <input type="file" id="group-photo-input" accept="image/*" class="visually-hidden">
+      <input type="text" id="group-name-edit" class="group-name-edit hidden" maxlength="40"
+        autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false">
+      <div class="group-name-static" id="group-name-static"></div>
+      <div class="group-count" id="group-count"></div>
     </div>
-    <div class="group-pick-list" id="group-info-members"></div>
-    <div class="modal-actions">
-      <button class="btn-secondary" id="group-leave-btn" style="flex:1; justify-content:center; color:var(--bad);">Salir del grupo</button>
-      <button class="btn-primary" id="group-add-members-btn" style="flex:1;">Añadir amigos</button>
+    <div class="card-head" style="margin-top:18px;">
+      <span class="card-title">Miembros</span>
+      <button type="button" id="group-add-members-btn" class="btn-mini hidden">+ Añadir</button>
     </div>
+    <div id="group-info-members"></div>
+    <button type="button" id="group-leave-btn" class="btn-secondary" style="width:100%; justify-content:center; color:var(--bad); margin-top:18px;">Salir del grupo</button>
   </div>
 </div>
 
@@ -1596,7 +1674,8 @@ async function enterApp(profile){
     show_macros: profile.show_macros === true,
     suggest_meals: profile.suggest_meals === true,
     last_seen_wall_at: profile.last_seen_wall_at || null,
-    is_public: profile.is_public !== false
+    is_public: profile.is_public !== false,
+    share_explore: profile.share_explore !== false
   };
   $('#drawer-username').textContent = '@'+profile.username;
   $('#login-view').classList.add('hidden');
@@ -1685,6 +1764,7 @@ $all('.drawer-link').forEach(btn=>{
     if(btn.dataset.section==='nevera') renderNeveraSuggestions();
     if(btn.dataset.section==='social') loadChats();
     if(btn.dataset.section==='carrito') renderCartList();
+    if(btn.dataset.section==='explorar') openExploreSection();
   };
 });
 
@@ -3113,6 +3193,7 @@ function renderDrawerProfile(){
   }
   $('#toggle-fitness-btn').classList.toggle('on', currentUser.show_fitness);
   $('#toggle-public-btn').classList.toggle('on', currentUser.is_public);
+  $('#toggle-explore-btn').classList.toggle('on', currentUser.share_explore);
 }
 
 $('#avatar-wrap').onclick = ()=> $('#avatar-input').click();
@@ -3161,6 +3242,13 @@ $('#toggle-public-btn').onclick = async ()=>{
   const { error } = await sb.from('profiles').update({ is_public: newVal }).eq('id', currentUser.id);
   if(error){ alert(error.message); return; }
   currentUser.is_public = newVal;
+  renderDrawerProfile();
+};
+$('#toggle-explore-btn').onclick = async ()=>{
+  const newVal = !currentUser.share_explore;
+  const { error } = await sb.from('profiles').update({ share_explore: newVal }).eq('id', currentUser.id);
+  if(error){ alert(error.message); return; }
+  currentUser.share_explore = newVal;
   renderDrawerProfile();
 };
 $('#toggle-macros-btn').onclick = async ()=>{
@@ -3224,12 +3312,13 @@ async function loadFriendshipsState(){
     .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`);
   if(error){ console.error(error); return; }
   const rows = data||[];
-  friends = rows.filter(r=>r.status==='accepted').map(r=> r.requester_id===currentUser.id ? r.addressee : r.requester);
+  friends = rows.filter(r=>r.status==='accepted').map(r=> ({ ...(r.requester_id===currentUser.id ? r.addressee : r.requester), friendship_id: r.id }));
   incomingRequests = rows.filter(r=> r.status==='pending' && r.addressee_id===currentUser.id);
   outgoingRequests = rows.filter(r=> r.status==='pending' && r.requester_id===currentUser.id);
   renderFriendsList();
   renderIncomingRequests();
   updateNotifBadges();
+  exploreFriendDishes = null; // se vuelve a cargar la próxima vez que se entre en Explorar
 }
 function renderFriendsList(){
   const box = $('#friends-list');
@@ -3446,6 +3535,13 @@ $('#shared-preview-close').onclick = closeSharedPreview;
 $('#shared-preview-modal').addEventListener('click', e=>{ if(e.target.id==='shared-preview-modal') closeSharedPreview(); });
 $('#shared-preview-reject-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await rejectSharedDish(id); };
 $('#shared-preview-add-btn').onclick = async ()=>{
+  if(previewMode==='explore'){
+    const r = previewingExplore;
+    closeSharedPreview();
+    // De un amigo: con su marca de agua @usuario. De la comunidad: anónimo, sin marca.
+    if(r) await addFriendDishToRepo(r.dish, r.from ? r.from.username : null);
+    return;
+  }
   if(previewMode==='wall'){
     const id = previewingWallPostId;
     closeSharedPreview();
@@ -3477,11 +3573,26 @@ async function openFriendProfile(friend){
   friendProfileFolderId = null;
   friendRepoDishes = [];
   friendRepoFolders = [];
-  $('#friend-profile-header').innerHTML = `${avatarHtml(friend)}<span class="fp-name">@${escapeHtml(friend.username)}</span>`;
+  $('#friend-profile-header').innerHTML = `${avatarHtml(friend)}<span class="fp-name">@${escapeHtml(friend.username)}</span>
+    <button type="button" class="btn-mini btn-mini-ghost fp-unfriend" id="fp-unfriend-btn">Eliminar amigo</button>`;
+  $('#fp-unfriend-btn').onclick = ()=> removeFriend(friend);
   $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>';
   lockBodyScroll();
   showModal($('#friend-profile-modal'));
   await loadFriendRepo();
+}
+// Eliminar a un amigo: se borra la amistad (los dos dejáis de ser amigos:
+// ya no podéis cotillear vuestros repositorios ni crear chats nuevos). Los
+// mensajes que ya teníais en el chat no se borran.
+async function removeFriend(friend){
+  if(!friend || !confirm(`¿Eliminar a @${friend.username} de tus amigos?`)) return;
+  let q = sb.from('friendships').delete();
+  q = friend.friendship_id ? q.eq('id', friend.friendship_id)
+    : q.or(`and(requester_id.eq.${currentUser.id},addressee_id.eq.${friend.id}),and(requester_id.eq.${friend.id},addressee_id.eq.${currentUser.id})`);
+  const { error } = await q;
+  if(error){ alert(error.message); return; }
+  closeFriendProfile();
+  await loadFriendshipsState();
 }
 function closeFriendProfile(){
   hideModal($('#friend-profile-modal'));
@@ -3576,7 +3687,7 @@ function dishSnapshotOf(dish){
 }
 function renderShareTargets(){
   const groups = chatSummaries.filter(c=> c.is_group);
-  const rows = groups.map(g=> `<button type="button" class="user-row user-row-btn" data-share-chat="${g.chat_id}"><div class="group-avatar">${ICON_GROUP}</div><span class="user-row-name">${escapeHtml(g.name||'Grupo')}</span></button>`)
+  const rows = groups.map(g=> `<button type="button" class="user-row user-row-btn" data-share-chat="${g.chat_id}">${groupAvatarHtml(g.photo_url)}<span class="user-row-name">${escapeHtml(g.name||'Grupo')}</span></button>`)
     .concat(friends.map(f=> `<button type="button" class="user-row user-row-btn" data-share-to="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></button>`));
   $('#share-friends-list').innerHTML = rows.length ? rows.join('') : '<div class="empty-hint">Todavía no tienes amigos añadidos.</div>';
   $all('[data-share-to]').forEach(b=> b.onclick = ()=> shareDishWith({ friendId: b.dataset.shareTo }));
@@ -3655,8 +3766,11 @@ function recomputeChatUnread(){
   updateNotifBadges();
 }
 function chatTitle(c){ return c.is_group ? (c.name||'Grupo') : '@'+(c.other_username||'?'); }
+function groupAvatarHtml(photoUrl){
+  return `<div class="group-avatar">${photoUrl ? `<img src="${photoUrl}" alt="">` : ICON_GROUP}</div>`;
+}
 function chatAvatarHtml(c){
-  return c.is_group ? `<div class="group-avatar">${ICON_GROUP}</div>` : avatarHtml({ username: c.other_username, avatar_url: c.other_avatar });
+  return c.is_group ? groupAvatarHtml(c.photo_url) : avatarHtml({ username: c.other_username, avatar_url: c.other_avatar });
 }
 function chatPreviewText(c){
   if(!c.last_body && !c.last_dish_name) return 'Sin mensajes todavía';
@@ -3705,7 +3819,7 @@ function refreshChatHeader(){
   if(!c) return;
   $('#chat-header-avatar').innerHTML = chatAvatarHtml(c);
   $('#chat-title').textContent = chatTitle(c);
-  $('#chat-group-info-btn').classList.toggle('hidden', !c.is_group);
+  $('#chat-header').classList.toggle('is-group', !!c.is_group);
   if(c.is_group){
     const others = openChatMembers.filter(p=> p.id!==currentUser.id).map(p=> '@'+p.username);
     $('#chat-subtitle').textContent = others.length ? others.join(', ')+' y tú' : 'Solo tú';
@@ -3736,12 +3850,12 @@ function closeChat(){
 async function loadChatMessages(chatId){
   const [{ data: msgs, error }, { data: members }] = await Promise.all([
     sb.from('chat_messages').select('*').eq('chat_id', chatId).order('created_at', {ascending:false}).limit(200),
-    sb.from('chat_members').select('profile_id, profile:profile_id(id,username,avatar_url)').eq('chat_id', chatId)
+    sb.from('chat_members').select('profile_id, is_admin, joined_at, profile:profile_id(id,username,avatar_url)').eq('chat_id', chatId)
   ]);
   if(chatId!==openChatId) return;
   if(error){ $('#chat-messages').innerHTML = '<div class="empty-hint">No se pudieron cargar los mensajes.</div>'; return; }
   openChatProfiles = {};
-  openChatMembers = (members||[]).map(m=> m.profile).filter(Boolean);
+  openChatMembers = (members||[]).filter(m=> m.profile).map(m=> ({ ...m.profile, is_admin: !!m.is_admin, joined_at: m.joined_at }));
   openChatMembers.forEach(p=> openChatProfiles[p.id] = p);
   openChatMessages = (msgs||[]).reverse();
   await fetchMissingChatProfiles();
@@ -3918,29 +4032,124 @@ $('#group-modal-confirm').onclick = async ()=>{
     btn.disabled = false;
     if(error){ alert(error.message); return; }
     hideModal($('#group-modal'));
-    hideModal($('#group-info-modal'));
-    await loadChats();
-    if(openChatId) await loadChatMessages(openChatId);
+    await refreshGroupInfo();
   }
 };
-function openGroupInfo(){
+/* --- Pantalla del grupo: tocar el nombre en la cabecera del chat.
+   Todos ven la foto, el nombre y quién hay dentro. Los admins (el creador,
+   y a quien él o ella dé permiso) además pueden cambiar foto y nombre,
+   añadir y quitar gente, y dar o quitar admin. Las reglas se comprueban
+   también en el servidor (funciones de actualizar_grupos_explorar.sql). --- */
+function amGroupAdmin(){
+  const me = openChatMembers.find(p=> p.id===currentUser.id);
+  return !!(me && me.is_admin);
+}
+function renderGroupInfo(){
   const c = chatSummaries.find(x=> x.chat_id===openChatId);
   if(!c) return;
-  $('#group-info-title').textContent = c.name || 'Grupo';
-  $('#group-info-members').innerHTML = openChatMembers.map(p=>
-    `<div class="user-row">${avatarHtml(p)}<span class="user-row-name">@${escapeHtml(p.username)}${p.id===currentUser.id ? ' (tú)' : ''}</span></div>`).join('');
+  const admin = amGroupAdmin();
+  $('#group-photo-inner').innerHTML = c.photo_url ? `<img src="${c.photo_url}" alt="">` : ICON_GROUP;
+  $('#group-photo-edit').classList.toggle('hidden', !admin);
+  $('#group-photo-btn').style.pointerEvents = admin ? '' : 'none';
+  $('#group-name-edit').classList.toggle('hidden', !admin);
+  $('#group-name-static').classList.toggle('hidden', admin);
+  $('#group-name-static').textContent = c.name || 'Grupo';
+  if(document.activeElement !== $('#group-name-edit')) $('#group-name-edit').value = c.name || '';
+  const n = openChatMembers.length;
+  $('#group-count').textContent = n + (n===1 ? ' miembro' : ' miembros') + (admin ? ' · eres admin' : '');
+  $('#group-add-members-btn').classList.toggle('hidden', !admin);
+  // Admins primero, luego por antigüedad en el grupo.
+  const list = [...openChatMembers].sort((a,b)=> (b.is_admin - a.is_admin) || String(a.joined_at).localeCompare(String(b.joined_at)));
+  $('#group-info-members').innerHTML = list.map(p=>{
+    const me = p.id===currentUser.id;
+    const actions = (admin && !me)
+      ? `<button type="button" class="btn-mini btn-mini-ghost" data-toggle-admin="${p.id}">${p.is_admin ? 'Quitar admin' : 'Hacer admin'}</button>
+         <button type="button" class="member-del" data-remove-member="${p.id}" aria-label="Quitar del grupo">${ICON_TRASH}</button>`
+      : '';
+    return `<div class="member-row">${avatarHtml(p)}<span class="user-row-name">@${escapeHtml(p.username)}${me ? ' (tú)' : ''}</span>${p.is_admin ? '<span class="admin-chip">Admin</span>' : ''}${actions}</div>`;
+  }).join('');
+  $all('[data-toggle-admin]').forEach(b=> b.onclick = ()=> toggleGroupAdmin(b.dataset.toggleAdmin));
+  $all('[data-remove-member]').forEach(b=> b.onclick = ()=> removeGroupMember(b.dataset.removeMember));
+}
+async function refreshGroupInfo(){
+  await loadChats();
+  if(openChatId) await loadChatMessages(openChatId);
+  renderGroupInfo();
+}
+function openGroupInfo(){
+  const c = chatSummaries.find(x=> x.chat_id===openChatId);
+  if(!c || !c.is_group) return;
+  renderGroupInfo();
   showModal($('#group-info-modal'));
 }
-$('#chat-group-info-btn').onclick = openGroupInfo;
-$('#group-info-close').onclick = ()=> hideModal($('#group-info-modal'));
-$('#group-info-modal').addEventListener('click', e=>{ if(e.target.id==='group-info-modal') hideModal($('#group-info-modal')); });
+function closeGroupInfo(){ hideModal($('#group-info-modal')); }
+$('#chat-header').onclick = openGroupInfo;
+$('#group-info-close').onclick = closeGroupInfo;
+$('#group-info-modal').addEventListener('click', e=>{ if(e.target.id==='group-info-modal') closeGroupInfo(); });
 $('#group-add-members-btn').onclick = ()=> openGroupModal('add');
+
+async function saveGroupName(){
+  const c = chatSummaries.find(x=> x.chat_id===openChatId);
+  const name = $('#group-name-edit').value.trim();
+  if(!c || !amGroupAdmin() || !name || name===c.name){ if(c && !name) $('#group-name-edit').value = c.name||''; return; }
+  const { error } = await sb.rpc('rename_group', { p_chat: c.chat_id, p_name: name });
+  if(error){ alert(error.message); $('#group-name-edit').value = c.name||''; return; }
+  c.name = name;
+  refreshChatHeader(); renderChatList(); renderGroupInfo();
+}
+$('#group-name-edit').addEventListener('input', ()=> capitalizeFirstLetter($('#group-name-edit')));
+$('#group-name-edit').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#group-name-edit').blur(); } });
+$('#group-name-edit').addEventListener('blur', saveGroupName);
+
+$('#group-photo-btn').onclick = ()=>{ if(amGroupAdmin()) $('#group-photo-input').click(); };
+$('#group-photo-input').addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  e.target.value = '';
+  const chatId = openChatId;
+  if(!file || !chatId || !amGroupAdmin()) return;
+  const btn = $('#group-photo-btn');
+  btn.classList.add('busy');
+  try{
+    const jpg = await normalizeImageFile(file);
+    // Se guarda en la carpeta del propio admin (así vale la regla de subida que ya había).
+    const path = `${currentUser.id}/group-${chatId}-${Date.now()}.jpg`;
+    const { error } = await sb.storage.from('profile-photos').upload(path, jpg, { upsert:false, contentType:'image/jpeg', cacheControl:'31536000' });
+    if(error) throw error;
+    const { data } = sb.storage.from('profile-photos').getPublicUrl(path);
+    const { error: e2 } = await sb.rpc('set_group_photo', { p_chat: chatId, p_url: data.publicUrl });
+    if(e2) throw e2;
+    const c = chatSummaries.find(x=> x.chat_id===chatId);
+    if(c) c.photo_url = data.publicUrl;
+    refreshChatHeader(); renderChatList(); renderGroupInfo();
+  }catch(err){
+    alert('No se pudo cambiar la foto: '+(err.message||err));
+  }finally{
+    btn.classList.remove('busy');
+  }
+});
+
+async function toggleGroupAdmin(memberId){
+  const p = openChatMembers.find(x=> x.id===memberId);
+  if(!p) return;
+  const { error } = await sb.rpc('set_group_admin', { p_chat: openChatId, p_member: memberId, p_admin: !p.is_admin });
+  if(error){ alert(error.message); return; }
+  p.is_admin = !p.is_admin;
+  renderGroupInfo();
+}
+async function removeGroupMember(memberId){
+  const p = openChatMembers.find(x=> x.id===memberId);
+  if(!p || !confirm(`¿Quitar a @${p.username} del grupo?`)) return;
+  const { error } = await sb.rpc('remove_group_member', { p_chat: openChatId, p_member: memberId });
+  if(error){ alert(error.message); return; }
+  await refreshGroupInfo();
+  refreshChatHeader();
+}
 $('#group-leave-btn').onclick = async ()=>{
   const c = chatSummaries.find(x=> x.chat_id===openChatId);
   if(!c || !confirm(`¿Salir del grupo "${c.name||'Grupo'}"? Dejarás de ver sus mensajes.`)) return;
-  const { error } = await sb.from('chat_members').delete().eq('chat_id', c.chat_id).eq('profile_id', currentUser.id);
+  const { error } = await sb.rpc('leave_group', { p_chat: c.chat_id });
   if(error){ alert(error.message); return; }
-  hideModal($('#group-info-modal'));
+  closeGroupInfo();
   chatSummaries = chatSummaries.filter(x=> x!==c);
   closeChat();
 };
@@ -4056,7 +4265,7 @@ $('#push-test-btn').onclick = async ()=>{
   if(btn.disabled) return;
   btn.disabled = true;
   out.classList.remove('hidden');
-  out.textContent = 'Enviando… quédate en la app: en unos segundos te llegará el aviso arriba y aquí verás el resultado.';
+  out.textContent = 'Enviando… en un momento te llegará el aviso arriba y aquí verás el resultado.';
   try{
     // La base de datos llama a la función send-push (el mismo camino que usan
     // los avisos de verdad) y guarda su respuesta; aquí solo se lee.
@@ -4068,8 +4277,8 @@ $('#push-test-btn').onclick = async ()=>{
       return;
     }
     let row = null;
-    for(let i=0; i<20 && !row; i++){
-      await new Promise(r=> setTimeout(r, 1500));
+    for(let i=0; i<60 && !row; i++){
+      await new Promise(r=> setTimeout(r, 500));
       const { data } = await sb.rpc('push_test_result', { p_id: rid });
       if(data && data.length) row = data[0];
     }
@@ -4472,6 +4681,118 @@ function renderNeveraSuggestions(){
     };
   });
 }
+
+/* ===================== EXPLORAR ===================== */
+// Buscar platos por ingredientes: en "Amigos", los repositorios de tus amigos
+// con perfil público (las reglas de la base de datos ya dejan fuera los
+// perfiles privados y las carpetas privadas); en "Público", los platos de
+// cualquier usuario de la app que lo permita, SIN nombre (anónimo), vía
+// explore_public_dishes(). Mismo criterio de búsqueda en los dos: palabra
+// completa, sin tildes, singular/plural ("huevos" encuentra "huevo").
+let exploreMode = 'amigos';
+let exploreTerms = [];
+let exploreFriendDishes = null; // se carga al entrar en la sección
+let exploreResults = [];
+let exploreSeq = 0;
+function exploreTermRegex(term){
+  let t = stripAccents((term||'').toLowerCase()).replace(/[^a-z0-9 ]/g, '').trim();
+  if(t.length < 2) return null;
+  t = t.replace(/s$/, '');
+  return new RegExp('(^| )' + t + '(e?s)?( |$)');
+}
+function dishMatchCount(dish, regs){
+  const names = (dish.ingredients||[]).map(i=> stripAccents(normalizeIngredientItem(i).name.toLowerCase()));
+  return regs.filter(r=> names.some(n=> r.test(n))).length;
+}
+async function openExploreSection(){
+  renderExploreChips();
+  if(exploreFriendDishes===null) await loadExploreFriendDishes();
+  runExploreSearch();
+}
+async function loadExploreFriendDishes(){
+  const ids = friends.map(f=> f.id);
+  if(!ids.length){ exploreFriendDishes = []; return; }
+  const { data, error } = await sb.from('dishes')
+    .select('id,user_id,name,image_url,ingredients,description,calories,quality,duration_min,servings_base,protein_g,carbs_g,fat_g,fiber_g,created_at')
+    .in('user_id', ids).order('created_at', {ascending:false}).limit(1000);
+  if(error){ console.error(error); exploreFriendDishes = []; return; }
+  exploreFriendDishes = data||[];
+}
+function renderExploreChips(){
+  $('#explore-chips').innerHTML = exploreTerms.map((t, i)=>
+    `<button type="button" class="missing-chip in-cart" data-explore-del="${i}">${escapeHtml(t)}<span class="explore-chip-x">×</span></button>`).join('');
+  $all('[data-explore-del]').forEach(b=> b.onclick = ()=>{ exploreTerms.splice(Number(b.dataset.exploreDel), 1); renderExploreChips(); runExploreSearch(); });
+  $all('[data-explore-mode]').forEach(b=> b.classList.toggle('active', b.dataset.exploreMode===exploreMode));
+  $('#explore-hint').textContent = exploreMode==='amigos'
+    ? 'Platos de tus amigos con perfil público que llevan esos ingredientes.'
+    : 'Platos de cualquier usuario de NutriFit que lo permita, sin nombres (anónimo).';
+}
+function addExploreTerm(raw){
+  const t = (raw||'').trim().toLowerCase();
+  if(!t || !exploreTermRegex(t)) return;
+  if(!exploreTerms.includes(t)) exploreTerms.push(t);
+  $('#explore-input').value = '';
+  $('#explore-suggest').classList.add('hidden'); $('#explore-suggest').innerHTML = '';
+  renderExploreChips();
+  runExploreSearch();
+}
+async function runExploreSearch(){
+  const box = $('#explore-results');
+  const seq = ++exploreSeq;
+  if(!exploreTerms.length){
+    box.innerHTML = '<div class="empty-hint">Escribe uno o varios ingredientes para ver qué platos se pueden hacer con ellos.</div>';
+    return;
+  }
+  const regs = exploreTerms.map(exploreTermRegex).filter(Boolean);
+  if(exploreMode==='amigos'){
+    if(!friends.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes amigos. Prueba en "Público".</div>'; return; }
+    const byId = Object.fromEntries(friends.map(f=> [f.id, f]));
+    exploreResults = (exploreFriendDishes||[])
+      .map(d=> ({ dish:d, matched: dishMatchCount(d, regs), from: byId[d.user_id] }))
+      .filter(r=> r.matched>0)
+      .sort((a,b)=> b.matched-a.matched);
+  } else {
+    box.innerHTML = '<div class="empty-hint">Buscando…</div>';
+    const { data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms });
+    if(seq!==exploreSeq) return; // llegó otra búsqueda más nueva mientras tanto
+    if(error){ box.innerHTML = '<div class="empty-hint">No se pudo buscar ahora mismo.</div>'; console.error(error); return; }
+    exploreResults = (data||[]).map(d=> ({ dish:d, matched: d.matched, from: null }));
+  }
+  if(seq!==exploreSeq) return;
+  if(!exploreResults.length){
+    box.innerHTML = '<div class="empty-hint">No hay platos con esos ingredientes todavía.</div>';
+    return;
+  }
+  const total = regs.length;
+  box.innerHTML = exploreResults.map((r, i)=>{
+    const d = r.dish;
+    const who = r.from ? '@'+escapeHtml(r.from.username) : 'Comunidad';
+    const match = total>1 ? ` · <span class="explore-match">${r.matched} de ${total}</span>` : '';
+    return `<div class="shared-dish-row" data-explore-open="${i}">
+      ${d.image_url ? `<img class="shared-dish-thumb" src="${d.image_url}" alt="">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
+      <div class="shared-dish-info">
+        <span class="name">${escapeHtml(d.name||'Receta')}</span>
+        <span class="from">${who}${d.calories ? ' · '+d.calories+' kcal' : ''}${match}</span>
+      </div>
+    </div>`;
+  }).join('');
+  $all('[data-explore-open]').forEach(row=> row.onclick = ()=> openExploreDishPreview(exploreResults[Number(row.dataset.exploreOpen)]));
+}
+let previewingExplore = null;
+function openExploreDishPreview(r){
+  if(!r) return;
+  previewMode = 'explore';
+  previewingSharedId = null; previewingFriendDish = null; previewingChatDish = null; previewingWallPostId = null;
+  previewingExplore = r;
+  populateDishPreview(r.dish, r.from ? 'de @'+r.from.username : 'Receta de la comunidad');
+  $('#shared-preview-reject-btn').classList.add('hidden');
+  $('#shared-preview-add-btn').textContent = 'Añadir a mis recetas';
+  lockBodyScroll();
+  showModal($('#shared-preview-modal'));
+}
+$all('[data-explore-mode]').forEach(b=> b.onclick = ()=>{ exploreMode = b.dataset.exploreMode; renderExploreChips(); runExploreSearch(); });
+$('#explore-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addExploreTerm($('#explore-input').value); } });
+wireIngredientAutocomplete($('#explore-input'), $('#explore-suggest'), (name)=> addExploreTerm(name));
 
 /* ===================== CARRITO DE LA COMPRA ===================== */
 // Un ingrediente = una línea (se compara por nombre sin acentos). Se añade
