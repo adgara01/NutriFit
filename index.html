@@ -85,11 +85,13 @@ button{cursor:pointer; border:none;}
 }
 .icon-btn-boxed:active{background:var(--card);}
 
-.drawer-overlay{position:fixed; inset:0; background:rgba(20,30,25,.28); z-index:14; touch-action:pan-y;}
+.drawer-overlay{position:fixed; inset:0; background:rgba(20,30,25,.28); z-index:14; touch-action:pan-y; animation:nf-fade-in .3s cubic-bezier(.32,.72,0,1);}
+.drawer-overlay.no-anim{animation:none;}
+.drawer-overlay.closing{animation:nf-fade-out .28s cubic-bezier(.32,.72,0,1) forwards; pointer-events:none;}
 .drawer{
   position:fixed; top:0; left:0; bottom:0; width:78%; max-width:300px; z-index:15;
   background:var(--bg2); padding:26px 18px 18px; display:flex; flex-direction:column;
-  transform:translateX(-100%); transition:transform .25s ease; box-shadow:var(--shadow);
+  transform:translateX(-100%); transition:transform .3s cubic-bezier(.32,.72,0,1); box-shadow:var(--shadow);
   padding-top:calc(26px + env(safe-area-inset-top)); padding-bottom:calc(18px + env(safe-area-inset-bottom));
   touch-action:pan-y; will-change:transform;
 }
@@ -227,6 +229,40 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 /* La ficha de un plato se puede abrir desde dentro del pop-up de una carpeta
    (modal sobre modal) — debe quedar siempre por encima de ese pop-up. */
 #dish-modal{z-index:22;}
+/* ---------- ANIMACIONES DE POP-UPS ----------
+   Todo con transform/opacity (van por la GPU, no recalculan la página) y la
+   misma curva "de iOS" en toda la app. Al abrir: el fondo aparece y la hoja
+   sube desde abajo (o la tarjeta pequeña aparece con un leve zoom). Al
+   cerrar (.closing, ver hideModal): lo mismo al revés. */
+@keyframes nf-fade-in{from{opacity:0;}to{opacity:1;}}
+@keyframes nf-fade-out{from{opacity:1;}to{opacity:0;}}
+@keyframes nf-backdrop-in{from{background-color:rgba(20,25,23,0);}}
+@keyframes nf-backdrop-out{to{background-color:rgba(20,25,23,0);}}
+@keyframes nf-sheet-up{from{transform:translate3d(0,100%,0);}to{transform:translate3d(0,0,0);}}
+@keyframes nf-sheet-down{from{transform:translate3d(0,0,0);}to{transform:translate3d(0,100%,0);}}
+@keyframes nf-card-in{from{opacity:0; transform:scale(.94);}to{opacity:1; transform:scale(1);}}
+@keyframes nf-card-out{from{opacity:1; transform:scale(1);}to{opacity:0; transform:scale(.96);}}
+.modal{animation:nf-backdrop-in .28s cubic-bezier(.32,.72,0,1);}
+.modal > .modal-sheet{animation:nf-sheet-up .38s cubic-bezier(.32,.72,0,1);}
+.modal > .desc-modal-card{animation:nf-card-in .24s cubic-bezier(.32,.72,0,1);}
+.modal.closing{animation:nf-backdrop-out .2s ease-in forwards; pointer-events:none;}
+.modal.closing > .modal-sheet{animation:nf-sheet-down .2s ease-in forwards;}
+.modal.closing > .desc-modal-card{animation:nf-card-out .16s ease-in forwards;}
+/* Respuesta al toque: los botones se hunden un poco al pulsarlos. */
+.btn-primary, .btn-secondary, .btn-mini, .pill-btn, .drawer-link, .icon-btn-plain, .fab, .scale-btn,
+.ingredient-cart-btn, .missing-chip, .chat-send-btn, .friend-msg-btn, .switch, .add-ingredient-btn,
+.desc-modal-close, .sheet-close-btn, .wall-action-btn, .chat-row, .pick-row, .user-row-btn, .subtab, .day-btn, .auth-tab{
+  transition:transform .12s ease, background-color .15s ease, border-color .15s ease, color .15s ease;
+  touch-action:manipulation;
+}
+.btn-primary:active, .btn-secondary:active, .btn-mini:active, .pill-btn:active, .drawer-link:active, .fab:active,
+.scale-btn:active, .ingredient-cart-btn:active, .missing-chip:active, .chat-send-btn:active, .friend-msg-btn:active,
+.add-ingredient-btn:active, .desc-modal-close:active, .sheet-close-btn:active, .wall-action-btn:active,
+.subtab:active, .day-btn:active, .auth-tab:active{transform:scale(.96);}
+.chat-row:active, .pick-row:active, .user-row-btn:active{background-color:var(--card2);}
+@media (prefers-reduced-motion: reduce){
+  .modal, .modal > *, .modal.closing, .modal.closing > *, .drawer-overlay, .drawer-overlay.closing{animation:none !important;}
+}
 .modal-sheet{
   position:relative;
   width:100%; max-width:560px; max-height:min(91vh, calc(100vh - 40px - env(safe-area-inset-top)));
@@ -463,7 +499,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 /* La unidad ya no se elige a mano (siempre es la del catálogo) — es solo una
    etiqueta de solo lectura junto a la cantidad, no un campo. */
 .ingredient-unit-badge{
-  flex:0 0 auto; font-size:11px; color:var(--muted); padding:0 10px 0 6px; white-space:nowrap;
+  flex:0 0 44px; width:44px; font-size:11px; color:var(--muted); padding:0 4px 0 6px; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
 }
 .ingredient-suggest{
   position:absolute; left:0; right:0; top:100%; margin-top:4px; background:var(--card); border:1px solid var(--border);
@@ -500,7 +537,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 }
 .fridge-qty-input:focus{outline:none; border-color:var(--accent);}
 .fridge-qty-input::-webkit-outer-spin-button, .fridge-qty-input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
-.fridge-add-row .ingredient-unit-badge{padding:0; min-width:22px;}
+.fridge-add-row .ingredient-unit-badge{padding:0; flex:0 0 40px; width:40px;}
 .fridge-item-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border);}
 .fridge-item-row:last-child{border-bottom:none;}
 .fridge-item-name{flex:1; font-size:14px; font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
@@ -510,7 +547,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 }
 .fridge-item-qty-input:focus{outline:none; border-color:var(--accent);}
 .fridge-item-qty-input::-webkit-outer-spin-button, .fridge-item-qty-input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
-.fridge-item-unit{font-size:12px; color:var(--muted); flex:0 0 auto; min-width:18px;}
+.fridge-item-unit{font-size:12px; color:var(--muted); flex:0 0 40px; width:40px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .fridge-item-del{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--card2); color:var(--muted); display:flex; align-items:center; justify-content:center;}
 
 /* ---------- CARRITO ---------- */
@@ -732,7 +769,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .wall-post-header{display:flex; align-items:center; gap:10px; padding:12px 14px;}
 .wall-post-user{font-weight:700; font-size:14px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .wall-post-time{font-size:12px; color:var(--muted); flex-shrink:0;}
-.wall-post-photo{width:100%; aspect-ratio:4/3; background:var(--card2);}
+.wall-post-photo{width:100%; aspect-ratio:4/3; background:var(--card2); cursor:pointer;}
+.wall-post-body{cursor:pointer;}
 .wall-post-photo img{width:100%; height:100%; object-fit:cover; display:block;}
 .wall-post-body{padding:12px 14px 4px;}
 .wall-post-dish{font-weight:700; font-size:15px;}
@@ -1059,6 +1097,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
           <button type="button" id="toggle-push-btn" class="switch" aria-label="Notificaciones"></button>
         </div>
         <div class="settings-hint" id="push-hint"></div>
+        <button type="button" id="push-test-btn" class="btn-secondary hidden" style="width:100%; justify-content:center; margin-top:12px;">Enviar notificación de prueba</button>
+        <div class="settings-hint hidden" id="push-test-result"></div>
       </div>
 
       <div class="card">
@@ -1428,6 +1468,31 @@ const fmtDate = (d) => d.toISOString().slice(0,10);
 function isoWeekday(d){ return ((d.getDay()+6)%7)+1; }
 function getMonday(d){ const x=new Date(d); const diff=isoWeekday(x)-1; x.setDate(x.getDate()-diff); x.setHours(0,0,0,0); return x; }
 function uuid(){ return crypto.randomUUID(); }
+/* Abrir/cerrar pop-ups con animación: al abrir, el CSS anima solo (fondo que
+   aparece + hoja que sube). Al cerrar se marca .closing, se deja terminar la
+   animación de salida y entonces se oculta de verdad. */
+const REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function showModal(el){
+  if(!el) return;
+  clearTimeout(el._closeTimer);
+  el.classList.remove('closing');
+  el.classList.remove('hidden');
+}
+function hideModal(el){
+  if(!el || el.classList.contains('hidden')) return;
+  clearTimeout(el._closeTimer);
+  // Ya se ha animado la salida con el dedo (deslizar hacia abajo): ocultar sin repetirla.
+  if(el.dataset.instantClose || REDUCED_MOTION){
+    delete el.dataset.instantClose;
+    el.classList.remove('closing'); el.classList.add('hidden');
+    return;
+  }
+  el.classList.add('closing');
+  el._closeTimer = setTimeout(()=>{
+    if(el.classList.contains('closing')){ el.classList.remove('closing'); el.classList.add('hidden'); }
+  }, 200);
+}
+function modalHidden(el){ return el.classList.contains('hidden') || el.classList.contains('closing'); }
 const ICON_PLATE = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>';
 const ICON_HEART = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
 const ICON_COMMENT = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
@@ -1591,8 +1656,24 @@ function setSection(section){
   $('#section-'+section).classList.add('active');
   $all('.drawer-link').forEach(b=> b.classList.toggle('active', b.dataset.section===section));
 }
-function openDrawer(){ $('#drawer').classList.add('open'); $('#drawer-overlay').classList.remove('hidden'); }
-function closeDrawer(){ $('#drawer').classList.remove('open'); $('#drawer-overlay').classList.add('hidden'); }
+// El fondo oscuro aparece/desaparece a la vez que se desliza el menú (antes
+// salía y se iba de golpe mientras el menú aún se movía).
+let drawerOverlayTimer = null;
+function openDrawer(){
+  const ov = $('#drawer-overlay');
+  clearTimeout(drawerOverlayTimer);
+  ov.classList.remove('closing', 'no-anim', 'hidden');
+  $('#drawer').classList.add('open');
+}
+function closeDrawer(){
+  const ov = $('#drawer-overlay');
+  $('#drawer').classList.remove('open');
+  if(ov.classList.contains('hidden')) return;
+  if(REDUCED_MOTION){ ov.classList.add('hidden'); return; }
+  ov.classList.add('closing');
+  clearTimeout(drawerOverlayTimer);
+  drawerOverlayTimer = setTimeout(()=>{ ov.classList.remove('closing'); ov.classList.add('hidden'); }, 300);
+}
 $('#menu-btn').onclick = openDrawer;
 $('#drawer-overlay').onclick = closeDrawer;
 $('#drawer-settings-btn').onclick = ()=>{ setSection('settings'); closeDrawer(); };
@@ -1633,6 +1714,9 @@ function attachDrawerSwipe(){
       if(Math.abs(mdy)>Math.abs(mdx)){ release(); return; }
       dragging=true;
       drawer.style.transition='none';
+      clearTimeout(drawerOverlayTimer);
+      overlay.classList.remove('closing');
+      overlay.classList.add('no-anim');
       overlay.classList.remove('hidden');
       overlay.style.transition='none';
     }
@@ -1650,8 +1734,8 @@ function attachDrawerSwipe(){
     release();
     if(!dragging){ mode=null; return; }
     const willOpen = mode==='open' ? dx > width*0.28 : !(Math.abs(dx) > width*0.22);
-    drawer.style.transition='transform .22s ease';
-    overlay.style.transition='opacity .22s ease';
+    drawer.style.transition='transform .28s cubic-bezier(.32,.72,0,1)';
+    overlay.style.transition='opacity .28s cubic-bezier(.32,.72,0,1)';
     if(willOpen){ drawer.style.transform='translateX(0)'; overlay.style.opacity='1'; }
     else { drawer.style.transform=`translateX(-${width}px)`; overlay.style.opacity='0'; }
     setTimeout(()=>{
@@ -1659,12 +1743,13 @@ function attachDrawerSwipe(){
       overlay.style.transition=''; overlay.style.opacity='';
       drawer.classList.toggle('open', willOpen);
       overlay.classList.toggle('hidden', !willOpen);
-    }, 220);
+      overlay.classList.remove('no-anim');
+    }, 280);
     dragging=false; mode=null;
   }
   document.addEventListener('pointerdown', e=>{
     if($('#app-view').classList.contains('hidden')) return;
-    if(!$('#dish-modal').classList.contains('hidden') || !$('#desc-modal').classList.contains('hidden')) return;
+    if(!modalHidden($('#dish-modal')) || !modalHidden($('#desc-modal'))) return;
     const isOpen = drawer.classList.contains('open');
     if(!isOpen){
       if(e.target.closest('.week-board')) return;
@@ -1740,7 +1825,7 @@ async function loadDishes(){
   if(error){ console.error(error); return; }
   dishes = data||[];
   renderGallery();
-  if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
+  if(!modalHidden($('#folder-modal'))) renderFolderGallery();
 }
 async function loadFolders(){
   const { data, error } = await sb.from('dish_folders').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:true});
@@ -2041,7 +2126,7 @@ async function moveDishesToFolder(dishIds, folderId){
   });
   selectedDishIds.clear();
   renderGallery();
-  if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
+  if(!modalHidden($('#folder-modal'))) renderFolderGallery();
   const { error } = await updateWithRetry(()=> sb.from('dishes').update({ folder_id: folderId }).in('id', dishIds));
   if(error){
     alert(error.message);
@@ -2050,7 +2135,7 @@ async function moveDishesToFolder(dishIds, folderId){
       if(d && prevFolderIds.has(id)) d.folder_id = prevFolderIds.get(id);
     });
     renderGallery();
-    if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
+    if(!modalHidden($('#folder-modal'))) renderFolderGallery();
   }
 }
 
@@ -2066,10 +2151,10 @@ function openFolderModal(folderId){
   $('#folder-modal-title').textContent = folder ? folder.name : 'Carpeta';
   renderFolderGallery();
   lockBodyScroll();
-  $('#folder-modal').classList.remove('hidden');
+  showModal($('#folder-modal'));
 }
 function closeFolderModal(){
-  $('#folder-modal').classList.add('hidden');
+  hideModal($('#folder-modal'));
   unlockBodyScroll();
   currentFolderId = null;
 }
@@ -2274,7 +2359,7 @@ function openDishModal(dish){
   $('#dish-save-btn').textContent = 'Crear plato';
   applyDishModalButtons();
   applyDishFieldsLock();
-  $('#dish-modal').classList.remove('hidden');
+  showModal($('#dish-modal'));
 }
 // Botones de la ficha según el estado: plato nuevo -> Atrás + Crear plato;
 // plato existente en modo vista -> Atrás + Compartir + Editar; plato
@@ -2313,73 +2398,88 @@ function applyDishFieldsLock(){
 function closeDishModal(){
   if(dishSaveInFlight) return; // no se puede salir mientras hay una escritura en curso de verdad
   flushDishAutosave();
-  $('#dish-modal').classList.add('hidden');
-  $('#desc-modal').classList.add('hidden');
+  hideModal($('#dish-modal'));
+  hideModal($('#desc-modal'));
   unlockBodyScroll();
 }
 
 /* --- Gesto: deslizar TODA la tarjeta del plato hacia abajo para volver al mosaico.
-   Único gesto (antes había también uno horizontal, se quita para que sea más predecible).
-   Solo actúa cuando el contenido está arriba del todo (scrollTop 0), si no, se deja
-   scrollear con normalidad — incluso empezando sobre los ingredientes. */
+   Solo actúa cuando el contenido está arriba del todo (scrollTop 0); si no,
+   se deja hacer scroll con normalidad.
+   Va con eventos TOUCH (no pointer): en iPhone, con pointer events, en cuanto
+   Safari decide que el gesto es un scroll/rebote lo cancela a mitad
+   (pointercancel) y la hoja se quedaba a trompicones. Con touchmove sin
+   "passive" se puede frenar el scroll nativo y la hoja sigue al dedo de
+   verdad. El fondo oscuro se aclara a la vez, y se cierra también con un
+   gesto rápido aunque sea corto (velocidad), como en las apps de iOS. */
 function attachSwipeToCloseSheet(sheet, onClose, isLocked){
   const hardBlocked = 'button, .pill-btn';
-  let startX=0, startY=0, dy=0, dragging=false, pointerId=null, rafId=null;
-
-  function scheduleFrame(){
-    if(rafId) return;
-    rafId = requestAnimationFrame(()=>{
-      rafId = null;
-      sheet.style.transform = `translateY(${dy}px)`;
-      sheet.style.opacity = String(Math.max(0.4, 1 - dy/380));
-    });
+  const modal = sheet.closest('.modal');
+  let startX=0, startY=0, dy=0, tracking=false, dragging=false, rafId=null, lastY=0, lastT=0, velocity=0;
+  function paint(){
+    rafId = null;
+    sheet.style.transform = `translate3d(0,${dy}px,0)`;
+    const p = Math.min(1, dy / (sheet.offsetHeight || 600));
+    if(modal) modal.style.backgroundColor = `rgba(20,25,23,${(0.4*(1-p)).toFixed(3)})`;
   }
-  function onMove(e){
-    if(e.pointerId!==pointerId) return;
-    const mdx=e.clientX-startX, mdy=e.clientY-startY;
+  function schedule(){ if(!rafId) rafId = requestAnimationFrame(paint); }
+  function reset(){
+    sheet.style.transition=''; sheet.style.transform='';
+    if(modal){ modal.style.transition=''; modal.style.backgroundColor=''; }
+  }
+  sheet.addEventListener('touchstart', e=>{
+    if(e.touches.length!==1 || (isLocked && isLocked()) || e.target.closest(hardBlocked)) return;
+    const t = e.touches[0];
+    startX = t.clientX; startY = t.clientY; dy = 0; velocity = 0;
+    lastY = t.clientY; lastT = e.timeStamp;
+    tracking = true; dragging = false;
+  }, {passive:true});
+  sheet.addEventListener('touchmove', e=>{
+    if(!tracking) return;
+    const t = e.touches[0];
+    const mdx = t.clientX-startX, mdy = t.clientY-startY;
     if(!dragging){
-      if(Math.abs(mdx)<8 && Math.abs(mdy)<8) return;
+      if(Math.abs(mdx)<6 && Math.abs(mdy)<6) return;
       if(mdy>Math.abs(mdx) && sheet.scrollTop<=0){
         dragging = true;
-        try{ sheet.setPointerCapture(pointerId); }catch(err){}
-      } else {
-        endDrag(false); return;
-      }
+        startY = t.clientY; // sin salto: la hoja arranca justo donde está el dedo
+        sheet.style.transition = 'none';
+        if(modal) modal.style.transition = 'none';
+      } else { tracking = false; return; }
     }
-    e.preventDefault();
-    dy = Math.max(0, mdy);
-    scheduleFrame();
-  }
-  function endDrag(shouldEval){
-    if(pointerId!=null){
-      sheet.removeEventListener('pointermove', onMove);
-      try{ sheet.releasePointerCapture(pointerId); }catch(err){}
-    }
-    pointerId = null;
-    if(rafId){ cancelAnimationFrame(rafId); rafId=null; }
+    e.preventDefault(); // frena el scroll/rebote nativo mientras se arrastra la hoja
+    dy = Math.max(0, t.clientY - startY);
+    const dt = e.timeStamp - lastT;
+    if(dt > 0) velocity = (t.clientY - lastY) / dt;
+    lastY = t.clientY; lastT = e.timeStamp;
+    schedule();
+  }, {passive:false});
+  function end(){
+    if(!tracking) return;
+    tracking = false;
+    if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
     if(!dragging) return;
-    if(shouldEval!==false && dy > 55){
-      sheet.style.transition = 'transform .2s ease, opacity .2s ease';
-      sheet.style.transform = 'translateY(100%)';
-      sheet.style.opacity = '0';
-      setTimeout(()=>{ onClose(); sheet.style.transition=''; sheet.style.transform=''; sheet.style.opacity=''; }, 200);
-    } else {
-      sheet.style.transition = 'transform .18s ease, opacity .18s ease';
-      sheet.style.transform = 'translateY(0)';
-      sheet.style.opacity = '1';
-      setTimeout(()=> sheet.style.transition = '', 180);
-    }
     dragging = false;
+    const ease = 'cubic-bezier(.32,.72,0,1)';
+    if(dy > 110 || (dy > 30 && velocity > 0.5)){
+      sheet.style.transition = `transform .24s ${ease}`;
+      sheet.style.transform = 'translate3d(0,100%,0)';
+      if(modal){ modal.style.transition = `background-color .24s ${ease}`; modal.style.backgroundColor = 'rgba(20,25,23,0)'; }
+      setTimeout(()=>{
+        if(modal) modal.dataset.instantClose = '1';
+        onClose();
+        if(modal && !modal.classList.contains('hidden')) delete modal.dataset.instantClose; // no se cerró (p.ej. guardando)
+        reset();
+      }, 240);
+    } else {
+      sheet.style.transition = `transform .3s ${ease}`;
+      sheet.style.transform = 'translate3d(0,0,0)';
+      if(modal){ modal.style.transition = `background-color .3s ${ease}`; modal.style.backgroundColor = ''; }
+      setTimeout(reset, 300);
+    }
   }
-  sheet.addEventListener('pointerdown', e=>{
-    if(isLocked && isLocked()) return; // p.ej. guardando de verdad: no se puede empezar a deslizar para cerrar
-    if(e.target.closest(hardBlocked)) return;
-    startX=e.clientX; startY=e.clientY; dy=0; dragging=false;
-    pointerId = e.pointerId;
-    sheet.addEventListener('pointermove', onMove);
-  });
-  sheet.addEventListener('pointerup', ()=> endDrag());
-  sheet.addEventListener('pointercancel', ()=> endDrag(false));
+  sheet.addEventListener('touchend', end);
+  sheet.addEventListener('touchcancel', end);
 }
 attachSwipeToCloseSheet(document.querySelector('#dish-modal .modal-sheet'), closeDishModal, ()=> !!dishSaveInFlight);
 
@@ -2411,18 +2511,29 @@ function findIngredientMatches(term){
   // "aceite"... no cualquier ingrediente que lleve una "a" en medio.
   return ingredientCatalog.filter(ic=> stripAccents(ic.name.toLowerCase()).startsWith(t)).slice(0,6);
 }
+// Unidad de un ingrediente: la del catálogo si la tiene; si es un ingrediente
+// nuevo (o del catálogo pero sin unidad), se deduce sola — nunca se queda en
+// blanco. Mismo criterio que actualizar_ingredientes.sql.
+function guessUnit(name){
+  const n = (name||'').trim().toLowerCase();
+  if(!n) return null;
+  if(/(^| )(leche|zumo|jugo|caldo|agua|vino|cerveza|licor|ron|brandy|co[ñn]ac|whisky|vodka|vinagre|aceite|salsa|nata|bebida|sirope|jarabe|refresco|k[ée]fir|sidra|cava|horchata|infusi[oó]n|t[oó]nica|batido|smoothie|fumet|gazpacho|salmorejo|almíbar|esencia)/.test(n)) return 'ml';
+  if(/(^| )ajos?( |$)/.test(n)) return 'diente';
+  if(/^huevos?( |$)/.test(n)) return 'ud';
+  return 'g';
+}
 function lookupDefaultUnit(name){
   const norm = stripAccents((name||'').trim().toLowerCase());
   if(!norm) return null;
   const found = ingredientCatalog.find(ic=> stripAccents(ic.name.toLowerCase())===norm);
-  return found ? (found.default_unit||null) : null;
+  return (found && found.default_unit) || guessUnit(name);
 }
 async function resolveIngredientId(name){
   const norm = (name||'').trim().toLowerCase();
   if(!norm) return null;
   const found = ingredientCatalog.find(ic=> ic.name.toLowerCase()===norm);
   if(found) return found.id;
-  const { data, error } = await sb.from('ingredient_catalog').insert({ name: norm, created_by: currentUser.id }).select().single();
+  const { data, error } = await sb.from('ingredient_catalog').insert({ name: norm, default_unit: guessUnit(norm), created_by: currentUser.id }).select().single();
   if(!error && data){ ingredientCatalog.push(data); return data.id; }
   // Puede que otro usuario haya creado ese mismo ingrediente justo antes (choque de "unique") — se relee.
   const { data: existing } = await sb.from('ingredient_catalog').select('*').eq('name', norm).maybeSingle();
@@ -2631,10 +2742,10 @@ function updateDescPreview(){
 // En modo vista el pop-up es solo para leer (readOnly, sin sacar el teclado);
 // creando/editando se abre ya con el cursor puesto para escribir.
 function openDescModal(){
-  $('#desc-modal').classList.remove('hidden');
+  showModal($('#desc-modal'));
   if(!dishFieldsLocked()) $('#dish-desc').focus();
 }
-function closeDescModal(){ $('#desc-modal').classList.add('hidden'); updateDescPreview(); }
+function closeDescModal(){ hideModal($('#desc-modal')); updateDescPreview(); }
 $('#dish-desc-trigger').onclick = openDescModal;
 $('#desc-modal-close').onclick = closeDescModal;
 $('#desc-modal').addEventListener('click', e=>{ if(e.target.id==='desc-modal') closeDescModal(); });
@@ -2666,8 +2777,8 @@ $('#dish-duration').addEventListener('input', ()=> scheduleDishAutosave(false));
 // Macros: solo visible con el interruptor de Ajustes activo, y solo en un
 // plato que ya existe (igual que Compartir/Eliminar) — sin id fijo en la BD
 // todavía no hay dónde autoguardar los macros.
-function openMacrosModal(){ $('#macros-modal').classList.remove('hidden'); }
-function closeMacrosModal(){ $('#macros-modal').classList.add('hidden'); }
+function openMacrosModal(){ showModal($('#macros-modal')); }
+function closeMacrosModal(){ hideModal($('#macros-modal')); }
 $('#dish-macros-btn').onclick = openMacrosModal;
 $('#macros-modal').addEventListener('click', e=>{ if(e.target.id==='macros-modal') closeMacrosModal(); });
 $('#macro-protein').addEventListener('input', ()=> scheduleDishAutosave(false));
@@ -2899,7 +3010,7 @@ async function doSaveDishSnapshot(snap){
     // que ya puede desaparecer y ceder el paso al autoguardado silencioso.
     if(snap.id===editingDishId) dishExistsRemote = true;
     renderGallery();
-    if(!$('#folder-modal').classList.contains('hidden')) renderFolderGallery();
+    if(!modalHidden($('#folder-modal'))) renderFolderGallery();
     setAutosaveStatus('Guardado', snap.id);
   }catch(err){
     console.error(err);
@@ -3059,7 +3170,7 @@ $('#toggle-macros-btn').onclick = async ()=>{
   currentUser.show_macros = newVal;
   applyFitnessVisibility();
   // Si la ficha de un plato está abierta ahora mismo, refleja el cambio al instante.
-  if(!$('#dish-modal').classList.contains('hidden')){
+  if(!modalHidden($('#dish-modal'))){
     $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
   }
 };
@@ -3280,6 +3391,7 @@ let previewingSharedId = null;
 let previewMode = 'shared'; // 'shared' | 'friend' | 'chat'
 let previewingFriendDish = null;
 let previewingChatDish = null; // { snapshot, fromUsername } — receta recibida por el chat
+let previewingWallPostId = null; // publicación del Muro que se está viendo
 function populateDishPreview(d, fromLabel){
   const wrap = $('#shared-preview-photo-wrap'), img = $('#shared-preview-photo');
   if(d.image_url){ img.src = d.image_url; wrap.classList.remove('hidden'); } else { wrap.classList.add('hidden'); img.src=''; }
@@ -3308,7 +3420,7 @@ function openSharedPreview(sharedId){
   $('#shared-preview-reject-btn').classList.remove('hidden');
   $('#shared-preview-add-btn').textContent = 'Añadir a mis recetas';
   lockBodyScroll();
-  $('#shared-preview-modal').classList.remove('hidden');
+  showModal($('#shared-preview-modal'));
 }
 function openFriendDishPreview(dish){
   previewMode = 'friend';
@@ -3318,14 +3430,15 @@ function openFriendDishPreview(dish){
   $('#shared-preview-reject-btn').classList.add('hidden');
   $('#shared-preview-add-btn').textContent = 'Añadir a mi repositorio';
   lockBodyScroll();
-  $('#shared-preview-modal').classList.remove('hidden');
+  showModal($('#shared-preview-modal'));
 }
 function closeSharedPreview(){
-  $('#shared-preview-modal').classList.add('hidden');
+  hideModal($('#shared-preview-modal'));
   unlockBodyScroll();
   previewingSharedId = null;
   previewingFriendDish = null;
   previewingChatDish = null;
+  previewingWallPostId = null;
   $('#shared-preview-reject-btn').classList.remove('hidden'); // deja el pop-up listo para la próxima vez en modo 'shared'
   $('#shared-preview-add-btn').classList.remove('hidden');
 }
@@ -3333,6 +3446,12 @@ $('#shared-preview-close').onclick = closeSharedPreview;
 $('#shared-preview-modal').addEventListener('click', e=>{ if(e.target.id==='shared-preview-modal') closeSharedPreview(); });
 $('#shared-preview-reject-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await rejectSharedDish(id); };
 $('#shared-preview-add-btn').onclick = async ()=>{
+  if(previewMode==='wall'){
+    const id = previewingWallPostId;
+    closeSharedPreview();
+    if(id) await addWallDishToRepo(id);
+    return;
+  }
   if(previewMode==='chat'){
     const c = previewingChatDish;
     closeSharedPreview();
@@ -3361,11 +3480,11 @@ async function openFriendProfile(friend){
   $('#friend-profile-header').innerHTML = `${avatarHtml(friend)}<span class="fp-name">@${escapeHtml(friend.username)}</span>`;
   $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>';
   lockBodyScroll();
-  $('#friend-profile-modal').classList.remove('hidden');
+  showModal($('#friend-profile-modal'));
   await loadFriendRepo();
 }
 function closeFriendProfile(){
-  $('#friend-profile-modal').classList.add('hidden');
+  hideModal($('#friend-profile-modal'));
   unlockBodyScroll();
   friendProfile = null;
   friendProfileFolderId = null;
@@ -3465,16 +3584,16 @@ function renderShareTargets(){
 }
 $('#dish-share-btn').onclick = ()=>{
   renderShareTargets();
-  $('#share-modal').classList.remove('hidden');
+  showModal($('#share-modal'));
 };
-$('#share-modal').addEventListener('click', e=>{ if(e.target.id==='share-modal') $('#share-modal').classList.add('hidden'); });
+$('#share-modal').addEventListener('click', e=>{ if(e.target.id==='share-modal') hideModal($('#share-modal')); });
 let shareInFlight = false;
 async function shareDishWith(target){
   if(!editingDishId || shareInFlight) return;
   const dish = dishes.find(d=>d.id===editingDishId);
   if(!dish) return;
   shareInFlight = true;
-  $('#share-modal').classList.add('hidden');
+  hideModal($('#share-modal'));
   try{
     let chatId = target.chatId;
     if(!chatId){
@@ -3493,19 +3612,19 @@ async function shareDishWith(target){
 
 /* --- Publicar en el Muro (desde el mismo pop-up de Compartir) --- */
 $('#share-to-wall-btn').onclick = ()=>{
-  $('#share-modal').classList.add('hidden');
+  hideModal($('#share-modal'));
   $('#wall-publish-caption').value = '';
-  $('#wall-publish-modal').classList.remove('hidden');
+  showModal($('#wall-publish-modal'));
 };
-$('#wall-publish-cancel').onclick = ()=> $('#wall-publish-modal').classList.add('hidden');
-$('#wall-publish-modal').addEventListener('click', e=>{ if(e.target.id==='wall-publish-modal') $('#wall-publish-modal').classList.add('hidden'); });
+$('#wall-publish-cancel').onclick = ()=> hideModal($('#wall-publish-modal'));
+$('#wall-publish-modal').addEventListener('click', e=>{ if(e.target.id==='wall-publish-modal') hideModal($('#wall-publish-modal')); });
 $('#wall-publish-confirm').onclick = async ()=>{
   if(!editingDishId) return;
   const dish = dishes.find(d=>d.id===editingDishId);
   if(!dish) return;
   const snapshot = dishSnapshotOf(dish);
   const caption = $('#wall-publish-caption').value.trim();
-  $('#wall-publish-modal').classList.add('hidden');
+  hideModal($('#wall-publish-modal'));
   const { error } = await sb.from('wall_posts').insert({
     user_id: currentUser.id, dish_id: dish.id, dish_snapshot: snapshot, caption: caption || null
   });
@@ -3603,13 +3722,13 @@ async function openChat(chatId){
   refreshChatHeader();
   $('#chat-messages').innerHTML = '<div class="empty-hint">Cargando...</div>';
   $('#chat-input').value = '';
-  if($('#chat-modal').classList.contains('hidden')){ lockBodyScroll(); $('#chat-modal').classList.remove('hidden'); }
+  if(modalHidden($('#chat-modal'))){ lockBodyScroll(); showModal($('#chat-modal')); }
   recomputeChatUnread();
   await loadChatMessages(chatId);
   if(openChatId===chatId) markChatRead(chatId);
 }
 function closeChat(){
-  $('#chat-modal').classList.add('hidden');
+  hideModal($('#chat-modal'));
   unlockBodyScroll();
   openChatId = null;
   loadChats();
@@ -3712,7 +3831,7 @@ function subscribeChatRealtime(){
       .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages' }, async payload=>{
         const m = payload && payload.new;
         if(!m) return;
-        const chatOpen = m.chat_id===openChatId && !$('#chat-modal').classList.contains('hidden');
+        const chatOpen = m.chat_id===openChatId && !modalHidden($('#chat-modal'));
         if(!chatOpen){ loadChats(); return; }
         if(!openChatMessages.some(x=> x.id===m.id)){
           openChatMessages.push(m);
@@ -3748,7 +3867,7 @@ function openChatDishPreview(msgId){
   $('#shared-preview-add-btn').textContent = 'Añadir a mis recetas';
   $('#shared-preview-add-btn').classList.toggle('hidden', mine);
   lockBodyScroll();
-  $('#shared-preview-modal').classList.remove('hidden');
+  showModal($('#shared-preview-modal'));
 }
 
 /* --- Grupos: crear, ver miembros, añadir amigos, salir --- */
@@ -3771,11 +3890,11 @@ function openGroupModal(mode){
     if(groupPicked.has(id)) groupPicked.delete(id); else groupPicked.add(id);
     b.classList.toggle('picked', groupPicked.has(id));
   });
-  $('#group-modal').classList.remove('hidden');
+  showModal($('#group-modal'));
 }
 $('#new-group-btn').onclick = ()=> openGroupModal('create');
-$('#group-modal-cancel').onclick = ()=> $('#group-modal').classList.add('hidden');
-$('#group-modal').addEventListener('click', e=>{ if(e.target.id==='group-modal') $('#group-modal').classList.add('hidden'); });
+$('#group-modal-cancel').onclick = ()=> hideModal($('#group-modal'));
+$('#group-modal').addEventListener('click', e=>{ if(e.target.id==='group-modal') hideModal($('#group-modal')); });
 $('#group-name-input').addEventListener('input', ()=> capitalizeFirstLetter($('#group-name-input')));
 $('#group-modal-confirm').onclick = async ()=>{
   const btn = $('#group-modal-confirm');
@@ -3789,17 +3908,17 @@ $('#group-modal-confirm').onclick = async ()=>{
     const { data, error } = await sb.rpc('create_group_chat', { p_name: name, p_members: members });
     btn.disabled = false;
     if(error){ alert(error.message); return; }
-    $('#group-modal').classList.add('hidden');
+    hideModal($('#group-modal'));
     await loadChats();
     openChat(data);
   } else {
-    if(!members.length){ $('#group-modal').classList.add('hidden'); return; }
+    if(!members.length){ hideModal($('#group-modal')); return; }
     btn.disabled = true;
     const { error } = await sb.rpc('add_group_members', { p_chat: openChatId, p_members: members });
     btn.disabled = false;
     if(error){ alert(error.message); return; }
-    $('#group-modal').classList.add('hidden');
-    $('#group-info-modal').classList.add('hidden');
+    hideModal($('#group-modal'));
+    hideModal($('#group-info-modal'));
     await loadChats();
     if(openChatId) await loadChatMessages(openChatId);
   }
@@ -3810,18 +3929,18 @@ function openGroupInfo(){
   $('#group-info-title').textContent = c.name || 'Grupo';
   $('#group-info-members').innerHTML = openChatMembers.map(p=>
     `<div class="user-row">${avatarHtml(p)}<span class="user-row-name">@${escapeHtml(p.username)}${p.id===currentUser.id ? ' (tú)' : ''}</span></div>`).join('');
-  $('#group-info-modal').classList.remove('hidden');
+  showModal($('#group-info-modal'));
 }
 $('#chat-group-info-btn').onclick = openGroupInfo;
-$('#group-info-close').onclick = ()=> $('#group-info-modal').classList.add('hidden');
-$('#group-info-modal').addEventListener('click', e=>{ if(e.target.id==='group-info-modal') $('#group-info-modal').classList.add('hidden'); });
+$('#group-info-close').onclick = ()=> hideModal($('#group-info-modal'));
+$('#group-info-modal').addEventListener('click', e=>{ if(e.target.id==='group-info-modal') hideModal($('#group-info-modal')); });
 $('#group-add-members-btn').onclick = ()=> openGroupModal('add');
 $('#group-leave-btn').onclick = async ()=>{
   const c = chatSummaries.find(x=> x.chat_id===openChatId);
   if(!c || !confirm(`¿Salir del grupo "${c.name||'Grupo'}"? Dejarás de ver sus mensajes.`)) return;
   const { error } = await sb.from('chat_members').delete().eq('chat_id', c.chat_id).eq('profile_id', currentUser.id);
   if(error){ alert(error.message); return; }
-  $('#group-info-modal').classList.add('hidden');
+  hideModal($('#group-info-modal'));
   chatSummaries = chatSummaries.filter(x=> x!==c);
   closeChat();
 };
@@ -3903,6 +4022,7 @@ async function renderPushSetting(){
   const sub = await currentPushSubscription().catch(()=> null);
   const on = !!sub && Notification.permission==='granted';
   btn.classList.toggle('on', on);
+  $('#push-test-btn').classList.toggle('hidden', !on);
   hint.textContent = on
     ? 'Te avisaremos de mensajes y recetas del chat y de lo que publiquen tus amigos en el Muro.'
     : 'Actívalo para recibir avisos en este móvil aunque la app esté cerrada.';
@@ -3926,6 +4046,39 @@ $('#toggle-push-btn').onclick = async ()=>{
   }finally{
     delete btn.dataset.busy;
     renderPushSetting();
+  }
+};
+// Prueba de punta a punta: la función del servidor te manda un aviso a ti
+// mismo a los 5 segundos (tiempo de salir de la app o bloquear el móvil) y
+// devuelve qué respondió el servicio de Apple/Google, para ver dónde falla.
+$('#push-test-btn').onclick = async ()=>{
+  const btn = $('#push-test-btn'), out = $('#push-test-result');
+  if(btn.disabled) return;
+  btn.disabled = true;
+  out.classList.remove('hidden');
+  out.textContent = 'Enviando… sal de la app o bloquea el móvil: el aviso llega en unos 5 segundos.';
+  try{
+    const { data } = await sb.auth.getSession();
+    const token = data && data.session && data.session.access_token;
+    const res = await fetch(SUPABASE_URL + '/functions/v1/send-push', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token, 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ test: true })
+    });
+    let r = {};
+    try{ r = await res.json(); }catch(e){}
+    if(res.status===404) out.textContent = 'La función "send-push" no está desplegada en Supabase (o tiene otro nombre).';
+    else if(!res.ok) out.textContent = 'Error '+res.status+': '+(r.error || r.msg || r.message || 'la función respondió con un error.');
+    else if(!r.subscriptions) out.textContent = 'Este móvil no está registrado. Apaga y vuelve a encender el interruptor de arriba y prueba otra vez.';
+    else if(r.sent) out.textContent = 'Enviada correctamente'+(r.errors && r.errors.length ? ' (y '+r.errors.length+' dispositivo antiguo ya no válido)' : '')+'. Si no la ves, revisa Ajustes del iPhone → Notificaciones → NutriFit (Permitir, Pantalla bloqueada, Centro de notificaciones y Tiras) y que no tengas un modo Concentración activo.';
+    else {
+      const e0 = (r.errors||[])[0] || {};
+      out.textContent = 'El servicio de avisos ('+(e0.host||'?')+') la rechazó: '+e0.status+' '+(e0.body||'')+'.';
+    }
+  }catch(e){
+    out.textContent = 'No se pudo contactar con la función: '+(e && e.message ? e.message : e);
+  }finally{
+    btn.disabled = false;
   }
 };
 if('serviceWorker' in navigator){
@@ -3996,8 +4149,8 @@ function renderWallFeed(){
         <span class="wall-post-user">@${escapeHtml((p.author&&p.author.username)||'?')}</span>
         <span class="wall-post-time">${timeAgo(p.created_at)}</span>
       </div>
-      ${d.image_url ? `<div class="wall-post-photo"><img src="${d.image_url}" alt=""></div>` : ''}
-      <div class="wall-post-body">
+      ${d.image_url ? `<div class="wall-post-photo" data-wall-open="${p.id}"><img src="${d.image_url}" alt=""></div>` : ''}
+      <div class="wall-post-body" data-wall-open="${p.id}">
         <div class="wall-post-dish">${escapeHtml(d.name||'Receta')}${d.calories?` · ${d.calories} kcal`:''}</div>
         ${p.caption ? `<div class="wall-post-caption">${escapeHtml(p.caption)}</div>` : ''}
       </div>
@@ -4010,6 +4163,7 @@ function renderWallFeed(){
       </div>
     </div>`;
   }).join('');
+  $all('[data-wall-open]').forEach(el=> el.onclick = ()=> openWallDishPreview(el.dataset.wallOpen));
   $all('[data-wall-like]').forEach(b=> b.onclick = ()=> toggleWallLike(b.dataset.wallLike));
   $all('[data-wall-comment]').forEach(b=> b.onclick = ()=> openWallComments(b.dataset.wallComment));
   $all('[data-wall-add]').forEach(b=> b.onclick = ()=> addWallDishToRepo(b.dataset.wallAdd));
@@ -4045,10 +4199,10 @@ function openWallComments(postId){
   renderWallCommentsList();
   $('#wall-comment-input').value = '';
   lockBodyScroll();
-  $('#wall-comments-modal').classList.remove('hidden');
+  showModal($('#wall-comments-modal'));
 }
 function closeWallComments(){
-  $('#wall-comments-modal').classList.add('hidden');
+  hideModal($('#wall-comments-modal'));
   unlockBodyScroll();
   openingCommentsForPost = null;
 }
@@ -4069,6 +4223,22 @@ async function sendWallComment(){
 $('#wall-comment-send').onclick = sendWallComment;
 $('#wall-comment-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); sendWallComment(); } });
 
+// Tocar la foto o el nombre de una publicación del Muro abre la receta
+// completa (misma ficha de vista previa que las recetas del chat).
+function openWallDishPreview(postId){
+  const post = wallPosts.find(p=> p.id===postId);
+  if(!post) return;
+  const mine = post.user_id===currentUser.id;
+  previewMode = 'wall';
+  previewingSharedId = null; previewingFriendDish = null; previewingChatDish = null;
+  previewingWallPostId = postId;
+  populateDishPreview(post.dish_snapshot || {}, mine ? 'Publicada por ti' : 'de @'+((post.author && post.author.username) || '?'));
+  $('#shared-preview-reject-btn').classList.add('hidden');
+  $('#shared-preview-add-btn').textContent = 'Añadir a mis recetas';
+  $('#shared-preview-add-btn').classList.toggle('hidden', mine);
+  lockBodyScroll();
+  showModal($('#shared-preview-modal'));
+}
 async function addWallDishToRepo(postId){
   const post = wallPosts.find(p=> p.id===postId);
   if(!post) return;
@@ -4128,10 +4298,17 @@ function subscribeWallRealtime(){
 }
 
 /* ===================== CATÁLOGO DE INGREDIENTES + NEVERA ===================== */
+// Por páginas de 1000: Supabase no devuelve más de 1000 filas por consulta y
+// el catálogo ya pasa de 700 ingredientes (y crece con lo que escribe cada uno).
 async function loadIngredientCatalog(){
-  const { data, error } = await sb.from('ingredient_catalog').select('*').order('name', {ascending:true});
-  if(error){ console.error(error); return; }
-  ingredientCatalog = data||[];
+  const PAGE = 1000, all = [];
+  for(let from = 0; ; from += PAGE){
+    const { data, error } = await sb.from('ingredient_catalog').select('*').order('name', {ascending:true}).range(from, from+PAGE-1);
+    if(error){ console.error(error); break; }
+    all.push(...(data||[]));
+    if(!data || data.length < PAGE) break;
+  }
+  ingredientCatalog = all;
 }
 
 // Recetas creadas antes de esta ronda tienen ingredients como texto suelto
