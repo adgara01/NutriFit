@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>NutriFit</title>
 
 <!-- PWA / iOS fullscreen standalone -->
@@ -876,17 +876,13 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   <aside id="drawer" class="drawer">
     <div class="drawer-brand">NutriFit</div>
     <nav class="drawer-nav">
-      <button class="drawer-link" data-section="nevera">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg>
-        <span>Nevera</span>
-      </button>
       <button class="drawer-link" data-section="platos">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
         <span>Platos y Recetas</span>
       </button>
-      <button class="drawer-link" data-section="explorar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>
-        <span>Explorar</span>
+      <button class="drawer-link" data-section="nevera">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg>
+        <span>Nevera</span>
       </button>
       <button class="drawer-link" data-section="carrito">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg>
@@ -902,6 +898,10 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span>Muro</span>
         <span id="wall-notif-badge" class="notif-badge hidden">0</span>
+      </button>
+      <button class="drawer-link" data-section="explorar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>
+        <span>Explorar</span>
       </button>
       <button class="drawer-link" data-section="fitness">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg>
@@ -3841,7 +3841,46 @@ async function openChat(chatId){
   await loadChatMessages(chatId);
   if(openChatId===chatId) markChatRead(chatId);
 }
+/* Teclado del iPhone: al abrirse, iOS NO encoge la pantalla, sino que
+   desplaza la vista hacia arriba, y la hoja del chat (alta, fija abajo) se
+   quedaba con la cabecera y los mensajes fuera de la pantalla. Aquí se
+   ajusta el chat a la parte que de verdad se ve (visualViewport): cabecera
+   arriba, mensajes en medio, campo de escribir justo encima del teclado.
+   Y si estabas viendo los últimos mensajes, se sigue viendo el final. */
+function fitChatToViewport(){
+  const modal = $('#chat-modal'), sheet = modal.querySelector('.chat-sheet');
+  const vv = window.visualViewport;
+  if(!vv || modalHidden(modal)){ return; }
+  const box = $('#chat-messages');
+  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
+  const keyboardOpen = vv.height < window.innerHeight - 120;
+  if(keyboardOpen){
+    modal.style.top = vv.offsetTop + 'px';
+    modal.style.height = vv.height + 'px';
+    modal.style.bottom = 'auto';
+    sheet.style.height = sheet.style.maxHeight = vv.height + 'px';
+    sheet.style.borderRadius = '0';
+    sheet.style.paddingBottom = '10px';
+  } else {
+    resetChatViewportFit();
+  }
+  if(atBottom) box.scrollTop = box.scrollHeight;
+}
+function resetChatViewportFit(){
+  const modal = $('#chat-modal'), sheet = modal.querySelector('.chat-sheet');
+  modal.style.top = modal.style.height = modal.style.bottom = '';
+  sheet.style.height = sheet.style.maxHeight = sheet.style.borderRadius = sheet.style.paddingBottom = '';
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', fitChatToViewport);
+  window.visualViewport.addEventListener('scroll', fitChatToViewport);
+}
+// Al enfocar el campo, iOS intenta desplazar la página: se vuelve a encajar
+// en cuanto termina de abrirse el teclado.
+$('#chat-input').addEventListener('focus', ()=>{ setTimeout(fitChatToViewport, 50); setTimeout(fitChatToViewport, 350); });
+$('#chat-input').addEventListener('blur', ()=> setTimeout(fitChatToViewport, 350));
 function closeChat(){
+  resetChatViewportFit();
   hideModal($('#chat-modal'));
   unlockBodyScroll();
   openChatId = null;
