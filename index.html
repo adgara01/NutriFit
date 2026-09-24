@@ -4056,7 +4056,13 @@ $('#push-test-btn').onclick = async ()=>{
   if(btn.disabled) return;
   btn.disabled = true;
   out.classList.remove('hidden');
-  out.textContent = 'Enviando… sal de la app o bloquea el móvil: el aviso llega en unos 5 segundos.';
+  out.textContent = 'Enviando… quédate en la app: en unos 5 segundos te llegará el aviso arriba y aquí verás el resultado.';
+  // Si la app se va al fondo mientras espera, iOS corta la conexión ("Load
+  // failed") aunque el aviso sí se haya enviado — se avisa de eso en vez de
+  // dar un error que confunde.
+  let wentBackground = false;
+  const onVis = ()=>{ if(document.visibilityState==='hidden') wentBackground = true; };
+  document.addEventListener('visibilitychange', onVis);
   try{
     const { data } = await sb.auth.getSession();
     const token = data && data.session && data.session.access_token;
@@ -4076,8 +4082,11 @@ $('#push-test-btn').onclick = async ()=>{
       out.textContent = 'El servicio de avisos ('+(e0.host||'?')+') la rechazó: '+e0.status+' '+(e0.body||'')+'.';
     }
   }catch(e){
-    out.textContent = 'No se pudo contactar con la función: '+(e && e.message ? e.message : e);
+    out.textContent = wentBackground
+      ? 'Saliste de la app antes de recibir la respuesta, así que aquí no se puede ver el resultado. Si te llegó el aviso, todo funciona. Si no, vuelve a probar sin salir de la app.'
+      : 'No se pudo contactar con la función: '+(e && e.message ? e.message : e);
   }finally{
+    document.removeEventListener('visibilitychange', onVis);
     btn.disabled = false;
   }
 };
