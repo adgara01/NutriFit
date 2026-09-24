@@ -12,8 +12,12 @@
 <meta name="apple-mobile-web-app-title" content="NutriFit">
 <meta name="theme-color" content="#f4f6f5">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" href="icon-192.png">
+<!-- Iconos incrustados en el propio index.html (no dependen de que los .png
+     estén subidos al repo, así no se pierden al actualizar la app).
+     iPhone: cuadrado sin transparencias (iOS redondea las esquinas él solo).
+     PC/navegador: favicon para pestañas y marcadores. -->
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAqAklEQVR4nO2deZRcV3Xuv33OHWquHtWtlqzRmmxZ8izwhGwMxsYQQxhCgDA7JBiyyCLvvUBIXqb1woOXrPcAh5Bk4SQsIAyJjQkKwgYHgwHZsmXLgyRrsKaW1HPNdYdz9vvjdreqq6ukbqn7Vsvc36rloW71Hb+7zz777LMPdf75RxAR0QjR6hOIWLhE4ohoSiSOiKZE4ohoigFu9SlELFQMROqIaELUrEQ0JRJHRFMinyOiKZHliGhK5JBGNCWyHBFNicQR0ZTIIY1oSmQ5IpoSOaQRTYksR0RTIp8joimR5YhoihEZjohmRA5pRFOiZiWiKZFDGtGUyHJENCUSR0RTInFENMUAR05HRGMiyxHRlEgcEU2JxBHRlEgcEU2JHNKIphitPoFfUYgYAE37ngEwLZD3NRJHqBAxAQx4vqGZtBa1OiDAkEoQS6kAME8XT6hE4giJwFS4nqmZACztGk7FKt3ZvBQ6aNiJ2PXNQ6cWVVy7UI4zk2X4aOmg+a/iwBsREUA0i/cyeIB8Tv4ZETOT65kMLF80sLRreHHH6OrFJyyppFS1J8FMjm9UXOvkaPtPn7ukf6RDkhZCt8qE/Irkc5AgIgKBfK2U1q7yHc+b2NjkjyZujBQiYdkALGkAYLDWzDO4bwSA2PVMKfSSzqFr17244aJjhlQAHM90fYP9esstiBOWu27J8RWLBo4Odt3/iy0Vx7IMX7dCH9TxqQ+Gf9RwICJBBMDXuuq5nlK+Um2JRMy0lrV1Xtq71PH9xZm2rRdfwoxaO8LMRLR/6NQvD++Pm9ZQqbDz6EEGTubHiEgKkbQsQ0hBQgc6aYQg9rVQSi5qG3vNFU+v6BmQQjsTzYo4o9OpmYg4YbmHB7u//siNrm+YUoWvj5ehOAiQQmhG1XcrngugLZZct2jx5iXLtyy7eENP36rOnrQdt41Z+FtDpULJrf7s0L7DI4OPHtq7u//IULlQ9byYaSVMyxCyTiVC6KprZZPl1165a8WigYTtVF2Lz6aJOpQWCds5NtT5tUducjzTNPyQ2xdq/+TLRxyCSBB5SuWdiiHkys7uW9deds2yVTetWr+ivbvOyVBaz3y3dX97Ij/2dP/hnUcPbd/7zK7+w/lqJWFZCdMGoFlpFqWqvXHZ0Te+4vFUvBJYi1nJouYkKRFzjw52/et/Xe94phDn5vacIy8TcUgSIJRdp+J53anMWzZd8/pLr7x+5bpsLD75G6U1A4JAoNm5owAzMxB4hpOtVcAz/Ue2vbDrG0/9fPeJo1KwKdLZZGX90mNbNz1nGb7rG+cmi5rTFql45YUjS7/xkxssqcL0EC90cbAgAaDgVJTWl/Qu/eiNt7123WXL27uDzROCmPbun+dRmTUzA4YYH38oOtVHD77w9z//6ePHd739xh8v6RotOxYz0VwEtBhgTf/y41edGG63zPAaF2r/5AfCOdKcI4gEiaJT1axv33DFB16xdevFl6SsGCaajOnNwXygmTWzIQggn3OfeeIGaRz1VEKQmrtDUMJ2nzt80bcefUWY4rhQg2CmlGXXLTqVq5et/twb3/Wq1RuC732tBZEUZxlQ5Jp/U5O+LJ/+IaF5h1dQYB6o4A78y743KnoJOj2HygAgiD3P6GkfS8YdxzVDi3xceEEwKYRmHsiNre9d+nuvuv0919wUNy3NzMxCkNFcFgye1MHEraWJTQ2g2h/W7ARTur1gMLPOe8e//uLbT5SfjssOhn9OV3YmNFPSdhKWW6lagkIKTl1glsOURq5SjpnGx151+/+49a7FmTYASmspBJq0IDzxhCeVUfFczbroVB3fE0R5p6K0rrMfDE7bcSkEgbLxhCBKmPZ4IG1itwAIYFaCjKeGvnq48PM2e6mvneZW5tzRTDHLXdo1dHI0a4blll4w4iCCIeRAbvTaFRf/n7vefcOq9QCU1kKIho3IpJ0IHlTFc3PVcsmtVj1Xaa1Y24YpSTDQHk813EOhWqn6LkDD5QIzG1KaQqbteMqOp2w7cIQZSpBxIPejX5z825TZ42v3PJURhONIgKd1tDWT65kUoqm/MMLnUghfqYFy8QPX3fK/3/jOjkTKU8poKgvQhJ2oeO5YpZSrlqqeJ4SIG2ZHIp2JxSUJ2zDP7K4uSmWD/3B8j8H5aqXsOqOV4kAxZwiZjsWz8XjWTuW949888G5Xl0yKzySm3hQGCIZBvs/Voo4lRaOdcc0/550FbzkYhpRFp5q07M+/+X333HgbAKW1KWWj3waygGYeqxSHSoWy61iGkY0ll7Yl4obVTEwNb/dkC2IbJoBYygr+t+I5Rac6Wim9NFyMm6XHhj/sqLwt05rP1QllgCAMYs25YW/klCcELbk4JqZaCQKECPVNXugOqSFEvlrpTma+/p6P3rBqva+VpAYGo0YWerCYHyjmlNbZeGJVV0/GTkz9Jde5Fw0dz+lM/mHctOOm3Z3KuIqfOrXtSPHnlkieozImZKE154e90QFf+ZztNDJdBk1rPwgQpJmDuMe5HG22LGjLYUo5WMzfsnbjN97ze13JtK+VIRoYDExYi8FibrCYI6KedFs2lgjeeNT2R5t3XM9K7R8yglBpdefIpwEXMGf7uALfQhjEivPD/uiAF8gi22WaFmndIEyumKqudZ7x1lmxcMUxrow1l97/gU+k7JjSeroyJt/moVLhRH6EgEXptq5kJghv1/RT5hwNiKPFHSfLe+JGu+bZ9F0ZIMhxa+GPDnja50ynke02DYtYse/zdF9IEHu+MTiWkULzfFxQIxaoQ2pKOVjI3bJ24/0f/IOUHVOsmzQl5Cr/yOhgwal0JTOLM+2BgCZbmXmDAPrlqXsJNIuhsBrfIj/sjQ542kemxlooj4kadMmZyTK9PUf7RktxU6rQxt4Wos9hSjlYyN88oQzNWtIUZUw++6FSvj83EjOtNd19QeB8/mUBZkUkX8z9cO/YNltmGDPzNhhCEnNgLVzlI9tpZLsM0xZ6wlo06zwxIASfGG7zPWkJ9asbPjeEHCjmX73mtDJEI2UorY/nhodKhcWZ9sWZdoQii8kTAPSB3EOKPSLB0yMS0xACIKqW1FC/61Y421UjiybWYjqjxWTI2T4LSxyGkHmncsuajQ/c/QdJK6aZpymDCVTx3MOjg67vrVvUl7Ritf7m/MOCJMD7xn5gijifrZNCAkRUKarRAa9SUPG0vGidbcVmIQsGTKlOjmT39/faIY66YUGJQwpRcCpLs+3fvfu/JS27kc1gAhWdyr7B/rQdv7R3mRSCw5MFMJFBeLS4I+/1G2Q1jXoxSBIRKkU1esqrFFU8LZdcHIslJetZWAsAmsk0/af2ryiWY8mYE2ay4EJxSAnkK5WyY1955+8mLVs19jOo4FT2D53oTbf3ZtpFMBga7nkyNEEczP+4qsaSRjdP76cwhCTUyWJ1LJaSzKwVAzOVBQAGpOBy1T7Q32MZfpADP5fXc0YWikNqSDmQG/3Kb91z4+oN0+MZgQgKTmX/4Im+bEdPui34/kw3WWuwhpwX05h3+xvES2plMeBViiqRmrAWE7KYLcyUsJ3tj286NZKJ227IOaQLog6pKY2B3Mg9N7/+vVu2eso3pz7RoDWpVcbZDQYzhJifaeKkWZX9YYKsfYmJQPK0b5FIy77VsXhSgln75xiYYIYl1VgxsfvQUsPwOfRpkq2fZS9J5KrlV6xe/6d3vF0zN7IZ463JLJRB5B3YWdl2L9Tcp1bUh9sZROS53H+g2n+gCqBvdWzxqlg8IbTPWp97y8cgBh7auXGkkDKlDv81brFDGoyGxAzzS2+/uyORDIbgJ7cGNqPsOS8O9i/OBMqoHxmphzVI6JHjuT+7zT8yDBLx130Yyp+79oWJjITRzvBP64QYDCHQtzoWT9VYi/NoBLQWiVh1z9G+p/YvT8QcrVswqUlgciCnBR82hBwt5D6+9fWblyz3lJoWBiWl9ZGRwbQd7820n10ZALQG4Oz8vs4Ny07L2/MYMBsPcGZonmIQWMOwqHdlLJ4UWp2XtZjYo7AtVazEf/rMOlMq1q15QK3srQiiklvduHTlPTfdpljXZfgFUjiWG3K12rhoyQzHTkEEsLvjuyAJQf7BJwGgyXDdOUAgzV7OPSqo/tadm8vZ6BCSqTpaEt/+8SuOD3bGxv3QFjymVvocgkTZqf7JHW/tSmWC+MHkpkAZg6X8SLm4urNHzDQmoCCkf+ApZ9dDlEyx1pCzHi89MwwIMtdkb5tJYPQcEGS4qpSw2t+84ptOZYVhlsEte0YtO7AkUahWXrlq/V2brq3zQwMn1PG942PDfZmOyRjoDGAAzhMPcq5qrLrKWHWFf/B5/8CTAKDnMh08YXTMR4RFkOHqUsJse+vKb1/Td8vvbr2+UHbOmkk/f7TswIpZCvGFt33AEKLhy314dDBlx2bUPZmEJPuu++T3QbCvuoOsOLvu3E4gDIK269tfn7WW+Oyec3ZIoz1LV5diMvtb6x5cmrrC194f3PKm61dvyFfKMzWcc01rHFIJUaiU33z5liuXrlRTw+Q8Mdxacp0l2c5ZXIrWIFJHnvUOPkNtSfu6t8reVVBQx/bM6R0jzcqWmXVtd1T9MaK58WYEma4qx2T2Peu+15vYpNknSCnEJ259o9aamFrymERL/GAGS0EffdXt01/qiRHXkZ50Nm5aszAbrAE4j3+Pc1Vz9RWye5nsWc1V+Ad3ApjDungEAvj6xR9vt5dr9s6zfSEIQdJRIzEj+551D/YmLtPsCzKC6Tl3brxy89LlJbcixrOXQv20oFkRJEpu9fKlKy7rW8bMcorZYAADpZwhRE8qG2TjzXi/ImhTmGFffSfAIrsI1tz3Y4mEZtVur7i6+/0Fd9AQ1jnvSpDpc9VV1Q7rinevfSCwGYLGQzKBK/amzVuqrls3BhkOLTgkEZSvPvHqXwtmqk3ZBFJaDxZyfZkOKeQsXkrtg8jd9UNvz07Z22VteSNA5iU3ijTcXdvZdyHnstMuSDKraxZ9aE3brUXvlCRzVvaDQIECSt5AzMi+btnnXtt7f1JsYGii08E6QcTMv33Da1d29VR9L3y/I2yfgwDH8/raOl+zYTMzy6ndVwADxZwhZXsiNYsGBQjilO6OB3TJt696nbFkAwAoDwB77tzesvHDkUiai9659tvL0zcWvJMMLcg4s39KEERSkKHYK3qnBMmrF73/veu2bel5fzpGx/OnMDV5VBAp5q5U+tXrLytWK5JkyA8rbMshSRarlXdvuaktnlCsa2MbQcGuwVKud3zQdeYvOkMIXRp1dz8sbFhXvx5gKF8uWWusuVYdPezv2wGMB0/nCgIxdExm37X23966+r6YzBa9AZ9donEF1H0IwtVFx88VvYG0ufjmJZ967/ptd6380qL4BmbVk273lR6tlDDxkkwcBQA+fMNtScueebWZuSLkCClp1nHLetPma9Eg2Z9GykUwMrFE3dazoDWE8F94zD92UPb2WZtvHX9LySZhsOuynvvhNwAEweCYzFze9a4V6RsfO/n5vWPfz7lHNas6R5VISDKXp2+0ZXJl+lWbu34zYXQA0KyICCQMonQsPljMdSRStRceuKWblizfuGTZrqOHklZMz0/wrSGhDrwJgZJT3di3bGPfcj3VFSUQAyPlQnsiZQg5o2GU0xBAzo4HUCHr0q0i3QWtAnXJvrXY+Zjq34eNW+fhgsZ7Lpp1m738juWfe/XSPz5VfnbEOXi8tFNSDNAAMauU1bskedWqzOlz0OwTCVHTE16UantxsL/sOQnTrm1SNbMp5R2XXPnLA3vSdizMwdlQxUEgx/PecNnVtmH4WgtxesY6ASW3WvHci9q6MSuzwQwhuJx3dz8Mi+1r3zj+JRgQxtpr2bvP3/cLvPbueavyToIkQzOzLTPL0tctS193ede7Gp8sNLMO2p26TQnTsg1zqFRY1mZP3BIACG7Sr2265nM/fMAPt2UJNxOMYZC8buU61DubDNBouZgw7aRlz26fWkHI6qNf8w8fNJavtDbfCgBCjHsYyocApDk3598cwvhEKubg3a6/rQQikgRBjTqlDCaizmR6sJDjtinvRuCWre9dsrS98/DwoG2aoRWNC88hJSLX93sybVctWwVg0mxgok3JVytt8SSmemRnRwgQuU98Dy7sV76N0p1QPkhACADW5a+RnTH36Ye4UoAMYYkIIpKioUN6xlhqoIZsLOGzKjpV1Igr8NNNaVyz/OKK58oQAx7hRUgFUdVzLluyLBtPaj5dLCW4CyWn6mk/G09idm2KBgk9eMTd8zNKS/vqOzC13ixJE9pl5YZgPM4f2zBtwxotF6dvEkTXrVrHCDWzQ4R2KACe8resvDjwwOsuPlctmUJajQornIkgtefJbXpwzFhxiblmC4gmsjcIzJRqF31r9VhB9e8DsJAXlwnsZcqKFZwyT212g7dly4o1Sdv2WSOsRxZmEIwBun7VBkyzDcxcdJ2EGZt1kJgEAOfxB6HIuvx1MO3TQ/NEYBapDrl4jR7JqRMvAmhQL6cOreZ2cH+2pOyYp5Tje7VfBqmTG/uWLc12VV2XENI4XEgNGAGeVp2p9NL2Tkw4WZObAFR9L20Hk11n/HKzhhBq8LC/9zFKwr7mDQ1/REJCzDifQ0gIeXYNzQPBC5O0YwCqngtMuRGaWQixurtXKTWHeQJnJixxELm+35tu29C7FDXiCK6/5Do0cV9m53AAle1/rwZGzbXXGBdfBeYpGYGsAbKvuhMazhMPBufRfG8MrUrf+ovKf/4tSECr8NsgBgwSCcsuOpXa74M0bEG0eclyz/NCKK4aEFKcgwCtdXc6q7QW06YC+lpprWftcJCA57i7fgAgtvXdZCUaZ5mzghpvgJqifEjDfWp7dfvfq1NHIGQ8iIvULacw/wSrMrhNZlR0pbNCivOqPDYbxPgtmOcPgVzXvXH1BimE4vo0+7LrxEyLaDYVr7QCCe+lZ/yDu0Vnxrz8tUAwkakGEgDkis2iI6Fe2s2VAkg0tgdEAKr/9VV18ghl2vJ/89u5v34ntALR3I7IzISkZTu+r6fepcCg3rJuo2mYrHU4Ty3UCGnF85p879iGIWZVJ5wZgPv4dznvWNffZPSuhp4uDgIge1ZTTKiTB9itUjx9psaCtS4j86FP6+FjhX/4Gyg3+/tfhzSCONvMT+08iZv2SX9MM4tpNqvqeWEOv4UnDiLKxhMNNwkSerbXLCR7VefJbZCwr74TQkL5DVwoZjIt2bNKnTjEbrnxrpghhC4Meft2iEzcXH+9uXaLzg+Xv/PPYE5/+Esi0xWmPrTWtdVwa0lYdtw0my3/M+eE5JBq1qZp3nbp5ZjqcgZJgSXPCcJfM96dBpH/0jP+S8+KtpR11e1AI6+CCKwpkZEXXaYGCt7zPwWadVsIDF0YpoQpe1YCyHzsK8m3f6j68HdGPn6Vf/hpCAm/sdmbQ4L7krLjRBT4pJPuRZCDvmnJ8g29SyueG07KceumQwaz4AGtlfJcE5jFvFatQFZl272cd+ytt8meVUG3tunvg5mJntN4K2uQ9Pf9Qucr5up1ZFhBi5v+yJfNTTfn/uo3x/74jrY/22Ys3wR1vhmjM0GCoX3Pc2HZAIPkmS5tPgnJIZ341B5ZQBqQhjBtneniZAbSIGlgJh/TZs9xn32ELBF79fvOFJlgBhC7+k4IODv/A+AGBoYZgC6OcsE1ll1KyTawhpDQfuzGd2Q/+Q011D/26Vvdp/4T0pzR6Z3fh6Sp012UaQ/+u14ZQTjx5eeQTlyeBoTzy/vdXQ9TLK61314uKjteNEyeyYvJDCJdGuPcgOjuNi+5EQDOOkVgvDFpNK+QCGBv/xMwQemu098LA8qPXf92fBLFv/vo6KdvT7z+boqlJv5kvmDmtnKRLbtoxXS1bF9+q73lLtaaQrcfLRGHAgxnx/3Fr/yTaAcUsgY8heKs3CwTpJF4+/tFuvNM3mLQm126XnRm1LE9ujgqkm2BvGp/BJA+eQAM67JXAzjdo5Hj+jDXXTf2P28rfu3L02bIzgtZA75GkaBHgfcV7S13gVX42eCtEAdJALGb3im7VpId09ofKObbYonYbGapsFYkzfjrPwbgjN4GAZCL14hMUp14kSt5pNpRO0c+sEPFUTV8jGIGmdOySaQB5cuui9r+539WH7qPTGu+1cHMp4q5jB3P2HHtVKxLrgdAIfalJwlRHIzxLBUSAKzNr7E2vwaAAnK5sY5sW+Nu7ow4m6KUT0aMyWS32uC0SHC1qI49L3u6zA3XA9Nm5UsDrGXXsuRv/PG5n+OMYSCfz2Uz2Sk3ZHwFj1BXhwwh/+U0llGTVFHTWxH5ITIEYomZW45xhDxL808E5VMya216denb/+A987CxZB20hpwwNswgqIFDrIQw4033FqyAElIAimVhiKGQzIzPZJkwjQQyBPGkzzjPhDa2Qlqrw8OnLr9oxfhXQgCCAUPIeCxe8NxsMjOPZ+C7YMCYNjuNGYA69LQeceK33EyxVNMyQCROS2p+CN6NslvVJJPxFKQxKdWgRMVouThSKphhrawR3qis7/s/2fccUG8ZicgUhjN/ISYiAMb668iEP17oR9Rt1fkhSECaIQ+zNcT1fQDW1AWzg6jonpPH9w+ejBkhpZGG6gAn7MbJwwye72Fo2bsKBHXqADC1I0oCgPvsI2TCuvJ19VtbAU1kKk/fFDMsQ8rQ/ICQss+ZQaCRUrGugk9ANpbsz4+cYTmV84dMm2yLPYc9h6Y2LuxW2XdBIPs8fOK5I1ctJS1bCjndAxsuFbTSoc1ECymHVLO2LOu/9j7LgJzWZDbMKp0zSAAw1m6RFy339u1QJ/cHYy7AREmPgUP+izvk0mXGyismf99CgpSXOlkEhuShF3Z5nhvkNoTwCS/7nAi+VtWp05qDW5CwbCIquw4wmzTBWcEavgNBMOqbNnYr0ExSUqp9Xg49Y4KMr4rnpu349K3M7HjexDJDYXxCG5XluGntHzix6+ghAHUD9KaQRFRymwyMnSdE0IqkZW64kQvsv/BTAOP9QNYAvKcf0gU2N9xAROMJPq3D8X1XKbuu4QMMKYnokb3PmqYV2nTZUEswKK1fGh6oOwMGiChp2oVqBbPKIZ05zBBSZLq5ynrs5Pg3k/gufIhMF4QMM+pTf45gACWnKoiCaX+1/VgAg4X8SKlgCMlhPa8QZ7yBoPUje3Yz8/S2I23HK77rz9O0gKA3u/pK2NCF4clvgniG89R2StCEw9EysxG8FQWnEjctMXWZv0AcTx09eGR4MLR+LMLsyirWtmU//tJ+xVoKOXmFwdMIkn3K4yn583Lxsm8NmfCefQQIAuTjR2G3DLBcvGY+DjorNHPZc9piyelrpwN4dN9zmFo5eb4JzyFlaMuQh4ZO7B84Qajrx7MlZdxsPBNwriAhybLZ99irAuOz5fyjz/tH98qeXtHeC7TMcoy3KW7V02p6UpwgUlrvOLTPkDLMGZEhdtsYppC5YuHJwwcw+dqObwGA9niyUK2ommm0c4YQAIzVVxsr1/sHnlaHdwPj4tBjp7hYFO2L5KIVQIv7saPlUsKwbcPAVIdDkMhXy7uPH7ZDTCBFC2qCkfz+MzunjRoRgGw86Ws1Nq300VziuSDAtAAE9andZx7mKpkbbgBzCydCBlPpRyvF9kR9nYFADY/s3X1qbMSSJmsO7WGF+qIo5oQde2Tv7uFiwRCi1u1gsCWNtnhypFTA3PdZxvuo5obruYzxTOMA34XPItMVzK2d04POlEAKY5WyAHUk06gviAVmvv/JX+owl3cDEPLYCjPbhtk/MhSMwKma/npwOzoS6aJTrc5H/T9mAKJzCTvQw8cQpM8o3336IZEmY9WVQMscjvFFtYu5dDwuacqENmYO1kV8ZO/uhB0Lb71hAGE6pOPvADQJuu9nD/uNJgRnYvGkbQ+W8pifloUSWZjgcj6YqwKAvQqIZc+qYPucH3GGlNyqo/ygjGLtbQlmB35n52PHhgds0+RwV14J2//SSqdi8R89v+vw8KAUonb+VqCG3nT7SLngKT8o9zNnjKef3SrS5D7zMCsPJLz9j6vjh2TfSpHpmpZYGhLBVZ/Ij2ZjiZhRvxZpIJSv/vwRBtWn788/YTukDBhClp3qlx7ZVncqwY3IxBIxwzpZGAOAOb8ZvgvFMKwgEZA9l8uOaO8V7YuBFjQrDBCo5FaLTrU33Y46s6G1EPTY/j2/2P9CNp4Yf5FCfFgt6LkppRJ2/J8e+9FAPieCpLcJglejL9sxVMyX3OpcGg8igGXfWmPlpf7Rg/7BpwB4ux+GguxdFU7WXYOTApj58OhgeyIZMxsUpiLQ5x9+sOw4ohXzmlpwSAYswxzOjW3b/QSBajvugRrSdjxpx/rzo3MZJyYCQPE0xVNcLnElD0DnhtiBsfqq04P4IRJc23C56PheYDZq0cxE1D828pO9zybjcaVaUE+mRUtqsDZN43M/+HdfKSLUtqWBVV3W3lWsVobLxUaTkM4VZoBF22Jo4sIwmP2XdlFSiHQn0II2hQBfqWNjQ32ZDtsw6y6TmQXRvT/+j/7hAdswQi4VF3xasxiP1jph288ePfT5hx4UJHhqWV4GYobVl+04kR/x1NwFprQGyNy4lR32nn0ERGrgICVgbgjmzIUqjuCCj+WGY6a5KJXlqT0lzVoIeqH/6N/9eFsqkVK+bsljalm0WCudshN/+sDXjo0OE9U1LmDwolSbJY1DI6fm0ngA8KpgUKJNDRzSxQolO8OfpsxgAoZK+eFyYUX7oul5k0FW5R9++76h/JhlGGH3UiZomTgYsAwjVy79zfb7iWhafQ4iwvKORVXPPZ4bmRt9BGVrN90issLd8zP/4C4ezZurr5Ddy4N6pud/hJnAYAKVXOfo2NCy9u7p8/yU1lKIXxzYu+2ZnW3JjD+HtnOWhFeHdPrH0yqbTH3+hw/+9MXnDSlrYx6B8YgZ5kVtXacKY4Vqea7sByXbQJpLY/6JFyGJrAYJefONr9Xh0YFsLNGdzNQpg8FE8JT/O//yxbAqSjb9tHZF6vHJTn/+wNd9peqKNBCIwe2JVE+6bd/QCcf3z1cfQWXS9sXGist0fsj9xb8xs3X5bcAcL8VyBhgg0MHhU1rzyo4enhaUVVoLEv/4kx/uOvRi0o5prVr4dFrTW5n8KK0yieT2p3d86ZFthpB1JjTo2S7OtGdjiQPDJ5TW56cPAphiKZHt1EPH1fG9ZNHcrXF/dgJX43huuOK5qzp7aJqvobU2hDw0eOoPv/WVVDw5YUpb9nRanIYPwFcqm85+4mtffnTfc6Y0lK7TBwTR6s5eU8i9g/3nrQ8ALDKLQMTMIpOxNt0CnHGe/hwR2IzjuZHBYn5N1+LEtMUhmBlEnu+/+Qt/WXYdoyZZrlW0XhwAQMRCfPi+z/ePjRA1mMNCRBd3LTaF2Dd4fEIf53Tjgt7spls5WHeeQFbsvM/+7DBAwPHcyGAxt7a7L2HZ089fsRZEv/+Nf9h1eH8yFletqKJcx4IQh9Y6acefP3LoD/71HwWR0mr6vSOii7sXG6ftB517B8+tEMBOybz4WpFZBD3vXZXTylgUKKM+YcVXyhDyO0889oUf3J9taQ+llhY7pJMf3/c7su1fe/ThT3zjH01pNIwWE+jirsWWlM+dOpKvls9l5EUIAOZlW0U6C88nKw7DPN9mqjmBfJXW+4dODJXya7v76pboCvCVMqT8yb5n3/W3n8mkMqxbE/Ka/mmxQ1r78ZSfSaf/7/b7v/f044asd04BMEBEqzt7k1bs4PCp4VKBJr6fFZTuhBCsYQYLv81b006gsuvsG+wvu+6a7sVBazK9e2JIOVTMf+Sf7g0K04actHGGz4JoViYhIGZab/l/fxHow6vvvAAT+ujLdrw0OnBkdNDXajYuKoGZpCmy3WApupbO8QUAqDmZ4VJh7+BxS8qNiy9KmME8pSnaCOJdQ8X8bZ/9o+ePH07G4+GvD3oGFpY4NLMU0jCMt3z+L7739A5zmj4mWZTKbli0dKxa3jfQHyy6gBlJhEFgrXV+iEsK/nysRwwaD3MNvjQ6sCTbubprsWhU1n1cGYX8bZ/9oydf2t+WTC8QV2MSSt/9660+h3qEEL7yfaW+/dFP3Xn5tZ5SZpMFFZTWx3LDw+VCZyK9JNsRVHDgM6f7aQ3WpX/7jH/4mczvfJkSGWCOR92Gy4VjY0OWNJe3d0/vsk6euRRisJC7/XOf3vnS/o5UxvPnZfHb82EhigOAIOFrX/nqmx/71Bsuv9b1/bpKN7XkquWjY0O+Vksynd2p8dpRZ5HI3FF7oLLrHBkdrHhuT7ptcbaDmpxG4IEOFnK3fzZQRnouB5/nDkrf/eZWn0NjhBC+Ukr537znU2+4Yst41YrpA5jgYNLHQDE3VMwb0uhNt3UkUjU/aKQSrQEGifOxGXWyOFUYy1XLmVi8J91+hgVQgxo1g4Xc6z77R08GNmPmdb3DZeGKA4Ag4SmfiD7ztvd95NY3YHzBono/afIheVoNFnJD5bxBsi2e7EpmJu3NZJN/nuaEp+5Es85VyoOlfMVzU5bdm+kIZNFQkQyw1kKIn734/Mf++d6nDh9oS2X8haoMLHBxAAgWYcmPjXzkjrf89TvvtqQRtNbTf1knkeFyQbNO2fGuZCZtx+uWGeCax3cGufDpf9dbmLLrjFZKI+WCZk7Zsd4zWgsEaX8AEd2/8+e/ce//UprTsfh8VRWYIyj9oQUtDmB8ZavRYuHqlWv+9Z5PrlrU26yJQY1EmHmsUhouFUqeI0kkLTsViydMO2FZ5zydzlV+2XXy1XLJdRzl2dLMxpNdybR1ttG7QNC+Vh//6pe/8MMHMvGkmDotY2FyAYgjwBCy6FRSduyL77nnHa98FSbueMMf11p1T/m5anmsUiq5TjCBLG3HBYl0LGZJE+CEaTfUWdVzFWsGcpWSZi44FU/5zGwbVjaWyMaTM1lZPVhemYgODZ78jS/+1Y4De7OJJCPcSsTnCqU/9KZWn8NMkUI6vud53vtueu2fveW3erPtmLFEAHhKVTyn4rlFp+pp31PK14pAppQNbYmnlWYmQswwAcrGEpY00rF4rZ04Q59IMwdaVFrf9+j2T33zvqFiIT0+/eQCUAYuLHFgwgUpVEqLMm1/8qZ33X3zHcHdJ8IZFixu+Ag9pZRWRJSrlhta+Iwdl1ISYBv1M0rO3E9mZsU6CLo8cejFe/75i7/cvydh25ZhLvympJYLTBwBUkjHcyuuc82qtf/9zrf9+jU3ANBa88RyV81gAOBz8znq+ikN0aw1cyCLF/qP/uX9X/v3nY85vp+Ox7VmZm7dbNxzgVIfvPDEAYCIBFGhUtGs33Xdzb/3ujddvXK8bpOvlaTplTyb0mzof+Ya4vFV+8at12B+7Es/3nbv9u+eHBlKpzNBXZ4Z7mpBcaGKIyCod5svFpLxxM2XbH7HK7a+45VbA1UETX6zTs2cwGCtmcGThZeffGn/l3/0/e3PPnXoxLF4Immb5kIbLpkVF7Y4AgK3o1gpg/mVay65/fJr3nvjay7q7J78ga8UEQXG5jyPxczMHKwsP7m3quf++xOPfeuXP/nBs0+Wy6VYLBGzLKVDrqYx91Dqg3e1+hzmhsDbKFYryvN62juvX3PJnVe84taNV9SqJHiuQf31wKIEgamGOzy98g1z0G0RU1urius89uIL333y59t3P7nnxFFonUokDSEV6wuip3pWKPWBu1p9DnOJICEEOZ5XcarQureje01v39YNm65bc8klS5cvqxHKJA3WOyaA0XBie7Fa2Xvi2MPP7dpxYO/uowf3D5zUnmfadjD6eoH6Fs14uYkjYKIFIdf3HN/TrgPD7Mm2r+7u2bR89ZqevpXdvVeuvNhXOh2PL8q0NdyJ43vHhgcNaQzkRx/d+1zZcbbv3jlUyL948rjvuRDCNM24aQuioJMS7iWGwctTHJME634LQZrZ8/2q57LW8H2yrHQs4WvVnkxtXrayrqpP8L/9oyP7ThwzDMP1vGq5BCHIMAwpY6YVVO4KGqnWXdy88zIXRy004WgIIsWslCIiX6tqg4L8BLAhjZhpBV2eYAkczYyXuyBqCXUBwNbCE15i0LkUBAabQtrTKgaP/x48nvELXoBpWiHQurXsW834ohrgM/c4f1VenUYsrATjiAVFJI6IpkTiiGjKr5BDGjFbIssR0ZRIHBFNicQR0ZRIHBFNCWm58ogLkbCWRY+4ADEiaUQ0I/I5IpoS+RwRTYksR0RTIoc0oimR5YhoSuRzRDQlshwRTYnEEdGUyCGNaEpkOSKaEjmkEU2JLEdEUyJxRDQlckgjmhL5HBFNiZqViKZE4ohoSiSOiKZE4ohoyv8Hq/WRW5fEO/AAAAAASUVORK5CYII=">
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,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">
 
 <style>
 :root{
@@ -336,8 +340,24 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   gap:8px; margin-bottom:20px;
 }
 .meta-desc-big{
-  grid-column:1; grid-row:1; padding:10px 10px; overflow:hidden;
+  grid-column:1; grid-row:1; padding:10px 24px; overflow:hidden; position:relative;
 }
+/* Mini botón de "ampliar" en la esquina superior derecha: invita a tocar la
+   caja para leer/escribir la descripción entera en su pop-up. Es un <span>
+   (la caja entera ya es el botón; un botón dentro de otro no es válido). */
+.desc-expand-btn{
+  position:absolute; top:5px; right:5px; width:20px; height:20px; border-radius:6px;
+  background:var(--card); border:1px solid #b3beb7; color:var(--text);
+  display:flex; align-items:center; justify-content:center; pointer-events:none;
+}
+.desc-expand-btn svg{width:11px; height:11px;}
+/* Botón "+ Añadir ingrediente" debajo de la lista: solo creando/editando
+   (Enter sigue funcionando igual). */
+.add-ingredient-btn{
+  width:100%; padding:10px; border-radius:10px; border:1.5px dashed #b3beb7; background:none;
+  color:var(--text); font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.dish-view-locked .add-ingredient-btn{display:none;}
 .meta-desc-big .meta-value{
   font-size:13px; line-height:1.3; white-space:normal; overflow:hidden; text-overflow:clip;
   display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
@@ -493,6 +513,91 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .fridge-item-unit{font-size:12px; color:var(--muted); flex:0 0 auto; min-width:18px;}
 .fridge-item-del{flex:0 0 auto; width:26px; height:26px; border-radius:50%; background:var(--card2); color:var(--muted); display:flex; align-items:center; justify-content:center;}
 
+/* ---------- CARRITO ---------- */
+/* Botón de carrito por ingrediente (solo viendo un plato ya hecho, como el
+   tick). Verde relleno = ese ingrediente ya está en el carrito. */
+.ingredient-cart-btn{
+  flex:0 0 auto; width:30px; height:30px; margin-right:2px; border-radius:8px; background:var(--card);
+  border:1px solid #b3beb7; color:var(--text); display:flex; align-items:center; justify-content:center;
+}
+.ingredient-cart-btn svg, .missing-chip svg{width:16px; height:16px;}
+.ingredient-cart-btn.in-cart, .missing-chip.in-cart{background:var(--accent); border-color:var(--accent); color:#fff;}
+#dish-modal:not(.dish-view-locked) .ingredient-cart-btn{display:none;}
+.ingredient-row.no-name .ingredient-cart-btn{visibility:hidden;}
+.missing-label{font-size:11px; color:var(--muted); margin-top:3px;}
+.missing-chips{display:flex; flex-wrap:wrap; gap:5px; margin-top:5px;}
+.missing-chip{
+  display:inline-flex; align-items:center; gap:4px; padding:4px 8px 4px 10px; border-radius:999px;
+  background:var(--card); border:1px solid #b3beb7; color:var(--text); font-size:12px; font-weight:600;
+}
+.missing-chip svg{width:14px; height:14px;}
+.cart-row{display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid var(--border);}
+.cart-row:last-child{border-bottom:none;}
+.cart-row.busy{opacity:.5; pointer-events:none;}
+.cart-row-info{flex:1; min-width:0;}
+.cart-row-name{font-size:15px; font-weight:700; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cart-row-sub{font-size:12px; color:var(--muted);}
+.cart-row-sub i{font-size:11px;}
+.drawer-count{
+  margin-left:auto; font-size:13px; font-weight:800; color:var(--accent); background:rgba(18,135,94,.12);
+  padding:3px 10px; border-radius:999px;
+}
+
+/* ---------- CHAT ---------- */
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px;}
+.card-title{font-weight:700;}
+.chat-row{display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid var(--border); width:100%; text-align:left; background:none;}
+.chat-row:last-child{border-bottom:none;}
+.chat-row-main{flex:1; min-width:0; display:block;}
+.chat-row-top{display:flex; align-items:baseline; gap:8px;}
+.chat-row-name{flex:1; min-width:0; font-size:14px; font-weight:700; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.chat-row-time{font-size:11px; color:var(--muted); flex-shrink:0;}
+.chat-row-preview{display:block; font-size:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px;}
+.chat-row.unread .chat-row-preview{color:var(--text); font-weight:600;}
+.chat-unread{
+  min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:var(--accent); color:#fff;
+  font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.group-avatar{width:32px; height:32px; border-radius:50%; background:rgba(18,135,94,.12); color:var(--accent); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.group-avatar svg{width:17px; height:17px;}
+.friend-msg-btn{width:34px; height:34px; border-radius:10px; background:var(--card2); border:1px solid var(--border); color:var(--text); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.friend-msg-btn svg{width:17px; height:17px;}
+.chat-sheet{
+  display:flex; flex-direction:column; overflow:hidden; padding-top:14px;
+  height:min(91vh, calc(100vh - 40px - env(safe-area-inset-top)));
+}
+.chat-header{display:flex; align-items:center; gap:10px; padding:0 44px 12px 0; border-bottom:1px solid var(--border); flex-shrink:0;}
+.chat-header-info{flex:1; min-width:0;}
+.chat-title{font-weight:800; font-size:16px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.chat-subtitle{font-size:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.chat-messages{flex:1; min-height:0; overflow-y:auto; padding:12px 2px; display:flex; flex-direction:column; gap:4px; overscroll-behavior:contain;}
+.msg{max-width:80%; display:flex; flex-direction:column; gap:3px;}
+.msg.mine{align-self:flex-end; align-items:flex-end;}
+.msg.theirs{align-self:flex-start; align-items:flex-start;}
+.msg-sender{font-size:11px; font-weight:700; color:var(--accent); margin:6px 0 0 10px;}
+.msg-bubble{padding:8px 12px; border-radius:16px; font-size:15px; line-height:1.35; white-space:pre-wrap; word-break:break-word;}
+.msg.mine .msg-bubble{background:var(--accent); color:#fff; border-bottom-right-radius:5px;}
+.msg.theirs .msg-bubble{background:var(--card2); color:var(--text); border-bottom-left-radius:5px;}
+.msg-time{font-size:10px; color:var(--muted); margin:0 8px 4px;}
+.msg.pending{opacity:.6;}
+.msg-dish{width:220px; max-width:100%; background:var(--card); border:1px solid var(--border); border-radius:14px; overflow:hidden; text-align:left; padding:0; display:block;}
+.msg-dish img, .msg-dish .msg-dish-noimg{width:100%; aspect-ratio:16/9; object-fit:cover; display:block; background:var(--card2);}
+.msg-dish .msg-dish-noimg{display:flex; align-items:center; justify-content:center; color:var(--muted);}
+.msg-dish-body{padding:8px 10px; display:block;}
+.msg-dish-name{display:block; font-weight:700; font-size:14px; color:var(--text);}
+.msg-dish-sub{display:block; font-size:12px; color:var(--muted);}
+.chat-input-row{display:flex; align-items:center; gap:8px; padding-top:10px; border-top:1px solid var(--border); flex-shrink:0;}
+#chat-input{flex:1; min-width:0; border:1px solid var(--border); border-radius:999px; padding:10px 14px; font-size:16px; background:var(--card2); color:var(--text);}
+#chat-input:focus{outline:none; border-color:var(--accent);}
+.chat-send-btn{width:42px; height:42px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.pick-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border); width:100%; background:none; text-align:left;}
+.pick-row:last-child{border-bottom:none;}
+.pick-check{width:22px; height:22px; border-radius:6px; border:1.5px solid #b3beb7; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0;}
+.pick-check svg{width:13px; height:13px; opacity:0;}
+.pick-row.picked .pick-check{background:var(--accent); border-color:var(--accent);}
+.pick-row.picked .pick-check svg{opacity:1;}
+.group-pick-list{max-height:45vh; overflow-y:auto; margin:4px 0;}
+
 /* ---------- NOTIFICACIONES ---------- */
 .notif-badge{
   position:absolute; top:-3px; right:-3px; min-width:17px; height:17px; padding:0 4px;
@@ -505,6 +610,12 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .desc-modal-card textarea{
   width:100%; min-height:220px; border:none; background:none; font-size:15px; color:var(--text);
   resize:vertical; outline:none;
+}
+.desc-modal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+.desc-modal-head span{font-weight:700;}
+.desc-modal-close{
+  width:30px; height:30px; border-radius:8px; background:var(--card2); border:1px solid var(--border);
+  color:var(--text); display:flex; align-items:center; justify-content:center;
 }
 
 /* ---------- FITNESS ---------- */
@@ -698,6 +809,11 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
         <span>Platos y Recetas</span>
       </button>
+      <button class="drawer-link" data-section="carrito">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg>
+        <span>Carrito</span>
+        <span id="cart-count-badge" class="drawer-count hidden">0</span>
+      </button>
       <button class="drawer-link" data-section="social">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>Social</span>
@@ -770,6 +886,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div class="card">
         <div style="font-weight:700; margin-bottom:6px;">Sugerencia de platos</div>
         <div id="nevera-suggestions"><div class="empty-hint">Añade cosas a la nevera para ver sugerencias.</div></div>
+      </div>
+    </section>
+
+    <!-- CARRITO -->
+    <section id="section-carrito" class="app-section">
+      <div class="section-title">Carrito</div>
+      <div class="card">
+        <div id="cart-list"></div>
       </div>
     </section>
 
@@ -871,6 +995,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
       <div class="section-title">Social</div>
 
       <div class="card">
+        <div class="card-head">
+          <span class="card-title">Chats</span>
+          <button type="button" id="new-group-btn" class="btn-mini btn-mini-ghost">+ Grupo</button>
+        </div>
+        <div id="chat-list"><div class="empty-hint">Cargando...</div></div>
+      </div>
+
+      <div class="card">
         <div class="field" style="margin-bottom:8px;">
           <label>Buscar usuarios</label>
           <input type="text" id="social-search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
@@ -883,7 +1015,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
         <div id="incoming-requests-list"><div class="empty-hint">No tienes solicitudes pendientes.</div></div>
       </div>
 
-      <div class="card">
+      <div class="card hidden" id="shared-dishes-card">
         <div style="font-weight:700; margin-bottom:6px;">Recetas recibidas</div>
         <div id="shared-dishes-list"><div class="empty-hint">Nadie te ha compartido recetas todavía.</div></div>
       </div>
@@ -919,6 +1051,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
           <button type="button" id="toggle-public-btn" class="switch" aria-label="Perfil público"></button>
         </div>
         <div class="settings-hint">Con el perfil público, tus amigos pueden entrar a cotillear tu repositorio de platos (tocando tu nombre en Social). Las carpetas que marques como privadas se quedan fuera de esa vista, aunque el perfil sea público. Compartir recetas 1 a 1 y el Muro no dependen de esto.</div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <span style="font-weight:600;">Notificaciones en este móvil</span>
+          <button type="button" id="toggle-push-btn" class="switch" aria-label="Notificaciones"></button>
+        </div>
+        <div class="settings-hint" id="push-hint"></div>
       </div>
 
       <div class="card">
@@ -975,7 +1115,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
     <div class="dish-title-row">
       <input type="text" id="dish-name" class="dish-name-input"
-        autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+        autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" required>
       <button type="button" id="dish-macros-btn" class="macros-trigger hidden" aria-label="Macros del plato">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -985,6 +1125,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     <div class="dish-meta-grid">
       <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc meta-desc-big">
         <span class="meta-desc-label">Descripción</span>
+        <span class="desc-expand-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg></span>
         <span id="dish-desc-preview" class="meta-value">Descripción</span>
       </button>
       <div class="pill-group meta-quality-cell" id="quality-group">
@@ -1014,8 +1155,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
     <div class="field">
       <label>Ingredientes</label>
-      <div class="ingredients-hint">Enter para añadir un ingrediente · desliza a la izquierda para eliminarlo · nombre, cantidad y unidad</div>
+      <div class="ingredients-hint">Desliza un ingrediente a la izquierda para eliminarlo</div>
       <div id="ingredients-list"></div>
+      <button type="button" id="add-ingredient-btn" class="add-ingredient-btn">+ Añadir ingrediente</button>
     </div>
 
   <div class="modal-actions">
@@ -1035,8 +1177,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 <!-- ================= DESCRIPCIÓN POP-UP ================= -->
 <div id="desc-modal" class="modal desc-modal-overlay hidden">
   <div class="desc-modal-card">
+    <div class="desc-modal-head">
+      <span>Descripción</span>
+      <button type="button" class="desc-modal-close" id="desc-modal-close" aria-label="Cerrar">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
     <textarea id="dish-desc"
-      autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>
+      autocomplete="off" autocapitalize="sentences" autocorrect="on" spellcheck="true"></textarea>
   </div>
 </div>
 
@@ -1045,7 +1193,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   <div class="desc-modal-card">
     <div style="font-weight:700; margin-bottom:12px;">Compartir</div>
     <button type="button" id="share-to-wall-btn" class="btn-primary" style="width:100%; justify-content:center; margin-bottom:16px;">Publicar en el Muro</button>
-    <div style="font-weight:700; margin-bottom:6px; font-size:13px; color:var(--muted);">O enviar solo a...</div>
+    <div style="font-weight:700; margin-bottom:6px; font-size:13px; color:var(--muted);">O enviar por chat a...</div>
     <div id="share-friends-list"></div>
   </div>
 </div>
@@ -1106,6 +1254,65 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
     </button>
     <div class="friend-profile-header" id="friend-profile-header"></div>
     <div id="friend-profile-body"></div>
+  </div>
+</div>
+
+<!-- ================= CHAT (conversación abierta) ================= -->
+<div id="chat-modal" class="modal hidden">
+  <div class="modal-sheet chat-sheet">
+    <button type="button" class="sheet-close-btn" id="chat-close" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="chat-header">
+      <div id="chat-header-avatar"></div>
+      <div class="chat-header-info">
+        <div class="chat-title" id="chat-title"></div>
+        <div class="chat-subtitle" id="chat-subtitle"></div>
+      </div>
+      <button type="button" class="btn-mini btn-mini-ghost hidden" id="chat-group-info-btn">Grupo</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="Escribe un mensaje..."
+        autocomplete="off" autocapitalize="sentences" autocorrect="on" enterkeyhint="send">
+      <button type="button" class="chat-send-btn" id="chat-send" aria-label="Enviar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= NUEVO GRUPO / AÑADIR AMIGOS AL GRUPO ================= -->
+<div id="group-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card">
+    <div style="font-weight:700; margin-bottom:12px;" id="group-modal-title">Nuevo grupo</div>
+    <div class="field" id="group-name-field" style="margin-bottom:10px;">
+      <label>Nombre del grupo</label>
+      <input type="text" id="group-name-input" autocomplete="off" autocapitalize="sentences">
+    </div>
+    <div style="font-size:13px; color:var(--muted);">Elige amigos</div>
+    <div class="group-pick-list" id="group-pick-list"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="group-modal-cancel" style="flex:1; justify-content:center;">Cancelar</button>
+      <button class="btn-primary" id="group-modal-confirm" style="flex:1;">Crear grupo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= INFO DE UN GRUPO ================= -->
+<div id="group-info-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card">
+    <div class="desc-modal-head">
+      <span id="group-info-title">Grupo</span>
+      <button type="button" class="desc-modal-close" id="group-info-close" aria-label="Cerrar">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="group-pick-list" id="group-info-members"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="group-leave-btn" style="flex:1; justify-content:center; color:var(--bad);">Salir del grupo</button>
+      <button class="btn-primary" id="group-add-members-btn" style="flex:1;">Añadir amigos</button>
+    </div>
   </div>
 </div>
 
@@ -1179,6 +1386,10 @@ let dishes = [];
 let folders = [];
 let ingredientCatalog = [];   // catálogo compartido de ingredientes { id, name, default_unit }
 let fridgeItems = [];         // nevera del usuario actual
+let cartItems = [];           // carrito de la compra del usuario actual
+let chatSummaries = [];       // conversaciones (my_chats()): último mensaje + no leídos
+let chatUnreadTotal = 0;
+let openChatId = null;        // conversación abierta ahora mismo (o null)
 let galleryEditMode = false;
 let selectedDishIds = new Set();
 let editingDishId = null;
@@ -1224,6 +1435,10 @@ const ICON_PLUS_CIRCLE = '<svg width="17" height="17" viewBox="0 0 24 24" fill="
 const ICON_TRASH = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg>';
 const ICON_LOCK = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>';
 const ICON_UNLOCK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 9.5-3.5"/></svg>';
+const ICON_CART_PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/><path d="M13.5 8.6v4.8M11.1 11h4.8"/></svg>';
+const ICON_CART_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/><path d="M10.8 11.2l2 2 3.6-3.8"/></svg>';
+const ICON_GROUP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+const ICON_CHAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5A8.5 8.5 0 0 1 21 11.5z"/></svg>';
 const ICON_BACK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
 
 /* ===================== LOGIN REAL (Supabase Auth) ===================== */
@@ -1325,12 +1540,26 @@ async function enterApp(profile){
   applyFitnessVisibility();
   setSection('platos');
   openDrawer();
-  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems()]);
+  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems(), loadCart(), loadChats()]);
   await migrateLegacyIngredientsIfNeeded();
   renderNeveraSuggestions();
   renderWeekBoard();
   loadWeeklyLogs();
   subscribeWallRealtime();
+  subscribeChatRealtime();
+  handleDeepLink();
+  syncPushOnLogin();
+}
+
+// Al tocar una notificación push se abre la app con #chat=<id> o #muro.
+function handleDeepLink(url){
+  let hash = '';
+  try{ hash = new URL(url || location.href).hash; }catch(e){}
+  if(!hash) return;
+  const m = hash.match(/^#chat=([\w-]+)$/);
+  if(m){ closeDrawer(); setSection('social'); openChat(m[1]); }
+  else if(hash==='#muro'){ closeDrawer(); setSection('muro'); openWallSection(); }
+  try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
 }
 
 async function init(){
@@ -1343,6 +1572,10 @@ async function init(){
 }
 
 $('#settings-logout-btn').onclick = async ()=>{
+  await unsubscribeThisDeviceFromPush();
+  try{ sb.removeAllChannels(); }catch(e){}
+  chatRealtimeStarted = false;
+  chatSummaries = []; chatUnreadTotal = 0; cartItems = [];
   await sb.auth.signOut();
   currentUser = null;
   closeDrawer();
@@ -1369,6 +1602,8 @@ $all('.drawer-link').forEach(btn=>{
     closeDrawer();
     if(btn.dataset.section==='muro') openWallSection();
     if(btn.dataset.section==='nevera') renderNeveraSuggestions();
+    if(btn.dataset.section==='social') loadChats();
+    if(btn.dataset.section==='carrito') renderCartList();
   };
 });
 
@@ -2068,7 +2303,12 @@ function applyDishFieldsLock(){
   // descripción y las macros se pueden seguir viendo en modo Mostrar (solo
   // "consultar" incluye leerlas); nombre/calorías/duración/raciones/
   // calidad/ingredientes quedan bloqueados a través del CSS.
-  $('#dish-modal').classList.toggle('dish-view-locked', dishFieldsLocked());
+  const locked = dishFieldsLocked();
+  $('#dish-modal').classList.toggle('dish-view-locked', locked);
+  // Descripción y macros se pueden abrir para LEER en modo vista, pero no
+  // tocar: readOnly (no `disabled`, que en iOS difumina el texto).
+  $('#dish-desc').readOnly = locked;
+  ['#macro-protein','#macro-carbs','#macro-fat','#macro-fiber'].forEach(sel=> $(sel).readOnly = locked);
 }
 function closeDishModal(){
   if(dishSaveInFlight) return; // no se puede salir mientras hay una escritura en curso de verdad
@@ -2221,9 +2461,26 @@ function addIngredientRow(item={}, afterRow=null){
       </div>
       <input type="number" inputmode="decimal" class="ingredient-qty" placeholder="Cant." value="${it.quantity!=null?it.quantity:''}">
       <span class="ingredient-unit-badge">${escapeHtml(it.unit||lookupDefaultUnit(it.name)||'')}</span>
+      <button type="button" class="ingredient-cart-btn" aria-label="Añadir al carrito"></button>
     </div>`;
   const input = row.querySelector('.ingredient-input');
   const qtyInput = row.querySelector('.ingredient-qty');
+  // Carrito: añade/quita ESTE ingrediente con la cantidad que se ve ahora
+  // mismo (si has cambiado las raciones con +/-, la ya escalada).
+  const cartBtn = row.querySelector('.ingredient-cart-btn');
+  cartBtn.addEventListener('pointerdown', e=> e.stopPropagation());
+  cartBtn.onclick = e=>{
+    e.stopPropagation();
+    const name = input.value.trim();
+    if(!name) return;
+    toggleCartItem({
+      name, quantity: qtyInput.value!=='' ? Number(qtyInput.value) : null,
+      unit: row.querySelector('.ingredient-unit-badge').textContent.trim() || null,
+      source_dish_name: $('#dish-name').value.trim() || null
+    });
+  };
+  syncRowCartButton(row);
+  input.addEventListener('input', ()=> syncRowCartButton(row));
   qtyInput.dataset.orig = qtyInput.value; // cantidad real guardada, al margen de cualquier escalado de vista
   // El tick ya no se marca a mano — se calcula solo contra la Nevera (ver updateIngredientTicks).
   input.addEventListener('keydown', e=>{
@@ -2236,8 +2493,11 @@ function addIngredientRow(item={}, afterRow=null){
   });
   input.addEventListener('input', ()=>{ scheduleDishAutosave(false); });
   input.addEventListener('blur', ()=>{
-    // fila vacía y no es la única: se limpia sola, no se queda un hueco muerto
-    if(!input.value.trim() && $all('.ingredient-row').length>1){ row.remove(); scheduleDishAutosave(false); return; }
+    // Fila vacía en medio de la lista: se limpia sola, no se queda un hueco
+    // muerto. La ÚLTIMA fila vacía se deja (es donde se escribe el siguiente
+    // ingrediente): si se quitara al tocar "+ Añadir ingrediente", el botón
+    // saltaría hacia arriba justo bajo el dedo y el toque se perdería.
+    if(!input.value.trim() && $all('.ingredient-row').length>1 && row.nextElementSibling){ row.remove(); scheduleDishAutosave(false); return; }
     // La unidad nunca se elige a mano: si el nombre coincide de verdad con
     // algo del catálogo, se adopta su unidad por defecto sin preguntar.
     const u = lookupDefaultUnit(input.value);
@@ -2368,12 +2628,38 @@ function updateDescPreview(){
   $('#dish-desc-preview').textContent = v ? (v.length>90 ? v.slice(0,90)+'…' : v) : 'Descripción';
   $('#dish-desc-trigger').classList.toggle('filled', !!v);
 }
-function openDescModal(){ $('#desc-modal').classList.remove('hidden'); $('#dish-desc').focus(); }
+// En modo vista el pop-up es solo para leer (readOnly, sin sacar el teclado);
+// creando/editando se abre ya con el cursor puesto para escribir.
+function openDescModal(){
+  $('#desc-modal').classList.remove('hidden');
+  if(!dishFieldsLocked()) $('#dish-desc').focus();
+}
 function closeDescModal(){ $('#desc-modal').classList.add('hidden'); updateDescPreview(); }
 $('#dish-desc-trigger').onclick = openDescModal;
+$('#desc-modal-close').onclick = closeDescModal;
 $('#desc-modal').addEventListener('click', e=>{ if(e.target.id==='desc-modal') closeDescModal(); });
-$('#dish-name').addEventListener('input', ()=> scheduleDishAutosave(false));
-$('#dish-desc').addEventListener('input', ()=>{ updateDescPreview(); scheduleDishAutosave(false); });
+/* La primera letra siempre en mayúscula (el teclado del iPhone ya lo hace con
+   autocapitalize, esto lo asegura también desde el PC o si se pega texto). */
+function capitalizeFirstLetter(el){
+  const v = el.value;
+  const m = v.match(/^(\s*)(\p{Ll})/u);
+  if(!m) return;
+  const a = el.selectionStart, b = el.selectionEnd;
+  el.value = m[1] + m[2].toUpperCase() + v.slice(m[0].length);
+  try{ el.setSelectionRange(a, b); }catch(e){}
+}
+$('#dish-name').addEventListener('input', ()=>{ capitalizeFirstLetter($('#dish-name')); scheduleDishAutosave(false); });
+$('#dish-desc').addEventListener('input', ()=>{ capitalizeFirstLetter($('#dish-desc')); updateDescPreview(); scheduleDishAutosave(false); });
+/* "+ Añadir ingrediente": lo mismo que Enter, pero a la vista. Si la última
+   fila ya está vacía, simplemente se pone el cursor ahí (no se apilan huecos). */
+$('#add-ingredient-btn').onclick = ()=>{
+  const rows = $all('#ingredients-list .ingredient-row');
+  const last = rows[rows.length-1];
+  const lastInput = last && last.querySelector('.ingredient-input');
+  if(lastInput && !lastInput.value.trim()){ lastInput.focus(); return; }
+  const newRow = addIngredientRow({}, last || null);
+  newRow.querySelector('.ingredient-input').focus();
+};
 $('#dish-calories').addEventListener('input', ()=> scheduleDishAutosave(false));
 $('#dish-duration').addEventListener('input', ()=> scheduleDishAutosave(false));
 
@@ -2672,6 +2958,7 @@ $('#dish-edit-save-btn').onclick = async ()=>{
   flushDishAutosave();
   if(dishSaveInFlight) await dishSaveInFlight;
   btn.disabled = false;
+  pruneEmptyIngredientRows();
   captureIngredientBaselines();
   syncServingsBaseline();
   updateIngredientTicks();
@@ -2679,6 +2966,13 @@ $('#dish-edit-save-btn').onclick = async ()=>{
   applyDishModalButtons();
   applyDishFieldsLock();
 };
+// Al volver a modo vista no se dejan filas de ingrediente en blanco (siempre
+// queda al menos una, que es donde se escribe al volver a editar).
+function pruneEmptyIngredientRows(){
+  $all('#ingredients-list .ingredient-row').forEach(r=>{
+    if(!r.querySelector('.ingredient-input').value.trim() && $all('#ingredients-list .ingredient-row').length>1) r.remove();
+  });
+}
 
 $('#dish-delete-btn').onclick = async ()=>{
   if(!dishExistsRemote || dishSaveInFlight) return;
@@ -2788,10 +3082,17 @@ function setBadge(el, count){
   el.classList.toggle('hidden', count === 0);
 }
 function updateNotifBadges(){
-  const socialCount = incomingRequests.length + sharedDishesReceived.length;
+  const socialCount = incomingRequests.length + sharedDishesReceived.length + chatUnreadTotal;
   setBadge($('#social-notif-badge'), socialCount);
   setBadge($('#wall-notif-badge'), wallUnreadCount);
   setBadge($('#menu-notif-badge'), socialCount + wallUnreadCount);
+  // Número rojo sobre el icono de la app en la pantalla de inicio (iPhone con
+  // la app instalada, iOS 16.4+; en otros navegadores simplemente no hace nada).
+  const total = socialCount + wallUnreadCount;
+  try{
+    if(total && navigator.setAppBadge) navigator.setAppBadge(total).catch(()=>{});
+    else if(!total && navigator.clearAppBadge) navigator.clearAppBadge().catch(()=>{});
+  }catch(e){}
 }
 
 function avatarHtml(u){
@@ -2822,13 +3123,15 @@ async function loadFriendshipsState(){
 function renderFriendsList(){
   const box = $('#friends-list');
   if(!friends.length){ box.innerHTML = '<div class="empty-hint">Aún no tienes amigos añadidos.</div>'; return; }
-  box.innerHTML = friends.map(f=> `<div class="user-row user-row-clickable" data-friend-id="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></div>`).join('');
+  box.innerHTML = friends.map(f=> `<div class="user-row user-row-clickable" data-friend-id="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span><button type="button" class="friend-msg-btn" data-msg-friend="${f.id}" aria-label="Escribir a @${escapeHtml(f.username)}">${ICON_CHAT}</button></div>`).join('');
   $all('#friends-list [data-friend-id]').forEach(row=>{
-    row.onclick = ()=>{
+    row.onclick = e=>{
+      if(e.target.closest('[data-msg-friend]')) return;
       const f = friends.find(x=>x.id===row.dataset.friendId);
       if(f) openFriendProfile(f);
     };
   });
+  $all('#friends-list [data-msg-friend]').forEach(b=> b.onclick = e=>{ e.stopPropagation(); openDirectChat(b.dataset.msgFriend); });
 }
 function renderIncomingRequests(){
   const box = $('#incoming-requests-list');
@@ -2897,6 +3200,7 @@ async function loadSharedDishes(){
 }
 function renderSharedDishes(){
   const box = $('#shared-dishes-list');
+  $('#shared-dishes-card').classList.toggle('hidden', !sharedDishesReceived.length);
   if(!sharedDishesReceived.length){ box.innerHTML = '<div class="empty-hint">Nadie te ha compartido recetas todavía.</div>'; return; }
   box.innerHTML = sharedDishesReceived.map(s=>{
     const d = s.dish_snapshot || {};
@@ -2973,8 +3277,9 @@ async function rejectSharedDish(sharedId){
 // suyo -no un snapshot-, solo con Añadir). populateDishPreview() rellena los
 // campos comunes; cada modo decide qué botones mostrar y qué hace "Añadir".
 let previewingSharedId = null;
-let previewMode = 'shared'; // 'shared' | 'friend'
+let previewMode = 'shared'; // 'shared' | 'friend' | 'chat'
 let previewingFriendDish = null;
+let previewingChatDish = null; // { snapshot, fromUsername } — receta recibida por el chat
 function populateDishPreview(d, fromLabel){
   const wrap = $('#shared-preview-photo-wrap'), img = $('#shared-preview-photo');
   if(d.image_url){ img.src = d.image_url; wrap.classList.remove('hidden'); } else { wrap.classList.add('hidden'); img.src=''; }
@@ -3020,12 +3325,20 @@ function closeSharedPreview(){
   unlockBodyScroll();
   previewingSharedId = null;
   previewingFriendDish = null;
+  previewingChatDish = null;
   $('#shared-preview-reject-btn').classList.remove('hidden'); // deja el pop-up listo para la próxima vez en modo 'shared'
+  $('#shared-preview-add-btn').classList.remove('hidden');
 }
 $('#shared-preview-close').onclick = closeSharedPreview;
 $('#shared-preview-modal').addEventListener('click', e=>{ if(e.target.id==='shared-preview-modal') closeSharedPreview(); });
 $('#shared-preview-reject-btn').onclick = async ()=>{ const id=previewingSharedId; closeSharedPreview(); if(id) await rejectSharedDish(id); };
 $('#shared-preview-add-btn').onclick = async ()=>{
+  if(previewMode==='chat'){
+    const c = previewingChatDish;
+    closeSharedPreview();
+    if(c) await addFriendDishToRepo(c.snapshot, c.fromUsername);
+    return;
+  }
   if(previewMode==='friend'){
     const dish = previewingFriendDish, fromUsername = friendProfile ? friendProfile.username : null;
     closeSharedPreview();
@@ -3131,30 +3444,51 @@ $('#friend-profile-close').onclick = closeFriendProfile;
 $('#friend-profile-modal').addEventListener('click', e=>{ if(e.target.id==='friend-profile-modal') closeFriendProfile(); });
 
 /* --- Compartir un plato con un amigo (o publicarlo en el Muro) --- */
-$('#dish-share-btn').onclick = ()=>{
-  $('#share-friends-list').innerHTML = friends.length
-    ? friends.map(f=> `<button type="button" class="user-row user-row-btn" data-share-to="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></button>`).join('')
-    : '<div class="empty-hint">Todavía no tienes amigos añadidos.</div>';
-  $all('[data-share-to]').forEach(b=> b.onclick = ()=> shareDishWith(b.dataset.shareTo));
-  $('#share-modal').classList.remove('hidden');
-};
-$('#share-modal').addEventListener('click', e=>{ if(e.target.id==='share-modal') $('#share-modal').classList.add('hidden'); });
-async function shareDishWith(friendProfileId){
-  if(!editingDishId) return;
-  const dish = dishes.find(d=>d.id===editingDishId);
-  if(!dish) return;
-  const snapshot = {
+// Compartir = mandar la receta por el chat: los grupos salen en la lista
+// igual que un amigo más. La receta viaja como "foto fija" (snapshot), igual
+// que siempre: si luego editas tu plato, lo ya enviado no cambia.
+function dishSnapshotOf(dish){
+  return {
     name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
     description: dish.description, calories: dish.calories, quality: dish.quality,
     duration_min: dish.duration_min, servings_base: dish.servings_base || 1,
     protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g
   };
-  const { error } = await sb.from('shared_dishes').insert({
-    dish_id: dish.id, from_user_id: currentUser.id, to_user_id: friendProfileId, dish_snapshot: snapshot
-  });
+}
+function renderShareTargets(){
+  const groups = chatSummaries.filter(c=> c.is_group);
+  const rows = groups.map(g=> `<button type="button" class="user-row user-row-btn" data-share-chat="${g.chat_id}"><div class="group-avatar">${ICON_GROUP}</div><span class="user-row-name">${escapeHtml(g.name||'Grupo')}</span></button>`)
+    .concat(friends.map(f=> `<button type="button" class="user-row user-row-btn" data-share-to="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></button>`));
+  $('#share-friends-list').innerHTML = rows.length ? rows.join('') : '<div class="empty-hint">Todavía no tienes amigos añadidos.</div>';
+  $all('[data-share-to]').forEach(b=> b.onclick = ()=> shareDishWith({ friendId: b.dataset.shareTo }));
+  $all('[data-share-chat]').forEach(b=> b.onclick = ()=> shareDishWith({ chatId: b.dataset.shareChat }));
+}
+$('#dish-share-btn').onclick = ()=>{
+  renderShareTargets();
+  $('#share-modal').classList.remove('hidden');
+};
+$('#share-modal').addEventListener('click', e=>{ if(e.target.id==='share-modal') $('#share-modal').classList.add('hidden'); });
+let shareInFlight = false;
+async function shareDishWith(target){
+  if(!editingDishId || shareInFlight) return;
+  const dish = dishes.find(d=>d.id===editingDishId);
+  if(!dish) return;
+  shareInFlight = true;
   $('#share-modal').classList.add('hidden');
-  if(error){ alert('Error al compartir: '+error.message); return; }
-  alert('Receta compartida.');
+  try{
+    let chatId = target.chatId;
+    if(!chatId){
+      const { data, error } = await sb.rpc('get_or_create_direct_chat', { other: target.friendId });
+      if(error){ alert('Error al compartir: '+error.message); return; }
+      chatId = data;
+    }
+    const { error } = await sb.from('chat_messages').insert({ chat_id: chatId, sender_id: currentUser.id, dish_snapshot: dishSnapshotOf(dish) });
+    if(error){ alert('Error al compartir: '+error.message); return; }
+    alert('Receta enviada por el chat.');
+    loadChats();
+  } finally {
+    shareInFlight = false;
+  }
 }
 
 /* --- Publicar en el Muro (desde el mismo pop-up de Compartir) --- */
@@ -3169,12 +3503,7 @@ $('#wall-publish-confirm').onclick = async ()=>{
   if(!editingDishId) return;
   const dish = dishes.find(d=>d.id===editingDishId);
   if(!dish) return;
-  const snapshot = {
-    name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
-    description: dish.description, calories: dish.calories, quality: dish.quality,
-    duration_min: dish.duration_min, servings_base: dish.servings_base || 1,
-    protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g
-  };
+  const snapshot = dishSnapshotOf(dish);
   const caption = $('#wall-publish-caption').value.trim();
   $('#wall-publish-modal').classList.add('hidden');
   const { error } = await sb.from('wall_posts').insert({
@@ -3184,6 +3513,426 @@ $('#wall-publish-confirm').onclick = async ()=>{
   alert('Publicado en el Muro.');
   loadWallFeed();
 };
+
+/* ===================== CHAT (1 a 1 y grupos) ===================== */
+// Las conversaciones se crean solo por funciones del servidor que comprueban
+// la amistad (get_or_create_direct_chat / create_group_chat). Los mensajes
+// llegan en vivo por Realtime mientras la app está abierta; con la app
+// cerrada avisa la notificación push.
+let openChatMessages = [];
+let openChatProfiles = {};    // id -> {id, username, avatar_url}
+let openChatMembers = [];
+let chatRealtimeStarted = false;
+
+async function loadChats(){
+  const { data, error } = await sb.rpc('my_chats');
+  if(error){ console.error(error); const b=$('#chat-list'); if(b && !chatSummaries.length) b.innerHTML='<div class="empty-hint">No se pudieron cargar los chats.</div>'; return; }
+  chatSummaries = data||[];
+  recomputeChatUnread();
+}
+function recomputeChatUnread(){
+  chatUnreadTotal = chatSummaries.reduce((n,c)=> n + (c.chat_id===openChatId ? 0 : (c.unread||0)), 0);
+  renderChatList();
+  updateNotifBadges();
+}
+function chatTitle(c){ return c.is_group ? (c.name||'Grupo') : '@'+(c.other_username||'?'); }
+function chatAvatarHtml(c){
+  return c.is_group ? `<div class="group-avatar">${ICON_GROUP}</div>` : avatarHtml({ username: c.other_username, avatar_url: c.other_avatar });
+}
+function chatPreviewText(c){
+  if(!c.last_body && !c.last_dish_name) return 'Sin mensajes todavía';
+  const who = c.last_sender_id===currentUser.id ? 'Tú: ' : '';
+  return who + (c.last_dish_name ? 'Receta: '+c.last_dish_name : c.last_body);
+}
+function renderChatList(){
+  const box = $('#chat-list');
+  if(!box) return;
+  if(!chatSummaries.length){
+    box.innerHTML = '<div class="empty-hint">Aún no tienes chats. Toca el bocadillo junto a un amigo para escribirle, o crea un grupo.</div>';
+    return;
+  }
+  box.innerHTML = chatSummaries.map(c=>{
+    const unread = c.chat_id===openChatId ? 0 : (c.unread||0);
+    return `<button type="button" class="chat-row ${unread?'unread':''}" data-chat="${c.chat_id}">
+      ${chatAvatarHtml(c)}
+      <span class="chat-row-main">
+        <span class="chat-row-top"><span class="chat-row-name">${escapeHtml(chatTitle(c))}</span><span class="chat-row-time">${timeAgo(c.last_at)}</span></span>
+        <span class="chat-row-preview">${escapeHtml(chatPreviewText(c))}</span>
+      </span>
+      ${unread ? `<span class="chat-unread">${unread>9?'9+':unread}</span>` : ''}
+    </button>`;
+  }).join('');
+  $all('#chat-list [data-chat]').forEach(b=> b.onclick = ()=> openChat(b.dataset.chat));
+}
+function updateChatSummaryLocal(chatId, m){
+  const c = chatSummaries.find(x=> x.chat_id===chatId);
+  if(!c){ loadChats(); return; }
+  c.last_body = m.body || null;
+  c.last_dish_name = m.dish_snapshot ? (m.dish_snapshot.name||'Receta') : null;
+  c.last_sender_id = m.sender_id;
+  c.last_at = m.created_at;
+  chatSummaries = [c, ...chatSummaries.filter(x=> x!==c)];
+  renderChatList();
+}
+async function markChatRead(chatId){
+  const c = chatSummaries.find(x=> x.chat_id===chatId);
+  if(c) c.unread = 0;
+  recomputeChatUnread();
+  const { error } = await sb.rpc('mark_chat_read', { p_chat: chatId });
+  if(error) console.error(error);
+}
+function refreshChatHeader(){
+  const c = chatSummaries.find(x=> x.chat_id===openChatId);
+  if(!c) return;
+  $('#chat-header-avatar').innerHTML = chatAvatarHtml(c);
+  $('#chat-title').textContent = chatTitle(c);
+  $('#chat-group-info-btn').classList.toggle('hidden', !c.is_group);
+  if(c.is_group){
+    const others = openChatMembers.filter(p=> p.id!==currentUser.id).map(p=> '@'+p.username);
+    $('#chat-subtitle').textContent = others.length ? others.join(', ')+' y tú' : 'Solo tú';
+  } else {
+    $('#chat-subtitle').textContent = '';
+  }
+}
+async function openChat(chatId){
+  let c = chatSummaries.find(x=> x.chat_id===chatId);
+  if(!c){ await loadChats(); c = chatSummaries.find(x=> x.chat_id===chatId); }
+  if(!c){ alert('No se encontró la conversación.'); return; }
+  openChatId = chatId;
+  openChatMessages = []; openChatMembers = []; openChatProfiles = {};
+  refreshChatHeader();
+  $('#chat-messages').innerHTML = '<div class="empty-hint">Cargando...</div>';
+  $('#chat-input').value = '';
+  if($('#chat-modal').classList.contains('hidden')){ lockBodyScroll(); $('#chat-modal').classList.remove('hidden'); }
+  recomputeChatUnread();
+  await loadChatMessages(chatId);
+  if(openChatId===chatId) markChatRead(chatId);
+}
+function closeChat(){
+  $('#chat-modal').classList.add('hidden');
+  unlockBodyScroll();
+  openChatId = null;
+  loadChats();
+}
+async function loadChatMessages(chatId){
+  const [{ data: msgs, error }, { data: members }] = await Promise.all([
+    sb.from('chat_messages').select('*').eq('chat_id', chatId).order('created_at', {ascending:false}).limit(200),
+    sb.from('chat_members').select('profile_id, profile:profile_id(id,username,avatar_url)').eq('chat_id', chatId)
+  ]);
+  if(chatId!==openChatId) return;
+  if(error){ $('#chat-messages').innerHTML = '<div class="empty-hint">No se pudieron cargar los mensajes.</div>'; return; }
+  openChatProfiles = {};
+  openChatMembers = (members||[]).map(m=> m.profile).filter(Boolean);
+  openChatMembers.forEach(p=> openChatProfiles[p.id] = p);
+  openChatMessages = (msgs||[]).reverse();
+  await fetchMissingChatProfiles();
+  if(chatId!==openChatId) return;
+  refreshChatHeader();
+  renderChatMessages(true);
+}
+// Remitentes que ya no están en el grupo (se salieron): su nombre se busca aparte.
+async function fetchMissingChatProfiles(){
+  const missing = [...new Set(openChatMessages.map(m=> m.sender_id).filter(id=> id && !openChatProfiles[id]))];
+  if(!missing.length) return;
+  const { data } = await sb.from('profiles').select('id,username,avatar_url').in('id', missing);
+  (data||[]).forEach(p=> openChatProfiles[p.id] = p);
+}
+function msgTime(iso){
+  const d = new Date(iso), now = new Date();
+  const hm = d.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+  return d.toDateString()===now.toDateString() ? hm : d.toLocaleDateString('es-ES', {day:'numeric', month:'short'})+' '+hm;
+}
+function renderChatMessages(scrollToEnd){
+  const box = $('#chat-messages');
+  const c = chatSummaries.find(x=> x.chat_id===openChatId);
+  const isGroup = !!(c && c.is_group);
+  if(!openChatMessages.length){ box.innerHTML = '<div class="empty-hint">Todavía no hay mensajes. ¡Saluda!</div>'; return; }
+  box.innerHTML = openChatMessages.map((m, i)=>{
+    const mine = m.sender_id===currentUser.id;
+    const prev = openChatMessages[i-1], next = openChatMessages[i+1];
+    const showSender = isGroup && !mine && (!prev || prev.sender_id!==m.sender_id);
+    // La hora solo al final de cada tanda de mensajes seguidos de la misma persona.
+    const showTime = m._pending || !next || next.sender_id!==m.sender_id || (new Date(next.created_at) - new Date(m.created_at)) > 5*60000;
+    const sender = openChatProfiles[m.sender_id];
+    let content = '';
+    if(m.dish_snapshot){
+      const d = m.dish_snapshot;
+      content = `<button type="button" class="msg-dish" data-msg-dish="${m.id}">
+        ${d.image_url ? `<img src="${d.image_url}" alt="">` : `<span class="msg-dish-noimg">${ICON_PLATE}</span>`}
+        <span class="msg-dish-body"><span class="msg-dish-name">${escapeHtml(d.name||'Receta')}</span><span class="msg-dish-sub">${d.calories ? d.calories+' kcal · ' : ''}Toca para ver</span></span>
+      </button>`;
+    }
+    if(m.body) content += `<div class="msg-bubble">${escapeHtml(m.body)}</div>`;
+    return `<div class="msg ${mine?'mine':'theirs'} ${m._pending?'pending':''}">
+      ${showSender ? `<div class="msg-sender">@${escapeHtml(sender ? sender.username : '?')}</div>` : ''}
+      ${content}
+      ${showTime ? `<div class="msg-time">${m._pending ? 'Enviando…' : msgTime(m.created_at)}</div>` : ''}
+    </div>`;
+  }).join('');
+  $all('#chat-messages [data-msg-dish]').forEach(b=> b.onclick = ()=> openChatDishPreview(b.dataset.msgDish));
+  if(scrollToEnd){
+    box.scrollTop = box.scrollHeight;
+    box.querySelectorAll('img').forEach(img=> img.addEventListener('load', ()=>{ box.scrollTop = box.scrollHeight; }, {once:true}));
+  }
+}
+async function sendChatMessage(){
+  const chatId = openChatId;
+  const input = $('#chat-input');
+  const body = input.value.trim();
+  if(!chatId || !body) return;
+  input.value = '';
+  input.focus(); // el teclado se queda abierto para seguir escribiendo
+  const tmp = { id:'tmp-'+uuid(), chat_id:chatId, sender_id:currentUser.id, body, dish_snapshot:null, created_at:new Date().toISOString(), _pending:true };
+  openChatMessages.push(tmp);
+  renderChatMessages(true);
+  const { data, error } = await sb.from('chat_messages').insert({ chat_id: chatId, sender_id: currentUser.id, body }).select().single();
+  if(error){
+    openChatMessages = openChatMessages.filter(m=> m!==tmp);
+    if(chatId===openChatId){ renderChatMessages(false); if(!input.value) input.value = body; }
+    alert('No se pudo enviar: '+error.message);
+    return;
+  }
+  // Si el aviso en vivo ya trajo este mismo mensaje, se quita el provisional.
+  if(openChatMessages.some(m=> m.id===data.id)) openChatMessages = openChatMessages.filter(m=> m!==tmp);
+  else Object.assign(tmp, data, { _pending:false });
+  if(chatId===openChatId) renderChatMessages(true);
+  updateChatSummaryLocal(chatId, data);
+}
+$('#chat-send').onclick = sendChatMessage;
+$('#chat-input').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.isComposing){ e.preventDefault(); sendChatMessage(); } });
+$('#chat-input').addEventListener('input', ()=> capitalizeFirstLetter($('#chat-input')));
+$('#chat-close').onclick = closeChat;
+$('#chat-modal').addEventListener('click', e=>{ if(e.target.id==='chat-modal') closeChat(); });
+
+function subscribeChatRealtime(){
+  if(chatRealtimeStarted) return;
+  chatRealtimeStarted = true;
+  try{
+    sb.channel('chat-messages-live')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages' }, async payload=>{
+        const m = payload && payload.new;
+        if(!m) return;
+        const chatOpen = m.chat_id===openChatId && !$('#chat-modal').classList.contains('hidden');
+        if(!chatOpen){ loadChats(); return; }
+        if(!openChatMessages.some(x=> x.id===m.id)){
+          openChatMessages.push(m);
+          if(m.sender_id && !openChatProfiles[m.sender_id]) await fetchMissingChatProfiles();
+          renderChatMessages(true);
+        }
+        updateChatSummaryLocal(m.chat_id, m);
+        if(m.sender_id!==currentUser.id) markChatRead(m.chat_id);
+      })
+      .subscribe();
+  }catch(e){ console.error('Realtime del chat no disponible', e); }
+}
+
+async function openDirectChat(friendId){
+  const { data, error } = await sb.rpc('get_or_create_direct_chat', { other: friendId });
+  if(error){ alert('No se pudo abrir el chat: '+error.message); return; }
+  await loadChats();
+  openChat(data);
+}
+
+// Receta recibida en el chat: se abre en el mismo pop-up de vista previa.
+function openChatDishPreview(msgId){
+  const m = openChatMessages.find(x=> x.id===msgId);
+  if(!m || !m.dish_snapshot) return;
+  const mine = m.sender_id===currentUser.id;
+  const sender = openChatProfiles[m.sender_id];
+  previewMode = 'chat';
+  previewingSharedId = null;
+  previewingFriendDish = null;
+  previewingChatDish = { snapshot: m.dish_snapshot, fromUsername: mine ? null : (sender ? sender.username : null) };
+  populateDishPreview(m.dish_snapshot, mine ? 'Enviada por ti' : 'de @'+(sender ? sender.username : '?'));
+  $('#shared-preview-reject-btn').classList.add('hidden');
+  $('#shared-preview-add-btn').textContent = 'Añadir a mis recetas';
+  $('#shared-preview-add-btn').classList.toggle('hidden', mine);
+  lockBodyScroll();
+  $('#shared-preview-modal').classList.remove('hidden');
+}
+
+/* --- Grupos: crear, ver miembros, añadir amigos, salir --- */
+let groupModalMode = 'create'; // 'create' | 'add'
+let groupPicked = new Set();
+function openGroupModal(mode){
+  groupModalMode = mode;
+  groupPicked = new Set();
+  const already = new Set(mode==='add' ? openChatMembers.map(p=> p.id) : []);
+  const list = friends.filter(f=> !already.has(f.id));
+  $('#group-modal-title').textContent = mode==='add' ? 'Añadir amigos al grupo' : 'Nuevo grupo';
+  $('#group-name-field').classList.toggle('hidden', mode==='add');
+  $('#group-name-input').value = '';
+  $('#group-modal-confirm').textContent = mode==='add' ? 'Añadir' : 'Crear grupo';
+  $('#group-pick-list').innerHTML = list.length
+    ? list.map(f=> `<button type="button" class="pick-row" data-pick="${f.id}"><span class="pick-check">${ICON_CHECK}</span>${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></button>`).join('')
+    : `<div class="empty-hint">${mode==='add' ? 'Todos tus amigos ya están en el grupo.' : 'Primero añade amigos en Social.'}</div>`;
+  $all('#group-pick-list [data-pick]').forEach(b=> b.onclick = ()=>{
+    const id = b.dataset.pick;
+    if(groupPicked.has(id)) groupPicked.delete(id); else groupPicked.add(id);
+    b.classList.toggle('picked', groupPicked.has(id));
+  });
+  $('#group-modal').classList.remove('hidden');
+}
+$('#new-group-btn').onclick = ()=> openGroupModal('create');
+$('#group-modal-cancel').onclick = ()=> $('#group-modal').classList.add('hidden');
+$('#group-modal').addEventListener('click', e=>{ if(e.target.id==='group-modal') $('#group-modal').classList.add('hidden'); });
+$('#group-name-input').addEventListener('input', ()=> capitalizeFirstLetter($('#group-name-input')));
+$('#group-modal-confirm').onclick = async ()=>{
+  const btn = $('#group-modal-confirm');
+  if(btn.disabled) return;
+  const members = [...groupPicked];
+  if(groupModalMode==='create'){
+    const name = $('#group-name-input').value.trim();
+    if(!name){ alert('Ponle un nombre al grupo.'); return; }
+    if(!members.length){ alert('Elige al menos un amigo.'); return; }
+    btn.disabled = true;
+    const { data, error } = await sb.rpc('create_group_chat', { p_name: name, p_members: members });
+    btn.disabled = false;
+    if(error){ alert(error.message); return; }
+    $('#group-modal').classList.add('hidden');
+    await loadChats();
+    openChat(data);
+  } else {
+    if(!members.length){ $('#group-modal').classList.add('hidden'); return; }
+    btn.disabled = true;
+    const { error } = await sb.rpc('add_group_members', { p_chat: openChatId, p_members: members });
+    btn.disabled = false;
+    if(error){ alert(error.message); return; }
+    $('#group-modal').classList.add('hidden');
+    $('#group-info-modal').classList.add('hidden');
+    await loadChats();
+    if(openChatId) await loadChatMessages(openChatId);
+  }
+};
+function openGroupInfo(){
+  const c = chatSummaries.find(x=> x.chat_id===openChatId);
+  if(!c) return;
+  $('#group-info-title').textContent = c.name || 'Grupo';
+  $('#group-info-members').innerHTML = openChatMembers.map(p=>
+    `<div class="user-row">${avatarHtml(p)}<span class="user-row-name">@${escapeHtml(p.username)}${p.id===currentUser.id ? ' (tú)' : ''}</span></div>`).join('');
+  $('#group-info-modal').classList.remove('hidden');
+}
+$('#chat-group-info-btn').onclick = openGroupInfo;
+$('#group-info-close').onclick = ()=> $('#group-info-modal').classList.add('hidden');
+$('#group-info-modal').addEventListener('click', e=>{ if(e.target.id==='group-info-modal') $('#group-info-modal').classList.add('hidden'); });
+$('#group-add-members-btn').onclick = ()=> openGroupModal('add');
+$('#group-leave-btn').onclick = async ()=>{
+  const c = chatSummaries.find(x=> x.chat_id===openChatId);
+  if(!c || !confirm(`¿Salir del grupo "${c.name||'Grupo'}"? Dejarás de ver sus mensajes.`)) return;
+  const { error } = await sb.from('chat_members').delete().eq('chat_id', c.chat_id).eq('profile_id', currentUser.id);
+  if(error){ alert(error.message); return; }
+  $('#group-info-modal').classList.add('hidden');
+  chatSummaries = chatSummaries.filter(x=> x!==c);
+  closeChat();
+};
+
+/* ===================== NOTIFICACIONES PUSH ===================== */
+// Avisos de verdad en el móvil (aunque la app esté cerrada) cuando te
+// escriben por el chat, te mandan una receta o un amigo publica en el Muro.
+// El envío lo hace la Edge Function "send-push" de Supabase; aquí solo se
+// pide permiso y se guarda la "dirección" de este móvil (suscripción).
+// En iPhone solo funciona con la app añadida a la pantalla de inicio (iOS 16.4+).
+const VAPID_PUBLIC_KEY = 'BJKrFfHwMjvaWk6fgj0POj6ggeMzgvR6HtxyLYdEoCxPolGJbSh73CoD2A6E1IecxCav9NgvruyLPOvx9nToHFs';
+const PUSH_OPTOUT_KEY = 'nutrifit_push_off';
+let swRegistration = null;
+function pushSupported(){ return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+function isIOSDevice(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1); }
+function isStandaloneApp(){ return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone===true; }
+function pushOptedOut(){ try{ return localStorage.getItem(PUSH_OPTOUT_KEY)==='1'; }catch(e){ return false; } }
+function setPushOptOut(v){ try{ v ? localStorage.setItem(PUSH_OPTOUT_KEY, '1') : localStorage.removeItem(PUSH_OPTOUT_KEY); }catch(e){} }
+function urlB64ToUint8Array(b64){
+  const pad = '='.repeat((4 - b64.length % 4) % 4);
+  const raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from(raw, c=> c.charCodeAt(0));
+}
+async function registerServiceWorker(){
+  if(!('serviceWorker' in navigator)) return null;
+  try{ swRegistration = await navigator.serviceWorker.register('sw.js'); }
+  catch(e){ console.error('Service worker no disponible', e); }
+  return swRegistration;
+}
+async function currentPushSubscription(){
+  if(!pushSupported()) return null;
+  const reg = swRegistration || await navigator.serviceWorker.getRegistration();
+  return reg ? reg.pushManager.getSubscription() : null;
+}
+async function subscribeAndSavePush(){
+  const reg = swRegistration || await registerServiceWorker();
+  if(!reg) throw new Error('No se pudo preparar el servicio de notificaciones.');
+  await navigator.serviceWorker.ready;
+  let sub = await reg.pushManager.getSubscription();
+  if(!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY) });
+  const j = sub.toJSON();
+  const { error } = await sb.rpc('save_push_subscription', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth });
+  if(error) throw error;
+}
+async function unsubscribeThisDeviceFromPush(){
+  try{
+    const sub = await currentPushSubscription();
+    if(!sub) return;
+    await sb.rpc('delete_push_subscription', { p_endpoint: sub.endpoint });
+    await sub.unsubscribe();
+  }catch(e){ console.error(e); }
+}
+// Al entrar: si este móvil ya dio permiso (y no lo apagaste a mano), se
+// vuelve a guardar la suscripción a nombre de la cuenta con la que entras.
+async function syncPushOnLogin(){
+  if(pushSupported()){
+    await registerServiceWorker();
+    if(Notification.permission==='granted' && !pushOptedOut()){
+      try{ await subscribeAndSavePush(); }catch(e){ console.error('push', e); }
+    }
+  }
+  renderPushSetting();
+}
+async function renderPushSetting(){
+  const btn = $('#toggle-push-btn'), hint = $('#push-hint');
+  btn.classList.remove('switch-disabled');
+  if(!pushSupported()){
+    btn.classList.remove('on'); btn.classList.add('switch-disabled');
+    hint.textContent = (isIOSDevice() && !isStandaloneApp())
+      ? 'En iPhone, primero añade NutriFit a la pantalla de inicio (Compartir → Añadir a pantalla de inicio), ábrela desde su icono y activa esto ahí.'
+      : 'Este navegador no admite notificaciones.';
+    return;
+  }
+  if(Notification.permission==='denied'){
+    btn.classList.remove('on'); btn.classList.add('switch-disabled');
+    hint.textContent = 'Están bloqueadas. Actívalas en Ajustes del iPhone → Notificaciones → NutriFit.';
+    return;
+  }
+  const sub = await currentPushSubscription().catch(()=> null);
+  const on = !!sub && Notification.permission==='granted';
+  btn.classList.toggle('on', on);
+  hint.textContent = on
+    ? 'Te avisaremos de mensajes y recetas del chat y de lo que publiquen tus amigos en el Muro.'
+    : 'Actívalo para recibir avisos en este móvil aunque la app esté cerrada.';
+}
+$('#toggle-push-btn').onclick = async ()=>{
+  const btn = $('#toggle-push-btn');
+  if(btn.dataset.busy) return;
+  btn.dataset.busy = '1';
+  try{
+    if(btn.classList.contains('on')){
+      setPushOptOut(true);
+      await unsubscribeThisDeviceFromPush();
+    } else {
+      setPushOptOut(false);
+      // El permiso se pide lo primero, directamente desde el toque (iOS lo exige).
+      const perm = await Notification.requestPermission();
+      if(perm==='granted') await subscribeAndSavePush();
+    }
+  }catch(e){
+    alert('No se pudieron activar las notificaciones: '+(e && e.message ? e.message : e));
+  }finally{
+    delete btn.dataset.busy;
+    renderPushSetting();
+  }
+};
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('message', e=>{
+    if(e.data && e.data.type==='open-url' && currentUser) handleDeepLink(e.data.url);
+  });
+}
 
 /* ===================== MURO ===================== */
 let wallPosts = [], wallLikes = [], wallComments = [], wallUnreadCount = 0;
@@ -3491,7 +4240,7 @@ function computeDishSuggestionsFromFridge(){
     let have = 0; const missing = [];
     ings.forEach(i=>{
       const matched = (i.ingredient_id && fridgeIds.has(i.ingredient_id)) || fridgeNames.has(stripAccents(i.name.toLowerCase()));
-      if(matched) have++; else missing.push(i.name);
+      if(matched) have++; else missing.push(i);
     });
     if(have===0) return null;
     return { dish:d, total:ings.length, have, missing, pct: have/ings.length };
@@ -3507,18 +4256,144 @@ function renderNeveraSuggestions(){
   box.innerHTML = results.map(r=>{
     const d = r.dish;
     const full = r.have===r.total;
-    const status = full ? 'Ya lo puedes hacer' : ('Te falta: '+r.missing.slice(0,3).map(escapeHtml).join(', ')+(r.missing.length>3?'…':''));
+    // Lo que falta sale como chips con su botón de carrito (verde = ya está).
+    const missingHtml = full ? '' : `<div class="missing-label">Te falta:</div><div class="missing-chips">${
+      r.missing.map((m, idx)=>{
+        const inCart = isInCart(m.name);
+        return `<button type="button" class="missing-chip ${inCart?'in-cart':''}" data-dish="${d.id}" data-missing="${idx}">${escapeHtml(m.name)}${inCart?ICON_CART_CHECK:ICON_CART_PLUS}</button>`;
+      }).join('')}</div>`;
     return `<div class="shared-dish-row" data-open-dish="${d.id}">
       ${d.image_url ? `<img class="shared-dish-thumb" src="${d.image_url}" alt="">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
       <div class="shared-dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
-        <span class="from" style="color:${full?'var(--good)':'var(--muted)'};">${status}</span>
+        ${full ? '<span class="from" style="color:var(--good);">Ya lo puedes hacer</span>' : missingHtml}
       </div>
     </div>`;
   }).join('');
   $all('#nevera-suggestions [data-open-dish]').forEach(row=>{
-    row.onclick = ()=>{ const dish = dishes.find(d=> d.id===row.dataset.openDish); if(dish) openDishModal(dish); };
+    row.onclick = e=>{
+      if(e.target.closest('.missing-chip')) return;
+      const dish = dishes.find(d=> d.id===row.dataset.openDish); if(dish) openDishModal(dish);
+    };
   });
+  $all('#nevera-suggestions .missing-chip').forEach(chip=>{
+    chip.onclick = e=>{
+      e.stopPropagation();
+      const r = results.find(x=> x.dish.id===chip.dataset.dish);
+      const m = r && r.missing[Number(chip.dataset.missing)];
+      if(m) toggleCartItem({ ...m, source_dish_name: r.dish.name });
+    };
+  });
+}
+
+/* ===================== CARRITO DE LA COMPRA ===================== */
+// Un ingrediente = una línea (se compara por nombre sin acentos). Se añade
+// sin preguntar cantidad: entra con la de la receta. Desde el carrito cada
+// línea puede pasar a la Nevera o eliminarse.
+function normName(n){ return stripAccents((n||'').trim().toLowerCase()); }
+function findCartItem(name){ const k = normName(name); return cartItems.find(c=> normName(c.name)===k); }
+function isInCart(name){ return !!findCartItem(name); }
+function fmtQty(q, unit){
+  if(q==null || q==='') return unit ? unit : '';
+  const n = Math.round(Number(q)*100)/100;
+  return unit ? `${n} ${unit}` : String(n);
+}
+async function loadCart(){
+  const { data, error } = await sb.from('cart_items').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:true});
+  if(error){ console.error(error); return; }
+  cartItems = data||[];
+  onCartChanged();
+}
+function syncRowCartButton(row){
+  const btn = row.querySelector('.ingredient-cart-btn');
+  if(!btn) return;
+  const name = row.querySelector('.ingredient-input').value.trim();
+  const inCart = !!name && isInCart(name);
+  row.classList.toggle('no-name', !name);
+  btn.classList.toggle('in-cart', inCart);
+  btn.innerHTML = inCart ? ICON_CART_CHECK : ICON_CART_PLUS;
+  btn.setAttribute('aria-label', inCart ? 'Quitar del carrito' : 'Añadir al carrito');
+}
+function onCartChanged(){
+  const badge = $('#cart-count-badge');
+  if(badge){ badge.textContent = String(cartItems.length); badge.classList.toggle('hidden', !cartItems.length); }
+  $all('#ingredients-list .ingredient-row').forEach(syncRowCartButton);
+  renderCartList();
+  if($('#section-nevera').classList.contains('active')) renderNeveraSuggestions();
+}
+async function toggleCartItem(item){
+  const existing = findCartItem(item.name);
+  if(existing){ await removeCartItem(existing.id); return; }
+  const optimistic = {
+    id: 'tmp-'+uuid(), user_id: currentUser.id, ingredient_id: item.ingredient_id || null,
+    name: item.name, quantity: item.quantity!=null && !isNaN(item.quantity) ? item.quantity : null,
+    unit: item.unit || lookupDefaultUnit(item.name) || null, source_dish_name: item.source_dish_name || null
+  };
+  cartItems.push(optimistic);
+  onCartChanged();
+  const { id, ...row } = optimistic;
+  const { data, error } = await sb.from('cart_items').insert(row).select().single();
+  if(error){ cartItems = cartItems.filter(c=> c!==optimistic); onCartChanged(); alert('No se pudo añadir al carrito: '+error.message); return; }
+  Object.assign(optimistic, data);
+  renderCartList(); // ya con el id real (los botones de la lista lo usan)
+}
+async function removeCartItem(id){
+  const item = cartItems.find(c=> c.id===id);
+  if(!item) return;
+  cartItems = cartItems.filter(c=> c!==item);
+  onCartChanged();
+  if(String(id).startsWith('tmp-')) return;
+  const { error } = await sb.from('cart_items').delete().eq('id', id);
+  if(error){ console.error(error); cartItems.push(item); onCartChanged(); }
+}
+// Pasa una línea del carrito a la Nevera: si ya tenías ese ingrediente (y la
+// unidad cuadra) se suma a lo que había; si no, entra como ítem nuevo.
+async function moveCartItemToFridge(id){
+  const item = cartItems.find(c=> c.id===id);
+  if(!item || String(id).startsWith('tmp-')) return;
+  const row = document.querySelector(`.cart-row[data-cart-id="${id}"]`);
+  if(row) row.classList.add('busy');
+  try{
+    const k = normName(item.name);
+    const fi = fridgeItems.find(f=> normName(f.name)===k);
+    if(fi && (!fi.unit || !item.unit || fi.unit===item.unit)){
+      const quantity = (fi.quantity==null && item.quantity==null) ? null : (Number(fi.quantity)||0) + (Number(item.quantity)||0);
+      const { error } = await sb.from('fridge_items').update({ quantity, unit: fi.unit || item.unit }).eq('id', fi.id);
+      if(error){ alert(error.message); return; }
+      fi.quantity = quantity; fi.unit = fi.unit || item.unit;
+    } else {
+      const ingredient_id = item.ingredient_id || await resolveIngredientId(item.name);
+      const { data, error } = await sb.from('fridge_items').insert({
+        user_id: currentUser.id, ingredient_id, name: item.name, quantity: item.quantity, unit: item.unit
+      }).select().single();
+      if(error){ alert(error.message); return; }
+      fridgeItems.push(data);
+    }
+    renderFridgeList();
+    updateIngredientTicks();
+    await removeCartItem(id);
+    renderNeveraSuggestions();
+  } finally {
+    if(row) row.classList.remove('busy');
+  }
+}
+function renderCartList(){
+  const box = $('#cart-list');
+  if(!box) return;
+  if(!cartItems.length){
+    box.innerHTML = '<div class="empty-hint">Tu carrito está vacío. Añade ingredientes con el botón del carrito desde un plato o desde las sugerencias de la Nevera.</div>';
+    return;
+  }
+  box.innerHTML = cartItems.map(c=> `<div class="cart-row" data-cart-id="${c.id}">
+    <div class="cart-row-info">
+      <span class="cart-row-name">${escapeHtml(c.name)}</span>
+      <span class="cart-row-sub">${escapeHtml(fmtQty(c.quantity, c.unit))}${c.source_dish_name ? ` <i>· ${escapeHtml(c.source_dish_name)}</i>` : ''}</span>
+    </div>
+    <button type="button" class="btn-mini" data-cart-fridge="${c.id}">A la nevera</button>
+    <button type="button" class="fridge-item-del" data-cart-del="${c.id}" aria-label="Eliminar">${ICON_TRASH}</button>
+  </div>`).join('');
+  $all('[data-cart-fridge]').forEach(b=> b.onclick = ()=> moveCartItemToFridge(b.dataset.cartFridge));
+  $all('[data-cart-del]').forEach(b=> b.onclick = ()=> removeCartItem(b.dataset.cartDel));
 }
 
 /* ===================== FITNESS: SETUP ===================== */
