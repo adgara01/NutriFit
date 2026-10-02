@@ -800,6 +800,12 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .friend-profile-header .user-row-avatar{width:44px; height:44px;}
 .friend-profile-header .fp-name{font-weight:700; font-size:16px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis;}
 .fp-unfriend{color:var(--bad); border-color:rgba(201,86,74,.45);}
+.friend-profile-header .btn-mini, .friend-profile-header .chip-status{flex-shrink:0;}
+/* @nombres y avatares que abren el perfil de esa persona */
+.profile-link{cursor:pointer; -webkit-tap-highlight-color:transparent;}
+span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; border-radius:50%;}
+.profile-link:active{opacity:.6;}
+#dish-photo-watermark{pointer-events:auto; cursor:pointer; padding:6px 8px; margin:-6px -8px;}
 .fp-back-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
 .fp-back-btn{display:flex; align-items:center; gap:4px; background:none; color:var(--text); font-weight:600; font-size:13px; padding:4px 0;}
 .fp-back-btn svg{width:15px; height:15px;}
@@ -821,8 +827,8 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 /* ---------- MURO ---------- */
 .wall-post{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:16px; overflow:hidden;}
 .wall-post-header{display:flex; align-items:center; gap:10px; padding:12px 14px;}
-.wall-post-user{font-weight:700; font-size:14px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.wall-post-time{font-size:12px; color:var(--muted); flex-shrink:0;}
+.wall-post-user{font-weight:700; font-size:14px; flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.wall-post-time{font-size:12px; color:var(--muted); flex-shrink:0; margin-left:auto;}
 .wall-post-photo{width:100%; aspect-ratio:4/3; background:var(--card2); cursor:pointer;}
 .wall-post-body{cursor:pointer;}
 .wall-post-photo img{width:100%; height:100%; object-fit:cover; display:block;}
@@ -1571,6 +1577,16 @@ const REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-
 function showModal(el){
   if(!el) return;
   clearTimeout(el._closeTimer);
+  // El último pop-up que se abre queda siempre por encima de los que ya
+  // estaban abiertos (p. ej. un perfil abierto desde un chat o desde un plato).
+  let top = 0;
+  $all('.modal').forEach(m=>{
+    if(m===el || m.classList.contains('hidden')) return;
+    top = Math.max(top, parseInt(getComputedStyle(m).zIndex, 10) || 0);
+  });
+  el.style.zIndex = '';
+  const own = parseInt(getComputedStyle(el).zIndex, 10) || 0;
+  if(top >= own) el.style.zIndex = String(top + 1);
   el.classList.remove('closing');
   el.classList.remove('hidden');
 }
@@ -1713,16 +1729,44 @@ async function enterApp(profile){
   syncPushOnLogin();
 }
 
-// Al tocar una notificación push se abre la app con #chat=<id> o #muro.
-function handleDeepLink(url){
+// Al tocar una notificación push se abre la app en lo que corresponda:
+// #chat=<id>, #muro, #comentarios=<publicación>, #social (solicitudes y
+// recetas recibidas) o #perfil=<usuario>.
+async function handleDeepLink(url){
   let hash = '';
   try{ hash = new URL(url || location.href).hash; }catch(e){}
   if(!hash) return;
-  const m = hash.match(/^#chat=([\w-]+)$/);
-  if(m){ closeDrawer(); setSection('social'); openChat(m[1]); }
-  else if(hash==='#muro'){ closeDrawer(); setSection('muro'); openWallSection(); }
   try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+  let m;
+  if((m = hash.match(/^#chat=([\w-]+)$/))){ closeDrawer(); setSection('social'); openChat(m[1]); }
+  else if(hash==='#muro'){ closeDrawer(); setSection('muro'); openWallSection(); }
+  else if((m = hash.match(/^#comentarios=([\w-]+)$/))){
+    closeDrawer(); setSection('muro'); markWallSeen();
+    await loadWallFeed();
+    openWallComments(m[1]);
+  }
+  else if(hash==='#social'){
+    closeDrawer(); setSection('social');
+    await Promise.all([loadFriendshipsState(), loadSharedDishes()]);
+    const target = incomingRequests.length ? $('#incoming-requests-list') : (sharedDishesReceived.length ? $('#shared-dishes-card') : null);
+    if(target) target.closest('.card').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  else if((m = hash.match(/^#perfil=([\w-]+)$/))){
+    closeDrawer(); setSection('social');
+    await loadFriendshipsState();
+    openUserProfile(m[1]);
+  }
 }
+
+// Al volver a la app (desde otra app o con el móvil desbloqueado) se
+// refresca lo social, por si mientras tanto llegó algo nuevo.
+let lastResumeRefresh = 0;
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState!=='visible' || !currentUser) return;
+  if(Date.now() - lastResumeRefresh < 15000) return;
+  lastResumeRefresh = Date.now();
+  loadFriendshipsState(); loadSharedDishes(); loadChats();
+});
 
 async function init(){
   const { data } = await sb.auth.getSession();
@@ -2447,8 +2491,8 @@ function openDishModal(dish, preview){
   // Marca de agua: solo en platos que llegaron por Compartir (tienen
   // shared_from_username guardado desde que se aceptaron).
   const wm = $('#dish-photo-watermark');
-  if(dish && dish.shared_from_username){ wm.textContent = '@'+dish.shared_from_username; wm.classList.remove('hidden'); }
-  else { wm.textContent = ''; wm.classList.add('hidden'); }
+  if(dish && dish.shared_from_username){ wm.textContent = '@'+dish.shared_from_username; wm.dataset.profileUser = dish.shared_from_username; wm.classList.remove('hidden'); }
+  else { wm.textContent = ''; delete wm.dataset.profileUser; wm.classList.add('hidden'); }
 
   $('#dish-name').value = dish ? dish.name : '';
   $('#dish-desc').value = dish ? (dish.description||'') : '';
@@ -3349,6 +3393,12 @@ function avatarHtml(u){
     ? `<img class="user-row-avatar" src="${u.avatar_url}" alt="">`
     : `<div class="user-row-avatar avatar-placeholder-sm">${escapeHtml(((u&&u.username)||'?')[0].toUpperCase())}</div>`;
 }
+// Atributo para que un avatar o un @nombre abra ese perfil al tocarlo.
+function profileAttr(id){ return id ? ` data-profile-id="${escapeHtml(String(id))}"` : ''; }
+function profileAvatarHtml(u, id){
+  const pid = id || (u && u.id);
+  return pid ? `<span class="profile-link"${profileAttr(pid)}>${avatarHtml(u)}</span>` : avatarHtml(u);
+}
 function friendshipStatusWith(profileId){
   if(friends.some(f=>f.id===profileId)) return 'friends';
   if(outgoingRequests.some(r=>r.addressee_id===profileId)) return 'pending-out';
@@ -3388,8 +3438,8 @@ function renderIncomingRequests(){
   if(!incomingRequests.length){ box.innerHTML = '<div class="empty-hint">No tienes solicitudes pendientes.</div>'; return; }
   box.innerHTML = incomingRequests.map(r=> `
     <div class="user-row">
-      ${avatarHtml(r.requester)}
-      <span class="user-row-name">@${escapeHtml(r.requester.username)}</span>
+      ${profileAvatarHtml(r.requester, r.requester_id)}
+      <span class="user-row-name profile-link"${profileAttr(r.requester_id)}>@${escapeHtml(r.requester.username)}</span>
       <button class="btn-mini" data-accept="${r.id}">Aceptar</button>
       <button class="btn-mini btn-mini-ghost" data-reject="${r.id}">Rechazar</button>
     </div>`).join('');
@@ -3429,7 +3479,8 @@ function renderSearchResults(list){
     if(st==='friends') action = `<span class="chip-status">Amigos</span>`;
     else if(st==='pending-out') action = `<span class="chip-status">Pendiente</span>`;
     else if(st==='pending-in') action = `<span class="chip-status">Te ha escrito</span>`;
-    return `<div class="user-row">${avatarHtml(u)}<span class="user-row-name">@${escapeHtml(u.username)}</span>${action}</div>`;
+    profileCache[u.id] = u;
+    return `<div class="user-row">${profileAvatarHtml(u)}<span class="user-row-name profile-link"${profileAttr(u.id)}>@${escapeHtml(u.username)}</span>${action}</div>`;
   }).join('');
   $all('[data-add-friend]').forEach(btn=> btn.onclick = ()=> sendFriendRequest(btn.dataset.addFriend));
 }
@@ -3437,7 +3488,8 @@ async function sendFriendRequest(profileId){
   const { error } = await sb.from('friendships').insert({ requester_id: currentUser.id, addressee_id: profileId, status:'pending' });
   if(error){ alert(error.message); return; }
   await loadFriendshipsState();
-  runUserSearch($('#social-search').value.trim());
+  const term = $('#social-search').value.trim();
+  if(term) runUserSearch(term);
 }
 
 async function loadSharedDishes(){
@@ -3458,7 +3510,7 @@ function renderSharedDishes(){
       ${d.image_url ? `<img class="shared-dish-thumb" src="${d.image_url}" alt="">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
       <div class="shared-dish-info">
         <span class="name">${escapeHtml(d.name||'Receta')}</span>
-        <span class="from">de @${escapeHtml((s.from&&s.from.username)||'?')}</span>
+        <span class="from">de <span class="profile-link"${profileAttr(s.from_user_id)}>@${escapeHtml((s.from&&s.from.username)||'?')}</span></span>
       </div>
       <button class="btn-mini" data-add-shared="${s.id}">Añadir</button>
       <button class="btn-mini btn-mini-ghost" data-reject-shared="${s.id}">Descartar</button>
@@ -3606,18 +3658,104 @@ let friendRepoDishes = [];
 let friendRepoFolders = [];
 let friendProfileFolderId = null; // null = raíz del repositorio; si no, dentro de esa carpeta
 async function openFriendProfile(friend){
+  const wasOpen = !modalHidden($('#friend-profile-modal'));
   friendProfile = friend;
   friendProfileFolderId = null;
   friendRepoDishes = [];
   friendRepoFolders = [];
-  $('#friend-profile-header').innerHTML = `${avatarHtml(friend)}<span class="fp-name">@${escapeHtml(friend.username)}</span>
-    <button type="button" class="btn-mini btn-mini-ghost fp-unfriend" id="fp-unfriend-btn">Eliminar amigo</button>`;
-  $('#fp-unfriend-btn').onclick = ()=> removeFriend(friend);
-  $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>';
-  lockBodyScroll();
+  renderProfileHeader();
+  if(!wasOpen) lockBodyScroll();
   showModal($('#friend-profile-modal'));
-  await loadFriendRepo();
+  const st = profileRelation(friend.id);
+  if(st==='friends' || st==='me'){
+    $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>';
+    await loadFriendRepo();
+  } else {
+    $('#friend-profile-body').innerHTML = `<div class="empty-hint">${st==='pending-out'
+      ? 'Le has enviado una solicitud. Cuando la acepte podréis ver vuestros repositorios y chatear.'
+      : st==='pending-in'
+        ? '@'+escapeHtml(friend.username)+' quiere ser tu amigo. Acepta para ver su repositorio y poder chatear.'
+        : 'Aún no sois amigos. Añádelo para ver su repositorio y poder chatear.'}</div>`;
+  }
 }
+function profileRelation(id){
+  return id===currentUser.id ? 'me' : friendshipStatusWith(id);
+}
+// Cabecera del perfil: según la relación, Escribir + Eliminar amigo,
+// Añadir amigo, Aceptar, o "Solicitud enviada".
+function renderProfileHeader(){
+  const u = friendProfile;
+  if(!u) return;
+  const st = profileRelation(u.id);
+  let actions = '';
+  if(st==='friends'){
+    actions = `<button type="button" class="friend-msg-btn" id="fp-msg-btn" aria-label="Escribir a @${escapeHtml(u.username)}">${ICON_CHAT}</button>
+      <button type="button" class="btn-mini btn-mini-ghost fp-unfriend" id="fp-unfriend-btn">Eliminar amigo</button>`;
+  } else if(st==='none'){
+    actions = `<button type="button" class="btn-mini" id="fp-add-btn">Añadir amigo</button>`;
+  } else if(st==='pending-in'){
+    actions = `<button type="button" class="btn-mini" id="fp-accept-btn">Aceptar</button>`;
+  } else if(st==='pending-out'){
+    actions = `<span class="chip-status">Solicitud enviada</span>`;
+  } else if(st==='me'){
+    actions = `<span class="chip-status">Tú</span>`;
+  }
+  $('#friend-profile-header').innerHTML = `${avatarHtml(u)}<span class="fp-name">@${escapeHtml(u.username)}</span>${actions}`;
+  const fr = friends.find(f=> f.id===u.id);
+  if($('#fp-unfriend-btn')) $('#fp-unfriend-btn').onclick = ()=> removeFriend(fr || u);
+  if($('#fp-msg-btn')) $('#fp-msg-btn').onclick = ()=>{ const id = u.id; closeFriendProfile(); openDirectChat(id); };
+  if($('#fp-add-btn')) $('#fp-add-btn').onclick = async ()=>{
+    $('#fp-add-btn').disabled = true;
+    await sendFriendRequest(u.id);
+    if(friendProfile && friendProfile.id===u.id) openFriendProfile(u);
+  };
+  if($('#fp-accept-btn')) $('#fp-accept-btn').onclick = async ()=>{
+    const req = incomingRequests.find(r=> r.requester_id===u.id);
+    if(!req) return;
+    $('#fp-accept-btn').disabled = true;
+    await respondFriendRequest(req.id, true);
+    const nowFriend = friends.find(f=> f.id===u.id);
+    if(friendProfile && friendProfile.id===u.id) openFriendProfile(nowFriend || u);
+  };
+}
+// Abre el perfil de cualquier usuario a partir de su id o de su @nombre
+// (desde el Muro, el chat, los grupos, las solicitudes...).
+const profileCache = {};
+async function openUserProfile(idOrUser, byUsername){
+  if(!idOrUser || !currentUser) return;
+  let u = null;
+  if(byUsername){
+    const name = String(idOrUser).replace(/^@/, '');
+    u = friends.find(f=> f.username===name) || Object.values(profileCache).find(p=> p.username===name) || null;
+    if(!u){
+      const { data } = await sb.from('profiles').select('id,username,avatar_url,is_public').eq('username', name).maybeSingle();
+      u = data || null;
+    }
+    if(!u){ alert('No se ha encontrado a @'+name+'.'); return; }
+  } else {
+    const id = String(idOrUser);
+    u = friends.find(f=> f.id===id) || (id===currentUser.id ? currentUser : null) || profileCache[id] || null;
+    if(!u){
+      const { data } = await sb.from('profiles').select('id,username,avatar_url,is_public').eq('id', id).maybeSingle();
+      u = data || null;
+    }
+    if(!u) return;
+  }
+  profileCache[u.id] = u;
+  const fr = friends.find(f=> f.id===u.id);
+  openFriendProfile(fr || { id:u.id, username:u.username, avatar_url:u.avatar_url, is_public:u.is_public });
+}
+// Cualquier elemento con data-profile-id (o data-profile-user="@nombre")
+// abre ese perfil al tocarlo. Va en fase de captura para adelantarse a lo
+// que haga la fila o la tarjeta de alrededor al tocarla.
+document.addEventListener('click', e=>{
+  const el = e.target.closest && e.target.closest('[data-profile-id],[data-profile-user]');
+  if(!el || !currentUser) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(el.dataset.profileId) openUserProfile(el.dataset.profileId);
+  else openUserProfile(el.dataset.profileUser, true);
+}, true);
 // Eliminar a un amigo: se borra la amistad (los dos dejáis de ser amigos:
 // ya no podéis cotillear vuestros repositorios ni crear chats nuevos). Los
 // mensajes que ya teníais en el chat no se borran.
@@ -3643,7 +3781,7 @@ async function loadFriendRepo(){
   // cargada y el amigo pudo cambiar su privacidad mientras tanto).
   const { data: freshProfile } = await sb.from('profiles').select('id,username,avatar_url,is_public').eq('id', friendProfile.id).maybeSingle();
   if(freshProfile) friendProfile.is_public = freshProfile.is_public;
-  if(friendProfile.is_public === false){
+  if(friendProfile.is_public === false && friendProfile.id !== currentUser.id){
     $('#friend-profile-body').innerHTML = '<div class="empty-hint">Este perfil es privado — no puedes ver su repositorio.</div>';
     return;
   }
@@ -4023,7 +4161,7 @@ function renderChatMessages(scrollToEnd){
     }
     if(m.body) content += `<div class="msg-bubble">${escapeHtml(m.body)}</div>`;
     return `<div class="msg ${mine?'mine':'theirs'} ${m._pending?'pending':''}">
-      ${showSender ? `<div class="msg-sender">@${escapeHtml(sender ? sender.username : '?')}</div>` : ''}
+      ${showSender ? `<div class="msg-sender"><span class="profile-link"${profileAttr(m.sender_id)}>@${escapeHtml(sender ? sender.username : '?')}</span></div>` : ''}
       ${content}
       ${showTime ? `<div class="msg-time">${m._pending ? 'Enviando…' : msgTime(m.created_at)}</div>` : ''}
     </div>`;
@@ -4184,7 +4322,7 @@ function renderGroupInfo(){
       ? `<button type="button" class="btn-mini btn-mini-ghost" data-toggle-admin="${p.id}">${p.is_admin ? 'Quitar admin' : 'Hacer admin'}</button>
          <button type="button" class="member-del" data-remove-member="${p.id}" aria-label="Quitar del grupo">${ICON_TRASH}</button>`
       : '';
-    return `<div class="member-row">${avatarHtml(p)}<span class="user-row-name">@${escapeHtml(p.username)}${me ? ' (tú)' : ''}</span>${p.is_admin ? '<span class="admin-chip">Admin</span>' : ''}${actions}</div>`;
+    return `<div class="member-row">${profileAvatarHtml(p)}<span class="user-row-name"><span class="profile-link"${profileAttr(p.id)}>@${escapeHtml(p.username)}</span>${me ? ' (tú)' : ''}</span>${p.is_admin ? '<span class="admin-chip">Admin</span>' : ''}${actions}</div>`;
   }).join('');
   $all('[data-toggle-admin]').forEach(b=> b.onclick = ()=> toggleGroupAdmin(b.dataset.toggleAdmin));
   $all('[data-remove-member]').forEach(b=> b.onclick = ()=> removeGroupMember(b.dataset.removeMember));
@@ -4196,7 +4334,8 @@ async function refreshGroupInfo(){
 }
 function openGroupInfo(){
   const c = chatSummaries.find(x=> x.chat_id===openChatId);
-  if(!c || !c.is_group) return;
+  if(!c) return;
+  if(!c.is_group){ if(c.other_id) openUserProfile(c.other_id); return; }
   renderGroupInfo();
   showModal($('#group-info-modal'));
 }
@@ -4482,8 +4621,8 @@ function renderWallFeed(){
       : `<button type="button" class="wall-action-btn" data-wall-add="${p.id}">${ICON_PLUS_CIRCLE}<span>Añadir</span></button>`;
     return `<div class="wall-post" data-post="${p.id}">
       <div class="wall-post-header">
-        ${avatarHtml(p.author)}
-        <span class="wall-post-user">@${escapeHtml((p.author&&p.author.username)||'?')}</span>
+        ${profileAvatarHtml(p.author, p.user_id)}
+        <span class="wall-post-user profile-link"${profileAttr(p.user_id)}>@${escapeHtml((p.author&&p.author.username)||'?')}</span>
         <span class="wall-post-time">${timeAgo(p.created_at)}</span>
       </div>
       ${d.image_url ? `<div class="wall-post-photo" data-wall-open="${p.id}"><img src="${d.image_url}" alt=""></div>` : ''}
@@ -4528,7 +4667,7 @@ function renderWallCommentsList(){
   const list = wallComments.filter(c=> c.post_id===openingCommentsForPost);
   const box = $('#wall-comments-list');
   box.innerHTML = list.length
-    ? list.map(c=> `<div class="wall-comment-row">${avatarHtml(c.author)}<div class="wall-comment-body"><span class="wall-comment-user">@${escapeHtml((c.author&&c.author.username)||'?')}</span><span class="wall-comment-text">${escapeHtml(c.text)}</span></div></div>`).join('')
+    ? list.map(c=> `<div class="wall-comment-row">${profileAvatarHtml(c.author, c.user_id)}<div class="wall-comment-body"><span class="wall-comment-user profile-link"${profileAttr(c.user_id)}>@${escapeHtml((c.author&&c.author.username)||'?')}</span><span class="wall-comment-text">${escapeHtml(c.text)}</span></div></div>`).join('')
     : '<div class="empty-hint">Sé el primero en comentar.</div>';
 }
 function openWallComments(postId){
@@ -4876,7 +5015,7 @@ async function runExploreSearch(){
   const total = regs.length;
   box.innerHTML = exploreResults.map((r, i)=>{
     const d = r.dish;
-    const who = r.from ? '@'+escapeHtml(r.from.username) : 'Comunidad';
+    const who = r.from ? `<span class="profile-link"${profileAttr(r.from.id)}>@${escapeHtml(r.from.username)}</span>` : 'Comunidad';
     const match = total>1 ? ` · <span class="explore-match">${r.matched} de ${total}</span>` : '';
     return `<div class="shared-dish-row" data-explore-open="${i}">
       ${d.image_url ? `<img class="shared-dish-thumb" src="${d.image_url}" alt="">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
