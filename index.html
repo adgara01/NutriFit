@@ -44,6 +44,13 @@ input[type=range], input[type=checkbox], input[type=radio]{accent-color:var(--ac
 .hidden{display:none !important;}
 button{cursor:pointer; border:none;}
 
+/* ---------- ARRANQUE (sin parpadeo del login) ---------- */
+#boot-splash{display:none;}
+html.nf-boot #login-view{display:none;}
+html.nf-boot #boot-splash{position:fixed; inset:0; z-index:300; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;}
+.boot-logo{font-size:30px; font-weight:800; letter-spacing:-0.02em;}
+.boot-spinner{width:22px; height:22px; border:2.5px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite;}
+
 /* ---------- LOGIN ---------- */
 #login-view{
   min-height:100vh; display:flex; align-items:center; justify-content:center;
@@ -316,6 +323,42 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   background:var(--card2); margin-bottom:14px; border:1px solid var(--border);
 }
 .dish-photo-wrap img{width:100%; height:100%; object-fit:cover; display:block;}
+/* Carrusel de fotos (ficha y Muro): se desliza con el dedo, puntos abajo */
+.photo-track{position:absolute; inset:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none; overscroll-behavior-x:contain;}
+.photo-track::-webkit-scrollbar{display:none;}
+.photo-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always;}
+.photo-slide img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-select:none;}
+.photo-dots{position:absolute; left:0; right:0; bottom:9px; display:flex; justify-content:center; gap:5px; z-index:2; pointer-events:none;}
+.photo-dots span{width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.55); box-shadow:0 0 3px rgba(0,0,0,.35); transition:transform .2s, background .2s;}
+.photo-dots span.on{background:#fff; transform:scale(1.25);}
+.photo-tools{position:absolute; top:8px; right:8px; z-index:3; display:flex; gap:6px;}
+.photo-tool-btn{width:32px; height:32px; border-radius:50%; background:rgba(20,25,23,.55); color:#fff; display:flex; align-items:center; justify-content:center;
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);}
+.photo-tool-btn svg{width:16px; height:16px;}
+.photo-count-chip{position:absolute; top:10px; left:10px; z-index:3; font-size:11px; font-weight:600; color:#fff; background:rgba(20,25,23,.5);
+  padding:3px 8px; border-radius:999px; pointer-events:none;}
+.dish-photo-wrap:not(.has-photo) .photo-tools, .dish-photo-wrap:not(.has-photo) .photo-count-chip{display:none;}
+#dish-modal.dish-view-locked .photo-tools, #dish-modal.dish-preview .photo-tools{display:none;}
+.multi-photo-badge{position:absolute; top:7px; right:7px; z-index:2; width:22px; height:22px; border-radius:7px; background:rgba(20,25,23,.45); color:#fff;
+  display:flex; align-items:center; justify-content:center; pointer-events:none;}
+.multi-photo-badge svg{width:13px; height:13px;}
+.wall-post-photo{position:relative; overflow:hidden;}
+/* Visor de fotos a pantalla completa */
+.photo-viewer{position:fixed; inset:0; z-index:400; background:#000; display:flex; flex-direction:column; touch-action:pan-x;
+  animation:nf-fade-in .2s ease-out;}
+.photo-viewer.closing{animation:nf-fade-out .18s ease-in forwards;}
+.pv-top{position:absolute; top:0; left:0; right:0; z-index:2; display:flex; align-items:center; justify-content:space-between;
+  padding:calc(10px + env(safe-area-inset-top)) 14px 10px; color:#fff; font-size:14px; font-weight:600;
+  background:linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,0));}
+.pv-close{width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.16); color:#fff; display:flex; align-items:center; justify-content:center;}
+.pv-stage{flex:1; position:relative; will-change:transform;}
+.pv-track{position:absolute; inset:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch;}
+.pv-track::-webkit-scrollbar{display:none;}
+.pv-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always; display:flex; align-items:center; justify-content:center;}
+.pv-slide img{max-width:100%; max-height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none;}
+.photo-viewer .photo-dots{bottom:calc(18px + env(safe-area-inset-bottom));}
+@keyframes nf-fade-out{ to{ opacity:0; } }
 .dish-photo-placeholder{
   position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:8px; color:var(--muted); font-size:13px;
@@ -858,6 +901,12 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 </style>
 </head>
 <body>
+<script>
+/* Si en este móvil ya hay una sesión guardada, no se enseña la pantalla de
+   login mientras se comprueba: sale un arranque neutro y se entra directo. */
+try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localStorage.key(i))){ document.documentElement.classList.add('nf-boot'); break; } } }catch(e){}
+</script>
+<div id="boot-splash"><div class="boot-logo">NutriFit</div><div class="boot-spinner"></div></div>
 
 <!-- ================= LOGIN ================= -->
 <div id="login-view">
@@ -1236,15 +1285,21 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
     </button>
     <span class="autosave-status hidden" id="dish-autosave-status"></span>
     <div class="dish-photo-wrap" id="dish-photo-wrap">
-      <img id="dish-photo-preview" class="hidden" alt="">
+      <div class="photo-track" id="dish-photo-track"></div>
+      <div class="photo-dots" id="dish-photo-dots"></div>
+      <span class="photo-count-chip hidden" id="dish-photo-count"></span>
+      <div class="photo-tools">
+        <button type="button" class="photo-tool-btn" id="dish-photo-add" aria-label="Añadir fotos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button type="button" class="photo-tool-btn" id="dish-photo-del" aria-label="Quitar esta foto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg></button>
+      </div>
       <div class="dish-photo-placeholder">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        <span>Añadir foto</span>
+        <span>Añadir fotos</span>
       </div>
       <div class="photo-spinner" id="dish-photo-spinner"></div>
       <span class="shared-watermark hidden" id="dish-photo-watermark"></span>
     </div>
-    <input type="file" id="dish-photo-input" accept="image/*" class="visually-hidden">
+    <input type="file" id="dish-photo-input" accept="image/*" multiple class="visually-hidden">
 
     <div class="dish-title-row">
       <input type="text" id="dish-name" class="dish-name-input"
@@ -1513,6 +1568,15 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
   </div>
 </div>
 
+<!-- ================= VISOR DE FOTOS (pantalla completa) ================= -->
+<div id="photo-viewer" class="photo-viewer hidden" role="dialog" aria-label="Fotos">
+  <div class="pv-top"><span id="pv-count"></span>
+    <button type="button" class="pv-close" id="pv-close" aria-label="Cerrar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="pv-stage" id="pv-stage"><div class="pv-track" id="pv-track"></div></div>
+  <div class="photo-dots" id="pv-dots"></div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ===================== CONFIG ===================== */
@@ -1541,8 +1605,11 @@ let dishExistsRemote = false;   // false mientras el plato que se está editando
 // fila en la BD) no pasa por esto — siempre está "editable" mientras se crea.
 let dishViewMode = true;
 function dishFieldsLocked(){ return dishExistsRemote && dishViewMode; }
-let dishCurrentImageUrl = null; // última foto guardada de verdad (para poder limpiarla al subir otra)
-let dishPhotoFile = null;
+// Fotos del plato abierto, en orden (la primera es la portada):
+// {key, url} si ya está subida, o {key, file, preview} si está pendiente.
+let dishPhotos = [];
+const MAX_DISH_PHOTOS = 10;
+const photoUploads = {}; // key -> promesa de la URL (para no subir dos veces la misma foto)
 let selectedQuality = null;
 let dishSaveTimer = null;
 let dishSaveInFlight = null;
@@ -1609,6 +1676,7 @@ const ICON_PLATE = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" 
 const ICON_HEART = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
 const ICON_COMMENT = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
 const ICON_PLUS_CIRCLE = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>';
+const ICON_MULTI_PHOTO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="7" y="7" width="13" height="13" rx="2.5"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg>';
 const ICON_TRASH = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg>';
 const ICON_LOCK = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>';
 const ICON_UNLOCK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V7a5 5 0 0 1 9.5-3.5"/></svg>';
@@ -1700,9 +1768,30 @@ $('#auth-form').addEventListener('submit', async (e)=>{
   }
 });
 
-async function enterApp(profile){
-  currentUser = {
+/* Copia local de lo básico (perfil, platos y carpetas) para que al abrir la
+   app se vea todo al instante; por detrás se recarga de Supabase. */
+function bootCacheKey(authId){ return 'nutrifit_boot_'+authId; }
+function readBootCache(authId){
+  try{ const raw = localStorage.getItem(bootCacheKey(authId)); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+let bootCacheTimer = null;
+function saveBootCache(){
+  if(!currentUser || !currentUser.auth_user_id) return;
+  clearTimeout(bootCacheTimer);
+  bootCacheTimer = setTimeout(()=>{
+    try{
+      localStorage.setItem(bootCacheKey(currentUser.auth_user_id), JSON.stringify({ profile: currentUser.profileRow, dishes, folders, ts: Date.now() }));
+    }catch(e){ /* sin espacio o modo privado: no pasa nada */ }
+  }, 400);
+}
+function clearBootCache(){
+  try{ Object.keys(localStorage).filter(k=> k.startsWith('nutrifit_boot_')).forEach(k=> localStorage.removeItem(k)); }catch(e){}
+}
+function profileToCurrentUser(profile){
+  return {
     id: profile.id, username: profile.username,
+    auth_user_id: profile.auth_user_id || null,
+    profileRow: profile,
     avatar_url: profile.avatar_url || null,
     show_fitness: profile.show_fitness !== false,
     show_macros: profile.show_macros === true,
@@ -1711,12 +1800,35 @@ async function enterApp(profile){
     is_public: profile.is_public !== false,
     share_explore: profile.share_explore !== false
   };
+}
+// Llega el perfil recién leído de Supabase después de haber entrado con la
+// copia local: se actualiza lo que haya cambiado sin recargar nada más.
+function applyFreshProfile(profile){
+  if(!currentUser || profile.id!==currentUser.id) return;
+  const keepSeen = currentUser.last_seen_wall_at;
+  Object.assign(currentUser, profileToCurrentUser(profile));
+  if(keepSeen && (!currentUser.last_seen_wall_at || keepSeen > currentUser.last_seen_wall_at)) currentUser.last_seen_wall_at = keepSeen;
+  $('#drawer-username').textContent = '@'+profile.username;
+  renderDrawerProfile();
+  applyFitnessVisibility();
+  saveBootCache();
+}
+
+async function enterApp(profile, cache){
+  currentUser = profileToCurrentUser(profile);
+  document.documentElement.classList.remove('nf-boot');
+  if(cache){
+    // Se pinta ya con lo guardado en el móvil; lo de Supabase llega enseguida.
+    dishes = Array.isArray(cache.dishes) ? cache.dishes : [];
+    folders = Array.isArray(cache.folders) ? cache.folders : [];
+  }
   $('#drawer-username').textContent = '@'+profile.username;
   $('#login-view').classList.add('hidden');
   $('#app-view').classList.remove('hidden');
   renderDrawerProfile();
   applyFitnessVisibility();
   setSection('platos');
+  if(cache) renderGallery();
   openDrawer();
   await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems(), loadCart(), loadChats()]);
   await migrateLegacyIngredientsIfNeeded();
@@ -1725,6 +1837,7 @@ async function enterApp(profile){
   loadWeeklyLogs();
   subscribeWallRealtime();
   subscribeChatRealtime();
+  subscribeLiveUpdates();
   handleDeepLink();
   syncPushOnLogin();
 }
@@ -1761,25 +1874,98 @@ async function handleDeepLink(url){
 // Al volver a la app (desde otra app o con el móvil desbloqueado) se
 // refresca lo social, por si mientras tanto llegó algo nuevo.
 let lastResumeRefresh = 0;
+function refreshAllSocial(){
+  if(!currentUser) return;
+  lastResumeRefresh = Date.now();
+  loadFriendshipsState(); loadSharedDishes(); loadChats(); loadWallFeed();
+  if(openChatId && !modalHidden($('#chat-modal'))) loadChatMessages(openChatId);
+}
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState!=='visible' || !currentUser) return;
-  if(Date.now() - lastResumeRefresh < 15000) return;
-  lastResumeRefresh = Date.now();
-  loadFriendshipsState(); loadSharedDishes(); loadChats();
+  if(Date.now() - lastResumeRefresh < 3000) return;
+  refreshAllSocial();
 });
+window.addEventListener('online', ()=> refreshAllSocial());
+
+/* ===================== TODO EN VIVO =====================
+   Un canal de Supabase Realtime escucha lo que cambia en la base de datos
+   (amistades, grupos, me gusta, comentarios, recetas recibidas y tus avisos)
+   y recarga solo esa parte de la pantalla al momento, sin salir de la app.
+   Varias cosas seguidas se agrupan (liveRefresh) para no recargar de más. */
+let liveStarted = false;
+const liveTimers = {};
+function liveRefresh(key, fn, ms){
+  clearTimeout(liveTimers[key]);
+  liveTimers[key] = setTimeout(()=>{ if(currentUser) fn(); }, ms==null ? 250 : ms);
+}
+function liveChatsChanged(){
+  liveRefresh('chats', async ()=>{
+    await loadChats();
+    if(openChatId && !modalHidden($('#chat-modal'))){
+      if(!chatSummaries.some(c=> c.chat_id===openChatId)){
+        // Te han sacado del grupo mientras lo tenías abierto.
+        if(!modalHidden($('#group-info-modal'))) closeGroupInfo();
+        closeChat();
+        return;
+      }
+      await loadChatMessages(openChatId);
+      if(!modalHidden($('#group-info-modal'))) renderGroupInfo();
+    }
+  });
+}
+function subscribeLiveUpdates(){
+  if(liveStarted || !currentUser) return;
+  liveStarted = true;
+  const me = currentUser.id;
+  try{
+    let wasSubscribed = false;
+    sb.channel('nf-live-'+me)
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'notifications', filter:`recipient_id=eq.${me}` }, payload=>{
+        const n = payload && payload.new; if(!n) return;
+        if(n.kind==='friend_request' || n.kind==='friend_accepted') liveRefresh('friends', loadFriendshipsState);
+        else if(n.kind==='group_added' || n.kind==='group_admin') liveChatsChanged();
+        else if(n.kind==='wall_like' || n.kind==='wall_comment') liveRefresh('wall', loadWallFeed, 400);
+        else if(n.kind==='dish_shared') liveRefresh('shared', loadSharedDishes);
+      })
+      .on('postgres_changes', { event:'*', schema:'public', table:'friendships' }, ()=> liveRefresh('friends', loadFriendshipsState))
+      .on('postgres_changes', { event:'*', schema:'public', table:'chat_members' }, ()=> liveChatsChanged())
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'chats' }, ()=> liveChatsChanged())
+      .on('postgres_changes', { event:'*', schema:'public', table:'wall_likes' }, ()=> liveRefresh('wall', loadWallFeed, 400))
+      .on('postgres_changes', { event:'*', schema:'public', table:'wall_comments' }, ()=> liveRefresh('wall', loadWallFeed, 400))
+      .on('postgres_changes', { event:'DELETE', schema:'public', table:'wall_posts' }, ()=> liveRefresh('wall', loadWallFeed, 400))
+      .on('postgres_changes', { event:'*', schema:'public', table:'shared_dishes' }, ()=> liveRefresh('shared', loadSharedDishes))
+      .subscribe(status=>{
+        // Si la conexión se cayó (p. ej. con el móvil bloqueado) y vuelve,
+        // se recarga todo una vez por si algo pasó mientras tanto.
+        if(status==='SUBSCRIBED'){ if(wasSubscribed) refreshAllSocial(); wasSubscribed = true; }
+      });
+  }catch(e){ console.error('Realtime no disponible', e); }
+}
 
 async function init(){
-  const { data } = await sb.auth.getSession();
-  const session = data && data.session;
+  let session = null;
+  try{ const { data } = await sb.auth.getSession(); session = data && data.session; }catch(e){ console.error(e); }
   if(session){
+    const cache = readBootCache(session.user.id);
+    if(cache && cache.profile && cache.profile.auth_user_id===session.user.id){
+      // Entrada instantánea con la copia local; el perfil se refresca por detrás.
+      sb.from('profiles').select('*').eq('auth_user_id', session.user.id).maybeSingle()
+        .then(({ data: profile })=>{ if(profile) applyFreshProfile(profile); })
+        .catch(()=>{});
+      await enterApp(cache.profile, cache);
+      return;
+    }
     const { data: profile } = await sb.from('profiles').select('*').eq('auth_user_id', session.user.id).maybeSingle();
-    if(profile){ await enterApp(profile); return; }
+    if(profile){ await enterApp(profile); saveBootCache(); return; }
   }
+  document.documentElement.classList.remove('nf-boot');
 }
 
 $('#settings-logout-btn').onclick = async ()=>{
   await unsubscribeThisDeviceFromPush();
+  clearBootCache();
   try{ sb.removeAllChannels(); }catch(e){}
+  liveStarted = false;
   chatRealtimeStarted = false;
   chatSummaries = []; chatUnreadTotal = 0; cartItems = [];
   await sb.auth.signOut();
@@ -1896,8 +2082,11 @@ function attachDrawerSwipe(){
     if($('#app-view').classList.contains('hidden')) return;
     if(!modalHidden($('#dish-modal')) || !modalHidden($('#desc-modal'))) return;
     const isOpen = drawer.classList.contains('open');
+    if(pvOpen) return;
     if(!isOpen){
       if(e.target.closest('.week-board')) return;
+      // deslizar entre las fotos de un plato o del Muro no abre el menú
+      if(e.target.closest('.photo-track')) return;
       // en modo editar mosaico/carpeta, el arrastre horizontal es para archivar
       // platos en carpetas, no para abrir el menú lateral
       if((galleryEditMode || folderEditMode) && e.target.closest('#gallery, #folder-gallery')) return;
@@ -1971,12 +2160,14 @@ async function loadDishes(){
   dishes = data||[];
   renderGallery();
   if(!modalHidden($('#folder-modal'))) renderFolderGallery();
+  saveBootCache();
 }
 async function loadFolders(){
   const { data, error } = await sb.from('dish_folders').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:true});
   if(error){ console.error(error); return; }
   folders = data||[];
   renderGallery();
+  saveBootCache();
 }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
 
@@ -1985,6 +2176,7 @@ function dishCardHtml(d){
     <div class="dish-card" data-id="${d.id}" data-type="dish">
       <div class="dish-thumb-wrap">
         ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="" draggable="false">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
+        ${dishPhotoList(d).length>1 ? `<span class="multi-photo-badge">${ICON_MULTI_PHOTO}</span>` : ''}
         ${d.shared_from_username ? `<span class="shared-watermark">@${escapeHtml(d.shared_from_username)}</span>` : ''}
       </div>
       <div class="dish-info">
@@ -2477,16 +2669,13 @@ function openDishModal(dish, preview){
   editingDishId = dish ? dish.id : uuid();
   dishExistsRemote = !!dish;
   dishViewMode = true; // un plato ya existente se abre siempre en modo vista, hay que tocar "Editar"
-  dishCurrentImageUrl = dish ? (dish.image_url||null) : null;
-  dishPhotoFile = null;
+  dishPhotos = dishPhotoList(dish).map(url=> ({ key: uuid(), url }));
   selectedQuality = dish ? dish.quality : null;
   setAutosaveStatus('');
   setDishClosingLocked(false);
 
-  const wrap = $('#dish-photo-wrap'), img = $('#dish-photo-preview');
-  wrap.classList.remove('photo-busy');
-  if(dish && dish.image_url){ img.src = dish.image_url; img.classList.remove('hidden'); wrap.classList.add('has-photo'); }
-  else { img.src = ''; img.classList.add('hidden'); wrap.classList.remove('has-photo'); }
+  $('#dish-photo-wrap').classList.remove('photo-busy');
+  renderDishPhotos(0);
   $('#dish-photo-input').value = '';
   // Marca de agua: solo en platos que llegaron por Compartir (tienen
   // shared_from_username guardado desde que se aceptaron).
@@ -2996,40 +3185,166 @@ async function normalizeImageFile(file){
   return new File([blob], 'foto.jpg', { type:'image/jpeg' });
 }
 
-$('#dish-photo-wrap').onclick = ()=>{ if(dishFieldsLocked()) return; $('#dish-photo-input').click(); };
-$('#dish-photo-input').addEventListener('change', async e=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const wrap = $('#dish-photo-wrap');
-  // Ojo: antes se ocultaba el placeholder ("Añadir foto") de inmediato, antes
-  // de que la nueva imagen estuviera lista — eso dejaba un hueco en blanco
-  // durante el procesado. Ahora el placeholder se queda hasta que la nueva
-  // foto está de verdad lista para pintarse, y mientras tanto se ve un
-  // spinner discreto encima para que quede claro que está pasando algo.
-  wrap.classList.add('photo-busy');
-  try{
-    const normalized = await normalizeImageFile(file);
-    dishPhotoFile = normalized;
-    // Se espera a que el FileReader termine de verdad (no solo a que se
-    // lance) antes de quitar el spinner, así el spinner nunca desaparece
-    // un instante antes de que la miniatura esté lista para pintarse.
-    const dataUrl = await new Promise((resolve, reject)=>{
-      const reader = new FileReader();
-      reader.onload = ev=> resolve(ev.target.result);
-      reader.onerror = ()=> reject(new Error('No se pudo leer la imagen'));
-      reader.readAsDataURL(normalized);
+/* ---------- Fotos del plato: carrusel, añadir, quitar y pantalla completa ---------- */
+function dishPhotoList(d){
+  if(!d) return [];
+  const arr = Array.isArray(d.image_urls) ? d.image_urls.filter(Boolean) : [];
+  if(arr.length) return arr;
+  return d.image_url ? [d.image_url] : [];
+}
+function photoDotsHtml(n, active){
+  if(n<2) return '';
+  return Array.from({length:n}, (_,i)=> `<span class="${i===(active||0)?'on':''}"></span>`).join('');
+}
+function carouselIndex(track){
+  const w = track.clientWidth || 1;
+  return Math.max(0, Math.min(track.children.length-1, Math.round(track.scrollLeft / w)));
+}
+// Une un carrusel (pista deslizable) con sus puntos; onChange(i) al cambiar de foto.
+function wireCarousel(track, dots, onChange){
+  if(!track || track._wired) return;
+  track._wired = true;
+  let last = -1, raf = 0;
+  track.addEventListener('scroll', ()=>{
+    if(raf) return;
+    raf = requestAnimationFrame(()=>{
+      raf = 0;
+      const i = carouselIndex(track);
+      if(i===last) return;
+      last = i;
+      if(dots) Array.from(dots.children).forEach((d,k)=> d.classList.toggle('on', k===i));
+      if(onChange) onChange(i);
     });
-    $('#dish-photo-preview').src = dataUrl;
-    $('#dish-photo-preview').classList.remove('hidden');
-    wrap.classList.add('has-photo');
-    scheduleDishAutosave(true); // la foto se guarda sola, no hace falta pulsar nada (salvo en un plato nuevo, ver "Crear plato")
-  }catch(err){
-    alert('No se pudo procesar esa foto, prueba con otra: '+err.message);
-    dishPhotoFile = null;
+  }, { passive:true });
+}
+function scrollCarouselTo(track, i){
+  requestAnimationFrame(()=>{ track.scrollLeft = i * track.clientWidth; });
+}
+function renderDishPhotos(goTo){
+  const wrap = $('#dish-photo-wrap'), track = $('#dish-photo-track');
+  track.innerHTML = dishPhotos.map((p,i)=> `<div class="photo-slide" data-photo-i="${i}"><img src="${p.url || p.preview}" alt="" draggable="false"></div>`).join('');
+  wrap.classList.toggle('has-photo', dishPhotos.length>0);
+  const idx = Math.max(0, Math.min(goTo||0, dishPhotos.length-1));
+  $('#dish-photo-dots').innerHTML = photoDotsHtml(dishPhotos.length, idx);
+  updateDishPhotoChip(idx);
+  $('#dish-photo-add').classList.toggle('hidden', dishPhotos.length>=MAX_DISH_PHOTOS);
+  wireCarousel(track, $('#dish-photo-dots'), updateDishPhotoChip);
+  scrollCarouselTo(track, idx);
+}
+function updateDishPhotoChip(i){
+  const chip = $('#dish-photo-count');
+  chip.textContent = `${i+1}/${dishPhotos.length}`;
+  chip.classList.toggle('hidden', dishPhotos.length<2);
+}
+$('#dish-photo-wrap').onclick = (e)=>{
+  if(e.target.closest('#dish-photo-add')){ if(!dishFieldsLocked()) $('#dish-photo-input').click(); return; }
+  if(e.target.closest('#dish-photo-del')){ removeCurrentDishPhoto(); return; }
+  const slide = e.target.closest('.photo-slide');
+  if(slide){ openPhotoViewer(dishPhotos.map(p=> p.url || p.preview), Number(slide.dataset.photoI)); return; }
+  if(dishFieldsLocked()) return;
+  $('#dish-photo-input').click();
+};
+function removeCurrentDishPhoto(){
+  if(dishFieldsLocked() || !dishPhotos.length) return;
+  const i = carouselIndex($('#dish-photo-track'));
+  if(!confirm(dishPhotos.length>1 ? '¿Quitar esta foto?' : '¿Quitar la foto del plato?')) return;
+  dishPhotos.splice(i, 1);
+  renderDishPhotos(Math.min(i, dishPhotos.length-1));
+  scheduleDishAutosave(true);
+}
+function readAsDataUrl(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ev=> resolve(ev.target.result);
+    reader.onerror = ()=> reject(new Error('No se pudo leer la imagen'));
+    reader.readAsDataURL(file);
+  });
+}
+$('#dish-photo-input').addEventListener('change', async e=>{
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';
+  if(!files.length) return;
+  const room = MAX_DISH_PHOTOS - dishPhotos.length;
+  if(room<=0){ alert(`Máximo ${MAX_DISH_PHOTOS} fotos por plato.`); return; }
+  if(files.length>room) alert(`Solo caben ${room} foto${room===1?'':'s'} más (máximo ${MAX_DISH_PHOTOS}).`);
+  const forDish = editingDishId;
+  const wrap = $('#dish-photo-wrap');
+  // El spinner se queda hasta que las miniaturas están listas para pintarse.
+  wrap.classList.add('photo-busy');
+  const firstNew = dishPhotos.length;
+  try{
+    for(const file of files.slice(0, room)){
+      try{
+        const normalized = await normalizeImageFile(file);
+        const preview = await readAsDataUrl(normalized);
+        if(forDish!==editingDishId) return; // se cerró la ficha mientras tanto
+        dishPhotos.push({ key: uuid(), file: normalized, preview });
+      }catch(err){ alert('No se pudo procesar una de las fotos, prueba con otra: '+err.message); }
+    }
+    if(dishPhotos.length>firstNew){
+      renderDishPhotos(firstNew);
+      scheduleDishAutosave(true); // se guardan solas (salvo en un plato nuevo, ver "Crear plato")
+    }
   }finally{
     wrap.classList.remove('photo-busy');
   }
 });
+
+/* Visor a pantalla completa: se desliza entre fotos y se cierra con la X o
+   arrastrando hacia abajo. */
+let pvOpen = false;
+function openPhotoViewer(urls, index){
+  urls = (urls||[]).filter(Boolean);
+  if(!urls.length) return;
+  const v = $('#photo-viewer'), track = $('#pv-track');
+  track.innerHTML = urls.map(u=> `<div class="pv-slide"><img src="${u}" alt="" draggable="false"></div>`).join('');
+  const i = Math.max(0, Math.min(index||0, urls.length-1));
+  $('#pv-dots').innerHTML = photoDotsHtml(urls.length, i);
+  const setCount = (k)=> $('#pv-count').textContent = urls.length>1 ? `${k+1} / ${urls.length}` : '';
+  setCount(i);
+  track._onChange = setCount;
+  if(!track._wired) wireCarousel(track, $('#pv-dots'), k=> track._onChange && track._onChange(k));
+  $('#pv-stage').style.transform = ''; v.style.background = '';
+  v.classList.remove('closing', 'hidden');
+  if(!pvOpen) lockBodyScroll();
+  pvOpen = true;
+  track.scrollLeft = 0;
+  requestAnimationFrame(()=>{ track.scrollLeft = i * track.clientWidth; });
+}
+function closePhotoViewer(instant){
+  if(!pvOpen) return;
+  pvOpen = false;
+  unlockBodyScroll();
+  const v = $('#photo-viewer');
+  if(instant || REDUCED_MOTION){ v.classList.add('hidden'); return; }
+  v.classList.add('closing');
+  setTimeout(()=>{ if(!pvOpen){ v.classList.remove('closing'); v.classList.add('hidden'); } }, 180);
+}
+$('#pv-close').onclick = ()=> closePhotoViewer();
+document.addEventListener('keydown', e=>{ if(pvOpen && e.key==='Escape') closePhotoViewer(); });
+(function(){
+  const v = $('#photo-viewer'), stage = $('#pv-stage');
+  let x0=0, y0=0, t0=0, mode=null, dy=0;
+  v.addEventListener('touchstart', e=>{ if(e.touches.length!==1) return; x0=e.touches[0].clientX; y0=e.touches[0].clientY; t0=Date.now(); mode=null; dy=0; }, { passive:true });
+  v.addEventListener('touchmove', e=>{
+    if(e.touches.length!==1) return;
+    const dx = e.touches[0].clientX-x0; dy = e.touches[0].clientY-y0;
+    if(!mode){ if(Math.abs(dx)<8 && Math.abs(dy)<8) return; mode = (dy>0 && Math.abs(dy)>Math.abs(dx)) ? 'down' : 'side'; }
+    if(mode!=='down') return;
+    e.preventDefault();
+    stage.style.transition = 'none';
+    stage.style.transform = `translateY(${Math.max(0,dy)}px) scale(${Math.max(.85, 1-dy/1600)})`;
+    v.style.background = `rgba(0,0,0,${Math.max(.25, 1-dy/500)})`;
+  }, { passive:false });
+  v.addEventListener('touchend', ()=>{
+    if(mode!=='down') return;
+    const fast = dy>60 && (Date.now()-t0)<250;
+    stage.style.transition = 'transform .22s cubic-bezier(.32,.72,0,1)';
+    if(dy>120 || fast){ closePhotoViewer(); }
+    else { stage.style.transform = ''; v.style.background = ''; }
+    mode = null;
+  });
+})();
 
 /* Antes se subía siempre a la MISMA ruta (${id}.jpg) con upsert:true y se
    intentaba "romper" la caché añadiendo ?v=timestamp a la URL. En la
@@ -3041,22 +3356,20 @@ $('#dish-photo-input').addEventListener('change', async e=>{
    pueda servir bytes antiguos; la foto anterior se borra del bucket a
    continuación, de forma silenciosa (si falla el borrado no importa, es
    solo limpieza). */
-async function uploadDishPhoto(dishId, file, prevUrl){
-  const path = `${currentUser.id}/${dishId}-${Date.now()}.jpg`;
+async function uploadDishPhoto(dishId, file){
+  const path = `${currentUser.id}/${dishId}-${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;
   const { error } = await sb.storage.from('dish-photos').upload(path, file, { upsert:false, contentType:file.type, cacheControl:'31536000' });
   if(error) throw error;
   const { data } = sb.storage.from('dish-photos').getPublicUrl(path);
-  if(prevUrl){
-    try{
-      const marker = '/dish-photos/';
-      const idx = prevUrl.indexOf(marker);
-      if(idx>=0){
-        const oldPath = decodeURIComponent(prevUrl.slice(idx+marker.length).split('?')[0]);
-        if(oldPath && oldPath!==path) await sb.storage.from('dish-photos').remove([oldPath]);
-      }
-    }catch(e){ /* limpieza best-effort, no crítico */ }
-  }
+  // Las fotos quitadas no se borran del almacenamiento: puede que sigan
+  // saliendo en una receta ya enviada por el chat o publicada en el Muro.
   return data.publicUrl;
+}
+function uploadDishPhotoOnce(dishId, p){
+  if(!photoUploads[p.key]){
+    photoUploads[p.key] = uploadDishPhoto(dishId, p.file).catch(err=>{ delete photoUploads[p.key]; throw err; });
+  }
+  return photoUploads[p.key];
 }
 
 /* ===================== AUTOGUARDADO DE LA FICHA DE PLATO =====================
@@ -3093,8 +3406,7 @@ function captureDishSnapshot(){
     calories: $('#dish-calories').value ? Number($('#dish-calories').value) : null,
     duration_min: $('#dish-duration').value ? Number($('#dish-duration').value) : null,
     quality: selectedQuality,
-    photoFile: dishPhotoFile,
-    prevImageUrl: dishCurrentImageUrl,
+    photos: dishPhotos.map(p=> p.url ? { key:p.key, url:p.url } : { key:p.key, file:p.file }),
     protein_g: $('#macro-protein').value ? Number($('#macro-protein').value) : null,
     carbs_g: $('#macro-carbs').value ? Number($('#macro-carbs').value) : null,
     fat_g: $('#macro-fat').value ? Number($('#macro-fat').value) : null,
@@ -3137,7 +3449,6 @@ function runDishAutosave(snap){
   // sería crear entradas a medio rellenar sin que el usuario lo pidiera.
   if(!snap.wasExisting) return;
   if(!snap.name) return;
-  if(dishPhotoFile===snap.photoFile) dishPhotoFile = null; // esta foto ya queda "recogida" en este guardado
   if(dishSaveInFlight){
     dishSaveQueuedSnapshot = snap; // solo interesa la versión más reciente pendiente
     return;
@@ -3155,12 +3466,15 @@ function runDishAutosave(snap){
 }
 async function doSaveDishSnapshot(snap){
   setAutosaveStatus('Guardando…', snap.id);
-  let image_url = snap.prevImageUrl;
+  let image_urls = [];
   try{
-    if(snap.photoFile){
-      if(snap.id===editingDishId) $('#dish-photo-wrap').classList.add('photo-busy');
-      image_url = await uploadDishPhoto(snap.id, snap.photoFile, snap.prevImageUrl);
-      if(snap.id===editingDishId){ dishCurrentImageUrl = image_url; $('#dish-photo-wrap').classList.remove('photo-busy'); }
+    const pendingPhotos = snap.photos.filter(p=> !p.url);
+    if(pendingPhotos.length && snap.id===editingDishId) $('#dish-photo-wrap').classList.add('photo-busy');
+    image_urls = await Promise.all(snap.photos.map(p=> p.url ? p.url : uploadDishPhotoOnce(snap.id, p)));
+    if(snap.id===editingDishId){
+      // Las fotos ya subidas pasan a tener su URL definitiva.
+      snap.photos.forEach((p,i)=>{ const live = dishPhotos.find(x=> x.key===p.key); if(live && !live.url){ live.url = image_urls[i]; delete live.file; } });
+      $('#dish-photo-wrap').classList.remove('photo-busy');
     }
     // Cada ingrediente se enlaza con el catálogo compartido (se crea uno
     // nuevo la primera vez que se escribe, si no existía todavía).
@@ -3172,7 +3486,7 @@ async function doSaveDishSnapshot(snap){
       id: snap.id, user_id: currentUser.id, name: snap.name,
       ingredients: resolvedIngredients, servings_base: snap.servings_base || 1, description: snap.description,
       calories: snap.calories, duration_min: snap.duration_min,
-      quality: snap.quality, image_url,
+      quality: snap.quality, image_url: image_urls[0] || null, image_urls,
       protein_g: snap.protein_g, carbs_g: snap.carbs_g, fat_g: snap.fat_g, fiber_g: snap.fiber_g
     };
     const { error } = await updateWithRetry(()=> sb.from('dishes').upsert(payload));
@@ -3412,6 +3726,7 @@ async function loadFriendshipsState(){
     .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`);
   if(error){ console.error(error); return; }
   const rows = data||[];
+  const prevFriendIds = friends.map(f=> f.id).sort().join(',');
   friends = rows.filter(r=>r.status==='accepted').map(r=> ({ ...(r.requester_id===currentUser.id ? r.addressee : r.requester), friendship_id: r.id }));
   incomingRequests = rows.filter(r=> r.status==='pending' && r.addressee_id===currentUser.id);
   outgoingRequests = rows.filter(r=> r.status==='pending' && r.requester_id===currentUser.id);
@@ -3419,7 +3734,27 @@ async function loadFriendshipsState(){
   renderIncomingRequests();
   updateNotifBadges();
   exploreFriendDishes = null; // se vuelve a cargar la próxima vez que se entre en Explorar
+  const searchTerm = $('#social-search').value.trim();
+  if(searchTerm && $('#social-search-results').children.length) runUserSearch(searchTerm);
+  // Si alguien pasa a ser (o deja de ser) amigo, el Muro y los chats
+  // cambian también: se recargan solos, sin tener que salir de la app.
+  if(friendsLoadedOnce && prevFriendIds !== friends.map(f=> f.id).sort().join(',')){
+    liveRefresh('wall', loadWallFeed, 0);
+    liveRefresh('chats', loadChats, 0);
+  }
+  friendsLoadedOnce = true;
+  // El perfil que esté abierto se actualiza (botones Aceptar/Añadir/Eliminar...).
+  if(friendProfile && !modalHidden($('#friend-profile-modal'))){
+    const id = friendProfile.id;
+    const before = friendProfile._rel;
+    const now = profileRelation(id);
+    if(before !== now){
+      const fr = friends.find(f=> f.id===id);
+      openFriendProfile(fr || friendProfile);
+    }
+  }
 }
+let friendsLoadedOnce = false;
 function renderFriendsList(){
   const box = $('#friends-list');
   if(!friends.length){ box.innerHTML = '<div class="empty-hint">Aún no tienes amigos añadidos.</div>'; return; }
@@ -3446,15 +3781,23 @@ function renderIncomingRequests(){
   $all('[data-accept]').forEach(b=> b.onclick = ()=> respondFriendRequest(b.dataset.accept, true));
   $all('[data-reject]').forEach(b=> b.onclick = ()=> respondFriendRequest(b.dataset.reject, false));
 }
+// Aceptar o rechazar se ve al instante; la escritura va por detrás y, si
+// fallara, se vuelve a cargar el estado real.
 async function respondFriendRequest(id, accept){
-  if(accept){
-    const { error } = await sb.from('friendships').update({ status:'accepted' }).eq('id', id);
-    if(error){ alert(error.message); return; }
-  } else {
-    const { error } = await sb.from('friendships').delete().eq('id', id);
-    if(error){ alert(error.message); return; }
+  const req = incomingRequests.find(r=> r.id===id);
+  incomingRequests = incomingRequests.filter(r=> r.id!==id);
+  if(accept && req && req.requester && !friends.some(f=> f.id===req.requester_id)){
+    friends = [...friends, { ...req.requester, friendship_id: req.id }];
   }
+  renderFriendsList();
+  renderIncomingRequests();
+  updateNotifBadges();
+  const { error } = accept
+    ? await sb.from('friendships').update({ status:'accepted' }).eq('id', id)
+    : await sb.from('friendships').delete().eq('id', id);
+  if(error) alert(error.message);
   await loadFriendshipsState();
+  if(accept && !error){ loadWallFeed(); loadChats(); }
 }
 
 let socialSearchTimer = null;
@@ -3485,8 +3828,12 @@ function renderSearchResults(list){
   $all('[data-add-friend]').forEach(btn=> btn.onclick = ()=> sendFriendRequest(btn.dataset.addFriend));
 }
 async function sendFriendRequest(profileId){
+  const tmp = { id:'tmp-'+uuid(), requester_id: currentUser.id, addressee_id: profileId, status:'pending' };
+  outgoingRequests = [...outgoingRequests, tmp];
+  const term0 = $('#social-search').value.trim();
+  if(term0) runUserSearch(term0);
   const { error } = await sb.from('friendships').insert({ requester_id: currentUser.id, addressee_id: profileId, status:'pending' });
-  if(error){ alert(error.message); return; }
+  if(error){ outgoingRequests = outgoingRequests.filter(r=> r!==tmp); alert(error.message); return; }
   await loadFriendshipsState();
   const term = $('#social-search').value.trim();
   if(term) runUserSearch(term);
@@ -3539,7 +3886,7 @@ async function addSharedDish(sharedId){
     const d = shared.dish_snapshot || {};
     const { error } = await sb.from('dishes').insert({
       id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
-      image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
+      image_url: d.image_url||null, image_urls: dishPhotoList(d), ingredients: d.ingredients||[], description: d.description||'',
       calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
       shared_from_username: (shared.from && shared.from.username) || null,
       protein_g: d.protein_g||null, carbs_g: d.carbs_g||null, fat_g: d.fat_g||null, fiber_g: d.fiber_g||null,
@@ -3687,6 +4034,7 @@ function renderProfileHeader(){
   const u = friendProfile;
   if(!u) return;
   const st = profileRelation(u.id);
+  u._rel = st;
   let actions = '';
   if(st==='friends'){
     actions = `<button type="button" class="friend-msg-btn" id="fp-msg-btn" aria-label="Escribir a @${escapeHtml(u.username)}">${ICON_CHAT}</button>
@@ -3767,7 +4115,10 @@ async function removeFriend(friend){
   const { error } = await q;
   if(error){ alert(error.message); return; }
   closeFriendProfile();
+  friends = friends.filter(f=> f.id!==friend.id);
+  renderFriendsList();
   await loadFriendshipsState();
+  loadWallFeed(); loadChats();
 }
 function closeFriendProfile(){
   hideModal($('#friend-profile-modal'));
@@ -3835,7 +4186,7 @@ function renderFriendProfileBody(){
 async function addFriendDishToRepo(dish, fromUsername){
   const { error } = await sb.from('dishes').insert({
     id: uuid(), user_id: currentUser.id, name: dish.name||'Receta',
-    image_url: dish.image_url||null, ingredients: dish.ingredients||[], description: dish.description||'',
+    image_url: dish.image_url||null, image_urls: dishPhotoList(dish), ingredients: dish.ingredients||[], description: dish.description||'',
     calories: dish.calories||null, quality: dish.quality||null, duration_min: dish.duration_min||null,
     shared_from_username: fromUsername || null,
     protein_g: dish.protein_g||null, carbs_g: dish.carbs_g||null, fat_g: dish.fat_g||null, fiber_g: dish.fiber_g||null,
@@ -3854,7 +4205,7 @@ $('#friend-profile-modal').addEventListener('click', e=>{ if(e.target.id==='frie
 // que siempre: si luego editas tu plato, lo ya enviado no cambia.
 function dishSnapshotOf(dish){
   return {
-    name: dish.name, image_url: dish.image_url, ingredients: dish.ingredients,
+    name: dish.name, image_url: dish.image_url, image_urls: dishPhotoList(dish), ingredients: dish.ingredients,
     description: dish.description, calories: dish.calories, quality: dish.quality,
     duration_min: dish.duration_min, servings_base: dish.servings_base || 1,
     protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g
@@ -4609,6 +4960,9 @@ function updateWallUnreadCount(){
 
 function renderWallFeed(){
   const box = $('#wall-feed');
+  // Al repintar (p. ej. tras un me gusta) cada carrusel sigue en la foto que estabas viendo.
+  const photoPos = {};
+  $all('#wall-feed .wall-post').forEach(el=>{ const t = el.querySelector('.photo-track'); if(t) photoPos[el.dataset.post] = carouselIndex(t); });
   if(!wallPosts.length){ box.innerHTML = '<div class="empty-hint">Todavía no hay nada en el Muro. ¡Publica tu primera receta desde su ficha!</div>'; return; }
   box.innerHTML = wallPosts.map(p=>{
     const d = p.dish_snapshot || {};
@@ -4625,7 +4979,8 @@ function renderWallFeed(){
         <span class="wall-post-user profile-link"${profileAttr(p.user_id)}>@${escapeHtml((p.author&&p.author.username)||'?')}</span>
         <span class="wall-post-time">${timeAgo(p.created_at)}</span>
       </div>
-      ${d.image_url ? `<div class="wall-post-photo" data-wall-open="${p.id}"><img src="${d.image_url}" alt=""></div>` : ''}
+      ${(()=>{ const ph = dishPhotoList(d); if(!ph.length) return '';
+        return `<div class="wall-post-photo" data-wall-open="${p.id}"><div class="photo-track">${ph.map(u=> `<div class="photo-slide"><img src="${u}" alt="" draggable="false"></div>`).join('')}</div><div class="photo-dots">${photoDotsHtml(ph.length, 0)}</div></div>`; })()}
       <div class="wall-post-body" data-wall-open="${p.id}">
         <div class="wall-post-dish">${escapeHtml(d.name||'Receta')}${d.calories?` · ${d.calories} kcal`:''}</div>
         ${p.caption ? `<div class="wall-post-caption">${escapeHtml(p.caption)}</div>` : ''}
@@ -4640,6 +4995,13 @@ function renderWallFeed(){
     </div>`;
   }).join('');
   $all('[data-wall-open]').forEach(el=> el.onclick = ()=> openWallDishPreview(el.dataset.wallOpen));
+  $all('#wall-feed .wall-post').forEach(post=>{
+    const ph = post.querySelector('.wall-post-photo'); if(!ph) return;
+    const track = ph.querySelector('.photo-track'), dots = ph.querySelector('.photo-dots');
+    wireCarousel(track, dots);
+    const i = photoPos[post.dataset.post];
+    if(i){ track.scrollLeft = i * track.clientWidth; Array.from(dots.children).forEach((d,k)=> d.classList.toggle('on', k===i)); }
+  });
   $all('[data-wall-like]').forEach(b=> b.onclick = ()=> toggleWallLike(b.dataset.wallLike));
   $all('[data-wall-comment]').forEach(b=> b.onclick = ()=> openWallComments(b.dataset.wallComment));
   $all('[data-wall-add]').forEach(b=> b.onclick = ()=> addWallDishToRepo(b.dataset.wallAdd));
@@ -4713,7 +5075,7 @@ async function addWallDishToRepo(postId){
   const d = post.dish_snapshot || {};
   const { error } = await sb.from('dishes').insert({
     id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
-    image_url: d.image_url||null, ingredients: d.ingredients||[], description: d.description||'',
+    image_url: d.image_url||null, image_urls: dishPhotoList(d), ingredients: d.ingredients||[], description: d.description||'',
     calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
     shared_from_username: (post.author && post.author.username) || null,
     protein_g: d.protein_g||null, carbs_g: d.carbs_g||null, fat_g: d.fat_g||null, fiber_g: d.fiber_g||null,
@@ -4962,7 +5324,7 @@ async function loadExploreFriendDishes(){
   const ids = friends.map(f=> f.id);
   if(!ids.length){ exploreFriendDishes = []; return; }
   const { data, error } = await sb.from('dishes')
-    .select('id,user_id,name,image_url,ingredients,description,calories,quality,duration_min,servings_base,protein_g,carbs_g,fat_g,fiber_g,created_at')
+    .select('id,user_id,name,image_url,image_urls,ingredients,description,calories,quality,duration_min,servings_base,protein_g,carbs_g,fat_g,fiber_g,created_at')
     .in('user_id', ids).order('created_at', {ascending:false}).limit(1000);
   if(error){ console.error(error); exploreFriendDishes = []; return; }
   exploreFriendDishes = data||[];
