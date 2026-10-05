@@ -44,6 +44,11 @@ input[type=range], input[type=checkbox], input[type=radio]{accent-color:var(--ac
 .hidden{display:none !important;}
 button{cursor:pointer; border:none;}
 
+.update-banner{position:fixed; left:50%; transform:translateX(-50%); bottom:calc(16px + env(safe-area-inset-bottom)); z-index:500;
+  display:flex; align-items:center; gap:12px; padding:11px 16px; border-radius:999px; background:#1d2622; color:#fff; font-size:13px;
+  box-shadow:0 8px 24px rgba(0,0,0,.25); white-space:nowrap; animation:nf-fade-in .25s ease-out;}
+.update-banner b{color:#7fe0b4;}
+
 /* ---------- ARRANQUE (sin parpadeo del login) ---------- */
 #boot-splash{display:none;}
 html.nf-boot #login-view{display:none;}
@@ -153,7 +158,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 }
 .dish-thumb{
   width:100%; aspect-ratio:1/1; background:var(--card2); display:flex; align-items:center;
-  justify-content:center; color:var(--muted); object-fit:cover;
+  justify-content:center; color:var(--muted); object-fit:contain;
 }
 .dish-thumb-empty svg{width:32px; height:32px;}
 .dish-info{padding:8px 10px;}
@@ -328,7 +333,7 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   -webkit-overflow-scrolling:touch; scrollbar-width:none; overscroll-behavior-x:contain;}
 .photo-track::-webkit-scrollbar{display:none;}
 .photo-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always;}
-.photo-slide img{width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; user-select:none;}
+.photo-slide img{width:100%; height:100%; object-fit:contain; display:block; -webkit-user-drag:none; user-select:none;}
 .photo-dots{position:absolute; left:0; right:0; bottom:9px; display:flex; justify-content:center; gap:5px; z-index:2; pointer-events:none;}
 .photo-dots span{width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.55); box-shadow:0 0 3px rgba(0,0,0,.35); transition:transform .2s, background .2s;}
 .photo-dots span.on{background:#fff; transform:scale(1.25);}
@@ -613,6 +618,22 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
   background:var(--card); border:1px solid #b3beb7; color:var(--text); font-size:12px; font-weight:600;
 }
 .missing-chip svg{width:14px; height:14px;}
+.cart-search{position:relative; display:flex; align-items:center;}
+.cart-search-icon{position:absolute; left:12px; color:var(--muted); pointer-events:none;}
+#cart-search-input{width:100%; padding:12px 38px 12px 38px; border-radius:12px; border:1px solid var(--border); background:var(--card2); font-size:16px;}
+#cart-search-input:focus{outline:none; border-color:var(--accent);}
+.cart-search-clear{position:absolute; right:6px; width:30px; height:30px; border-radius:50%; background:none; color:var(--muted); font-size:20px; line-height:1;}
+.cart-search-results{margin-top:8px;}
+.cart-sugg-row{display:flex; align-items:center; gap:10px; width:100%; padding:9px 4px; border-bottom:1px solid var(--border); background:none; text-align:left;}
+.cart-sugg-row:last-child{border-bottom:none;}
+.cart-sugg-name{flex:1; min-width:0; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cart-sugg-name b{font-weight:700;}
+.cart-sugg-unit{font-size:12px; color:var(--muted); width:40px; text-align:right; flex-shrink:0;}
+.cart-sugg-btn{width:36px; height:36px; border-radius:10px; border:1px solid var(--border); background:var(--card2); color:var(--text);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.cart-sugg-btn.in-cart{background:var(--accent); border-color:var(--accent); color:#fff;}
+.cart-sugg-btn svg{width:18px; height:18px;}
+.cart-sugg-new .cart-sugg-name{color:var(--muted);}
 .cart-row{display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid var(--border);}
 .cart-row:last-child{border-bottom:none;}
 .cart-row.busy{opacity:.5; pointer-events:none;}
@@ -627,6 +648,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 
 /* ---------- CHAT ---------- */
 .card-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px;}
+.card-head-actions{display:flex; gap:6px;}
+.chat-del-btn{flex-shrink:0; font-size:12px; font-weight:700; color:#fff; background:var(--bad); border-radius:999px; padding:7px 12px;}
+#chat-list.editing .chat-row{cursor:default;}
 .card-title{font-weight:700;}
 .chat-row{display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid var(--border); width:100%; text-align:left; background:none;}
 .chat-row:last-child{border-bottom:none;}
@@ -872,9 +896,9 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 .wall-post-header{display:flex; align-items:center; gap:10px; padding:12px 14px;}
 .wall-post-user{font-weight:700; font-size:14px; flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .wall-post-time{font-size:12px; color:var(--muted); flex-shrink:0; margin-left:auto;}
-.wall-post-photo{width:100%; aspect-ratio:4/3; background:var(--card2); cursor:pointer;}
+.wall-post-photo{width:100%; aspect-ratio:4/3; background:var(--card2); cursor:pointer; transition:aspect-ratio .2s;}
 .wall-post-body{cursor:pointer;}
-.wall-post-photo img{width:100%; height:100%; object-fit:cover; display:block;}
+.wall-post-photo img{width:100%; height:100%; object-fit:contain; display:block;}
 .wall-post-body{padding:12px 14px 4px;}
 .wall-post-dish{font-weight:700; font-size:15px;}
 .wall-post-caption{font-size:14px; color:var(--text); margin-top:4px; line-height:1.4;}
@@ -896,6 +920,22 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 .wall-comment-user{font-weight:700; margin-right:6px;}
 .wall-comment-text{color:var(--text);}
 .wall-comment-input-row{display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);}
+.wall-reply-bar + .wall-comment-input-row{margin-top:0; border-top:none; padding-top:8px;}
+.wc-meta{display:flex; gap:14px; margin-top:3px; font-size:11.5px; color:var(--muted);}
+.wc-reply-btn{background:none; padding:0; font-size:11.5px; font-weight:700; color:var(--muted);}
+.wall-comment-row.wc-is-reply{padding-left:40px; border-bottom:none;}
+.wall-comment-row.wc-is-reply .user-row-avatar{width:24px; height:24px; font-size:11px;}
+.wc-thread{border-bottom:1px solid var(--border);}
+.wc-thread:last-child{border-bottom:none;}
+.wc-thread > .wall-comment-row{border-bottom:none;}
+.wc-toggle{display:flex; align-items:center; gap:8px; margin:0 0 8px 40px; background:none; padding:0; font-size:12px; font-weight:700; color:var(--muted);}
+.wc-toggle::before{content:''; width:22px; height:1px; background:var(--muted); opacity:.6;}
+.wc-mention{font-weight:700; color:var(--accent);}
+.wall-comment-row.wc-flash{animation:wc-flash 1.2s ease-out;}
+@keyframes wc-flash{ from{ background:rgba(31,122,90,.14); } to{ background:transparent; } }
+.wall-reply-bar{display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding:8px 10px; border-top:1px solid var(--border);
+  font-size:12.5px; color:var(--muted); background:var(--card2); border-radius:10px;}
+.wall-reply-bar button{background:none; font-size:20px; line-height:1; color:var(--muted); padding:0 4px;}
 #wall-comment-input{flex:1; min-width:0; border:1px solid var(--border); border-radius:999px; padding:9px 14px; font-size:14px; background:var(--card2);}
 #wall-comments-list{max-height:50vh; overflow-y:auto;}
 </style>
@@ -1065,6 +1105,15 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     <section id="section-carrito" class="app-section">
       <div class="section-title">Carrito</div>
       <div class="card">
+        <div class="cart-search">
+          <svg class="cart-search-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="text" id="cart-search-input" placeholder="Buscar un ingrediente para añadir..."
+            autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+          <button type="button" id="cart-search-clear" class="cart-search-clear hidden" aria-label="Borrar búsqueda">×</button>
+        </div>
+        <div id="cart-search-results" class="cart-search-results hidden"></div>
+      </div>
+      <div class="card">
         <div id="cart-list"></div>
       </div>
     </section>
@@ -1169,7 +1218,10 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div class="card">
         <div class="card-head">
           <span class="card-title">Chats</span>
-          <button type="button" id="new-group-btn" class="btn-mini btn-mini-ghost">+ Grupo</button>
+          <span class="card-head-actions">
+            <button type="button" id="chat-edit-btn" class="btn-mini btn-mini-ghost">Editar</button>
+            <button type="button" id="new-group-btn" class="btn-mini btn-mini-ghost">+ Grupo</button>
+          </span>
         </div>
         <div id="chat-list"><div class="empty-hint">Cargando...</div></div>
       </div>
@@ -1560,6 +1612,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     </button>
     <div style="font-weight:700; margin-bottom:14px;">Comentarios</div>
     <div id="wall-comments-list"></div>
+    <div class="wall-reply-bar hidden" id="wall-reply-bar"><span id="wall-reply-label"></span><button type="button" id="wall-reply-cancel" aria-label="Cancelar respuesta">×</button></div>
     <div class="wall-comment-input-row">
       <input type="text" id="wall-comment-input" placeholder="Escribe un comentario..."
         autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
@@ -1581,6 +1634,9 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 <script>
 /* ===================== CONFIG ===================== */
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
+// Versión de la app: se sube en cada entrega. Al volver a la app, si en
+// GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
+const APP_VERSION = '2026.10.04-2';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -1924,7 +1980,7 @@ function subscribeLiveUpdates(){
         const n = payload && payload.new; if(!n) return;
         if(n.kind==='friend_request' || n.kind==='friend_accepted') liveRefresh('friends', loadFriendshipsState);
         else if(n.kind==='group_added' || n.kind==='group_admin') liveChatsChanged();
-        else if(n.kind==='wall_like' || n.kind==='wall_comment') liveRefresh('wall', loadWallFeed, 400);
+        else if(n.kind==='wall_like' || n.kind==='wall_comment' || n.kind==='wall_reply') liveRefresh('wall', loadWallFeed, 400);
         else if(n.kind==='dish_shared') liveRefresh('shared', loadSharedDishes);
       })
       .on('postgres_changes', { event:'*', schema:'public', table:'friendships' }, ()=> liveRefresh('friends', loadFriendshipsState))
@@ -1941,6 +1997,61 @@ function subscribeLiveUpdates(){
       });
   }catch(e){ console.error('Realtime no disponible', e); }
 }
+
+/* ===================== ACTUALIZACIONES SIN REINSTALAR =====================
+   1) sw.js sirve SIEMPRE la página recién bajada de GitHub (nunca una copia
+      vieja guardada por el iPhone), así que cada vez que la app arranca de
+      cero ya es la última versión.
+   2) Si la app estaba solo "dormida" en segundo plano, al volver se mira si
+      en GitHub hay otra versión (APP_VERSION) y, si no estás en medio de
+      algo, se recarga sola; si lo estás, sale un aviso para actualizar. */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js', { updateViaCache:'none' })
+    .then(reg=>{ swRegistration = swRegistration || reg; try{ reg.update(); }catch(e){} })
+    .catch(()=>{});
+}
+const VERSION_RE = new RegExp("APP_VERSION = '" + "([0-9A-Za-z.\\-]+)'");
+let lastUpdateCheck = 0;
+function appBusy(){
+  if(pvOpen) return true;
+  if($all('.modal').some(m=> !m.classList.contains('hidden'))) return true;
+  const a = document.activeElement;
+  if(a && (a.tagName==='INPUT' || a.tagName==='TEXTAREA') && a.value) return true;
+  return !!(typeof dishSaveInFlight!=='undefined' && dishSaveInFlight);
+}
+function reloadToLatest(v){
+  try{ sessionStorage.setItem('nf_reloaded_for', v); }catch(e){}
+  // Una dirección nueva (?v=...) garantiza que no se use ninguna copia vieja.
+  location.replace(location.pathname + '?v=' + encodeURIComponent(v) + location.hash);
+}
+async function checkForAppUpdate(auto){
+  if(Date.now() - lastUpdateCheck < 20000) return;
+  lastUpdateCheck = Date.now();
+  try{
+    const res = await fetch('index.html?nfcheck=' + Date.now(), { cache:'no-store' });
+    if(!res.ok) return;
+    const m = VERSION_RE.exec(await res.text());
+    if(!m || m[1]===APP_VERSION) return;
+    let already = null; try{ already = sessionStorage.getItem('nf_reloaded_for'); }catch(e){}
+    if(auto && !appBusy() && already!==m[1]){ reloadToLatest(m[1]); return; }
+    showUpdateBanner(m[1]);
+  }catch(e){ /* sin conexión: ya se mirará la próxima vez */ }
+}
+function showUpdateBanner(v){
+  let b = $('#update-banner');
+  if(!b){
+    b = document.createElement('button');
+    b.id = 'update-banner'; b.type = 'button'; b.className = 'update-banner';
+    document.body.appendChild(b);
+  }
+  b.innerHTML = '<span>Hay una versión nueva de NutriFit</span><b>Actualizar</b>';
+  b.onclick = ()=> reloadToLatest(v);
+  b.classList.remove('hidden');
+}
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible'){ checkForAppUpdate(true); if(swRegistration) try{ swRegistration.update(); }catch(e){} }
+});
+setTimeout(()=> checkForAppUpdate(true), 4000);
 
 async function init(){
   let session = null;
@@ -2175,7 +2286,7 @@ function dishCardHtml(d){
   return `
     <div class="dish-card" data-id="${d.id}" data-type="dish">
       <div class="dish-thumb-wrap">
-        ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="" draggable="false">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
+        ${d.image_url ? `<img class="dish-thumb" src="${d.image_url}" alt="" draggable="false" data-ar-lead ${ratioBoxAttrs(d.image_url, 0.66, 1.91, null)} onload="nfImgLoaded(this)">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
         ${dishPhotoList(d).length>1 ? `<span class="multi-photo-badge">${ICON_MULTI_PHOTO}</span>` : ''}
         ${d.shared_from_username ? `<span class="shared-watermark">@${escapeHtml(d.shared_from_username)}</span>` : ''}
       </div>
@@ -3161,12 +3272,25 @@ $all('#quality-group .pill-btn').forEach(b=>{
    la sensación de que la foto "se guarda pero se pierde". createImageBitmap
    con imageOrientation:'from-image' decodifica el formato original y
    respeta la rotación correctamente antes de reexportar. */
+// Se decodifica con un <img> (no con createImageBitmap): así el navegador
+// aplica siempre la orientación de la foto (EXIF), también en el iPhone, y
+// una foto apaisada nunca acaba girada.
+function decodeImageFile(file){
+  return new Promise((resolve, reject)=>{
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = ()=>{ resolve({ source: img, width: img.naturalWidth, height: img.naturalHeight, done: ()=> URL.revokeObjectURL(url) }); };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); reject(new Error('Formato de imagen no compatible')); };
+    img.src = url;
+  });
+}
 async function normalizeImageFile(file){
   let bitmap;
   try{
-    bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const d = await decodeImageFile(file);
+    bitmap = { width: d.width, height: d.height, img: d.source, close: d.done };
   }catch(e){
-    bitmap = await createImageBitmap(file);
+    bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
   }
   const maxDim = 1600;
   let { width, height } = bitmap;
@@ -3177,12 +3301,54 @@ async function normalizeImageFile(file){
   const canvas = document.createElement('canvas');
   canvas.width = width; canvas.height = height;
   const ctx = canvas.getContext('2d');
-  ctx.drawImage(bitmap, 0, 0, width, height);
+  ctx.drawImage(bitmap.img || bitmap, 0, 0, width, height);
   if(bitmap.close) bitmap.close();
   const blob = await new Promise((resolve, reject)=>{
     canvas.toBlob(b=> b ? resolve(b) : reject(new Error('No se pudo procesar la imagen')), 'image/jpeg', 0.85);
   });
-  return new File([blob], 'foto.jpg', { type:'image/jpeg' });
+  const out = new File([blob], 'foto.jpg', { type:'image/jpeg' });
+  out.nfRatio = width / height; // proporción real (ancho/alto) para pintarla sin recortes
+  return out;
+}
+
+/* ---------- Proporción de cada foto (para verla siempre entera) ----------
+   Las fotos nuevas llevan su proporción en la propia URL (#ar=1.3333); de las
+   antiguas se mide al cargarlas y se recuerda en el móvil. */
+const RATIO_KEY = 'nutrifit_ratios';
+let ratioCache = {};
+try{ ratioCache = JSON.parse(localStorage.getItem(RATIO_KEY) || '{}') || {}; }catch(e){ ratioCache = {}; }
+function photoRatio(url){
+  if(!url) return null;
+  const m = /#ar=([\d.]+)/.exec(url);
+  if(m) return Number(m[1]) || null;
+  return ratioCache[String(url).split('#')[0]] || null;
+}
+function clampRatio(r, min, max){ return Math.max(min, Math.min(max, r)); }
+function ratioBoxAttrs(url, min, max, fallback){
+  const r = photoRatio(url) || fallback;
+  return `data-ar-min="${min}" data-ar-max="${max}"${r ? ` style="aspect-ratio:${clampRatio(r, min, max).toFixed(4)}"` : ''}`;
+}
+let ratioSaveTimer = null, galleryRelayoutTimer = null;
+function nfImgLoaded(img){
+  if(!img.naturalWidth || !img.naturalHeight || !img.hasAttribute('data-ar-lead')) return;
+  const r = img.naturalWidth / img.naturalHeight;
+  const src = img.getAttribute('src') || '';
+  const box = img.matches('[data-ar-min]') ? img : img.closest('[data-ar-min]');
+  const known = src.startsWith('data:') ? null : photoRatio(src);
+  if(box && !known) box.style.aspectRatio = clampRatio(r, Number(box.dataset.arMin), Number(box.dataset.arMax)).toFixed(4);
+  if(known || src.startsWith('data:')) return;
+  ratioCache[src.split('#')[0]] = Math.round(r*10000)/10000;
+  clearTimeout(ratioSaveTimer);
+  ratioSaveTimer = setTimeout(()=>{ try{ localStorage.setItem(RATIO_KEY, JSON.stringify(ratioCache)); }catch(e){} }, 800);
+  // En el mosaico, al conocer la altura real se recolocan las columnas una vez.
+  if(img.closest('#gallery, #folder-gallery')){
+    clearTimeout(galleryRelayoutTimer);
+    galleryRelayoutTimer = setTimeout(()=>{
+      if(galleryEditMode || folderEditMode || document.querySelector('.dish-card.dragging')) return;
+      renderGallery();
+      if(!modalHidden($('#folder-modal'))) renderFolderGallery();
+    }, 600);
+  }
 }
 
 /* ---------- Fotos del plato: carrusel, añadir, quitar y pantalla completa ---------- */
@@ -3222,8 +3388,14 @@ function scrollCarouselTo(track, i){
 }
 function renderDishPhotos(goTo){
   const wrap = $('#dish-photo-wrap'), track = $('#dish-photo-track');
-  track.innerHTML = dishPhotos.map((p,i)=> `<div class="photo-slide" data-photo-i="${i}"><img src="${p.url || p.preview}" alt="" draggable="false"></div>`).join('');
+  track.innerHTML = dishPhotos.map((p,i)=> `<div class="photo-slide" data-photo-i="${i}"><img src="${p.url || p.preview}" alt="" draggable="false"${i===0?' data-ar-lead':''} onload="nfImgLoaded(this)"></div>`).join('');
   wrap.classList.toggle('has-photo', dishPhotos.length>0);
+  // La caja se adapta a la primera foto (entre 4:5 vertical y 1,91:1 apaisada,
+  // como Instagram); el resto se ven enteras dentro, sin recortar.
+  wrap.dataset.arMin = '0.8'; wrap.dataset.arMax = '1.91';
+  const first = dishPhotos[0];
+  const r0 = first ? (first.ratio || photoRatio(first.url)) : null;
+  wrap.style.aspectRatio = r0 ? clampRatio(r0, 0.8, 1.91).toFixed(4) : '';
   const idx = Math.max(0, Math.min(goTo||0, dishPhotos.length-1));
   $('#dish-photo-dots').innerHTML = photoDotsHtml(dishPhotos.length, idx);
   updateDishPhotoChip(idx);
@@ -3278,7 +3450,7 @@ $('#dish-photo-input').addEventListener('change', async e=>{
         const normalized = await normalizeImageFile(file);
         const preview = await readAsDataUrl(normalized);
         if(forDish!==editingDishId) return; // se cerró la ficha mientras tanto
-        dishPhotos.push({ key: uuid(), file: normalized, preview });
+        dishPhotos.push({ key: uuid(), file: normalized, preview, ratio: normalized.nfRatio || null });
       }catch(err){ alert('No se pudo procesar una de las fotos, prueba con otra: '+err.message); }
     }
     if(dishPhotos.length>firstNew){
@@ -3363,7 +3535,7 @@ async function uploadDishPhoto(dishId, file){
   const { data } = sb.storage.from('dish-photos').getPublicUrl(path);
   // Las fotos quitadas no se borran del almacenamiento: puede que sigan
   // saliendo en una receta ya enviada por el chat o publicada en el Muro.
-  return data.publicUrl;
+  return file.nfRatio ? `${data.publicUrl}#ar=${file.nfRatio.toFixed(4)}` : data.publicUrl;
 }
 function uploadDishPhotoOnce(dishId, p){
   if(!photoUploads[p.key]){
@@ -4303,13 +4475,19 @@ function chatPreviewText(c){
   const who = c.last_sender_id===currentUser.id ? 'Tú: ' : '';
   return who + (c.last_dish_name ? 'Receta: '+c.last_dish_name : c.last_body);
 }
+let chatEditMode = false;
 function renderChatList(){
   const box = $('#chat-list');
   if(!box) return;
   if(!chatSummaries.length){
+    chatEditMode = false;
+    $('#chat-edit-btn').classList.add('hidden');
     box.innerHTML = '<div class="empty-hint">Aún no tienes chats. Toca el bocadillo junto a un amigo para escribirle, o crea un grupo.</div>';
     return;
   }
+  $('#chat-edit-btn').classList.remove('hidden');
+  box.classList.toggle('editing', chatEditMode);
+  $('#chat-edit-btn').textContent = chatEditMode ? 'Listo' : 'Editar';
   box.innerHTML = chatSummaries.map(c=>{
     const unread = c.chat_id===openChatId ? 0 : (c.unread||0);
     return `<div class="chat-swipe">
@@ -4320,12 +4498,17 @@ function renderChatList(){
           <span class="chat-row-top"><span class="chat-row-name">${escapeHtml(chatTitle(c))}</span><span class="chat-row-time">${timeAgo(c.last_at)}</span></span>
           <span class="chat-row-preview">${escapeHtml(chatPreviewText(c))}</span>
         </span>
-        ${unread ? `<span class="chat-unread">${unread>9?'9+':unread}</span>` : ''}
+        ${chatEditMode ? `<span class="chat-del-btn" data-del-chat="${c.chat_id}">${c.is_group ? 'Salir' : 'Borrar'}</span>`
+          : (unread ? `<span class="chat-unread">${unread>9?'9+':unread}</span>` : '')}
       </button>
     </div>`;
-  }).join('') + '<div class="settings-hint">Desliza un chat a la izquierda para borrarlo.</div>';
+  }).join('') + `<div class="settings-hint">${chatEditMode ? 'Borrar un chat lo quita solo para ti (tu amigo sigue en Amigos). En un grupo, sales de él.' : 'Toca "Editar" o desliza un chat a la izquierda para borrarlo.'}</div>`;
   $all('#chat-list [data-chat]').forEach(b=>{
-    b.onclick = ()=>{ if(b.dataset.swiped){ delete b.dataset.swiped; return; } openChat(b.dataset.chat); };
+    b.onclick = (e)=>{
+      if(chatEditMode){ if(e.target.closest('[data-del-chat]')) deleteChatFromList(b.dataset.chat); return; }
+      if(b.dataset.swiped){ delete b.dataset.swiped; return; }
+      openChat(b.dataset.chat);
+    };
     attachChatSwipe(b);
   });
 }
@@ -4357,6 +4540,7 @@ function attachChatSwipe(row){
   row.addEventListener('pointerup', end);
   row.addEventListener('pointercancel', end);
 }
+$('#chat-edit-btn').onclick = ()=>{ chatEditMode = !chatEditMode; renderChatList(); };
 async function deleteChatFromList(chatId){
   const c = chatSummaries.find(x=> x.chat_id===chatId);
   if(!c) return;
@@ -4365,8 +4549,12 @@ async function deleteChatFromList(chatId){
     : `¿Borrar el chat con ${chatTitle(c)}? Se borra solo para ti; si te vuelve a escribir, aparecerá de nuevo.`;
   if(!confirm(msg)) return;
   const { error } = await sb.rpc('delete_chat_for_me', { p_chat: chatId });
-  if(error){ alert(error.message); return; }
+  if(error){
+    alert(/delete_chat_for_me/.test(error.message) ? 'Falta actualizar la base de datos (ejecuta el SQL de esta versión en Supabase).' : error.message);
+    return;
+  }
   chatSummaries = chatSummaries.filter(x=> x!==c);
+  if(openChatId===chatId && !modalHidden($('#chat-modal'))) closeChat();
   recomputeChatUnread();
 }
 function updateChatSummaryLocal(chatId, m){
@@ -4783,7 +4971,7 @@ function urlB64ToUint8Array(b64){
 }
 async function registerServiceWorker(){
   if(!('serviceWorker' in navigator)) return null;
-  try{ swRegistration = await navigator.serviceWorker.register('sw.js'); }
+  try{ swRegistration = await navigator.serviceWorker.register('sw.js', { updateViaCache:'none' }); }
   catch(e){ console.error('Service worker no disponible', e); }
   return swRegistration;
 }
@@ -4980,7 +5168,7 @@ function renderWallFeed(){
         <span class="wall-post-time">${timeAgo(p.created_at)}</span>
       </div>
       ${(()=>{ const ph = dishPhotoList(d); if(!ph.length) return '';
-        return `<div class="wall-post-photo" data-wall-open="${p.id}"><div class="photo-track">${ph.map(u=> `<div class="photo-slide"><img src="${u}" alt="" draggable="false"></div>`).join('')}</div><div class="photo-dots">${photoDotsHtml(ph.length, 0)}</div></div>`; })()}
+        return `<div class="wall-post-photo" data-wall-open="${p.id}" ${ratioBoxAttrs(ph[0], 0.8, 1.91, 4/3)}><div class="photo-track">${ph.map((u,i)=> `<div class="photo-slide"><img src="${u}" alt="" draggable="false"${i===0?' data-ar-lead':''} onload="nfImgLoaded(this)"></div>`).join('')}</div><div class="photo-dots">${photoDotsHtml(ph.length, 0)}</div></div>`; })()}
       <div class="wall-post-body" data-wall-open="${p.id}">
         <div class="wall-post-dish">${escapeHtml(d.name||'Receta')}${d.calories?` · ${d.calories} kcal`:''}</div>
         ${p.caption ? `<div class="wall-post-caption">${escapeHtml(p.caption)}</div>` : ''}
@@ -5025,15 +5213,76 @@ async function toggleWallLike(postId){
   }
 }
 
-function renderWallCommentsList(){
-  const list = wallComments.filter(c=> c.post_id===openingCommentsForPost);
-  const box = $('#wall-comments-list');
-  box.innerHTML = list.length
-    ? list.map(c=> `<div class="wall-comment-row">${profileAvatarHtml(c.author, c.user_id)}<div class="wall-comment-body"><span class="wall-comment-user profile-link"${profileAttr(c.user_id)}>@${escapeHtml((c.author&&c.author.username)||'?')}</span><span class="wall-comment-text">${escapeHtml(c.text)}</span></div></div>`).join('')
-    : '<div class="empty-hint">Sé el primero en comentar.</div>';
+/* Comentarios con respuestas, como en Instagram: cada comentario tiene
+   "Responder"; las respuestas cuelgan del comentario original (un solo
+   nivel) y, si son muchas, se pliegan tras "Ver N respuestas". */
+let wallReplyTo = null;               // { id, username } del comentario al que respondes
+const wallThreadsOpen = new Set();     // hilos desplegados
+function commentTextHtml(text){
+  // Una @mención al principio se pinta destacada y abre ese perfil.
+  const m = /^@([a-z0-9_]{3,20})\b/i.exec(text||'');
+  if(!m) return escapeHtml(text);
+  return `<span class="wc-mention profile-link" data-profile-user="${escapeHtml(m[1])}">@${escapeHtml(m[1])}</span>${escapeHtml(text.slice(m[0].length))}`;
 }
+function commentRowHtml(c, isReply){
+  const user = (c.author&&c.author.username)||'?';
+  return `<div class="wall-comment-row ${isReply?'wc-is-reply':''}" data-comment="${c.id}">${profileAvatarHtml(c.author, c.user_id)}<div class="wall-comment-body">
+    <span class="wall-comment-user profile-link"${profileAttr(c.user_id)}>@${escapeHtml(user)}</span><span class="wall-comment-text">${commentTextHtml(c.text)}</span>
+    <div class="wc-meta"><span>${c.created_at ? timeAgo(c.created_at) : ''}</span>${String(c.id).startsWith('tmp-') ? '' : `<button type="button" class="wc-reply-btn" data-reply="${c.id}" data-reply-user="${escapeHtml(user)}">Responder</button>`}</div>
+  </div></div>`;
+}
+function renderWallCommentsList(flashId){
+  const all = wallComments.filter(c=> c.post_id===openingCommentsForPost);
+  const byId = new Map(all.map(c=> [c.id, c]));
+  // Cada respuesta cuelga del comentario principal de su hilo (por si alguna
+  // apunta a otra respuesta).
+  const topIdOf = (c)=>{ let x = c, guard = 0; while(x.parent_id && byId.has(x.parent_id) && guard++<20) x = byId.get(x.parent_id); return x.id; };
+  const tops = all.filter(c=> !c.parent_id || !byId.has(c.parent_id));
+  const box = $('#wall-comments-list');
+  box.innerHTML = tops.length ? tops.map(c=>{
+    const replies = all.filter(r=> r!==c && topIdOf(r)===c.id);
+    const open = replies.length<3 || wallThreadsOpen.has(c.id);
+    return `<div class="wc-thread">${commentRowHtml(c, false)}
+      ${replies.length>=3 ? `<button type="button" class="wc-toggle" data-thread="${c.id}">${open ? 'Ocultar respuestas' : `Ver ${replies.length} respuestas`}</button>` : ''}
+      ${open ? replies.map(r=> commentRowHtml(r, true)).join('') : ''}
+    </div>`;
+  }).join('') : '<div class="empty-hint">Sé el primero en comentar.</div>';
+  box.querySelectorAll('[data-reply]').forEach(b=> b.onclick = ()=> startWallReply(b.dataset.reply, b.dataset.replyUser));
+  box.querySelectorAll('[data-thread]').forEach(b=> b.onclick = ()=>{
+    const id = b.dataset.thread;
+    if(wallThreadsOpen.has(id)) wallThreadsOpen.delete(id); else wallThreadsOpen.add(id);
+    renderWallCommentsList();
+  });
+  if(flashId){
+    const row = box.querySelector(`[data-comment="${flashId}"]`);
+    if(row){ row.classList.add('wc-flash'); row.scrollIntoView({ block:'nearest', behavior:'smooth' }); }
+  }
+}
+function startWallReply(commentId, username){
+  const c = wallComments.find(x=> x.id===commentId);
+  if(!c) return;
+  wallReplyTo = { id: c.id, username, topId: c.parent_id || c.id };
+  $('#wall-reply-label').textContent = 'Respondiendo a @'+username;
+  $('#wall-reply-bar').classList.remove('hidden');
+  const input = $('#wall-comment-input');
+  if(!input.value.trim().startsWith('@'+username)) input.value = '@'+username+' ';
+  input.placeholder = 'Escribe tu respuesta...';
+  input.focus();
+  try{ input.setSelectionRange(input.value.length, input.value.length); }catch(e){}
+}
+function cancelWallReply(){
+  const input = $('#wall-comment-input');
+  if(wallReplyTo && input.value.trim()==='@'+wallReplyTo.username) input.value = '';
+  wallReplyTo = null;
+  $('#wall-reply-bar').classList.add('hidden');
+  input.placeholder = 'Escribe un comentario...';
+}
+$('#wall-reply-cancel').onclick = cancelWallReply;
 function openWallComments(postId){
   openingCommentsForPost = postId;
+  wallReplyTo = null;
+  $('#wall-reply-bar').classList.add('hidden');
+  $('#wall-comment-input').placeholder = 'Escribe un comentario...';
   renderWallCommentsList();
   $('#wall-comment-input').value = '';
   lockBodyScroll();
@@ -5049,13 +5298,29 @@ async function sendWallComment(){
   const postId = openingCommentsForPost;
   const text = $('#wall-comment-input').value.trim();
   if(!postId || !text) return;
+  const reply = wallReplyTo && text!=='@'+wallReplyTo.username ? wallReplyTo : null;
+  if(wallReplyTo && !reply) return; // solo la @mención, sin texto todavía
   $('#wall-comment-input').value = '';
+  if(wallReplyTo) cancelWallReply();
+  const row = { post_id: postId, user_id: currentUser.id, text };
+  if(reply) row.parent_id = reply.id;
+  // Se pinta al instante; la base de datos confirma por detrás.
+  const tmp = { ...row, id:'tmp-'+uuid(), parent_id: reply ? reply.topId : null, created_at: new Date().toISOString(), author:{ username: currentUser.username, avatar_url: currentUser.avatar_url } };
+  wallComments.push(tmp);
+  if(reply) wallThreadsOpen.add(reply.topId);
+  renderWallCommentsList(tmp.id);
+  renderWallFeed();
   const { data, error } = await sb.from('wall_comments')
-    .insert({ post_id: postId, user_id: currentUser.id, text })
+    .insert(row)
     .select('*, author:user_id(username,avatar_url)').single();
-  if(error){ alert(error.message); return; }
-  wallComments.push(data);
-  renderWallCommentsList();
+  if(error){
+    wallComments = wallComments.filter(c=> c!==tmp);
+    renderWallCommentsList(); renderWallFeed();
+    alert(/parent_id/.test(error.message) ? 'Falta actualizar la base de datos (ejecuta el SQL de esta versión en Supabase).' : error.message);
+    return;
+  }
+  Object.assign(tmp, data);
+  if(openingCommentsForPost===postId) renderWallCommentsList();
   renderWallFeed();
 }
 $('#wall-comment-send').onclick = sendWallComment;
@@ -5432,6 +5697,7 @@ function onCartChanged(){
   if(badge){ badge.textContent = String(cartItems.length); badge.classList.toggle('hidden', !cartItems.length); }
   $all('#ingredients-list .ingredient-row').forEach(syncRowCartButton);
   renderCartList();
+  if($('#cart-search-input') && $('#cart-search-input').value.trim()) renderCartSearch();
   if($('#section-nevera').classList.contains('active')) renderNeveraSuggestions();
 }
 async function toggleCartItem(item){
@@ -5490,17 +5756,61 @@ async function moveCartItemToFridge(id){
     if(row) row.classList.remove('busy');
   }
 }
+/* Buscador del carrito: escribes unas letras, sugiere ingredientes del
+   catálogo (empiezan por lo escrito, como en el resto de la app) y cada uno
+   tiene su botón de carrito para añadirlo (o quitarlo) ahí mismo. */
+function renderCartSearch(){
+  const input = $('#cart-search-input'), box = $('#cart-search-results');
+  const term = input.value.trim();
+  $('#cart-search-clear').classList.toggle('hidden', !term);
+  if(!term){ box.classList.add('hidden'); box.innerHTML=''; return; }
+  const t = stripAccents(term.toLowerCase());
+  const matches = ingredientCatalog.filter(ic=> stripAccents(ic.name.toLowerCase()).startsWith(t)).slice(0, 8);
+  const exact = matches.some(m=> normName(m.name)===normName(term));
+  const rows = matches.map(m=> ({ name: m.name, unit: m.default_unit || guessUnit(m.name) || '', id: m.id, isNew:false }));
+  if(!exact) rows.push({ name: capitalizeText(term), unit: guessUnit(term) || '', id:null, isNew:true });
+  box.innerHTML = rows.map((r,i)=>{
+    const inCart = isInCart(r.name);
+    const label = r.isNew
+      ? `Añadir «${escapeHtml(r.name)}»`
+      : `<b>${escapeHtml(r.name.slice(0, term.length))}</b>${escapeHtml(r.name.slice(term.length))}`;
+    return `<button type="button" class="cart-sugg-row ${r.isNew?'cart-sugg-new':''}" data-sugg="${i}">
+      <span class="cart-sugg-name">${label}</span>
+      <span class="cart-sugg-unit">${escapeHtml(r.unit)}</span>
+      <span class="cart-sugg-btn ${inCart?'in-cart':''}" aria-label="${inCart?'Quitar del carrito':'Añadir al carrito'}">${inCart ? ICON_CART_CHECK : ICON_CART_PLUS}</span>
+    </button>`;
+  }).join('');
+  box.classList.remove('hidden');
+  box.querySelectorAll('[data-sugg]').forEach(b=>{
+    b.addEventListener('pointerdown', e=> e.preventDefault()); // que no se cierre el teclado al tocar
+    b.onclick = async ()=>{
+      const r = rows[Number(b.dataset.sugg)];
+      await toggleCartItem({ name: r.name, quantity: null, unit: r.unit || null, ingredient_id: r.id || null });
+      renderCartSearch();
+    };
+  });
+}
+function capitalizeText(t){ t = (t||'').trim(); return t ? t[0].toUpperCase() + t.slice(1) : t; }
+$('#cart-search-input').addEventListener('input', renderCartSearch);
+$('#cart-search-input').addEventListener('keydown', e=>{
+  if(e.key!=='Enter') return;
+  e.preventDefault();
+  const first = $('#cart-search-results [data-sugg]');
+  if(first) first.click();
+});
+$('#cart-search-clear').onclick = ()=>{ $('#cart-search-input').value=''; renderCartSearch(); $('#cart-search-input').focus(); };
+
 function renderCartList(){
   const box = $('#cart-list');
   if(!box) return;
   if(!cartItems.length){
-    box.innerHTML = '<div class="empty-hint">Tu carrito está vacío. Añade ingredientes con el botón del carrito desde un plato o desde las sugerencias de la Nevera.</div>';
+    box.innerHTML = '<div class="empty-hint">Tu carrito está vacío. Búscalos arriba, o añádelos con el botón del carrito desde un plato o desde las sugerencias de la Nevera.</div>';
     return;
   }
   box.innerHTML = cartItems.map(c=> `<div class="cart-row" data-cart-id="${c.id}">
     <div class="cart-row-info">
       <span class="cart-row-name">${escapeHtml(c.name)}</span>
-      <span class="cart-row-sub">${escapeHtml(fmtQty(c.quantity, c.unit))}${c.source_dish_name ? ` <i>· ${escapeHtml(c.source_dish_name)}</i>` : ''}</span>
+      ${(c.quantity!=null && c.quantity!=='') || c.source_dish_name ? `<span class="cart-row-sub">${c.quantity!=null && c.quantity!=='' ? escapeHtml(fmtQty(c.quantity, c.unit)) : ''}${c.source_dish_name ? ` <i>${c.quantity!=null && c.quantity!=='' ? '· ' : ''}${escapeHtml(c.source_dish_name)}</i>` : ''}</span>` : ''}
     </div>
     <button type="button" class="btn-mini" data-cart-fridge="${c.id}">A la nevera</button>
     <button type="button" class="fridge-item-del" data-cart-del="${c.id}" aria-label="Eliminar">${ICON_TRASH}</button>
