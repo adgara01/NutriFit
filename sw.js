@@ -1,9 +1,39 @@
-/* NutriFit — service worker SOLO para notificaciones push.
-   A propósito no tiene "fetch" ni guarda nada en caché: la app se sigue
-   cargando siempre fresca de GitHub Pages, como hasta ahora (así no se
-   añaden más problemas de versiones viejas en el iPhone). */
+/* NutriFit — service worker.
+   1) Notificaciones push (push + notificationclick).
+   2) Actualizaciones sin reinstalar: la página (index.html) se pide SIEMPRE
+      nueva a GitHub, saltándose cualquier copia vieja que guarde el iPhone.
+      Solo si no hay conexión se usa la última copia buena guardada aquí.
+   El resto de archivos (iconos, fotos, Supabase...) no se tocan. */
+const SHELL_CACHE = 'nf-shell-v1';
+const SHELL_KEY = './index.html';
+
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET' || req.mode !== 'navigate') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  e.respondWith((async () => {
+    try {
+      const fresh = await fetch(req.url, { cache: 'no-store', credentials: 'same-origin' });
+      if (fresh.ok) {
+        const copy = fresh.clone();
+        caches.open(SHELL_CACHE).then((c) => c.put(SHELL_KEY, copy)).catch(() => {});
+      }
+      // Una respuesta "redirigida" no se puede devolver tal cual a una navegación.
+      if (fresh.redirected) {
+        return new Response(await fresh.blob(), { status: fresh.status, statusText: fresh.statusText, headers: fresh.headers });
+      }
+      return fresh;
+    } catch (err) {
+      const hit = await caches.match(SHELL_KEY, { cacheName: SHELL_CACHE });
+      if (hit) return hit;
+      throw err;
+    }
+  })());
+});
 
 self.addEventListener('push', (e) => {
   let d = {};
@@ -20,7 +50,7 @@ self.addEventListener('push', (e) => {
   }));
 });
 
-// Tocar la notificación: abre (o trae al frente) la app en el chat / Muro.
+// Tocar la notificación: abre (o trae al frente) la app en lo que toque.
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
   const url = new URL((e.notification.data && e.notification.data.url) || './', self.registration.scope).href;

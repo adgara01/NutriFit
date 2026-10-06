@@ -48,6 +48,14 @@ button{cursor:pointer; border:none;}
   display:flex; align-items:center; gap:12px; padding:11px 16px; border-radius:999px; background:#1d2622; color:#fff; font-size:13px;
   box-shadow:0 8px 24px rgba(0,0,0,.25); white-space:nowrap; animation:nf-fade-in .25s ease-out;}
 .update-banner b{color:#7fe0b4;}
+#updating-screen{position:fixed; inset:0; z-index:600; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+  animation:nf-fade-in .2s ease-out;}
+#updating-screen.hidden{display:none;}
+.updating-text{font-size:14px; color:var(--muted);}
+.nf-toast{position:fixed; left:50%; top:calc(14px + env(safe-area-inset-top)); z-index:550; transform:translate(-50%, -20px); opacity:0; pointer-events:none;
+  padding:10px 16px; border-radius:999px; background:#1d2622; color:#fff; font-size:13px; font-weight:600; box-shadow:0 8px 24px rgba(0,0,0,.2);
+  transition:opacity .25s, transform .25s cubic-bezier(.32,.72,0,1);}
+.nf-toast.show{opacity:1; transform:translate(-50%, 0);}
 
 /* ---------- ARRANQUE (sin parpadeo del login) ---------- */
 #boot-splash{display:none;}
@@ -1369,6 +1377,17 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         </div>
       </div>
 
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <div>
+            <div style="font-weight:600;">Versión de la app</div>
+            <div class="settings-hint" id="app-version-label" style="margin-top:2px;"></div>
+          </div>
+          <button type="button" id="update-now-btn" class="btn-mini">Actualizar</button>
+        </div>
+        <div class="settings-hint">La app se actualiza sola al abrirla. Este botón fuerza una recarga limpia por si algo se ve raro; no se cierra tu sesión.</div>
+      </div>
+
       <button id="settings-logout-btn" class="btn-secondary" style="width:100%; justify-content:center;">Cerrar sesión</button>
     </section>
   </main>
@@ -1692,7 +1711,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.06-1';
+const APP_VERSION = '2026.10.06-2';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2076,10 +2095,47 @@ function appBusy(){
   if(a && (a.tagName==='INPUT' || a.tagName==='TEXTAREA') && a.value) return true;
   return !!(typeof dishSaveInFlight!=='undefined' && dishSaveInFlight);
 }
-function reloadToLatest(v){
-  try{ sessionStorage.setItem('nf_reloaded_for', v); }catch(e){}
-  // Una dirección nueva (?v=...) garantiza que no se use ninguna copia vieja.
-  location.replace(location.pathname + '?v=' + encodeURIComponent(v) + location.hash);
+// Recarga limpia: muestra "Actualizando NutriFit…", borra las copias guardadas
+// de la app (no tus datos ni tu sesión, que siguen en el móvil) y vuelve a
+// cargar la última versión.
+function showUpdatingScreen(text){
+  let o = $('#updating-screen');
+  if(!o){
+    o = document.createElement('div');
+    o.id = 'updating-screen';
+    o.innerHTML = '<div class="boot-logo">NutriFit</div><div class="boot-spinner"></div><div class="updating-text"></div>';
+    document.body.appendChild(o);
+  }
+  o.querySelector('.updating-text').textContent = text || 'Actualizando a la última versión…';
+  o.classList.remove('hidden');
+}
+async function reloadToLatest(v){
+  showUpdatingScreen();
+  try{ sessionStorage.setItem('nf_reloaded_for', v || 'manual'); sessionStorage.setItem('nf_just_updated', '1'); }catch(e){}
+  const t0 = Date.now();
+  try{ if(window.caches){ const keys = await caches.keys(); await Promise.all(keys.map(k=> caches.delete(k))); } }catch(e){}
+  try{ if(swRegistration) await swRegistration.update(); }catch(e){}
+  // Que el aviso se vea un momento (si no, parece un parpadeo).
+  const wait = Math.max(0, 700 - (Date.now() - t0));
+  setTimeout(()=>{
+    // Una dirección nueva (?v=...) garantiza que no se use ninguna copia vieja.
+    location.replace(location.pathname + '?v=' + encodeURIComponent(v || Date.now()) + location.hash);
+  }, wait);
+}
+// Al volver de una actualización: aviso breve y se limpia la dirección.
+(function(){
+  let just = null; try{ just = sessionStorage.getItem('nf_just_updated'); sessionStorage.removeItem('nf_just_updated'); }catch(e){}
+  if(/[?&]v=/.test(location.search)){
+    try{ history.replaceState(null, '', location.pathname + location.hash); }catch(e){}
+  }
+  if(just) setTimeout(()=> showToast('NutriFit actualizado'), 600);
+})();
+function showToast(text){
+  let t = $('#nf-toast');
+  if(!t){ t = document.createElement('div'); t.id = 'nf-toast'; t.className = 'nf-toast'; document.body.appendChild(t); }
+  t.textContent = text;
+  t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+  clearTimeout(t._timer); t._timer = setTimeout(()=> t.classList.remove('show'), 2400);
 }
 async function checkForAppUpdate(auto){
   if(Date.now() - lastUpdateCheck < 20000) return;
@@ -2108,7 +2164,20 @@ function showUpdateBanner(v){
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState==='visible'){ checkForAppUpdate(true); if(swRegistration) try{ swRegistration.update(); }catch(e){} }
 });
-setTimeout(()=> checkForAppUpdate(true), 4000);
+setTimeout(()=> checkForAppUpdate(true), 1500);
+$('#app-version-label').textContent = 'v' + APP_VERSION;
+$('#update-now-btn').onclick = async ()=>{
+  const btn = $('#update-now-btn');
+  btn.disabled = true; btn.textContent = 'Buscando…';
+  let latest = null;
+  try{
+    const res = await fetch('index.html?nfcheck=' + Date.now(), { cache:'no-store' });
+    const m = VERSION_RE.exec(await res.text());
+    latest = m ? m[1] : null;
+  }catch(e){}
+  btn.disabled = false; btn.textContent = 'Actualizar';
+  reloadToLatest(latest || APP_VERSION);
+};
 
 // Chrome (sobre todo en ordenador) a veces ofrece "añadir una dirección de
 // correo" en los buscadores de ingredientes: se marcan como campos de
