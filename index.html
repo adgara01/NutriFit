@@ -164,10 +164,11 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .np-ink{position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 6px); border-radius:10px; background:var(--card);
   box-shadow:0 1px 4px rgba(0,0,0,.08); transition:transform .25s cubic-bezier(.32,.72,0,1); will-change:transform;}
 .np-count{font-size:11px; font-weight:800; color:#fff; background:var(--accent); border-radius:999px; padding:1px 7px;}
-.np-pager{display:flex; align-items:flex-start; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none;
+.np-pager{display:flex; align-items:flex-start; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; touch-action:pan-y;
   -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; margin:0 -16px; transition:height .2s;}
 .np-pager::-webkit-scrollbar{display:none;}
-.np-page{flex:0 0 100%; min-width:0; scroll-snap-align:start; scroll-snap-stop:always; padding:0 16px 24px; box-sizing:border-box;}
+.np-page{flex:0 0 100%; min-width:0; scroll-snap-align:start; scroll-snap-stop:always; padding:0 16px 24px; box-sizing:border-box; touch-action:pan-y;}
+#section-despensa{min-height:calc(100vh - 120px); touch-action:pan-y;}
 .drawer-icon-pair{display:flex; gap:2px; flex-shrink:0;}
 .drawer-icon-pair svg{width:24px !important; height:26px !important;}
 .app-section.active{display:block;}
@@ -1711,7 +1712,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.06-2';
+const APP_VERSION = '2026.10.07-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2377,9 +2378,9 @@ function attachDrawerSwipe(){
       if(e.target.closest('.week-board')) return;
       // deslizar entre las fotos de un plato o del Muro no abre el menú
       if(e.target.closest('.photo-track')) return;
-      // en el Carrito, deslizar a la derecha vuelve a la Nevera
-      const pg = e.target.closest('#np-pager');
-      if(pg && pg.scrollLeft > 4) return;
+      // En el Carrito el menú solo se abre empezando en el borde izquierdo;
+      // en cualquier otro punto, deslizar a la derecha vuelve a la Nevera.
+      if($('#section-despensa').classList.contains('active') && despensaPage()===1 && e.clientX > DRAWER_EDGE) return;
       // en modo editar mosaico/carpeta, el arrastre horizontal es para archivar
       // platos en carpetas, no para abrir el menú lateral
       if((galleryEditMode || folderEditMode) && e.target.closest('#gallery, #folder-gallery')) return;
@@ -6003,6 +6004,7 @@ $('#explore-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.prev
 wireIngredientAutocomplete($('#explore-input'), $('#explore-suggest'), (name)=> addExploreTerm(name));
 
 /* ===================== NEVERA / CARRITO: deslizar entre las dos ===================== */
+const DRAWER_EDGE = 30; // px desde el borde izquierdo que abren el menú en el Carrito
 function despensaPage(){ const p = $('#np-pager'); return p ? Math.round(p.scrollLeft / (p.clientWidth||1)) : 0; }
 function setDespensaPage(i, smooth){
   const p = $('#np-pager'); if(!p) return;
@@ -6033,6 +6035,49 @@ function syncDespensaHeight(){
     });
   }, { passive:true });
   $all('.np-tab').forEach(t=> t.onclick = ()=> setDespensaPage(Number(t.dataset.np), true));
+  // El paso de una pantalla a otra lo lleva la app (no el navegador), así se
+  // puede deslizar desde cualquier punto (también la zona vacía de abajo) y
+  // no se pelea con el gesto del menú.
+  let x0 = 0, y0 = 0, s0 = 0, t0 = 0, lastX = 0, mode = null, pid = null, startPage = 0;
+  document.addEventListener('pointerdown', e=>{
+    if(e.pointerType==='mouse' || isDesktopLayout()) return;
+    if(!$('#section-despensa').classList.contains('active')) return;
+    if($all('.modal').some(m=> !m.classList.contains('hidden')) || $('#drawer').classList.contains('open')) return;
+    if(e.target.closest('input, textarea, select, #drawer, .ingredient-suggest')) return;
+    startPage = despensaPage();
+    if(startPage===1 && e.clientX <= DRAWER_EDGE) return; // eso abre el menú
+    x0 = lastX = e.clientX; y0 = e.clientY; s0 = p.scrollLeft; t0 = Date.now(); mode = null; pid = e.pointerId;
+  }, true);
+  document.addEventListener('pointermove', e=>{
+    if(pid===null || e.pointerId!==pid) return;
+    lastX = e.clientX;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    if(!mode){
+      if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      mode = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+      if(mode==='h' && startPage===0 && dx > 0) mode = 'skip'; // en la Nevera, a la derecha = menú
+      if(mode==='h') p.style.scrollSnapType = 'none';
+    }
+    if(mode!=='h') return;
+    const w = p.clientWidth || 1;
+    p.scrollLeft = Math.max(0, Math.min(w, s0 - dx));
+  }, true);
+  const endSwipe = e=>{
+    if(pid===null || e.pointerId!==pid) return;
+    pid = null;
+    if(mode!=='h'){ mode = null; return; }
+    mode = null;
+    // (en un "pointercancel" la posición viene a 0: se usa la última conocida)
+    const w = p.clientWidth || 1, dx = lastX - x0, fast = Math.abs(dx) > 40 && (Date.now() - t0) < 280;
+    let target = startPage;
+    if(dx < -w*0.22 || (fast && dx < 0)) target = 1;
+    else if(dx > w*0.22 || (fast && dx > 0)) target = 0;
+    p.scrollTo({ left: target * w, behavior:'smooth' });
+    setTimeout(()=>{ p.style.scrollSnapType = ''; }, 380);
+    updateDespensaTabs(target);
+  };
+  document.addEventListener('pointerup', endSwipe, true);
+  document.addEventListener('pointercancel', endSwipe, true);
   if(window.ResizeObserver){
     const ro = new ResizeObserver(()=> syncDespensaHeight());
     Array.from(p.children).forEach(c=> ro.observe(c));
