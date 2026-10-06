@@ -108,6 +108,13 @@ html.nf-boot #boot-splash{position:fixed; inset:0; z-index:300; background:var(-
   touch-action:pan-y; will-change:transform;
 }
 .drawer.open{transform:translateX(0);}
+@media (min-width:1024px){
+  .drawer{transform:none !important; width:290px; max-width:290px; box-shadow:none; border-right:1px solid var(--border); transition:none;}
+  .drawer-overlay{display:none !important;}
+  .appbar{display:none;}
+  #app-view{padding-left:290px;}
+  main{padding-top:28px;}
+}
 .drawer-brand{font-size:20px; font-weight:800; letter-spacing:-.02em; margin-bottom:36px;}
 .drawer-nav{display:flex; flex-direction:column; gap:8px; flex:1;}
 .drawer-link{
@@ -140,6 +147,21 @@ html.nf-boot #boot-splash{position:fixed; inset:0; z-index:300; background:var(-
 
 main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .app-section{display:none;}
+/* ---------- NEVERA / CARRITO (una página, dos pantallas) ---------- */
+.np-tabs{position:relative; display:flex; gap:4px; padding:4px; margin:2px 0 16px; background:var(--card2); border:1px solid var(--border); border-radius:14px;}
+.np-tab{flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 8px; border-radius:10px; background:none;
+  font-size:16px; font-weight:800; color:var(--muted); position:relative; z-index:1; transition:color .2s;}
+.np-tab svg{width:20px; height:20px;}
+.np-tab.active{color:var(--accent);}
+.np-ink{position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 6px); border-radius:10px; background:var(--card);
+  box-shadow:0 1px 4px rgba(0,0,0,.08); transition:transform .25s cubic-bezier(.32,.72,0,1); will-change:transform;}
+.np-count{font-size:11px; font-weight:800; color:#fff; background:var(--accent); border-radius:999px; padding:1px 7px;}
+.np-pager{display:flex; align-items:flex-start; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none;
+  -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; margin:0 -16px; transition:height .2s;}
+.np-pager::-webkit-scrollbar{display:none;}
+.np-page{flex:0 0 100%; min-width:0; scroll-snap-align:start; scroll-snap-stop:always; padding:0 16px 24px; box-sizing:border-box;}
+.drawer-icon-pair{display:flex; gap:2px; flex-shrink:0;}
+.drawer-icon-pair svg{width:24px !important; height:26px !important;}
 .app-section.active{display:block;}
 
 /* ---------- GALLERY ---------- */
@@ -292,7 +314,9 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .sheet-kicker{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:10px;}
 .field{margin-bottom:14px;}
 .field label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px;}
-.field input[type=text], .field input[type=number], .field textarea, .field select{
+input[type=search]{-webkit-appearance:none; appearance:none;}
+input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-search-decoration{-webkit-appearance:none; display:none;}
+.field input[type=text], .field input[type=search], .field input[type=number], .field textarea, .field select{
   width:100%; padding:11px; border-radius:10px; border:1px solid var(--border); background:var(--card); font-size:15px;
 }
 .field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--accent);}
@@ -334,6 +358,14 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .photo-track::-webkit-scrollbar{display:none;}
 .photo-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always;}
 .photo-slide img{width:100%; height:100%; object-fit:contain; display:block; -webkit-user-drag:none; user-select:none;}
+.car-arrow{display:none; position:absolute; top:50%; z-index:3; width:34px; height:34px; margin-top:-17px; border-radius:50%;
+  background:rgba(255,255,255,.88); color:#1d2622; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,.18);}
+.car-arrow svg{width:18px; height:18px;}
+.car-prev{left:10px;} .car-next{right:10px;}
+.car-arrow.car-off{visibility:hidden; pointer-events:none;}
+@media (hover:hover) and (pointer:fine){ .car-arrow{display:flex;} .photo-track{cursor:grab;} }
+.photo-viewer .car-arrow{background:rgba(255,255,255,.18); color:#fff; width:44px; height:44px; margin-top:-22px;}
+.dish-photo-wrap, .wall-post-photo{transition:aspect-ratio .25s cubic-bezier(.32,.72,0,1);}
 .photo-dots{position:absolute; left:0; right:0; bottom:9px; display:flex; justify-content:center; gap:5px; z-index:2; pointer-events:none;}
 .photo-dots span{width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.55); box-shadow:0 0 3px rgba(0,0,0,.35); transition:transform .2s, background .2s;}
 .photo-dots span.on{background:#fff; transform:scale(1.25);}
@@ -892,17 +924,23 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 .shared-dish-info .from{font-size:11px; color:var(--muted);}
 
 /* ---------- MURO ---------- */
-.wall-post{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:16px; overflow:hidden;}
-.wall-post-header{display:flex; align-items:center; gap:10px; padding:12px 14px;}
+/* Publicaciones sin marco, como en Instagram: la foto de lado a lado */
+#wall-feed{max-width:540px; margin:0 auto;}
+.wall-post{background:none; border:none; border-radius:0; margin:0 -16px 26px;}
+@media (min-width:600px){ .wall-post{margin:0 0 30px;} .wall-post-photo{border-radius:6px;} }
+.wall-post-header{display:flex; align-items:center; gap:10px; padding:4px 14px 10px;}
 .wall-post-user{font-weight:700; font-size:14px; flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .wall-post-time{font-size:12px; color:var(--muted); flex-shrink:0; margin-left:auto;}
-.wall-post-photo{width:100%; aspect-ratio:4/3; background:var(--card2); cursor:pointer; transition:aspect-ratio .2s;}
+.wall-post-photo{width:100%; aspect-ratio:4/3; background:transparent; cursor:pointer;}
 .wall-post-body{cursor:pointer;}
 .wall-post-photo img{width:100%; height:100%; object-fit:contain; display:block;}
-.wall-post-body{padding:12px 14px 4px;}
+.wall-post-body{padding:4px 14px 0;}
+.wall-likes-line{display:block; background:none; padding:0 14px; font-size:14px; color:var(--text); text-align:left;}
+.wall-likes-line b{font-weight:700;}
+.wall-comments-link{display:block; background:none; padding:6px 14px 0; font-size:14px; color:var(--muted); text-align:left;}
 .wall-post-dish{font-weight:700; font-size:15px;}
 .wall-post-caption{font-size:14px; color:var(--text); margin-top:4px; line-height:1.4;}
-.wall-post-actions{display:flex; align-items:center; padding:10px 14px 14px; gap:10px;}
+.wall-post-actions{display:flex; align-items:center; padding:8px 14px 6px; gap:10px;}
 .wall-action-left{display:flex; align-items:center; gap:16px;}
 .wall-action-right{margin-left:auto; display:flex; align-items:center; gap:10px;}
 .wall-action-btn{
@@ -917,6 +955,11 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 .wall-comment-row{display:flex; gap:9px; padding:8px 0; border-bottom:1px solid var(--border);}
 .wall-comment-row:last-child{border-bottom:none;}
 .wall-comment-body{flex:1; min-width:0; font-size:13px; line-height:1.4;}
+.wc-like-btn{flex-shrink:0; align-self:flex-start; margin-top:2px; background:none; padding:4px; color:var(--muted);}
+.wc-like-btn svg{width:14px; height:14px;}
+.wc-like-btn.liked{color:var(--bad);}
+.wc-like-btn.liked svg{fill:var(--bad); stroke:var(--bad);}
+.wc-likes{font-weight:700;}
 .wall-comment-user{font-weight:700; margin-right:6px;}
 .wall-comment-text{color:var(--text);}
 .wall-comment-input-row{display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border);}
@@ -992,13 +1035,9 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
         <span>Platos y Recetas</span>
       </button>
-      <button class="drawer-link" data-section="nevera">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg>
-        <span>Nevera</span>
-      </button>
-      <button class="drawer-link" data-section="carrito">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg>
-        <span>Carrito</span>
+      <button class="drawer-link drawer-link-pair" data-section="despensa">
+        <span class="drawer-icon-pair"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg></span>
+        <span>Nevera/Carrito</span>
         <span id="cart-count-badge" class="drawer-count hidden">0</span>
       </button>
       <button class="drawer-link" data-section="social">
@@ -1051,9 +1090,15 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </button>
     </section>
 
-    <!-- NEVERA -->
-    <section id="section-nevera" class="app-section">
-      <div class="section-title">Nevera</div>
+    <!-- NEVERA / CARRITO: dos pantallas, se pasa de una a otra deslizando -->
+    <section id="section-despensa" class="app-section">
+      <div class="np-tabs" role="tablist">
+        <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg><span>Nevera</span></button>
+        <button type="button" class="np-tab" data-np="1" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg><span>Carrito</span><span class="np-count hidden" id="np-cart-count">0</span></button>
+        <span class="np-ink" id="np-ink"></span>
+      </div>
+      <div class="np-pager" id="np-pager">
+        <div class="np-page" id="section-nevera">
 
       <div class="card">
         <div class="field" style="margin-bottom:8px;"><label>Añadir a la nevera</label></div>
@@ -1078,6 +1123,22 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <div style="font-weight:700; margin-bottom:6px;">Sugerencia de platos</div>
         <div id="nevera-suggestions"><div class="empty-hint">Añade cosas a la nevera para ver sugerencias.</div></div>
       </div>
+        </div>
+        <div class="np-page" id="section-carrito">
+      <div class="card">
+        <div class="cart-search">
+          <svg class="cart-search-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="cart-search-input" name="nf-cart-q" placeholder="Busca un ingrediente..."
+            autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+          <button type="button" id="cart-search-clear" class="cart-search-clear hidden" aria-label="Borrar búsqueda">×</button>
+        </div>
+        <div id="cart-search-results" class="cart-search-results hidden"></div>
+      </div>
+      <div class="card">
+        <div id="cart-list"></div>
+      </div>
+        </div>
+      </div>
     </section>
 
     <!-- EXPLORAR -->
@@ -1089,7 +1150,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <button type="button" class="subtab" data-explore-mode="publico">Público</button>
         </nav>
         <div class="ingredient-name-wrap explore-input-wrap">
-          <input type="text" id="explore-input" placeholder="Añade ingredientes: pollo, arroz…"
+          <input type="search" id="explore-input" name="nf-explore-q" placeholder="Añade ingredientes: pollo, arroz…"
             autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
           <div class="ingredient-suggest hidden" id="explore-suggest"></div>
         </div>
@@ -1101,22 +1162,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
     </section>
 
-    <!-- CARRITO -->
-    <section id="section-carrito" class="app-section">
-      <div class="section-title">Carrito</div>
-      <div class="card">
-        <div class="cart-search">
-          <svg class="cart-search-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="text" id="cart-search-input" placeholder="Buscar un ingrediente para añadir..."
-            autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
-          <button type="button" id="cart-search-clear" class="cart-search-clear hidden" aria-label="Borrar búsqueda">×</button>
-        </div>
-        <div id="cart-search-results" class="cart-search-results hidden"></div>
-      </div>
-      <div class="card">
-        <div id="cart-list"></div>
-      </div>
-    </section>
 
     <!-- FITNESS -->
     <section id="section-fitness" class="app-section">
@@ -1229,7 +1274,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div class="card">
         <div class="field" style="margin-bottom:8px;">
           <label>Buscar usuarios</label>
-          <input type="text" id="social-search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+          <input type="search" id="social-search" name="nf-user-q" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
         </div>
         <div id="social-search-results"></div>
       </div>
@@ -1621,6 +1666,17 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   </div>
 </div>
 
+<!-- ================= QUIÉN HA DADO ME GUSTA ================= -->
+<div id="likers-modal" class="modal hidden">
+  <div class="modal-sheet sheet-with-close">
+    <button type="button" class="sheet-close-btn" id="likers-close" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div style="font-weight:700; margin-bottom:14px;">Me gusta</div>
+    <div id="likers-list"></div>
+  </div>
+</div>
+
 <!-- ================= VISOR DE FOTOS (pantalla completa) ================= -->
 <div id="photo-viewer" class="photo-viewer hidden" role="dialog" aria-label="Fotos">
   <div class="pv-top"><span id="pv-count"></span>
@@ -1636,7 +1692,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.04-2';
+const APP_VERSION = '2026.10.06-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -1980,7 +2036,7 @@ function subscribeLiveUpdates(){
         const n = payload && payload.new; if(!n) return;
         if(n.kind==='friend_request' || n.kind==='friend_accepted') liveRefresh('friends', loadFriendshipsState);
         else if(n.kind==='group_added' || n.kind==='group_admin') liveChatsChanged();
-        else if(n.kind==='wall_like' || n.kind==='wall_comment' || n.kind==='wall_reply') liveRefresh('wall', loadWallFeed, 400);
+        else if(n.kind==='wall_like' || n.kind==='wall_comment' || n.kind==='wall_reply' || n.kind==='comment_like') liveRefresh('wall', loadWallFeed, 400);
         else if(n.kind==='dish_shared') liveRefresh('shared', loadSharedDishes);
       })
       .on('postgres_changes', { event:'*', schema:'public', table:'friendships' }, ()=> liveRefresh('friends', loadFriendshipsState))
@@ -1988,6 +2044,7 @@ function subscribeLiveUpdates(){
       .on('postgres_changes', { event:'UPDATE', schema:'public', table:'chats' }, ()=> liveChatsChanged())
       .on('postgres_changes', { event:'*', schema:'public', table:'wall_likes' }, ()=> liveRefresh('wall', loadWallFeed, 400))
       .on('postgres_changes', { event:'*', schema:'public', table:'wall_comments' }, ()=> liveRefresh('wall', loadWallFeed, 400))
+      .on('postgres_changes', { event:'*', schema:'public', table:'wall_comment_likes' }, ()=> liveRefresh('wall', loadWallFeed, 400))
       .on('postgres_changes', { event:'DELETE', schema:'public', table:'wall_posts' }, ()=> liveRefresh('wall', loadWallFeed, 400))
       .on('postgres_changes', { event:'*', schema:'public', table:'shared_dishes' }, ()=> liveRefresh('shared', loadSharedDishes))
       .subscribe(status=>{
@@ -2053,6 +2110,39 @@ document.addEventListener('visibilitychange', ()=>{
 });
 setTimeout(()=> checkForAppUpdate(true), 4000);
 
+// Chrome (sobre todo en ordenador) a veces ofrece "añadir una dirección de
+// correo" en los buscadores de ingredientes: se marcan como campos de
+// búsqueda propios para que ni Chrome ni los gestores de contraseñas
+// propongan nada.
+function noAutofill(el){
+  if(!el || el.dataset.nfNoAutofill) return;
+  el.dataset.nfNoAutofill = '1';
+  el.setAttribute('autocomplete', 'off');
+  el.setAttribute('data-lpignore', 'true');
+  el.setAttribute('data-1p-ignore', 'true');
+  el.setAttribute('data-form-type', 'other');
+  if(!el.name) el.name = 'nf-' + Math.random().toString(36).slice(2, 8);
+  if(el.closest('.ingredient-name-wrap, .cart-search') || el.type==='search'){
+    el.setAttribute('role', 'combobox');
+    el.setAttribute('aria-autocomplete', 'list');
+    el.setAttribute('aria-expanded', 'false');
+  }
+}
+function noAutofillAll(root){
+  (root||document).querySelectorAll('input[type=text], input[type=search], textarea').forEach(el=>{
+    if(el.closest('#login-view')) return;
+    noAutofill(el);
+  });
+}
+noAutofillAll();
+new MutationObserver(muts=>{
+  for(const m of muts) m.addedNodes.forEach(n=>{
+    if(n.nodeType!==1) return;
+    if(n.matches && n.matches('input[type=text], input[type=search], textarea') && !n.closest('#login-view')) noAutofill(n);
+    else if(n.querySelectorAll) noAutofillAll(n);
+  });
+}).observe(document.body, { childList:true, subtree:true });
+
 async function init(){
   let session = null;
   try{ const { data } = await sb.auth.getSession(); session = data && data.session; }catch(e){ console.error(e); }
@@ -2090,6 +2180,11 @@ $('#settings-logout-btn').onclick = async ()=>{
 
 /* ===================== NAVEGACIÓN: DRAWER + SECCIONES ===================== */
 function setSection(section){
+  if(section==='nevera' || section==='carrito'){
+    const page = section==='carrito' ? 1 : 0;
+    section = 'despensa';
+    requestAnimationFrame(()=> setDespensaPage(page, false));
+  }
   $all('.app-section').forEach(s=> s.classList.remove('active'));
   $('#section-'+section).classList.add('active');
   $all('.drawer-link').forEach(b=> b.classList.toggle('active', b.dataset.section===section));
@@ -2097,13 +2192,28 @@ function setSection(section){
 // El fondo oscuro aparece/desaparece a la vez que se desliza el menú (antes
 // salía y se iba de golpe mientras el menú aún se movía).
 let drawerOverlayTimer = null;
+// En pantallas grandes (ordenador) el menú está siempre desplegado a la izquierda.
+const DESKTOP_MQ = window.matchMedia('(min-width: 1024px)');
+function isDesktopLayout(){ return DESKTOP_MQ.matches; }
+function applyDesktopLayout(){
+  if(isDesktopLayout()){
+    $('#drawer').classList.add('open');
+    const ov = $('#drawer-overlay'); ov.classList.add('hidden'); ov.classList.remove('closing');
+  } else {
+    $('#drawer').classList.remove('open');
+  }
+}
+if(DESKTOP_MQ.addEventListener) DESKTOP_MQ.addEventListener('change', applyDesktopLayout);
+else if(DESKTOP_MQ.addListener) DESKTOP_MQ.addListener(applyDesktopLayout);
 function openDrawer(){
+  if(isDesktopLayout()){ $('#drawer').classList.add('open'); return; }
   const ov = $('#drawer-overlay');
   clearTimeout(drawerOverlayTimer);
   ov.classList.remove('closing', 'no-anim', 'hidden');
   $('#drawer').classList.add('open');
 }
 function closeDrawer(){
+  if(isDesktopLayout()) return; // en ordenador no se cierra
   const ov = $('#drawer-overlay');
   $('#drawer').classList.remove('open');
   if(ov.classList.contains('hidden')) return;
@@ -2120,9 +2230,8 @@ $all('.drawer-link').forEach(btn=>{
     setSection(btn.dataset.section);
     closeDrawer();
     if(btn.dataset.section==='muro') openWallSection();
-    if(btn.dataset.section==='nevera') renderNeveraSuggestions();
+    if(btn.dataset.section==='despensa'){ renderNeveraSuggestions(); renderCartList(); requestAnimationFrame(syncDespensaHeight); }
     if(btn.dataset.section==='social') loadChats();
-    if(btn.dataset.section==='carrito') renderCartList();
     if(btn.dataset.section==='explorar') openExploreSection();
   };
 });
@@ -2190,6 +2299,7 @@ function attachDrawerSwipe(){
     dragging=false; mode=null;
   }
   document.addEventListener('pointerdown', e=>{
+    if(isDesktopLayout()) return;
     if($('#app-view').classList.contains('hidden')) return;
     if(!modalHidden($('#dish-modal')) || !modalHidden($('#desc-modal'))) return;
     const isOpen = drawer.classList.contains('open');
@@ -2198,6 +2308,9 @@ function attachDrawerSwipe(){
       if(e.target.closest('.week-board')) return;
       // deslizar entre las fotos de un plato o del Muro no abre el menú
       if(e.target.closest('.photo-track')) return;
+      // en el Carrito, deslizar a la derecha vuelve a la Nevera
+      const pg = e.target.closest('#np-pager');
+      if(pg && pg.scrollLeft > 4) return;
       // en modo editar mosaico/carpeta, el arrastre horizontal es para archivar
       // platos en carpetas, no para abrir el menú lateral
       if((galleryEditMode || folderEditMode) && e.target.closest('#gallery, #folder-gallery')) return;
@@ -3329,13 +3442,29 @@ function ratioBoxAttrs(url, min, max, fallback){
   return `data-ar-min="${min}" data-ar-max="${max}"${r ? ` style="aspect-ratio:${clampRatio(r, min, max).toFixed(4)}"` : ''}`;
 }
 let ratioSaveTimer = null, galleryRelayoutTimer = null;
+function applyBoxRatio(box, r){
+  if(!box || !r) return;
+  box.style.aspectRatio = clampRatio(r, Number(box.dataset.arMin), Number(box.dataset.arMax)).toFixed(4);
+}
+// Carrusel: la caja toma la forma de la foto que se está viendo (cada una la suya).
+function applyCarouselRatio(track, i){
+  const slide = track && track.children[i];
+  const r = slide ? Number(slide.dataset.r) : 0;
+  if(r) applyBoxRatio(track.closest('[data-ar-min]'), r);
+}
 function nfImgLoaded(img){
-  if(!img.naturalWidth || !img.naturalHeight || !img.hasAttribute('data-ar-lead')) return;
+  if(!img.naturalWidth || !img.naturalHeight) return;
   const r = img.naturalWidth / img.naturalHeight;
   const src = img.getAttribute('src') || '';
-  const box = img.matches('[data-ar-min]') ? img : img.closest('[data-ar-min]');
+  const slide = img.closest('.photo-slide');
   const known = src.startsWith('data:') ? null : photoRatio(src);
-  if(box && !known) box.style.aspectRatio = clampRatio(r, Number(box.dataset.arMin), Number(box.dataset.arMax)).toFixed(4);
+  if(slide){
+    if(!Number(slide.dataset.r)) slide.dataset.r = (known || r).toFixed(4);
+    const track = slide.parentElement;
+    if(track && Array.prototype.indexOf.call(track.children, slide)===carouselIndex(track)) applyCarouselRatio(track, carouselIndex(track));
+  } else if(img.hasAttribute('data-ar-lead') && !known){
+    applyBoxRatio(img.matches('[data-ar-min]') ? img : img.closest('[data-ar-min]'), r);
+  }
   if(known || src.startsWith('data:')) return;
   ratioCache[src.split('#')[0]] = Math.round(r*10000)/10000;
   clearTimeout(ratioSaveTimer);
@@ -3368,35 +3497,113 @@ function carouselIndex(track){
 }
 // Une un carrusel (pista deslizable) con sus puntos; onChange(i) al cambiar de foto.
 function wireCarousel(track, dots, onChange){
-  if(!track || track._wired) return;
-  track._wired = true;
-  let last = -1, raf = 0;
-  track.addEventListener('scroll', ()=>{
-    if(raf) return;
-    raf = requestAnimationFrame(()=>{
-      raf = 0;
-      const i = carouselIndex(track);
-      if(i===last) return;
-      last = i;
-      if(dots) Array.from(dots.children).forEach((d,k)=> d.classList.toggle('on', k===i));
-      if(onChange) onChange(i);
-    });
-  }, { passive:true });
+  if(!track) return;
+  if(!track._wired){
+    track._wired = true;
+    let last = -1, raf = 0;
+    track.addEventListener('scroll', ()=>{
+      if(raf) return;
+      raf = requestAnimationFrame(()=>{
+        raf = 0;
+        const i = carouselIndex(track);
+        if(i===last) return;
+        last = i;
+        if(dots) Array.from(dots.children).forEach((d,k)=> d.classList.toggle('on', k===i));
+        applyCarouselRatio(track, i);
+        updateCarouselArrows(track);
+        if(track._onChange) track._onChange(i);
+      });
+    }, { passive:true });
+    attachMouseDrag(track);
+    // Tras arrastrar con el ratón, el "clic" de soltar no abre nada.
+    track.addEventListener('click', e=>{ if(track._dragged){ track._dragged = false; e.stopPropagation(); e.preventDefault(); } }, true);
+  }
+  if(onChange) track._onChange = onChange;
+  addCarouselArrows(track);
+  requestAnimationFrame(()=>{ applyCarouselRatio(track, carouselIndex(track)); updateCarouselArrows(track); });
 }
+// Flechas ‹ › (solo se ven en ordenador, con ratón).
+function addCarouselArrows(track){
+  const box = track.parentElement;
+  if(!box) return;
+  box.querySelectorAll(':scope > .car-arrow').forEach(a=> a.remove());
+  if(track.children.length<2) return;
+  ['prev','next'].forEach(dir=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'car-arrow car-'+dir;
+    b.setAttribute('aria-label', dir==='prev' ? 'Foto anterior' : 'Foto siguiente');
+    b.innerHTML = dir==='prev'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+    b.addEventListener('click', e=>{
+      e.stopPropagation(); e.preventDefault();
+      const i = carouselIndex(track) + (dir==='prev' ? -1 : 1);
+      track.scrollTo({ left: Math.max(0, Math.min(track.children.length-1, i)) * track.clientWidth, behavior:'smooth' });
+    });
+    b.addEventListener('pointerdown', e=> e.stopPropagation());
+    box.appendChild(b);
+  });
+  updateCarouselArrows(track);
+}
+function updateCarouselArrows(track){
+  const box = track.parentElement;
+  if(!box) return;
+  const i = carouselIndex(track), n = track.children.length;
+  const prev = box.querySelector(':scope > .car-prev'), next = box.querySelector(':scope > .car-next');
+  if(prev) prev.classList.toggle('car-off', i<=0);
+  if(next) next.classList.toggle('car-off', i>=n-1);
+}
+// Arrastrar las fotos con el ratón (en el móvil ya se deslizan con el dedo).
+function attachMouseDrag(track){
+  let x0 = 0, s0 = 0, down = false, moved = false;
+  track.addEventListener('pointerdown', e=>{
+    if(e.pointerType!=='mouse' || e.button!==0 || track.children.length<2) return;
+    down = true; moved = false; x0 = e.clientX; s0 = track.scrollLeft;
+    e.preventDefault();
+  });
+  track.addEventListener('pointermove', e=>{
+    if(!down) return;
+    const dx = e.clientX - x0;
+    if(!moved && Math.abs(dx) > 4){
+      // Solo al empezar a arrastrar de verdad (un clic normal sigue abriendo la foto)
+      moved = true;
+      track.style.scrollSnapType = 'none';
+      try{ track.setPointerCapture(e.pointerId); }catch(err){}
+    }
+    if(moved) track.scrollLeft = s0 - dx;
+  });
+  const end = e=>{
+    if(!down) return;
+    down = false;
+    if(!moved){ track.style.scrollSnapType = ''; return; }
+    const w = track.clientWidth || 1, dx = e.clientX - x0;
+    let i = Math.round(s0 / w);
+    if(dx < -w*0.15) i++; else if(dx > w*0.15) i--;
+    i = Math.max(0, Math.min(track.children.length-1, i));
+    track._dragged = moved;
+    track.scrollTo({ left: i*w, behavior:'smooth' });
+    setTimeout(()=>{ track.style.scrollSnapType = ''; if(!moved) track._dragged = false; }, 350);
+  };
+  track.addEventListener('pointerup', end);
+  track.addEventListener('pointercancel', end);
+}
+
 function scrollCarouselTo(track, i){
   requestAnimationFrame(()=>{ track.scrollLeft = i * track.clientWidth; });
 }
 function renderDishPhotos(goTo){
   const wrap = $('#dish-photo-wrap'), track = $('#dish-photo-track');
-  track.innerHTML = dishPhotos.map((p,i)=> `<div class="photo-slide" data-photo-i="${i}"><img src="${p.url || p.preview}" alt="" draggable="false"${i===0?' data-ar-lead':''} onload="nfImgLoaded(this)"></div>`).join('');
+  track.innerHTML = dishPhotos.map((p,i)=>{ const r = p.ratio || photoRatio(p.url);
+    return `<div class="photo-slide" data-photo-i="${i}" data-r="${r ? r.toFixed(4) : ''}"><img src="${p.url || p.preview}" alt="" draggable="false" onload="nfImgLoaded(this)"></div>`; }).join('');
   wrap.classList.toggle('has-photo', dishPhotos.length>0);
-  // La caja se adapta a la primera foto (entre 4:5 vertical y 1,91:1 apaisada,
-  // como Instagram); el resto se ven enteras dentro, sin recortar.
-  wrap.dataset.arMin = '0.8'; wrap.dataset.arMax = '1.91';
-  const first = dishPhotos[0];
-  const r0 = first ? (first.ratio || photoRatio(first.url)) : null;
-  wrap.style.aspectRatio = r0 ? clampRatio(r0, 0.8, 1.91).toFixed(4) : '';
   const idx = Math.max(0, Math.min(goTo||0, dishPhotos.length-1));
+  // La caja toma la forma de la foto que se ve (entre 4:5 vertical y 1,91:1
+  // apaisada); al pasar a otra, cambia a la forma de esa. Nada se recorta.
+  wrap.dataset.arMin = '0.8'; wrap.dataset.arMax = '1.91';
+  const cur = dishPhotos[idx];
+  const r0 = cur ? (cur.ratio || photoRatio(cur.url)) : null;
+  wrap.style.aspectRatio = r0 ? clampRatio(r0, 0.8, 1.91).toFixed(4) : '';
   $('#dish-photo-dots').innerHTML = photoDotsHtml(dishPhotos.length, idx);
   updateDishPhotoChip(idx);
   $('#dish-photo-add').classList.toggle('hidden', dishPhotos.length>=MAX_DISH_PHOTOS);
@@ -3474,8 +3681,7 @@ function openPhotoViewer(urls, index){
   $('#pv-dots').innerHTML = photoDotsHtml(urls.length, i);
   const setCount = (k)=> $('#pv-count').textContent = urls.length>1 ? `${k+1} / ${urls.length}` : '';
   setCount(i);
-  track._onChange = setCount;
-  if(!track._wired) wireCarousel(track, $('#pv-dots'), k=> track._onChange && track._onChange(k));
+  wireCarousel(track, $('#pv-dots'), setCount);
   $('#pv-stage').style.transform = ''; v.style.background = '';
   v.classList.remove('closing', 'hidden');
   if(!pvOpen) lockBodyScroll();
@@ -3493,7 +3699,14 @@ function closePhotoViewer(instant){
   setTimeout(()=>{ if(!pvOpen){ v.classList.remove('closing'); v.classList.add('hidden'); } }, 180);
 }
 $('#pv-close').onclick = ()=> closePhotoViewer();
-document.addEventListener('keydown', e=>{ if(pvOpen && e.key==='Escape') closePhotoViewer(); });
+document.addEventListener('keydown', e=>{
+  if(!pvOpen) return;
+  if(e.key==='Escape') closePhotoViewer();
+  if(e.key==='ArrowRight' || e.key==='ArrowLeft'){
+    const t = $('#pv-track'), i = carouselIndex(t) + (e.key==='ArrowRight' ? 1 : -1);
+    t.scrollTo({ left: Math.max(0, Math.min(t.children.length-1, i)) * t.clientWidth, behavior:'smooth' });
+  }
+});
 (function(){
   const v = $('#photo-viewer'), stage = $('#pv-stage');
   let x0=0, y0=0, t0=0, mode=null, dy=0;
@@ -5103,7 +5316,7 @@ if('serviceWorker' in navigator){
 }
 
 /* ===================== MURO ===================== */
-let wallPosts = [], wallLikes = [], wallComments = [], wallUnreadCount = 0;
+let wallPosts = [], wallLikes = [], wallComments = [], wallCommentLikes = [], wallUnreadCount = 0;
 let openingCommentsForPost = null;
 
 function timeAgo(iso){
@@ -5125,15 +5338,21 @@ async function loadWallFeed(){
   const ids = wallPosts.map(p=>p.id);
   if(ids.length){
     const [{data: likes, error: likesErr}, {data: comments, error: commentsErr}] = await Promise.all([
-      sb.from('wall_likes').select('*').in('post_id', ids),
+      sb.from('wall_likes').select('*, liker:user_id(id,username,avatar_url)').in('post_id', ids),
       sb.from('wall_comments').select('*, author:user_id(username,avatar_url)').in('post_id', ids).order('created_at', {ascending:true})
     ]);
     if(likesErr) console.error(likesErr);
     if(commentsErr) console.error(commentsErr);
     wallLikes = likes||[];
     wallComments = comments||[];
+    const cids = wallComments.map(c=> c.id);
+    wallCommentLikes = [];
+    if(cids.length){
+      const { data: cl, error: clErr } = await sb.from('wall_comment_likes').select('*').in('comment_id', cids);
+      if(!clErr) wallCommentLikes = cl||[]; // si aún no se ha ejecutado el SQL, simplemente no hay likes de comentarios
+    }
   } else {
-    wallLikes = []; wallComments = [];
+    wallLikes = []; wallComments = []; wallCommentLikes = [];
   }
   renderWallFeed();
   updateWallUnreadCount();
@@ -5168,18 +5387,20 @@ function renderWallFeed(){
         <span class="wall-post-time">${timeAgo(p.created_at)}</span>
       </div>
       ${(()=>{ const ph = dishPhotoList(d); if(!ph.length) return '';
-        return `<div class="wall-post-photo" data-wall-open="${p.id}" ${ratioBoxAttrs(ph[0], 0.8, 1.91, 4/3)}><div class="photo-track">${ph.map((u,i)=> `<div class="photo-slide"><img src="${u}" alt="" draggable="false"${i===0?' data-ar-lead':''} onload="nfImgLoaded(this)"></div>`).join('')}</div><div class="photo-dots">${photoDotsHtml(ph.length, 0)}</div></div>`; })()}
-      <div class="wall-post-body" data-wall-open="${p.id}">
-        <div class="wall-post-dish">${escapeHtml(d.name||'Receta')}${d.calories?` · ${d.calories} kcal`:''}</div>
-        ${p.caption ? `<div class="wall-post-caption">${escapeHtml(p.caption)}</div>` : ''}
-      </div>
+        return `<div class="wall-post-photo" data-wall-open="${p.id}" ${ratioBoxAttrs(ph[0], 0.8, 1.91, 4/3)}><div class="photo-track">${ph.map(u=> `<div class="photo-slide" data-r="${photoRatio(u) ? photoRatio(u).toFixed(4) : ''}"><img src="${u}" alt="" draggable="false" onload="nfImgLoaded(this)"></div>`).join('')}</div><div class="photo-dots">${photoDotsHtml(ph.length, 0)}</div></div>`; })()}
       <div class="wall-post-actions">
         <div class="wall-action-left">
-          <button type="button" class="wall-action-btn ${liked?'liked':''}" data-wall-like="${p.id}" aria-label="Me gusta">${ICON_HEART}${likeCount?`<span>${likeCount}</span>`:''}</button>
-          <button type="button" class="wall-action-btn" data-wall-comment="${p.id}" aria-label="Comentarios">${ICON_COMMENT}${commentCount?`<span>${commentCount}</span>`:''}</button>
+          <button type="button" class="wall-action-btn ${liked?'liked':''}" data-wall-like="${p.id}" aria-label="Me gusta">${ICON_HEART}</button>
+          <button type="button" class="wall-action-btn" data-wall-comment="${p.id}" aria-label="Comentarios">${ICON_COMMENT}</button>
         </div>
         <div class="wall-action-right">${rightBtn}</div>
       </div>
+      ${likeCount ? `<button type="button" class="wall-likes-line" data-wall-likers="${p.id}">${wallLikesLine(p.id)}</button>` : ''}
+      <div class="wall-post-body" data-wall-open="${p.id}">
+        <div class="wall-post-dish">${escapeHtml(d.name||'Receta')}${d.calories?` · ${d.calories} kcal`:''}</div>
+        ${p.caption ? `<div class="wall-post-caption"><span class="profile-link"${profileAttr(p.user_id)}>@${escapeHtml((p.author&&p.author.username)||'?')}</span> ${escapeHtml(p.caption)}</div>` : ''}
+      </div>
+      <button type="button" class="wall-comments-link" data-wall-comment="${p.id}">${commentCount ? (commentCount===1 ? 'Ver 1 comentario' : `Ver los ${commentCount} comentarios`) : 'Añade un comentario…'}</button>
     </div>`;
   }).join('');
   $all('[data-wall-open]').forEach(el=> el.onclick = ()=> openWallDishPreview(el.dataset.wallOpen));
@@ -5194,7 +5415,28 @@ function renderWallFeed(){
   $all('[data-wall-comment]').forEach(b=> b.onclick = ()=> openWallComments(b.dataset.wallComment));
   $all('[data-wall-add]').forEach(b=> b.onclick = ()=> addWallDishToRepo(b.dataset.wallAdd));
   $all('[data-wall-delete]').forEach(b=> b.onclick = ()=> deleteWallPost(b.dataset.wallDelete));
+  $all('[data-wall-likers]').forEach(b=> b.onclick = ()=> openWallLikers(b.dataset.wallLikers));
 }
+// "Le gusta a @beto y 3 personas más" (primero tus amigos, como Instagram).
+function wallLikesLine(postId){
+  const ls = wallLikes.filter(l=> l.post_id===postId);
+  if(!ls.length) return '';
+  const pick = ls.find(l=> l.user_id!==currentUser.id && friends.some(f=> f.id===l.user_id)) || ls.find(l=> l.user_id!==currentUser.id) || ls[0];
+  const name = pick.user_id===currentUser.id ? 'ti' : '@'+((pick.liker && pick.liker.username) || '?');
+  const rest = ls.length - 1;
+  return `Le gusta a <b>${escapeHtml(name)}</b>${rest ? ` y <b>${rest} ${rest===1?'persona':'personas'} más</b>` : ''}`;
+}
+// Lista de quién ha dado me gusta a una publicación.
+function openWallLikers(postId){
+  const ls = wallLikes.filter(l=> l.post_id===postId);
+  $('#likers-list').innerHTML = ls.length ? ls.map(l=>{
+    const u = l.liker || (l.user_id===currentUser.id ? currentUser : { id:l.user_id, username:'?' });
+    return `<div class="user-row user-row-clickable" data-profile-id="${escapeHtml(l.user_id)}">${avatarHtml(u)}<span class="user-row-name">@${escapeHtml(u.username||'?')}${l.user_id===currentUser.id ? ' (tú)' : ''}</span></div>`;
+  }).join('') : '<div class="empty-hint">Todavía no le ha gustado a nadie.</div>';
+  lockBodyScroll();
+  showModal($('#likers-modal'));
+}
+function closeWallLikers(){ hideModal($('#likers-modal')); unlockBodyScroll(); }
 
 async function toggleWallLike(postId){
   const existing = wallLikes.find(l=> l.post_id===postId && l.user_id===currentUser.id);
@@ -5204,7 +5446,7 @@ async function toggleWallLike(postId){
     const { error } = await sb.from('wall_likes').delete().eq('id', existing.id);
     if(error){ console.error(error); await loadWallFeed(); }
   } else {
-    const optimistic = { id: 'tmp-'+uuid(), post_id: postId, user_id: currentUser.id, created_at: new Date().toISOString() };
+    const optimistic = { id: 'tmp-'+uuid(), post_id: postId, user_id: currentUser.id, created_at: new Date().toISOString(), liker: { id: currentUser.id, username: currentUser.username, avatar_url: currentUser.avatar_url } };
     wallLikes.push(optimistic);
     renderWallFeed();
     const { data, error } = await sb.from('wall_likes').insert({ post_id: postId, user_id: currentUser.id }).select().single();
@@ -5226,10 +5468,34 @@ function commentTextHtml(text){
 }
 function commentRowHtml(c, isReply){
   const user = (c.author&&c.author.username)||'?';
+  const tmp = String(c.id).startsWith('tmp-');
+  const likes = wallCommentLikes.filter(l=> l.comment_id===c.id);
+  const liked = likes.some(l=> l.user_id===currentUser.id);
   return `<div class="wall-comment-row ${isReply?'wc-is-reply':''}" data-comment="${c.id}">${profileAvatarHtml(c.author, c.user_id)}<div class="wall-comment-body">
     <span class="wall-comment-user profile-link"${profileAttr(c.user_id)}>@${escapeHtml(user)}</span><span class="wall-comment-text">${commentTextHtml(c.text)}</span>
-    <div class="wc-meta"><span>${c.created_at ? timeAgo(c.created_at) : ''}</span>${String(c.id).startsWith('tmp-') ? '' : `<button type="button" class="wc-reply-btn" data-reply="${c.id}" data-reply-user="${escapeHtml(user)}">Responder</button>`}</div>
-  </div></div>`;
+    <div class="wc-meta"><span>${c.created_at ? timeAgo(c.created_at) : ''}</span>${likes.length ? `<span class="wc-likes">${likes.length} Me gusta</span>` : ''}${tmp ? '' : `<button type="button" class="wc-reply-btn" data-reply="${c.id}" data-reply-user="${escapeHtml(user)}">Responder</button>`}</div>
+  </div>${tmp ? '' : `<button type="button" class="wc-like-btn ${liked?'liked':''}" data-clike="${c.id}" aria-label="${liked?'Quitar me gusta':'Me gusta'}">${ICON_HEART}</button>`}</div>`;
+}
+async function toggleCommentLike(commentId){
+  const mine = wallCommentLikes.find(l=> l.comment_id===commentId && l.user_id===currentUser.id);
+  if(mine){
+    wallCommentLikes = wallCommentLikes.filter(l=> l!==mine);
+    renderWallCommentsList();
+    if(String(mine.id).startsWith('tmp-')) return;
+    const { error } = await sb.from('wall_comment_likes').delete().eq('id', mine.id);
+    if(error){ wallCommentLikes.push(mine); renderWallCommentsList(); }
+    return;
+  }
+  const tmp = { id:'tmp-'+uuid(), comment_id: commentId, user_id: currentUser.id };
+  wallCommentLikes.push(tmp);
+  renderWallCommentsList();
+  const { data, error } = await sb.from('wall_comment_likes').insert({ comment_id: commentId, user_id: currentUser.id }).select().single();
+  if(error){
+    wallCommentLikes = wallCommentLikes.filter(l=> l!==tmp); renderWallCommentsList();
+    alert(/wall_comment_likes/.test(error.message) ? 'Falta actualizar la base de datos (ejecuta el SQL de esta versión en Supabase).' : error.message);
+    return;
+  }
+  Object.assign(tmp, data);
 }
 function renderWallCommentsList(flashId){
   const all = wallComments.filter(c=> c.post_id===openingCommentsForPost);
@@ -5248,6 +5514,7 @@ function renderWallCommentsList(flashId){
     </div>`;
   }).join('') : '<div class="empty-hint">Sé el primero en comentar.</div>';
   box.querySelectorAll('[data-reply]').forEach(b=> b.onclick = ()=> startWallReply(b.dataset.reply, b.dataset.replyUser));
+  box.querySelectorAll('[data-clike]').forEach(b=> b.onclick = ()=> toggleCommentLike(b.dataset.clike));
   box.querySelectorAll('[data-thread]').forEach(b=> b.onclick = ()=>{
     const id = b.dataset.thread;
     if(wallThreadsOpen.has(id)) wallThreadsOpen.delete(id); else wallThreadsOpen.add(id);
@@ -5278,6 +5545,8 @@ function cancelWallReply(){
   input.placeholder = 'Escribe un comentario...';
 }
 $('#wall-reply-cancel').onclick = cancelWallReply;
+$('#likers-close').onclick = closeWallLikers;
+$('#likers-modal').addEventListener('click', e=>{ if(e.target.id==='likers-modal') closeWallLikers(); });
 function openWallComments(postId){
   openingCommentsForPost = postId;
   wallReplyTo = null;
@@ -5664,6 +5933,44 @@ $all('[data-explore-mode]').forEach(b=> b.onclick = ()=>{ exploreMode = b.datase
 $('#explore-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addExploreTerm($('#explore-input').value); } });
 wireIngredientAutocomplete($('#explore-input'), $('#explore-suggest'), (name)=> addExploreTerm(name));
 
+/* ===================== NEVERA / CARRITO: deslizar entre las dos ===================== */
+function despensaPage(){ const p = $('#np-pager'); return p ? Math.round(p.scrollLeft / (p.clientWidth||1)) : 0; }
+function setDespensaPage(i, smooth){
+  const p = $('#np-pager'); if(!p) return;
+  p.scrollTo({ left: i * p.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+  updateDespensaTabs(i);
+}
+function updateDespensaTabs(i){
+  $all('.np-tab').forEach(t=> t.classList.toggle('active', Number(t.dataset.np)===i));
+  syncDespensaHeight();
+}
+// La página mide lo que mide la pantalla visible (así no queda hueco debajo).
+function syncDespensaHeight(){
+  const p = $('#np-pager'); if(!p) return;
+  const page = p.children[despensaPage()];
+  if(page) p.style.height = page.scrollHeight + 'px';
+}
+(function(){
+  const p = $('#np-pager'), ink = $('#np-ink');
+  let raf = 0, last = 0;
+  p.addEventListener('scroll', ()=>{
+    if(raf) return;
+    raf = requestAnimationFrame(()=>{
+      raf = 0;
+      const f = p.scrollLeft / (p.clientWidth||1);
+      ink.style.transform = `translateX(calc(${Math.max(0, Math.min(1, f))} * (100% + 4px)))`;
+      const i = Math.round(f);
+      if(i!==last){ last = i; updateDespensaTabs(i); if(i===1) renderCartList(); else renderNeveraSuggestions(); }
+    });
+  }, { passive:true });
+  $all('.np-tab').forEach(t=> t.onclick = ()=> setDespensaPage(Number(t.dataset.np), true));
+  if(window.ResizeObserver){
+    const ro = new ResizeObserver(()=> syncDespensaHeight());
+    Array.from(p.children).forEach(c=> ro.observe(c));
+  }
+  window.addEventListener('resize', ()=>{ const i = despensaPage(); p.scrollLeft = i * p.clientWidth; syncDespensaHeight(); });
+})();
+
 /* ===================== CARRITO DE LA COMPRA ===================== */
 // Un ingrediente = una línea (se compara por nombre sin acentos). Se añade
 // sin preguntar cantidad: entra con la de la receta. Desde el carrito cada
@@ -5698,7 +6005,9 @@ function onCartChanged(){
   $all('#ingredients-list .ingredient-row').forEach(syncRowCartButton);
   renderCartList();
   if($('#cart-search-input') && $('#cart-search-input').value.trim()) renderCartSearch();
-  if($('#section-nevera').classList.contains('active')) renderNeveraSuggestions();
+  if($('#section-despensa').classList.contains('active')) renderNeveraSuggestions();
+  const npc = $('#np-cart-count');
+  if(npc){ npc.textContent = String(cartItems.length); npc.classList.toggle('hidden', !cartItems.length); }
 }
 async function toggleCartItem(item){
   const existing = findCartItem(item.name);
