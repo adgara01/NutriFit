@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="NutriFit">
 <meta name="theme-color" content="#f4f6f5">
+<script>try{if(localStorage.getItem('nutrifit_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');document.querySelector('meta[name="theme-color"]').setAttribute('content','#0e1211');}}catch(e){}</script>
 <link rel="manifest" href="manifest.json">
 <!-- Iconos incrustados en el propio index.html (no dependen de que los .png
      estén subidos al repo, así no se pierden al actualizar la app).
@@ -27,7 +28,26 @@
   --good:#1f9d63; --normal:#c07a1f; --bad:#c9564a;
   --radius:16px;
   --shadow:0 1px 2px rgba(20,30,25,.05), 0 10px 24px rgba(20,30,25,.08);
+  --border-strong:#b3beb7; --border-btn:#8a978f; --photo-bars:#eef1ef; --sel-ring:#3a3f3c;
+  color-scheme:light;
 }
+/* Modo oscuro (Ajustes → Modo oscuro): fondos casi negros con un punto verde,
+   tarjetas un tono más claras y bordes en gris suave (estilo GitHub/Threads). */
+html[data-theme="dark"]{
+  --bg:#0e1211; --bg2:#151a19; --card:#181e1c; --card2:#222a28;
+  --border:#323c39; --text:#e8eeeb; --muted:#93a19b;
+  --accent:#2fb37f; --accent-l:#5ccf9f; --accent2:#22e3a0;
+  --good:#3cc47f; --normal:#e0a24a; --bad:#e2705f;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 24px rgba(0,0,0,.35);
+  --border-strong:#56625d; --border-btn:#6b7873; --photo-bars:#0a0d0c; --sel-ring:#cfd8d4;
+  color-scheme:dark;
+}
+html[data-theme="dark"] .modal{background:rgba(0,0,0,.6);}
+html[data-theme="dark"] .drawer-overlay{background:rgba(0,0,0,.5);}
+html[data-theme="dark"] .day-col .day-badge{color:#7fe0b4;}
+html[data-theme="dark"] .ingredient-check.checked{background:#1f5a43; border-color:#2f7a5c;}
+html[data-theme="dark"] .update-banner{background:#2a3431;}
+html[data-theme="dark"] .np-ink{box-shadow:0 1px 4px rgba(0,0,0,.5);}
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
 body{
@@ -174,21 +194,40 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
    propio scroll vertical (sin hueco debajo y sin cargarse "a medias"); el
    paso de una a otra lo mueve la app con el dedo (ver gestos más abajo). */
 .appbar .np-tabs{display:none; flex:1; margin:0 0 0 16px;}
-body.sec-despensa .appbar .np-tabs{display:flex;}
-body.sec-despensa main{padding-bottom:0;}
-#section-despensa.active{position:fixed; left:0; right:0; top:var(--appbar-h, 64px); bottom:0; z-index:1; overflow:hidden;}
-#np-pager{display:flex; height:100%; overflow:hidden;}
-.np-page{flex:0 0 100%; min-width:0; height:100%; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+body.sec-despensa .appbar #np-tabs, body.sec-explorar .appbar #ex-tabs{display:flex;}
+body.sec-pager main{padding-bottom:0;}
+/* Secciones de "pantallas deslizables" (Nevera/Carrito, Explorar, Ajustes):
+   fijas bajo la barra de arriba; cada pantalla con su propio scroll. */
+.pager-section.active.active{position:fixed; left:0; right:0; top:var(--appbar-h, 64px); bottom:0; z-index:1; overflow:hidden;
+  display:flex; flex-direction:column;}
+.pager-top{flex:0 0 auto; position:relative; z-index:2; padding:6px 16px 0;}
+.pager-top > *{max-width:868px; margin-left:auto; margin-right:auto;}
+.pager-top .card{margin-bottom:10px;}
+.pager{display:flex; flex:1 1 auto; min-height:0; overflow:hidden;}
+.pager-page{flex:0 0 100%; min-width:0; align-self:stretch; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
   padding:6px 16px calc(28px + env(safe-area-inset-bottom)); box-sizing:border-box; touch-action:pan-y;
   transform:translate3d(var(--np-x, 0px),0,0); transition:transform .32s cubic-bezier(.32,.72,0,1); will-change:transform;}
-#np-pager.np-dragging .np-page{transition:none;}
-.np-page > *{max-width:868px; margin-left:auto; margin-right:auto;}
+.pager.np-dragging .pager-page{transition:none;}
+.pager-page > *{max-width:868px; margin-left:auto; margin-right:auto;}
+.explore-hint{margin:2px 4px 10px;}
 @media (min-width:1024px){
-  #section-despensa.active{left:290px;}
-  body.sec-despensa .appbar{display:flex; padding-left:24px; padding-right:24px;}
-  body.sec-despensa #menu-btn{display:none;}
-  body.sec-despensa .appbar .np-tabs{margin:0 auto; max-width:560px;}
+  .pager-section.active.active{left:290px;}
+  body.sec-despensa .appbar, body.sec-explorar .appbar{display:flex; padding-left:24px; padding-right:24px;}
+  body.sec-despensa #menu-btn, body.sec-explorar #menu-btn{display:none;}
+  body.sec-despensa .appbar .np-tabs, body.sec-explorar .appbar .np-tabs{margin:0 auto; max-width:560px;}
+  #section-settings.active.active{top:0;}
+  #section-settings .pager-page{padding-top:28px;}
 }
+/* Ajustes: fila que lleva a otra pantalla (como en los ajustes del iPhone) */
+.settings-link{width:100%; display:flex; align-items:center; gap:12px; background:none; padding:2px 0; text-align:left; color:var(--text); font-size:15px; font-weight:600;}
+.settings-link-icon{width:32px; height:32px; border-radius:9px; background:var(--card2); border:1px solid var(--border); color:var(--accent);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.settings-link-icon svg{width:17px; height:17px;}
+.settings-link-label{flex:1;}
+.settings-link-chev{width:18px; height:18px; color:var(--muted); flex-shrink:0;}
+.subpage-head{display:flex; align-items:center; margin:0 0 6px;}
+.subpage-back{display:inline-flex; align-items:center; gap:2px; background:none; padding:6px 8px 6px 0; color:var(--accent); font-size:16px; font-weight:600;}
+.subpage-back svg{width:22px; height:22px;}
 .drawer-icon-pair{display:flex; gap:2px; flex-shrink:0;}
 .drawer-icon-pair svg{width:24px !important; height:26px !important;}
 .app-section.active{display:block;}
@@ -227,7 +266,7 @@ body.sec-despensa main{padding-bottom:0;}
 }
 .dish-card.jiggle, .folder-card.jiggle{animation:dish-jiggle .24s infinite ease-in-out;}
 .dish-card.jiggle:nth-child(even), .folder-card.jiggle:nth-child(even){animation-delay:-.12s;}
-.dish-card.selected{box-shadow:inset 0 0 0 3px #3a3f3c;}
+.dish-card.selected{box-shadow:inset 0 0 0 3px var(--sel-ring);}
 .dish-card.dragging, .folder-card.dragging{animation:none !important; opacity:.92; box-shadow:var(--shadow); z-index:50; position:relative;}
 .folder-card.drop-hover{outline:3px solid var(--accent); outline-offset:-3px; background:rgba(18,135,94,.08);}
 /* Arrastre en grupo (varios platos seleccionados a la vez, estilo iPhone):
@@ -369,7 +408,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .dish-close-disabled{opacity:.35; pointer-events:none;}
 .btn-primary{flex:1; background:var(--accent); color:#fff; padding:13px; border-radius:12px; font-weight:600; font-size:15px;}
 .btn-secondary{
-  background:var(--card); color:var(--text); font-weight:600; padding:13px 16px; border-radius:12px; border:1.5px solid #8a978f;
+  background:var(--card); color:var(--text); font-weight:600; padding:13px 16px; border-radius:12px; border:1.5px solid var(--border-btn);
   display:flex; align-items:center; justify-content:center; gap:6px;
 }
 .btn-danger{background:none; color:var(--bad); padding:13px; font-size:14px;}
@@ -385,7 +424,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .photo-track{position:absolute; inset:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; overscroll-behavior:none;
   -webkit-overflow-scrolling:touch; scrollbar-width:none; }
 .photo-track::-webkit-scrollbar{display:none;}
-.photo-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always;}
+.photo-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always; background:var(--photo-bars);}
 .photo-slide img{width:100%; height:100%; object-fit:contain; display:block; -webkit-user-drag:none; user-select:none;}
 .car-arrow{display:none; position:absolute; top:50%; z-index:3; width:34px; height:34px; margin-top:-17px; border-radius:50%;
   background:rgba(255,255,255,.88); color:#1d2622; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,.18);}
@@ -494,14 +533,14 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
    (la caja entera ya es el botón; un botón dentro de otro no es válido). */
 .desc-expand-btn{
   position:absolute; top:5px; right:5px; width:20px; height:20px; border-radius:6px;
-  background:var(--card); border:1px solid #b3beb7; color:var(--text);
+  background:var(--card); border:1px solid var(--border-strong); color:var(--text);
   display:flex; align-items:center; justify-content:center; pointer-events:none;
 }
 .desc-expand-btn svg{width:11px; height:11px;}
 /* Botón "+ Añadir ingrediente" debajo de la lista: solo creando/editando
    (Enter sigue funcionando igual). */
 .add-ingredient-btn{
-  width:100%; padding:10px; border-radius:10px; border:1.5px dashed #b3beb7; background:none;
+  width:100%; padding:10px; border-radius:10px; border:1.5px dashed var(--border-strong); background:none;
   color:var(--text); font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px;
 }
 .dish-view-locked .add-ingredient-btn{display:none;}
@@ -557,7 +596,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .step-tool svg{width:15px; height:15px;}
 .step-tool-del{margin-left:auto; color:var(--bad);}
 .step-photo-del{position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:50%; background:rgba(20,25,23,.6); color:#fff; font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center;}
-.steps-add{width:100%; margin-top:14px; padding:13px; border-radius:12px; border:1.5px dashed #b3beb7; background:none; font-size:15px; font-weight:700; color:var(--text);}
+.steps-add{width:100%; margin-top:14px; padding:13px; border-radius:12px; border:1.5px dashed var(--border-strong); background:none; font-size:15px; font-weight:700; color:var(--text);}
 .steps-empty{padding:40px 10px; text-align:center; color:var(--muted); font-size:14px; line-height:1.5;}
 .steps-done{flex:0 0 auto !important; margin:0 16px calc(12px + env(safe-area-inset-bottom)); padding:14px; }
 #steps-modal.kb-fit .steps-done{display:none;}
@@ -710,7 +749,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
    tick). Verde relleno = ese ingrediente ya está en el carrito. */
 .ingredient-cart-btn{
   flex:0 0 auto; width:30px; height:30px; margin-right:2px; border-radius:8px; background:var(--card);
-  border:1px solid #b3beb7; color:var(--text); display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--border-strong); color:var(--text); display:flex; align-items:center; justify-content:center;
 }
 .ingredient-cart-btn svg, .missing-chip svg{width:16px; height:16px;}
 .ingredient-cart-btn.in-cart, .missing-chip.in-cart{background:var(--accent); border-color:var(--accent); color:#fff;}
@@ -720,7 +759,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .missing-chips{display:flex; flex-wrap:wrap; gap:5px; margin-top:5px;}
 .missing-chip{
   display:inline-flex; align-items:center; gap:4px; padding:4px 8px 4px 10px; border-radius:999px;
-  background:var(--card); border:1px solid #b3beb7; color:var(--text); font-size:12px; font-weight:600;
+  background:var(--card); border:1px solid var(--border-strong); color:var(--text); font-size:12px; font-weight:600;
 }
 .missing-chip svg{width:14px; height:14px;}
 .cart-search{position:relative; display:flex; align-items:center;}
@@ -840,7 +879,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .chat-send-btn{width:42px; height:42px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
 .pick-row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--border); width:100%; background:none; text-align:left;}
 .pick-row:last-child{border-bottom:none;}
-.pick-check{width:22px; height:22px; border-radius:6px; border:1.5px solid #b3beb7; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0;}
+.pick-check{width:22px; height:22px; border-radius:6px; border:1.5px solid var(--border-strong); display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0;}
 .pick-check svg{width:13px; height:13px; opacity:0;}
 .pick-row.picked .pick-check{background:var(--accent); border-color:var(--accent);}
 .pick-row.picked .pick-check svg{opacity:1;}
@@ -1130,10 +1169,15 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       <span id="menu-notif-badge" class="notif-badge hidden">0</span>
     </button>
-    <div class="np-tabs" role="tablist">
+    <div class="np-tabs" id="np-tabs" role="tablist">
         <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg><span>Nevera</span></button>
         <button type="button" class="np-tab" data-np="1" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg><span>Carrito</span><span class="np-count hidden" id="np-cart-count">0</span></button>
         <span class="np-ink" id="np-ink"></span>
+      </div>
+    <div class="np-tabs" id="ex-tabs" role="tablist">
+        <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.2 3-5 6-5s5.4 1.8 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.6c2.4.1 4 1.6 4.5 4.4"/></svg><span>Amigos</span></button>
+        <button type="button" class="np-tab" data-np="1" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></svg><span>Público</span></button>
+        <span class="np-ink" id="ex-ink"></span>
       </div>
   </header>
 
@@ -1201,9 +1245,9 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     </section>
 
     <!-- NEVERA / CARRITO: dos pantallas, se pasa de una a otra deslizando -->
-    <section id="section-despensa" class="app-section">
-      <div class="np-pager" id="np-pager">
-        <div class="np-page" id="section-nevera">
+    <section id="section-despensa" class="app-section pager-section">
+      <div class="np-pager pager" id="np-pager">
+        <div class="np-page pager-page" id="section-nevera">
 
       <div class="card">
         <div class="field" style="margin-bottom:8px;"><label>Añadir a la nevera</label></div>
@@ -1229,7 +1273,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <div id="nevera-suggestions"><div class="empty-hint">Añade cosas a la nevera para ver sugerencias.</div></div>
       </div>
         </div>
-        <div class="np-page" id="section-carrito">
+        <div class="np-page pager-page" id="section-carrito">
       <div class="card">
         <div class="cart-search">
           <svg class="cart-search-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -1247,23 +1291,26 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     </section>
 
     <!-- EXPLORAR -->
-    <section id="section-explorar" class="app-section">
-      <div class="section-title">Explorar</div>
-      <div class="card">
-        <nav class="subtabs" style="margin-bottom:12px;">
-          <button type="button" class="subtab active" data-explore-mode="amigos">Amigos</button>
-          <button type="button" class="subtab" data-explore-mode="publico">Público</button>
-        </nav>
-        <div class="ingredient-name-wrap explore-input-wrap">
-          <input type="search" id="explore-input" name="nf-explore-q" placeholder="Añade ingredientes: pollo, arroz…"
-            autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
-          <div class="ingredient-suggest hidden" id="explore-suggest"></div>
+    <section id="section-explorar" class="app-section pager-section">
+      <div class="pager-top">
+        <div class="card">
+          <div class="ingredient-name-wrap explore-input-wrap">
+            <input type="search" id="explore-input" name="nf-explore-q" placeholder="Añade ingredientes: pollo, arroz…"
+              autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+            <div class="ingredient-suggest hidden" id="explore-suggest"></div>
+          </div>
+          <div class="missing-chips" id="explore-chips"></div>
         </div>
-        <div class="missing-chips" id="explore-chips"></div>
-        <div class="settings-hint" id="explore-hint"></div>
       </div>
-      <div class="card" id="explore-results-card">
-        <div id="explore-results"></div>
+      <div class="pager" id="ex-pager">
+        <div class="pager-page" id="ex-page-amigos">
+          <div class="settings-hint explore-hint">Platos de tus amigos con perfil público que llevan esos ingredientes.</div>
+          <div class="card"><div id="explore-results-amigos"></div></div>
+        </div>
+        <div class="pager-page" id="ex-page-publico">
+          <div class="settings-hint explore-hint">Platos de cualquier usuario de NutriFit que lo permita, sin nombres (anónimo).</div>
+          <div class="card"><div id="explore-results-publico"></div></div>
+        </div>
       </div>
     </section>
 
@@ -1407,7 +1454,9 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     </section>
 
     <!-- CONFIGURACIÓN -->
-    <section id="section-settings" class="app-section">
+    <section id="section-settings" class="app-section pager-section">
+     <div class="pager" id="set-pager">
+      <div class="pager-page" id="set-main">
       <div class="section-title">Configuración</div>
 
       <div class="card" style="text-align:center;">
@@ -1417,6 +1466,14 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         </div>
         <input type="file" id="avatar-input" accept="image/*" class="visually-hidden">
         <div style="margin-top:10px; font-weight:700; font-size:16px;" id="settings-username">@usuario</div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <span style="font-weight:600;">Modo oscuro</span>
+          <button type="button" id="toggle-dark-btn" class="switch" aria-label="Modo oscuro"></button>
+        </div>
+        <div class="settings-hint">Fondo oscuro con bordes en gris suave, más cómodo de noche. Se recuerda en este dispositivo.</div>
       </div>
 
       <div class="card">
@@ -1446,11 +1503,11 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
 
       <div class="card">
-        <div style="font-weight:700; margin-bottom:10px;">Cambiar contraseña</div>
-        <div class="field"><label>Nueva contraseña</label><input type="password" id="new-password" autocomplete="new-password"></div>
-        <div class="field"><label>Repite la nueva contraseña</label><input type="password" id="new-password-confirm" autocomplete="new-password"></div>
-        <div id="password-msg" class="auth-error hidden"></div>
-        <button id="change-password-btn" class="btn-primary">Cambiar contraseña</button>
+        <button type="button" class="settings-link" id="open-password-page">
+          <span class="settings-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
+          <span class="settings-link-label">Cambiar contraseña</span>
+          <svg class="settings-link-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
       </div>
 
       <div class="card">
@@ -1486,6 +1543,21 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
 
       <button id="settings-logout-btn" class="btn-secondary" style="width:100%; justify-content:center;">Cerrar sesión</button>
+      </div>
+      <div class="pager-page" id="set-password">
+        <div class="subpage-head">
+          <button type="button" class="subpage-back" id="password-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg><span>Configuración</span></button>
+        </div>
+        <div class="section-title">Cambiar contraseña</div>
+        <div class="card">
+          <div class="field"><label>Nueva contraseña</label><input type="password" id="new-password" autocomplete="new-password"></div>
+          <div class="field"><label>Repite la nueva contraseña</label><input type="password" id="new-password-confirm" autocomplete="new-password"></div>
+          <div id="password-msg" class="auth-error hidden"></div>
+          <button id="change-password-btn" class="btn-primary" style="width:100%; justify-content:center;">Cambiar contraseña</button>
+        </div>
+        <div class="settings-hint" style="margin:0 4px;">Mínimo 6 caracteres. Seguirás con la sesión abierta en este dispositivo.</div>
+      </div>
+     </div>
     </section>
   </main>
 </div>
@@ -1856,7 +1928,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.08-1';
+const APP_VERSION = '2026.10.09-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2393,14 +2465,28 @@ $('#settings-logout-btn').onclick = async ()=>{
 };
 
 /* ===================== NAVEGACIÓN: DRAWER + SECCIONES ===================== */
+// Secciones con dos pantallas que se pasan deslizando (o con las pestañas de
+// arriba): Nevera/Carrito, Explorar (Amigos/Público) y Ajustes (la pantalla de
+// "Cambiar contraseña" entra por la derecha; a ella solo se llega tocando).
+var PAGERS = {
+  despensa: { pager:'#np-pager', tabs:'#np-tabs .np-tab', ink:'#np-ink', idx:0, pages:2,
+    onChange(i){ if(i===1) renderCartList(); else renderNeveraSuggestions(); } },
+  explorar: { pager:'#ex-pager', tabs:'#ex-tabs .np-tab', ink:'#ex-ink', idx:0, pages:2,
+    onChange(i){ exploreMode = i===1 ? 'publico' : 'amigos'; } },
+  settings: { pager:'#set-pager', idx:0, pages:2, noForwardSwipe:true,
+    onChange(i){ if(i===0){ const a = document.activeElement; if(a && a.closest && a.closest('#set-password') && a.blur) a.blur(); $('#password-msg').classList.add('hidden'); } } },
+};
 function setSection(section){
   if(section==='nevera' || section==='carrito'){
     const page = section==='carrito' ? 1 : 0;
     section = 'despensa';
     requestAnimationFrame(()=> setDespensaPage(page, false));
   }
-  document.body.classList.toggle('sec-despensa', section==='despensa');
-  if(section==='despensa') requestAnimationFrame(()=>{ syncAppbarHeight(); setDespensaPage(despensaIdx, false); });
+  const PG = PAGERS || {};
+  Object.keys(PG).forEach(k=> document.body.classList.toggle('sec-'+k, section===k));
+  document.body.classList.toggle('sec-pager', !!PG[section]);
+  if(section==='settings' && PG.settings) PG.settings.idx = 0; // Ajustes siempre empieza en la lista
+  if(PG[section]) requestAnimationFrame(()=>{ syncAppbarHeight(); setPagerPage(section, PG[section].idx, false); });
   $all('.app-section').forEach(s=> s.classList.remove('active'));
   $('#section-'+section).classList.add('active');
   $all('.drawer-link').forEach(b=> b.classList.toggle('active', b.dataset.section===section));
@@ -3786,9 +3872,11 @@ function applyBoxRatio(box, r){
   if(!box || !r) return;
   box.style.aspectRatio = clampRatio(r, Number(box.dataset.arMin), Number(box.dataset.arMax)).toFixed(4);
 }
-// Carrusel: la caja toma la forma de la foto que se está viendo (cada una la suya).
+// Carrusel: la caja toma SIEMPRE la forma de la PRIMERA foto; las demás se
+// ajustan dentro (con franjas a los lados o arriba/abajo), así al pasar de una
+// a otra nada sube ni baja.
 function applyCarouselRatio(track, i){
-  const slide = track && track.children[i];
+  const slide = track && track.children[0];
   const r = slide ? Number(slide.dataset.r) : 0;
   if(r) applyBoxRatio(track.closest('[data-ar-min]'), r);
 }
@@ -3801,7 +3889,7 @@ function nfImgLoaded(img){
   if(slide){
     if(!Number(slide.dataset.r)) slide.dataset.r = (known || r).toFixed(4);
     const track = slide.parentElement;
-    if(track && Array.prototype.indexOf.call(track.children, slide)===carouselIndex(track)) applyCarouselRatio(track, carouselIndex(track));
+    if(track && track.children[0]===slide) applyCarouselRatio(track, 0);
   } else if(img.hasAttribute('data-ar-lead') && !known){
     applyBoxRatio(img.matches('[data-ar-min]') ? img : img.closest('[data-ar-min]'), r);
   }
@@ -3938,10 +4026,10 @@ function renderDishPhotos(goTo){
     return `<div class="photo-slide" data-photo-i="${i}" data-r="${r ? r.toFixed(4) : ''}"><img src="${p.url || p.preview}" alt="" draggable="false" onload="nfImgLoaded(this)"></div>`; }).join('');
   wrap.classList.toggle('has-photo', dishPhotos.length>0);
   const idx = Math.max(0, Math.min(goTo||0, dishPhotos.length-1));
-  // La caja toma la forma de la foto que se ve (entre 4:5 vertical y 1,91:1
-  // apaisada); al pasar a otra, cambia a la forma de esa. Nada se recorta.
+  // La caja toma la forma de la PRIMERA foto (entre 4:5 vertical y 1,91:1
+  // apaisada) y el resto se ajusta dentro con franjas. Nada se recorta.
   wrap.dataset.arMin = '0.8'; wrap.dataset.arMax = '1.91';
-  const cur = dishPhotos[idx];
+  const cur = dishPhotos[0];
   const r0 = cur ? (cur.ratio || photoRatio(cur.url)) : null;
   wrap.style.aspectRatio = r0 ? clampRatio(r0, 0.8, 1.91).toFixed(4) : '';
   $('#dish-photo-dots').innerHTML = photoDotsHtml(dishPhotos.length, idx);
@@ -4371,6 +4459,25 @@ $('#change-password-btn').onclick = async ()=>{
   if(error){ msg.textContent = 'Error: '+error.message; msg.classList.remove('hidden'); return; }
   $('#new-password').value=''; $('#new-password-confirm').value='';
   alert('Contraseña actualizada.');
+  setPagerPage('settings', 0, true);
+};
+
+// Modo oscuro: se guarda en este dispositivo y se aplica antes de pintar nada
+// (script en el <head>), así no hay destello blanco al abrir la app.
+const THEME_KEY = 'nutrifit_theme';
+function isDarkTheme(){ return document.documentElement.getAttribute('data-theme')==='dark'; }
+function applyTheme(dark){
+  if(dark) document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+  const m = document.querySelector('meta[name="theme-color"]');
+  if(m) m.setAttribute('content', dark ? '#0e1211' : '#f4f6f5');
+  const b = $('#toggle-dark-btn'); if(b) b.classList.toggle('on', dark);
+}
+applyTheme(isDarkTheme());
+$('#toggle-dark-btn').onclick = ()=>{
+  const dark = !isDarkTheme();
+  applyTheme(dark);
+  try{ localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); }catch(e){}
 };
 
 $('#toggle-fitness-btn').onclick = async ()=>{
@@ -6387,7 +6494,7 @@ function renderNeveraSuggestions(){
 let exploreMode = 'amigos';
 let exploreTerms = [];
 let exploreFriendDishes = null; // se carga al entrar en la sección
-let exploreResults = [];
+let exploreResultsBy = { amigos: [], publico: [] };
 let exploreSeq = 0;
 function exploreTermRegex(term){
   let t = stripAccents((term||'').toLowerCase()).replace(/[^a-z0-9 ]/g, '').trim();
@@ -6417,10 +6524,6 @@ function renderExploreChips(){
   $('#explore-chips').innerHTML = exploreTerms.map((t, i)=>
     `<button type="button" class="missing-chip in-cart" data-explore-del="${i}">${escapeHtml(t)}<span class="explore-chip-x">×</span></button>`).join('');
   $all('[data-explore-del]').forEach(b=> b.onclick = ()=>{ exploreTerms.splice(Number(b.dataset.exploreDel), 1); renderExploreChips(); runExploreSearch(); });
-  $all('[data-explore-mode]').forEach(b=> b.classList.toggle('active', b.dataset.exploreMode===exploreMode));
-  $('#explore-hint').textContent = exploreMode==='amigos'
-    ? 'Platos de tus amigos con perfil público que llevan esos ingredientes.'
-    : 'Platos de cualquier usuario de NutriFit que lo permita, sin nombres (anónimo).';
 }
 function addExploreTerm(raw){
   const t = (raw||'').trim().toLowerCase();
@@ -6431,39 +6534,50 @@ function addExploreTerm(raw){
   renderExploreChips();
   runExploreSearch();
 }
+// Rellena las dos pantallas a la vez (Amigos y Público), así al deslizar de
+// una a otra los resultados ya están ahí.
 async function runExploreSearch(){
-  const box = $('#explore-results');
+  const boxA = $('#explore-results-amigos'), boxP = $('#explore-results-publico');
   const seq = ++exploreSeq;
   if(!exploreTerms.length){
-    box.innerHTML = '<div class="empty-hint">Escribe uno o varios ingredientes para ver qué platos se pueden hacer con ellos.</div>';
+    exploreResultsBy = { amigos: [], publico: [] };
+    const empty = '<div class="empty-hint">Escribe uno o varios ingredientes para ver qué platos se pueden hacer con ellos.</div>';
+    boxA.innerHTML = empty; boxP.innerHTML = empty;
     return;
   }
   const regs = exploreTerms.map(exploreTermRegex).filter(Boolean);
-  if(exploreMode==='amigos'){
-    if(!friends.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes amigos. Prueba en "Público".</div>'; return; }
+  const total = regs.length;
+  // Amigos (en el móvil, al momento)
+  if(!friends.length){
+    exploreResultsBy.amigos = [];
+    boxA.innerHTML = '<div class="empty-hint">Todavía no tienes amigos. Desliza a "Público".</div>';
+  } else {
     const byId = Object.fromEntries(friends.map(f=> [f.id, f]));
-    exploreResults = (exploreFriendDishes||[])
+    exploreResultsBy.amigos = (exploreFriendDishes||[])
       .map(d=> ({ dish:d, matched: dishMatchCount(d, regs), from: byId[d.user_id] }))
       .filter(r=> r.matched>0)
       .sort((a,b)=> b.matched-a.matched);
-  } else {
-    box.innerHTML = '<div class="empty-hint">Buscando…</div>';
-    const { data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms });
-    if(seq!==exploreSeq) return; // llegó otra búsqueda más nueva mientras tanto
-    if(error){ box.innerHTML = '<div class="empty-hint">No se pudo buscar ahora mismo.</div>'; console.error(error); return; }
-    exploreResults = (data||[]).map(d=> ({ dish:d, matched: d.matched, from: null }));
+    renderExploreList('amigos', boxA, total);
   }
-  if(seq!==exploreSeq) return;
-  if(!exploreResults.length){
+  // Público (base de datos)
+  boxP.innerHTML = '<div class="empty-hint">Buscando…</div>';
+  const { data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms });
+  if(seq!==exploreSeq) return; // llegó otra búsqueda más nueva mientras tanto
+  if(error){ boxP.innerHTML = '<div class="empty-hint">No se pudo buscar ahora mismo.</div>'; console.error(error); return; }
+  exploreResultsBy.publico = (data||[]).map(d=> ({ dish:d, matched: d.matched, from: null }));
+  renderExploreList('publico', boxP, total);
+}
+function renderExploreList(mode, box, total){
+  const list = exploreResultsBy[mode] || [];
+  if(!list.length){
     box.innerHTML = '<div class="empty-hint">No hay platos con esos ingredientes todavía.</div>';
     return;
   }
-  const total = regs.length;
-  box.innerHTML = exploreResults.map((r, i)=>{
+  box.innerHTML = list.map((r, i)=>{
     const d = r.dish;
     const who = r.from ? `<span class="profile-link"${profileAttr(r.from.id)}>@${escapeHtml(r.from.username)}</span>` : 'Comunidad';
     const match = total>1 ? ` · <span class="explore-match">${r.matched} de ${total}</span>` : '';
-    return `<div class="shared-dish-row" data-explore-open="${i}">
+    return `<div class="shared-dish-row" data-explore-open="${mode}:${i}">
       ${d.image_url ? `<img class="shared-dish-thumb" src="${d.image_url}" alt="">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
       <div class="shared-dish-info">
         <span class="name">${escapeHtml(d.name||'Receta')}</span>
@@ -6471,7 +6585,11 @@ async function runExploreSearch(){
       </div>
     </div>`;
   }).join('');
-  $all('[data-explore-open]').forEach(row=> row.onclick = ()=> openExploreDishPreview(exploreResults[Number(row.dataset.exploreOpen)]));
+  box.querySelectorAll('[data-explore-open]').forEach(row=> row.onclick = (e)=>{
+    if(e.target.closest('.profile-link')) return;
+    const [m, i] = row.dataset.exploreOpen.split(':');
+    openExploreDishPreview(exploreResultsBy[m][Number(i)]);
+  });
 }
 let previewingExplore = null;
 function openExploreDishPreview(r){
@@ -6479,42 +6597,48 @@ function openExploreDishPreview(r){
   const from = r.from ? r.from.username : null;
   openDishPreview(r.dish, { fromUsername: from, onAdd: ()=> addFriendDishToRepo(r.dish, from) });
 }
-$all('[data-explore-mode]').forEach(b=> b.onclick = ()=>{ exploreMode = b.dataset.exploreMode; renderExploreChips(); runExploreSearch(); });
 $('#explore-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addExploreTerm($('#explore-input').value); } });
 wireIngredientAutocomplete($('#explore-input'), $('#explore-suggest'), (name)=> addExploreTerm(name));
 
-/* ===================== NEVERA / CARRITO: dos pantallas ===================== */
-const DRAWER_EDGE = 30; // px desde el borde izquierdo que abren el menú estando en el Carrito
-let despensaIdx = 0;
-function despensaPage(){ return despensaIdx; }
+/* ===================== PANTALLAS DESLIZABLES ===================== */
+const DRAWER_EDGE = 30; // px desde el borde izquierdo que abren el menú estando en la 2ª pantalla
+function currentPagerKey(){
+  for(const k in PAGERS){ if(document.body.classList.contains('sec-'+k)) return k; }
+  return null;
+}
 function syncAppbarHeight(){
   const bar = document.querySelector('.appbar');
-  if(bar && bar.offsetHeight) document.documentElement.style.setProperty('--appbar-h', bar.offsetHeight + 'px');
+  if(bar) document.documentElement.style.setProperty('--appbar-h', (bar.offsetHeight||0) + 'px');
 }
-// Coloca las dos pantallas (px = desplazamiento, 0 = Nevera, -ancho = Carrito).
-function setDespensaPos(px, animate){
-  const p = $('#np-pager'); if(!p) return;
+// Coloca las pantallas (px = desplazamiento: 0 = la 1ª, -ancho = la 2ª).
+function setPagerPos(key, px, animate){
+  const P = PAGERS[key]; const p = P && $(P.pager); if(!p) return;
   const w = p.clientWidth || window.innerWidth || 1;
   p.classList.toggle('np-dragging', !animate);
   p.style.setProperty('--np-x', px + 'px');
-  const f = Math.max(0, Math.min(1, -px / w));
-  const ink = $('#np-ink');
+  if(p.scrollLeft) p.scrollLeft = 0;
+  const f = Math.max(0, Math.min(P.pages-1, -px / w));
+  const ink = P.ink && $(P.ink);
   if(ink){ ink.style.transition = animate ? '' : 'none'; ink.style.transform = `translateX(calc(${f} * (100% + 4px)))`; }
 }
-function setDespensaPage(i, smooth){
-  const changed = i!==despensaIdx;
-  despensaIdx = i;
-  const p = $('#np-pager'); if(!p) return;
-  setDespensaPos(-i * (p.clientWidth || window.innerWidth), smooth!==false);
-  updateDespensaTabs(i, changed);
+function setPagerPage(key, i, smooth){
+  const P = PAGERS[key]; if(!P) return;
+  i = Math.max(0, Math.min(P.pages-1, i));
+  const changed = i!==P.idx;
+  P.idx = i;
+  const p = $(P.pager); if(!p) return;
+  setPagerPos(key, -i * (p.clientWidth || window.innerWidth), smooth!==false);
+  if(P.tabs) $all(P.tabs).forEach(t=> t.classList.toggle('active', Number(t.dataset.np)===i));
+  if(changed && P.onChange) P.onChange(i);
 }
-function updateDespensaTabs(i, changed){
-  $all('.np-tab').forEach(t=> t.classList.toggle('active', Number(t.dataset.np)===i));
-  if(changed!==false){ if(i===1) renderCartList(); else renderNeveraSuggestions(); }
-}
+function despensaPage(){ return PAGERS.despensa.idx; }
+function setDespensaPos(px, animate){ setPagerPos('despensa', px, animate); }
+function setDespensaPage(i, smooth){ setPagerPage('despensa', i, smooth); }
 function syncDespensaHeight(){ /* ya no hace falta: cada pantalla tiene su propio scroll */ }
-$all('.np-tab').forEach(t=> t.onclick = ()=> setDespensaPage(Number(t.dataset.np), true));
-window.addEventListener('resize', ()=>{ syncAppbarHeight(); setDespensaPage(despensaIdx, false); });
+['despensa', 'explorar'].forEach(k=> $all(PAGERS[k].tabs).forEach(t=> t.onclick = ()=> setPagerPage(k, Number(t.dataset.np), true)));
+$('#open-password-page').onclick = ()=> setPagerPage('settings', 1, true);
+$('#password-back').onclick = ()=> setPagerPage('settings', 0, true);
+window.addEventListener('resize', ()=>{ syncAppbarHeight(); const k = currentPagerKey(); if(k) setPagerPage(k, PAGERS[k].idx, false); });
 
 /* ===================== GESTOS (menú lateral y Nevera/Carrito) =====================
    Un único gestor con eventos táctiles: en cuanto el dedo deja claro que va en
@@ -6537,9 +6661,15 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); setDespensaPage(desp
     if(t.closest && t.closest('.photo-track, .week-board, input, textarea, select, .ingredient-suggest')) return 'none';
     if((galleryEditMode || folderEditMode) && t.closest && t.closest('#gallery, #folder-gallery')) return 'none';
     if(dx < 0 && t.closest && t.closest('.chat-swipe')) return 'none'; // deslizar un chat = borrarlo
-    if(document.body.classList.contains('sec-despensa')){
-      if(despensaIdx===1) return (g.x0 <= DRAWER_EDGE && dx > 0) ? 'drawer-open' : 'pager';
-      return dx > 0 ? 'drawer-open' : 'pager';
+    const pk = currentPagerKey();
+    if(pk){
+      const P = PAGERS[pk];
+      g.pk = pk;
+      // En la 2ª pantalla el menú solo sale empezando en el borde izquierdo;
+      // en cualquier otro punto, deslizar vuelve a la 1ª.
+      if(P.idx > 0) return (g.x0 <= DRAWER_EDGE && dx > 0) ? 'drawer-open' : 'pager';
+      if(dx > 0) return 'drawer-open';
+      return P.noForwardSwipe ? 'none' : 'pager';
     }
     return dx > 0 ? 'drawer-open' : 'none';
   }
@@ -6556,9 +6686,10 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); setDespensaPage(desp
       drawer.style.transform = `translateX(${x}px)`;
       overlay.style.opacity = String(1 + x / g.w);
     } else if(g.owner==='pager'){
+      const min = -(PAGERS[g.pk].pages - 1) * g.w;
       let x = -g.startIdx * g.w + dx;
-      if(x > 0) x = x / 3; else if(x < -g.w) x = -g.w + (x + g.w) / 3; // resistencia en los extremos
-      setDespensaPos(x, false);
+      if(x > 0) x = x / 3; else if(x < min) x = min + (x - min) / 3; // resistencia en los extremos
+      setPagerPos(g.pk, x, false);
     }
   }
   function start(){
@@ -6569,8 +6700,8 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); setDespensaPage(desp
       clearTimeout(drawerOverlayTimer);
       if(g.owner==='drawer-open'){ overlay.classList.remove('hidden', 'closing'); overlay.classList.add('no-anim'); overlay.style.opacity = '0'; }
     } else if(g.owner==='pager'){
-      g.w = $('#np-pager').clientWidth || window.innerWidth;
-      g.startIdx = despensaIdx;
+      g.w = $(PAGERS[g.pk].pager).clientWidth || window.innerWidth;
+      g.startIdx = PAGERS[g.pk].idx;
     }
   }
   function finish(){
@@ -6592,9 +6723,10 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); setDespensaPage(desp
       }, 280);
     } else if(g.owner==='pager'){
       let target = g.startIdx;
-      if(dx < -g.w * 0.2 || vx < -0.3) target = 1;
-      else if(dx > g.w * 0.2 || vx > 0.3) target = 0;
-      setDespensaPage(target, true);
+      if(dx < -g.w * 0.2 || vx < -0.3) target = g.startIdx + 1;
+      else if(dx > g.w * 0.2 || vx > 0.3) target = g.startIdx - 1;
+      if(PAGERS[g.pk].noForwardSwipe && target > g.startIdx) target = g.startIdx;
+      setPagerPage(g.pk, target, true);
     }
   }
   document.addEventListener('touchstart', e=>{
