@@ -1301,6 +1301,29 @@ body.sec-platos .appbar #pf-bar{display:flex;}
 .menu-dish.on .menu-dish-check{background:var(--accent); border-color:var(--accent);}
 .menu-dish-check svg{width:14px; height:14px;}
 .menu-status{font-size:12.5px; color:var(--accent); font-weight:600; margin-top:8px; min-height:0;}
+/* Tira horizontal de platos (Carrito) */
+.menu-card{padding:14px 0 12px;}
+.menu-card .card-head, .menu-card .menu-hint, .menu-card .menu-status{padding:0 16px;}
+.menu-hint{font-size:12px; color:var(--muted); line-height:1.4; margin:-2px 0 10px;}
+.menu-clear{background:none; padding:2px 0; color:var(--muted); font-size:12.5px; font-weight:700;}
+.menu-clear.hidden{display:none;}
+.menu-strip{display:flex; gap:10px; overflow-x:auto; overflow-y:hidden; padding:2px 16px 6px; scroll-snap-type:x proximity; scroll-padding-inline:16px;
+  -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; touch-action:pan-x pan-y; scrollbar-width:none;}
+.menu-strip::-webkit-scrollbar{display:none;}
+.menu-tile{flex:0 0 104px; width:104px; scroll-snap-align:start; background:none; padding:0; text-align:left; color:var(--text); position:relative;}
+.menu-tile-img{display:block; width:104px; height:104px; border-radius:14px; overflow:hidden; background:var(--card2); border:2px solid transparent;
+  display:flex; align-items:center; justify-content:center; color:var(--muted); transition:border-color .15s, transform .15s;}
+.menu-tile-img img{width:100%; height:100%; object-fit:cover; display:block;}
+.menu-tile-img svg{width:30px; height:30px;}
+.menu-tile-name{display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; font-size:12.5px; font-weight:700; line-height:1.25; margin-top:6px;}
+.menu-tile-check{position:absolute; top:6px; right:6px; width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fff;
+  display:none; align-items:center; justify-content:center; box-shadow:0 1px 4px rgba(0,0,0,.25);}
+.menu-tile-check svg{width:14px; height:14px;}
+.menu-tile.on .menu-tile-img{border-color:var(--accent); box-shadow:0 0 0 3px rgba(18,135,94,.18);}
+.menu-tile.on .menu-tile-name{color:var(--accent);}
+.menu-tile.on .menu-tile-check{display:flex;}
+.menu-tile:active .menu-tile-img{transform:scale(.97);}
+.menu-tile.busy{opacity:.55; pointer-events:none;}
 .menu-status:empty{display:none;}
 /* Plato entero al carrito */
 .ing-label-row{display:flex; align-items:center; justify-content:space-between; gap:8px;}
@@ -1540,18 +1563,13 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         </div>
         <div id="cart-search-results" class="cart-search-results hidden"></div>
       </div>
-      <div class="card" id="menu-card">
+      <div class="card menu-card" id="menu-card">
         <div class="card-head">
-          <span class="card-title">Menú de la semana</span>
-          <button type="button" class="btn-mini btn-mini-ghost hidden" id="menu-clear-btn">Vaciar menú</button>
+          <span class="card-title">Tus platos</span>
+          <button type="button" class="menu-clear" id="menu-clear-btn">Quitar todos</button>
         </div>
-        <div class="settings-hint" style="margin-top:0;">Elige los platos que vas a comer: se añade al carrito solo lo que te falta en la Nevera.</div>
-        <div class="cart-search menu-search">
-          <svg class="cart-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="menu-search" name="nf-menu-q" placeholder="Busca entre tus platos…"
-            autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
-        </div>
-        <div class="menu-dishes" id="menu-dishes"></div>
+        <div class="menu-hint">Toca un plato y sus ingredientes van al carrito (menos lo que ya tienes en la Nevera). Otra vez, para quitarlos.</div>
+        <div class="menu-strip" id="menu-dishes"></div>
         <div class="menu-status" id="menu-status"></div>
       </div>
       <div class="card">
@@ -2280,7 +2298,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.18-1';
+const APP_VERSION = '2026.10.19-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -8182,6 +8200,8 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); const k = currentPag
     if(anyModalOpen()) return 'none';
     const t = g.target;
     if(t.closest && t.closest('.photo-track, .week-board, input[type=range], .ingredient-suggest')) return 'none';
+    const strip = t.closest && t.closest('.menu-strip');
+    if(strip && !(dx > 0 && strip.scrollLeft <= 0)) return 'none'; // la tira de platos se mueve sola
     // Un campo de texto solo "se queda" el gesto si estás escribiendo en él;
     // si no, deslizar por encima también pasa de pantalla.
     const fld = t.closest && t.closest('input, textarea, select');
@@ -8599,7 +8619,7 @@ async function toggleMenuDish(id){
       m.ids = m.ids.filter(x=> x!==id); delete m.parts[id];
       saveMenu(m);
       onCartChanged();
-      $('#menu-status').textContent = `Quitado "${dish.name}" del menú`;
+      $('#menu-status').textContent = `Quitado "${dish.name}" del carrito`;
     } else {
       m.ids.push(id);
       const r = await addDishToCart(dish, { used: m.used, source: dish.name });
@@ -8623,31 +8643,52 @@ function menuDishHtml(d, on){
     <span class="menu-dish-check">${on ? ICON_CHECK : ''}</span>
   </button>`;
 }
+function menuTileHtml(d, on){
+  const img = d.image_url ? `<img src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async" draggable="false">` : ICON_PLATE;
+  return `<button type="button" class="menu-tile ${on ? 'on' : ''}" data-menu-dish="${d.id}" aria-pressed="${on}">
+    <span class="menu-tile-img">${img}</span><span class="menu-tile-check">${ICON_CHECK}</span>
+    <span class="menu-tile-name">${escapeHtml(d.name||'Plato')}</span></button>`;
+}
+// Tira horizontal con TODOS tus platos (miniatura + nombre). Los que están en
+// el carrito se quedan marcados en verde.
 function renderMenuCard(){
   const box = $('#menu-dishes'); if(!box || !currentUser) return;
   const m = loadMenu();
-  // (los platos que ya no existen simplemente no se enseñan; no se borran del
-  // menú aquí porque al abrir la app los platos aún pueden estar cargándose)
   const live = m.ids.filter(id=> dishes.some(d=> d.id===id));
-  const q = pfNorm($('#menu-search').value);
-  const chosen = live.map(id=> dishes.find(d=> d.id===id));
-  let others = dishes.filter(d=> !live.includes(d.id));
-  if(q) others = others.filter(d=> pfNorm(d.name).includes(q) || (d.tags||[]).some(t=> pfNorm(t).includes(q)) || (d.ingredients||[]).some(i=> pfNorm(normalizeIngredientItem(i).name).includes(q)));
-  others = others.slice(0, q ? 20 : 5);
-  let html = '';
-  if(chosen.length) html += `<div class="menu-sub">Esta semana (${chosen.length})</div>` + chosen.map(d=> menuDishHtml(d, true)).join('');
-  if(others.length) html += `<div class="menu-sub">${q ? 'Resultados' : (chosen.length ? 'Añadir más' : 'Tus platos')}</div>` + others.map(d=> menuDishHtml(d, false)).join('');
-  if(!html) html = `<div class="empty-hint">${dishes.length ? 'Ningún plato coincide.' : 'Todavía no tienes platos en tu perfil.'}</div>`;
-  box.innerHTML = html;
-  $('#menu-clear-btn').classList.toggle('hidden', !chosen.length);
-  box.querySelectorAll('[data-menu-dish]').forEach(b=> b.onclick = ()=> toggleMenuDish(b.dataset.menuDish));
+  const keep = box.scrollLeft; // que no salte al principio al repintar
+  box.innerHTML = dishes.length
+    ? dishes.map(d=> menuTileHtml(d, live.includes(d.id))).join('')
+    : '<div class="empty-hint" style="padding:6px 0;">Todavía no tienes platos en tu perfil.</div>';
+  box.scrollLeft = keep;
+  $('#menu-clear-btn').classList.toggle('hidden', !live.length);
+  box.querySelectorAll('[data-menu-dish]').forEach(b=> b.onclick = ()=>{
+    if(Date.now() - menuStripDragAt < 250) return; // venía de arrastrar con el ratón
+    b.classList.add('busy');
+    toggleMenuDish(b.dataset.menuDish);
+  });
 }
-$('#menu-search').addEventListener('input', renderMenuCard);
+// En ordenador: la rueda del ratón y arrastrar también mueven la tira.
+let menuStripDragAt = 0;
+(function(){
+  const strip = $('#menu-dishes');
+  strip.addEventListener('wheel', e=>{
+    if(Math.abs(e.deltaY) > Math.abs(e.deltaX) && strip.scrollWidth > strip.clientWidth){ strip.scrollLeft += e.deltaY; e.preventDefault(); }
+  }, { passive:false });
+  let drag = null;
+  strip.addEventListener('mousedown', e=>{ drag = { x:e.clientX, left:strip.scrollLeft, moved:false }; });
+  window.addEventListener('mousemove', e=>{
+    if(!drag) return;
+    const dx = e.clientX - drag.x;
+    if(Math.abs(dx) > 5) drag.moved = true;
+    if(drag.moved){ strip.scrollLeft = drag.left - dx; e.preventDefault(); }
+  });
+  window.addEventListener('mouseup', ()=>{ if(drag && drag.moved) menuStripDragAt = Date.now(); drag = null; });
+})();
 $('#menu-clear-btn').onclick = async ()=>{
   const m = loadMenu();
-  if(!m.ids.length || !confirm('¿Vaciar el menú? Se quitará del carrito lo que habían añadido estos platos.')) return;
+  if(!m.ids.length || !confirm('¿Quitar todos los platos? Se quitará del carrito lo que habían añadido.')) return;
   for(const id of m.ids.slice()) await toggleMenuDish(id);
-  $('#menu-status').textContent = 'Menú vaciado';
+  $('#menu-status').textContent = 'Platos quitados del carrito';
 };
 
 function renderCartList(){
