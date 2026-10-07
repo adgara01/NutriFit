@@ -1129,6 +1129,7 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 /* ---------- PERFIL (estilo Instagram) ---------- */
 .pf-bar{display:none; flex:1; align-items:center; gap:4px; margin-left:14px; min-width:0;}
 body.sec-platos .appbar #pf-bar{display:flex;}
+#pf-bar .pf-stat{transform:translateY(5px);}
 .pf-bar-avatar{width:46px; height:46px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); border:1px solid var(--border);
   padding:0; display:flex; align-items:center; justify-content:center; color:var(--accent); font-weight:800; font-size:18px; margin-right:6px;}
 .pf-bar-avatar img, .fp-avatar img{width:100%; height:100%; object-fit:cover; display:block;}
@@ -1178,11 +1179,14 @@ body.sec-platos .appbar #pf-bar{display:flex;}
   display:flex; align-items:center; justify-content:center; border:3px solid var(--card); pointer-events:none;}
 .avatar-cam svg{width:15px; height:15px;}
 .settings-profile-name{margin-top:12px; font-weight:800; font-size:20px;}
-.bio-wrap{margin-top:14px; text-align:left;}
-#bio-input{width:100%; resize:none; border-radius:12px; border:1px solid var(--border-strong); background:var(--card2); padding:10px 12px;
-  font-size:16px; line-height:1.4; color:var(--text); box-sizing:border-box; display:block;}
-#bio-input:focus{outline:none; border-color:var(--accent);}
-.bio-foot{display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted); margin-top:5px; padding:0 2px;}
+/* Descripción discreta: una línea gris bajo el nombre; al tocarla se edita */
+.bio-wrap{margin-top:2px;}
+#bio-input{width:100%; resize:none; overflow:hidden; border:1px solid transparent; border-radius:10px; background:none; padding:4px 10px;
+  font-size:16px; line-height:1.35; color:var(--muted); text-align:center; box-sizing:border-box; display:block; min-height:34px;}
+#bio-input::placeholder{color:var(--muted); opacity:.75;}
+#bio-input:focus{outline:none; color:var(--text); text-align:left; background:var(--card2); border-color:var(--border-strong);}
+.bio-foot{display:none; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted); margin-top:4px; padding:0 4px;}
+.bio-wrap:focus-within .bio-foot, .bio-foot.show{display:flex;}
 .settings-link-value{color:var(--muted); font-weight:500; font-size:14px; max-width:42%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .uname-wrap{position:relative;}
 .uname-at{position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:700; pointer-events:none;}
@@ -1191,6 +1195,12 @@ body.sec-platos .appbar #pf-bar{display:flex;}
 .uname-status.ok{color:var(--good);}
 .uname-status.err{color:var(--bad);}
 .btn-primary.btn-off{opacity:.45; pointer-events:none;}
+/* Fila de ingrediente donde se está escribiendo: se resalta y el cursor
+   (la barra que parpadea) sale en verde, con el texto de ayuda detrás. */
+.ingredient-input{caret-color:var(--accent);}
+.ingredient-input::placeholder{color:var(--muted); opacity:.7; font-style:italic;}
+#dish-modal:not(.dish-view-locked) .ingredient-row:focus-within .ingredient-row-inner{box-shadow:inset 0 0 0 1.5px var(--accent);}
+.dish-view-locked .ingredient-input::placeholder{color:transparent;}
 </style>
 </head>
 <body>
@@ -1548,7 +1558,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <input type="file" id="avatar-input" accept="image/*" class="visually-hidden">
         <div class="settings-profile-name" id="settings-username">@usuario</div>
         <div class="bio-wrap">
-          <textarea id="bio-input" rows="3" maxlength="160" placeholder="Escribe una pequeña descripción para tu perfil…" autocomplete="off"></textarea>
+          <textarea id="bio-input" rows="1" maxlength="160" placeholder="Añadir una descripción" autocomplete="off" aria-label="Descripción del perfil"></textarea>
           <div class="bio-foot"><span id="bio-status"></span><span id="bio-count">0/160</span></div>
         </div>
       </div>
@@ -1560,14 +1570,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <span class="settings-link-value" id="username-current"></span>
           <svg class="settings-link-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
         </button>
-      </div>
-
-      <div class="card">
-        <div class="settings-row">
-          <span style="font-weight:600;">Modo oscuro</span>
-          <button type="button" id="toggle-dark-btn" class="switch" aria-label="Modo oscuro"></button>
-        </div>
-        <div class="settings-hint">Fondo oscuro con bordes en gris suave, más cómodo de noche. Se recuerda en este dispositivo.</div>
       </div>
 
       <div class="card">
@@ -1586,6 +1588,14 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <div class="settings-hint" id="push-hint"></div>
         <button type="button" id="push-test-btn" class="btn-secondary hidden" style="width:100%; justify-content:center; margin-top:12px;">Enviar notificación de prueba</button>
         <div class="settings-hint hidden" id="push-test-result"></div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <span style="font-weight:600;">Modo oscuro</span>
+          <button type="button" id="toggle-dark-btn" class="switch" aria-label="Modo oscuro"></button>
+        </div>
+        <div class="settings-hint">Fondo oscuro con bordes en gris suave, más cómodo de noche. Se recuerda en este dispositivo.</div>
       </div>
 
       <div class="card">
@@ -2054,7 +2064,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.11-1';
+const APP_VERSION = '2026.10.12-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2675,6 +2685,7 @@ function setSection(section){
   document.body.classList.toggle('sec-pager', !!PG[section]);
   document.body.classList.toggle('sec-platos', section==='platos');
   if(section==='settings' && PG.settings) PG.settings.idx = 0; // Ajustes siempre empieza en la lista
+  if(section==='settings') requestAnimationFrame(()=>{ try{ updateBioCount(); }catch(e){} });
   if(PG[section]) requestAnimationFrame(()=>{ syncAppbarHeight(); setPagerPage(section, PG[section].idx, false); });
   $all('.app-section').forEach(s=> s.classList.remove('active'));
   $('#section-'+section).classList.add('active');
@@ -3669,7 +3680,7 @@ function addIngredientRow(item={}, afterRow=null){
     <div class="ingredient-row-inner">
       <button type="button" class="ingredient-check" aria-label="Marcar ingrediente">${ICON_CHECK}</button>
       <div class="ingredient-name-wrap">
-        <input type="text" class="ingredient-input" value="${escapeHtml(it.name)}" enterkeyhint="next"
+        <input type="text" class="ingredient-input" value="${escapeHtml(it.name)}" enterkeyhint="next" placeholder="Escribe un ingrediente…"
           autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
         <div class="ingredient-suggest hidden"></div>
       </div>
@@ -4670,7 +4681,13 @@ function renderDrawerProfile(){
 
 // ---------- Descripción del perfil (se guarda sola) ----------
 let bioSaveTimer = null;
-function updateBioCount(){ $('#bio-count').textContent = `${$('#bio-input').value.length}/160`; }
+function updateBioCount(){
+  const t = $('#bio-input');
+  $('#bio-count').textContent = `${t.value.length}/160`;
+  // Alto según el texto (si Ajustes está oculto todavía no se puede medir).
+  t.style.height = '';
+  if(t.offsetParent && t.scrollHeight) t.style.height = Math.max(t.scrollHeight, 34) + 'px';
+}
 async function saveBio(){
   if(!currentUser) return;
   const bio = $('#bio-input').value.replace(/\s+$/, '').slice(0, 160);
@@ -4681,7 +4698,8 @@ async function saveBio(){
   currentUser.bio = bio;
   if(currentUser.profileRow) currentUser.profileRow.bio = bio;
   $('#bio-status').textContent = 'Guardado';
-  setTimeout(()=>{ if($('#bio-status').textContent==='Guardado') $('#bio-status').textContent = ''; }, 1800);
+  $('.bio-foot').classList.add('show');
+  setTimeout(()=>{ if($('#bio-status').textContent==='Guardado'){ $('#bio-status').textContent = ''; $('.bio-foot').classList.remove('show'); } }, 1800);
   renderMyProfileHeader();
   saveBootCache();
 }
@@ -4691,7 +4709,8 @@ $('#bio-input').addEventListener('input', ()=>{
   clearTimeout(bioSaveTimer);
   bioSaveTimer = setTimeout(saveBio, 900);
 });
-$('#bio-input').addEventListener('blur', ()=>{ clearTimeout(bioSaveTimer); saveBio(); });
+$('#bio-input').addEventListener('blur', ()=>{ clearTimeout(bioSaveTimer); saveBio(); setTimeout(updateBioCount, 0); });
+$('#bio-input').addEventListener('focus', ()=> setTimeout(updateBioCount, 0));
 
 // ---------- Cambiar nombre de usuario (solo si está libre) ----------
 let unameSeq = 0, unameTimer = null, unameOk = false;
