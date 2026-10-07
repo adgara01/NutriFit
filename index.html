@@ -1125,6 +1125,72 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 #wall-comment-input{flex:1; min-width:0; border:1px solid var(--border); border-radius:999px; padding:9px 14px; font-size:16px; background:var(--card2);}
 #wall-comment-input:focus{outline:none; border-color:var(--accent);}
 #wall-comments-list{max-height:50vh; overflow-y:auto;}
+
+/* ---------- PERFIL (estilo Instagram) ---------- */
+.pf-bar{display:none; flex:1; align-items:center; gap:4px; margin-left:14px; min-width:0;}
+body.sec-platos .appbar #pf-bar{display:flex;}
+.pf-bar-avatar{width:46px; height:46px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); border:1px solid var(--border);
+  padding:0; display:flex; align-items:center; justify-content:center; color:var(--accent); font-weight:800; font-size:18px; margin-right:6px;}
+.pf-bar-avatar img, .fp-avatar img{width:100%; height:100%; object-fit:cover; display:block;}
+.pf-stat{flex:1; min-width:0; background:none; padding:2px 0; display:flex; flex-direction:column; align-items:center; gap:1px; color:var(--text);}
+.pf-stat b{font-size:17px; font-weight:800; line-height:1.15;}
+.pf-stat span{font-size:12px; color:var(--muted); white-space:nowrap;}
+.pf-intro{margin:2px 0 18px;}
+.pf-intro-name{font-size:17px; font-weight:800;}
+.pf-intro-bio{font-size:14px; line-height:1.45; margin-top:3px; white-space:pre-line; word-break:break-word;}
+.pf-bio-add{background:none; padding:0; margin-top:4px; color:var(--accent); font-size:14px; font-weight:600;}
+.section-title.pf-subtitle{font-size:17px;}
+@media (min-width:1024px){
+  body.sec-platos .appbar{display:flex; padding-left:24px; padding-right:24px;}
+  body.sec-platos #menu-btn{display:none;}
+  body.sec-platos .appbar #pf-bar{margin:0 auto; max-width:560px;}
+}
+/* Perfil de otra persona */
+#friend-profile-header{display:block; padding-bottom:16px;}
+.fp-top{display:flex; align-items:center; gap:14px;}
+.fp-avatar{width:78px; height:78px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; color:var(--accent); font-weight:800; font-size:28px; padding:0;}
+.fp-stats{flex:1; display:flex; min-width:0;}
+#friend-profile-header .fp-name{display:flex; align-items:center; gap:8px; margin-top:12px; font-weight:800; font-size:16px;}
+.fp-friend-chip{font-size:11px; font-weight:700; color:var(--accent); background:rgba(18,135,94,.12); padding:3px 9px; border-radius:999px;}
+.fp-bio{font-size:14px; line-height:1.45; margin-top:3px; white-space:pre-line; word-break:break-word;}
+.fp-actions{display:flex; gap:8px; margin-top:14px;}
+.fp-main-btn{flex:1; padding:10px 12px; border-radius:10px; font-size:14px; font-weight:700; text-align:center;}
+.fp-follow{background:var(--accent); color:#fff;}
+.fp-following{background:var(--card2); color:var(--text); border:1px solid var(--border);}
+.fp-request{margin-top:12px; padding:10px 12px; border-radius:12px; background:var(--card2); border:1px solid var(--border); display:flex; align-items:center; gap:8px; font-size:14px;}
+.fp-request span{flex:1; min-width:0;}
+.fp-locked{text-align:center; padding:26px 10px; color:var(--muted); font-size:14px; line-height:1.45;}
+.fp-locked svg{width:34px; height:34px; display:block; margin:0 auto 10px; color:var(--text);}
+.fp-locked b{display:block; color:var(--text); font-size:15px; margin-bottom:2px;}
+/* Lista de seguidores / seguidos */
+.fl-title{font-weight:800; font-size:16px; text-align:center; margin-bottom:12px;}
+.fl-tabs{margin-bottom:8px;}
+#fl-list .user-row-name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+#fl-list .btn-mini + .btn-mini{margin-left:-4px;}
+.user-row-sub{color:var(--muted); font-weight:500; font-size:12px;}
+/* Ajustes: foto, nombre y descripción */
+.settings-profile-card{text-align:center; padding-top:22px;}
+.avatar-edit{position:relative; width:112px; height:112px; margin:0 auto; cursor:pointer;}
+.avatar-edit .avatar-wrap{width:112px; height:112px;}
+.avatar-edit .avatar-placeholder{font-size:40px;}
+.avatar-cam{position:absolute; right:0; bottom:2px; width:34px; height:34px; border-radius:50%; background:var(--accent); color:#fff;
+  display:flex; align-items:center; justify-content:center; border:3px solid var(--card); pointer-events:none;}
+.avatar-cam svg{width:15px; height:15px;}
+.settings-profile-name{margin-top:12px; font-weight:800; font-size:20px;}
+.bio-wrap{margin-top:14px; text-align:left;}
+#bio-input{width:100%; resize:none; border-radius:12px; border:1px solid var(--border-strong); background:var(--card2); padding:10px 12px;
+  font-size:16px; line-height:1.4; color:var(--text); box-sizing:border-box; display:block;}
+#bio-input:focus{outline:none; border-color:var(--accent);}
+.bio-foot{display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted); margin-top:5px; padding:0 2px;}
+.settings-link-value{color:var(--muted); font-weight:500; font-size:14px; max-width:42%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.uname-wrap{position:relative;}
+.uname-at{position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:700; pointer-events:none;}
+.field .uname-wrap input[type=text]{padding-left:29px !important;}
+.uname-status{font-size:13px; font-weight:600; min-height:18px; margin:-4px 2px 12px; color:var(--muted);}
+.uname-status.ok{color:var(--good);}
+.uname-status.err{color:var(--bad);}
+.btn-primary.btn-off{opacity:.45; pointer-events:none;}
 </style>
 </head>
 <body>
@@ -1169,6 +1235,12 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       <span id="menu-notif-badge" class="notif-badge hidden">0</span>
     </button>
+    <div class="pf-bar" id="pf-bar">
+      <button type="button" class="pf-bar-avatar" id="pf-bar-avatar" aria-label="Tu foto"></button>
+      <button type="button" class="pf-stat" data-pf-stat="dishes"><b id="pf-n-dishes">0</b><span>publicaciones</span></button>
+      <button type="button" class="pf-stat" data-pf-stat="followers"><b id="pf-n-followers">0</b><span>seguidores</span></button>
+      <button type="button" class="pf-stat" data-pf-stat="following"><b id="pf-n-following">0</b><span>seguidos</span></button>
+    </div>
     <div class="np-tabs" id="np-tabs" role="tablist">
         <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg><span>Nevera</span></button>
         <button type="button" class="np-tab" data-np="1" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg><span>Carrito</span><span class="np-count hidden" id="np-cart-count">0</span></button>
@@ -1186,8 +1258,8 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     <div class="drawer-brand">NutriFit</div>
     <nav class="drawer-nav">
       <button class="drawer-link" data-section="platos">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
-        <span>Platos y Recetas</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6.5 8-6.5s7.2 2.5 8 6.5"/></svg>
+        <span>Perfil</span>
       </button>
       <button class="drawer-link drawer-link-pair" data-section="despensa">
         <span class="drawer-icon-pair"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg></span>
@@ -1230,8 +1302,13 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   <main>
     <!-- PLATOS -->
     <section id="section-platos" class="app-section">
+      <div class="pf-intro">
+        <div class="pf-intro-name" id="pf-intro-name"></div>
+        <div class="pf-intro-bio hidden" id="pf-intro-bio"></div>
+        <button type="button" class="pf-bio-add hidden" id="pf-bio-add">+ Añadir una descripción</button>
+      </div>
       <div class="section-title-row">
-        <div class="section-title">Platos y Recetas</div>
+        <div class="section-title pf-subtitle">Platos y recetas</div>
         <div class="section-actions">
           <button id="new-folder-btn" class="btn-mini btn-mini-ghost" type="button">+ Carpeta</button>
           <button id="edit-gallery-btn" class="btn-mini btn-mini-ghost" type="button">Editar</button>
@@ -1425,14 +1502,14 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 
       <div class="card">
         <div class="field" style="margin-bottom:8px;">
-          <label>Buscar usuarios</label>
+          <label>Buscar gente para seguir</label>
           <input type="search" id="social-search" name="nf-user-q" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
         </div>
         <div id="social-search-results"></div>
       </div>
 
       <div class="card">
-        <div style="font-weight:700; margin-bottom:6px;">Solicitudes recibidas</div>
+        <div style="font-weight:700; margin-bottom:6px;">Solicitudes para seguirte</div>
         <div id="incoming-requests-list"><div class="empty-hint">No tienes solicitudes pendientes.</div></div>
       </div>
 
@@ -1442,8 +1519,9 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
 
       <div class="card">
-        <div style="font-weight:700; margin-bottom:6px;">Amigos</div>
-        <div id="friends-list"><div class="empty-hint">Aún no tienes amigos añadidos.</div></div>
+        <div style="font-weight:700;">Amigos</div>
+        <div class="settings-hint" style="margin:2px 0 6px;">Gente a la que sigues y que te sigue. Con ellos puedes chatear, hacer grupos y enviaros recetas.</div>
+        <div id="friends-list"><div class="empty-hint">Todavía no tienes amigos.</div></div>
       </div>
     </section>
 
@@ -1459,13 +1537,29 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div class="pager-page" id="set-main">
       <div class="section-title">Configuración</div>
 
-      <div class="card" style="text-align:center;">
-        <div class="avatar-wrap" id="avatar-wrap">
-          <img id="avatar-preview" class="hidden" alt="">
-          <div class="avatar-placeholder" id="avatar-placeholder">?</div>
+      <div class="card settings-profile-card">
+        <div class="avatar-edit" id="avatar-wrap" role="button" aria-label="Cambiar foto de perfil">
+          <div class="avatar-wrap">
+            <img id="avatar-preview" class="hidden" alt="">
+            <div class="avatar-placeholder" id="avatar-placeholder">?</div>
+          </div>
+          <span class="avatar-cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
         </div>
         <input type="file" id="avatar-input" accept="image/*" class="visually-hidden">
-        <div style="margin-top:10px; font-weight:700; font-size:16px;" id="settings-username">@usuario</div>
+        <div class="settings-profile-name" id="settings-username">@usuario</div>
+        <div class="bio-wrap">
+          <textarea id="bio-input" rows="3" maxlength="160" placeholder="Escribe una pequeña descripción para tu perfil…" autocomplete="off"></textarea>
+          <div class="bio-foot"><span id="bio-status"></span><span id="bio-count">0/160</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <button type="button" class="settings-link" id="open-username-page">
+          <span class="settings-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.9 7.9"/></svg></span>
+          <span class="settings-link-label">Cambiar nombre de usuario</span>
+          <span class="settings-link-value" id="username-current"></span>
+          <svg class="settings-link-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
       </div>
 
       <div class="card">
@@ -1477,19 +1571,11 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
 
       <div class="card">
-        <div class="settings-row">
-          <span style="font-weight:600;">Perfil público</span>
-          <button type="button" id="toggle-public-btn" class="switch" aria-label="Perfil público"></button>
-        </div>
-        <div class="settings-hint">Con el perfil público, tus amigos pueden entrar a cotillear tu repositorio de platos (tocando tu nombre en Social). Las carpetas que marques como privadas se quedan fuera de esa vista, aunque el perfil sea público. Compartir recetas 1 a 1 y el Muro no dependen de esto.</div>
-      </div>
-
-      <div class="card">
-        <div class="settings-row">
-          <span style="font-weight:600;">Mis platos en Explorar</span>
-          <button type="button" id="toggle-explore-btn" class="switch" aria-label="Mis platos en Explorar"></button>
-        </div>
-        <div class="settings-hint">Tus platos pueden salir en Explorar → Público <b>sin tu nombre</b>, para que otros usuarios de la app encuentren ideas. Las carpetas privadas no salen nunca.</div>
+        <button type="button" class="settings-link" id="open-password-page">
+          <span class="settings-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
+          <span class="settings-link-label">Cambiar contraseña</span>
+          <svg class="settings-link-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
       </div>
 
       <div class="card">
@@ -1503,11 +1589,19 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
 
       <div class="card">
-        <button type="button" class="settings-link" id="open-password-page">
-          <span class="settings-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
-          <span class="settings-link-label">Cambiar contraseña</span>
-          <svg class="settings-link-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-        </button>
+        <div class="settings-row">
+          <span style="font-weight:600;">Perfil público</span>
+          <button type="button" id="toggle-public-btn" class="switch" aria-label="Perfil público"></button>
+        </div>
+        <div class="settings-hint">Público: cualquiera de la app puede seguirte al momento y ver los platos de tu perfil. Privado: tienes que aceptar a quien quiera seguirte y solo tus seguidores ven tus platos y tus publicaciones del Muro. Las carpetas privadas no las ve nadie más que tú.</div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <span style="font-weight:600;">Mis platos en Explorar</span>
+          <button type="button" id="toggle-explore-btn" class="switch" aria-label="Mis platos en Explorar"></button>
+        </div>
+        <div class="settings-hint">Tus platos pueden salir en Explorar → Público <b>sin tu nombre</b>, para que otros usuarios de la app encuentren ideas. Las carpetas privadas no salen nunca.</div>
       </div>
 
       <div class="card">
@@ -1544,7 +1638,8 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 
       <button id="settings-logout-btn" class="btn-secondary" style="width:100%; justify-content:center;">Cerrar sesión</button>
       </div>
-      <div class="pager-page" id="set-password">
+      <div class="pager-page" id="set-sub">
+       <div id="sub-password" class="hidden">
         <div class="subpage-head">
           <button type="button" class="subpage-back" id="password-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg><span>Configuración</span></button>
         </div>
@@ -1556,6 +1651,22 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <button id="change-password-btn" class="btn-primary" style="width:100%; justify-content:center;">Cambiar contraseña</button>
         </div>
         <div class="settings-hint" style="margin:0 4px;">Mínimo 6 caracteres. Seguirás con la sesión abierta en este dispositivo.</div>
+       </div>
+       <div id="sub-username" class="hidden">
+        <div class="subpage-head">
+          <button type="button" class="subpage-back" id="username-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg><span>Configuración</span></button>
+        </div>
+        <div class="section-title">Nombre de usuario</div>
+        <div class="card">
+          <div class="field"><label>Nuevo nombre</label>
+            <div class="uname-wrap"><span class="uname-at">@</span><input type="text" id="new-username" maxlength="20" enterkeyhint="done"
+              autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></div>
+          </div>
+          <div class="uname-status" id="username-status"></div>
+          <button id="change-username-btn" class="btn-primary btn-off" style="width:100%; justify-content:center;">Cambiar nombre</button>
+        </div>
+        <div class="settings-hint" style="margin:0 4px;">Letras minúsculas, números y guion bajo (3 a 20). Solo se puede usar si nadie lo tiene. A partir de ahora entrarás a la app con el nombre nuevo; la contraseña no cambia.</div>
+       </div>
       </div>
      </div>
     </section>
@@ -1647,7 +1758,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button class="btn-secondary hidden" id="dish-edit-btn" style="flex:1; justify-content:center;">Editar</button>
       <button class="btn-primary hidden" id="dish-edit-save-btn" style="flex:1;">Guardar</button>
       <button class="btn-danger hidden" id="dish-delete-btn" style="flex:1; text-align:center;">Eliminar</button>
-      <button class="btn-primary hidden" id="dish-add-btn" style="flex:1;">Añadir a mi repositorio</button>
+      <button class="btn-primary hidden" id="dish-add-btn" style="flex:1;">Añadir a mi perfil</button>
     </div>
   </div>
 </div>
@@ -1913,6 +2024,21 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   </div>
 </div>
 
+<div id="follow-list-modal" class="modal hidden">
+  <div class="modal-sheet sheet-with-close">
+    <button type="button" class="sheet-close-btn" id="follow-list-close" aria-label="Cerrar">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="fl-title" id="fl-title"></div>
+    <div class="np-tabs fl-tabs" id="fl-tabs" role="tablist">
+      <button type="button" class="np-tab active" data-fl="followers" role="tab">Seguidores</button>
+      <button type="button" class="np-tab" data-fl="following" role="tab">Seguidos</button>
+      <span class="np-ink" id="fl-ink"></span>
+    </div>
+    <div id="fl-list"></div>
+  </div>
+</div>
+
 <!-- ================= VISOR DE FOTOS (pantalla completa) ================= -->
 <div id="photo-viewer" class="photo-viewer hidden" role="dialog" aria-label="Fotos">
   <div class="pv-top"><span id="pv-count"></span>
@@ -1928,7 +2054,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.09-1';
+const APP_VERSION = '2026.10.10-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2146,7 +2272,8 @@ function profileToCurrentUser(profile){
     suggest_meals: profile.suggest_meals === true,
     last_seen_wall_at: profile.last_seen_wall_at || null,
     is_public: profile.is_public !== false,
-    share_explore: profile.share_explore !== false
+    share_explore: profile.share_explore !== false,
+    bio: profile.bio || ''
   };
 }
 // Llega el perfil recién leído de Supabase después de haber entrado con la
@@ -2270,12 +2397,14 @@ function subscribeLiveUpdates(){
     sb.channel('nf-live-'+me)
       .on('postgres_changes', { event:'INSERT', schema:'public', table:'notifications', filter:`recipient_id=eq.${me}` }, payload=>{
         const n = payload && payload.new; if(!n) return;
-        if(n.kind==='friend_request' || n.kind==='friend_accepted') liveRefresh('friends', loadFriendshipsState);
+        if(n.kind==='friend_request' || n.kind==='friend_accepted' || n.kind==='follow' || n.kind==='follow_request' || n.kind==='follow_accepted') liveRefresh('friends', loadFriendshipsState);
         else if(n.kind==='group_added' || n.kind==='group_admin') liveChatsChanged();
         else if(n.kind==='wall_like' || n.kind==='wall_comment' || n.kind==='wall_reply' || n.kind==='comment_like') liveRefresh('wall', loadWallFeed, 400);
         else if(n.kind==='dish_shared') liveRefresh('shared', loadSharedDishes);
       })
       .on('postgres_changes', { event:'*', schema:'public', table:'friendships' }, ()=> liveRefresh('friends', loadFriendshipsState))
+      .on('postgres_changes', { event:'*', schema:'public', table:'follows' }, payload=> onFollowChange(payload))
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'profiles' }, payload=> onProfileChanged(payload && payload.new))
       .on('postgres_changes', { event:'*', schema:'public', table:'chat_members' }, ()=> liveChatsChanged())
       .on('postgres_changes', { event:'UPDATE', schema:'public', table:'chats' }, ()=> liveChatsChanged())
       .on('postgres_changes', { event:'*', schema:'public', table:'wall_likes' }, ()=> liveRefresh('wall', loadWallFeed, 400))
@@ -2289,6 +2418,65 @@ function subscribeLiveUpdates(){
         if(status==='SUBSCRIBED'){ if(wasSubscribed) refreshAllSocial(); wasSubscribed = true; }
       });
   }catch(e){ console.error('Realtime no disponible', e); }
+}
+
+// Alguien sigue / deja de seguir: tus números, tus amigos, el perfil que
+// estés viendo y la lista de seguidores abierta se actualizan al momento.
+function onFollowChange(payload){
+  if(!currentUser) return;
+  const n = payload && payload.new, o = payload && payload.old;
+  const r = (n && n.follower_id) ? n : (o && o.follower_id) ? o : null;
+  if(!r){ liveRefresh('friends', loadFriendshipsState); return; }
+  const ids = [r.follower_id, r.followed_id];
+  if(ids.includes(currentUser.id)) liveRefresh('friends', loadFriendshipsState, 150);
+  if(friendProfile && ids.includes(friendProfile.id) && !modalHidden($('#friend-profile-modal'))){
+    const id = friendProfile.id;
+    liveRefresh('prof-stats', ()=> loadProfileStats(id), 250);
+  }
+  if(followListState && ids.includes(followListState.user.id) && !modalHidden($('#follow-list-modal'))) liveRefresh('fl', loadFollowList, 250);
+}
+// Alguien cambia su foto, su nombre o su descripción: se ve al momento en el
+// Muro, los chats, Social y su perfil (solo se recarga si cambia algo que se ve).
+function knownProfile(id){
+  const hit = (p)=> p && p.id===id;
+  let k = friends.find(hit) || followersList.find(hit) || followingList.find(hit) || (friendProfile && friendProfile.id===id ? friendProfile : null);
+  if(k) return k;
+  for(const p of wallPosts){ if(p.user_id===id && p.author) return { id, ...p.author }; }
+  for(const c of wallComments){ if(c.user_id===id && c.author) return { id, ...c.author }; }
+  for(const l of wallLikes){ if(l.user_id===id && l.liker) return { id, ...l.liker }; }
+  if(typeof chatSummaries!=='undefined') for(const c of chatSummaries){ if(c.other_id===id) return { id, username:c.other_username, avatar_url:c.other_avatar }; }
+  return profileCache[id] || null;
+}
+function onProfileChanged(p){
+  if(!p || !p.id || !currentUser) return;
+  if(p.id===currentUser.id){
+    const before = currentUser.username + '|' + (currentUser.avatar_url||'');
+    applyFreshProfile(p);
+    renderMyProfileHeader();
+    if(before !== currentUser.username + '|' + (currentUser.avatar_url||'')){ liveRefresh('wall', loadWallFeed, 300); liveChatsChanged(); }
+    return;
+  }
+  const k = knownProfile(p.id);
+  if(!k) return;
+  const changed = k.username!==p.username || (k.avatar_url||null)!==(p.avatar_url||null)
+    || ('bio' in k && (k.bio||'')!==(p.bio||'')) || ('is_public' in k && k.is_public!==p.is_public);
+  if(!changed) return;
+  const fresh = { id:p.id, username:p.username, avatar_url:p.avatar_url, is_public:p.is_public, bio:p.bio||'' };
+  rememberProfile(fresh);
+  [friends, followersList, followingList].forEach(list=> list.forEach(x=>{ if(x.id===p.id) Object.assign(x, fresh); }));
+  followRows.forEach(r=>{ if(r.follower && r.follower.id===p.id) Object.assign(r.follower, fresh); if(r.followed && r.followed.id===p.id) Object.assign(r.followed, fresh); });
+  renderFriendsList();
+  renderIncomingRequests();
+  if(friendProfile && friendProfile.id===p.id && !modalHidden($('#friend-profile-modal'))){
+    const wasPublic = friendProfile.is_public;
+    Object.assign(friendProfile, fresh);
+    renderProfileHeader();
+    if(wasPublic!==fresh.is_public) loadFriendRepo();
+  }
+  if(followListState && !modalHidden($('#follow-list-modal'))) loadFollowList();
+  if($('#social-search').value.trim() && lastSearchResults.length){ lastSearchResults.forEach(x=>{ if(x.id===p.id) Object.assign(x, fresh); }); renderSearchResults(lastSearchResults); }
+  liveRefresh('wall', loadWallFeed, 300);
+  liveChatsChanged();
 }
 
 /* ===================== ACTUALIZACIONES SIN REINSTALAR =====================
@@ -2474,7 +2662,7 @@ var PAGERS = {
   explorar: { pager:'#ex-pager', tabs:'#ex-tabs .np-tab', ink:'#ex-ink', idx:0, pages:2,
     onChange(i){ exploreMode = i===1 ? 'publico' : 'amigos'; } },
   settings: { pager:'#set-pager', idx:0, pages:2, noForwardSwipe:true,
-    onChange(i){ if(i===0){ const a = document.activeElement; if(a && a.closest && a.closest('#set-password') && a.blur) a.blur(); $('#password-msg').classList.add('hidden'); } } },
+    onChange(i){ if(i===0){ const a = document.activeElement; if(a && a.closest && a.closest('#set-sub') && a.blur) a.blur(); $('#password-msg').classList.add('hidden'); } } },
 };
 function setSection(section){
   if(section==='nevera' || section==='carrito'){
@@ -2485,6 +2673,7 @@ function setSection(section){
   const PG = PAGERS || {};
   Object.keys(PG).forEach(k=> document.body.classList.toggle('sec-'+k, section===k));
   document.body.classList.toggle('sec-pager', !!PG[section]);
+  document.body.classList.toggle('sec-platos', section==='platos');
   if(section==='settings' && PG.settings) PG.settings.idx = 0; // Ajustes siempre empieza en la lista
   if(PG[section]) requestAnimationFrame(()=>{ syncAppbarHeight(); setPagerPage(section, PG[section].idx, false); });
   $all('.app-section').forEach(s=> s.classList.remove('active'));
@@ -2656,7 +2845,7 @@ function updateFitnessSettingsExtras(){
     suggestBtn.classList.remove('switch-disabled');
     suggestBtn.classList.toggle('on', currentUser.suggest_meals);
   } else {
-    hint.textContent = 'No tienes suficiente repositorio con platos con calorías indicadas como para que la app te sugiera platos en el planning.';
+    hint.textContent = 'No tienes suficientes platos con calorías indicadas en tu perfil como para que la app te sugiera platos en el planning.';
     suggestBtn.classList.add('switch-disabled');
     suggestBtn.classList.remove('on');
     // Si estaba activado y el repositorio se ha quedado corto (p.ej. borraste
@@ -2769,6 +2958,7 @@ function layoutMasonry(container, htmlItems){
   });
 }
 function renderGallery(){
+  renderMyProfileHeader();
   updateFitnessSettingsExtras(); // la elegibilidad de "Sugerir platos" depende del nº de platos con calorías
   renderNeveraSuggestions(); // se recalcula solo si Nevera ya tiene datos cargados (ver dentro)
   const box = $('#gallery');
@@ -4428,9 +4618,95 @@ function renderDrawerProfile(){
   $('#toggle-fitness-btn').classList.toggle('on', currentUser.show_fitness);
   $('#toggle-public-btn').classList.toggle('on', currentUser.is_public);
   $('#toggle-explore-btn').classList.toggle('on', currentUser.share_explore);
+  $('#username-current').textContent = '@'+currentUser.username;
+  const bi = $('#bio-input');
+  if(bi && document.activeElement!==bi){ bi.value = currentUser.bio || ''; updateBioCount(); }
+  renderMyProfileHeader();
 }
 
+// ---------- Descripción del perfil (se guarda sola) ----------
+let bioSaveTimer = null;
+function updateBioCount(){ $('#bio-count').textContent = `${$('#bio-input').value.length}/160`; }
+async function saveBio(){
+  if(!currentUser) return;
+  const bio = $('#bio-input').value.replace(/\s+$/, '').slice(0, 160);
+  if(bio === (currentUser.bio || '')) return;
+  $('#bio-status').textContent = 'Guardando…';
+  const { error } = await sb.from('profiles').update({ bio }).eq('id', currentUser.id);
+  if(error){ $('#bio-status').textContent = 'No se ha podido guardar'; console.error(error); return; }
+  currentUser.bio = bio;
+  if(currentUser.profileRow) currentUser.profileRow.bio = bio;
+  $('#bio-status').textContent = 'Guardado';
+  setTimeout(()=>{ if($('#bio-status').textContent==='Guardado') $('#bio-status').textContent = ''; }, 1800);
+  renderMyProfileHeader();
+  saveBootCache();
+}
+$('#bio-input').addEventListener('input', ()=>{
+  updateBioCount();
+  $('#bio-status').textContent = '';
+  clearTimeout(bioSaveTimer);
+  bioSaveTimer = setTimeout(saveBio, 900);
+});
+$('#bio-input').addEventListener('blur', ()=>{ clearTimeout(bioSaveTimer); saveBio(); });
+
+// ---------- Cambiar nombre de usuario (solo si está libre) ----------
+let unameSeq = 0, unameTimer = null, unameOk = false;
+function setUnameStatus(text, cls){ const el = $('#username-status'); el.textContent = text || ''; el.className = 'uname-status' + (cls ? ' '+cls : ''); }
+function setUnameBtn(on){ unameOk = !!on; $('#change-username-btn').classList.toggle('btn-off', !on); }
+function checkUsername(){
+  const inp = $('#new-username');
+  const v = inp.value.toLowerCase().replace(/\s+/g, '');
+  if(v !== inp.value) inp.value = v;
+  clearTimeout(unameTimer);
+  unameSeq++;
+  setUnameBtn(false);
+  if(!currentUser) return;
+  if(v === currentUser.username){ setUnameStatus('Es tu nombre actual.'); return; }
+  if(!/^[a-z0-9_]{3,20}$/.test(v)){ setUnameStatus(v.length < 3 ? 'Mínimo 3 caracteres.' : 'Solo letras minúsculas, números y _ (máximo 20).', 'err'); return; }
+  setUnameStatus('Comprobando…');
+  const seq = unameSeq;
+  unameTimer = setTimeout(async ()=>{
+    const { data, error } = await sb.rpc('username_available', { p_name: v });
+    if(seq !== unameSeq) return;
+    if(error){ setUnameStatus('No se ha podido comprobar ahora mismo.', 'err'); console.error(error); return; }
+    if(data === 'ok'){ setUnameStatus('@'+v+' está disponible', 'ok'); setUnameBtn(true); }
+    else if(data === 'taken') setUnameStatus('@'+v+' ya lo tiene otra persona', 'err');
+    else if(data === 'same') setUnameStatus('Es tu nombre actual.');
+    else setUnameStatus('Solo letras minúsculas, números y _ (3 a 20).', 'err');
+  }, 350);
+}
+$('#new-username').addEventListener('input', checkUsername);
+$('#new-username').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#change-username-btn').click(); } });
+$('#change-username-btn').onclick = async ()=>{
+  if(!unameOk || !currentUser) return;
+  const v = $('#new-username').value, old = currentUser.username;
+  setUnameBtn(false);
+  setUnameStatus('Cambiando…');
+  let { data, error } = await sb.rpc('change_username', { p_new: v });
+  if(!error && data === 'no_auth'){
+    // La base de datos no deja cambiar el usuario de entrada desde ahí: lo
+    // cambia la app con la sesión y luego se cambia el nombre.
+    const res = await sb.auth.updateUser({ email: fakeEmail(v) });
+    const nowEmail = res && res.data && res.data.user && res.data.user.email;
+    if(res.error || nowEmail !== fakeEmail(v)){
+      setUnameStatus('No se ha podido cambiar el nombre ahora mismo.', 'err');
+      return;
+    }
+    ({ data, error } = await sb.rpc('change_username', { p_new: v, p_auth_done: true }));
+  }
+  if(error){ setUnameStatus('Error: '+error.message, 'err'); return; }
+  if(data === 'taken'){ setUnameStatus('@'+v+' ya lo tiene otra persona', 'err'); return; }
+  if(data !== 'ok'){ setUnameStatus('No se ha podido cambiar el nombre.', 'err'); return; }
+  currentUser.username = v;
+  if(currentUser.profileRow) currentUser.profileRow.username = v;
+  renderDrawerProfile();
+  saveBootCache();
+  setUnameStatus('Hecho. A partir de ahora entras con @'+v+'.', 'ok');
+  setTimeout(()=>{ if(PAGERS.settings.idx===1 && !$('#sub-username').classList.contains('hidden')) setPagerPage('settings', 0, true); }, 1500);
+};
+
 $('#avatar-wrap').onclick = ()=> $('#avatar-input').click();
+$('#drawer-profile-btn').onclick = ()=> goToMyProfile();
 $('#avatar-input').addEventListener('change', async e=>{
   const file = e.target.files[0];
   if(!file) return;
@@ -4558,51 +4834,93 @@ function profileAvatarHtml(u, id){
   const pid = id || (u && u.id);
   return pid ? `<span class="profile-link"${profileAttr(pid)}>${avatarHtml(u)}</span>` : avatarHtml(u);
 }
+// ---------- Seguir (estilo Instagram) ----------
+// "follows" guarda quién sigue a quién: aceptado, o pendiente si el perfil
+// es privado. Amigos = os seguís los dos (chat, grupos, enviar recetas).
+let followRows = [], followersList = [], followingList = [];
+let lastSearchResults = [];
+function followRelation(id){
+  if(!currentUser || id===currentUser.id) return { me:true, iFollow:null, followsMe:null };
+  const a = followRows.find(r=> r.follower_id===currentUser.id && r.followed_id===id);
+  const b = followRows.find(r=> r.followed_id===currentUser.id && r.follower_id===id);
+  return { me:false, iFollow: a ? a.status : null, followsMe: b ? b.status : null };
+}
+function isFriend(id){ return friends.some(f=> f.id===id); }
 function friendshipStatusWith(profileId){
-  if(friends.some(f=>f.id===profileId)) return 'friends';
-  if(outgoingRequests.some(r=>r.addressee_id===profileId)) return 'pending-out';
-  if(incomingRequests.some(r=>r.requester_id===profileId)) return 'pending-in';
+  const r = followRelation(profileId);
+  if(r.iFollow==='accepted' && r.followsMe==='accepted') return 'friends';
+  if(r.iFollow==='pending') return 'pending-out';
+  if(r.followsMe==='pending') return 'pending-in';
   return 'none';
+}
+function relationKey(id){ const r = followRelation(id); return r.me ? 'me' : (r.iFollow||'-')+'/'+(r.followsMe||'-'); }
+function fmtCount(n){
+  n = Number(n)||0;
+  return n < 10000 ? String(n) : (Math.round(n/100)/10).toString().replace('.', ',') + ' mil';
+}
+function rememberProfile(u){
+  if(u && u.id){ const { _stats, _rel, ...clean } = u; profileCache[u.id] = { ...(profileCache[u.id]||{}), ...clean }; }
+  return u;
+}
+// Botón Seguir / Siguiendo / Solicitado para cualquier persona.
+function followBtnHtml(u, opts){
+  if(!u || !currentUser || u.id===currentUser.id) return '';
+  const big = opts && opts.big;
+  const r = followRelation(u.id);
+  const id = escapeHtml(String(u.id));
+  const on = big ? 'fp-main-btn fp-following' : 'btn-mini btn-mini-ghost';
+  if(r.iFollow==='accepted') return `<button type="button" class="${on}" data-unfollow="${id}">Siguiendo</button>`;
+  if(r.iFollow==='pending') return `<button type="button" class="${on}" data-unfollow="${id}">Solicitado</button>`;
+  return `<button type="button" class="${big ? 'fp-main-btn fp-follow' : 'btn-mini'}" data-follow="${id}">${r.followsMe==='accepted' ? 'Seguir también' : 'Seguir'}</button>`;
 }
 
 async function loadFriendshipsState(){
-  const { data, error } = await sb.from('friendships')
-    .select('*, requester:requester_id(id,username,avatar_url,is_public), addressee:addressee_id(id,username,avatar_url,is_public)')
-    .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`);
+  if(!currentUser) return;
+  const me = currentUser.id;
+  const { data, error } = await sb.from('follows')
+    .select('*, follower:follower_id(id,username,avatar_url,is_public,bio), followed:followed_id(id,username,avatar_url,is_public,bio)')
+    .or(`follower_id.eq.${me},followed_id.eq.${me}`);
   if(error){ console.error(error); return; }
-  const rows = data||[];
+  followRows = data||[];
+  followRows.forEach(r=>{ rememberProfile(r.follower); rememberProfile(r.followed); });
+  applyFollowRows();
+}
+function applyFollowRows(){
+  if(!currentUser) return;
+  const me = currentUser.id;
   const prevFriendIds = friends.map(f=> f.id).sort().join(',');
-  friends = rows.filter(r=>r.status==='accepted').map(r=> ({ ...(r.requester_id===currentUser.id ? r.addressee : r.requester), friendship_id: r.id }));
-  incomingRequests = rows.filter(r=> r.status==='pending' && r.addressee_id===currentUser.id);
-  outgoingRequests = rows.filter(r=> r.status==='pending' && r.requester_id===currentUser.id);
+  const prevFollowing = followingList.map(f=> f.id).sort().join(',');
+  const prof = (p, id)=> p || profileCache[id] || { id, username:'?', avatar_url:null };
+  const mine = followRows.filter(r=> r.follower_id===me), theirs = followRows.filter(r=> r.followed_id===me);
+  followingList = mine.filter(r=> r.status==='accepted').map(r=> prof(r.followed, r.followed_id));
+  followersList = theirs.filter(r=> r.status==='accepted').map(r=> prof(r.follower, r.follower_id));
+  const followerIds = new Set(followersList.map(p=> p.id));
+  friends = followingList.filter(p=> followerIds.has(p.id));
+  incomingRequests = theirs.filter(r=> r.status==='pending').map(r=> ({ id: r.follower_id, requester_id: r.follower_id, requester: prof(r.follower, r.follower_id) }));
+  outgoingRequests = mine.filter(r=> r.status==='pending').map(r=> ({ id: r.followed_id, addressee_id: r.followed_id }));
   renderFriendsList();
   renderIncomingRequests();
   updateNotifBadges();
+  renderMyProfileHeader();
   exploreFriendDishes = null; // se vuelve a cargar la próxima vez que se entre en Explorar
-  const searchTerm = $('#social-search').value.trim();
-  if(searchTerm && $('#social-search-results').children.length) runUserSearch(searchTerm);
-  // Si alguien pasa a ser (o deja de ser) amigo, el Muro y los chats
-  // cambian también: se recargan solos, sin tener que salir de la app.
-  if(friendsLoadedOnce && prevFriendIds !== friends.map(f=> f.id).sort().join(',')){
-    liveRefresh('wall', loadWallFeed, 0);
-    liveRefresh('chats', loadChats, 0);
+  if($('#social-search').value.trim() && lastSearchResults.length) renderSearchResults(lastSearchResults);
+  // Si cambia a quién sigues, el Muro cambia; si cambian tus amigos, los chats.
+  if(friendsLoadedOnce){
+    if(prevFollowing !== followingList.map(f=> f.id).sort().join(',')) liveRefresh('wall', loadWallFeed, 0);
+    if(prevFriendIds !== friends.map(f=> f.id).sort().join(',')) liveRefresh('chats', loadChats, 0);
   }
   friendsLoadedOnce = true;
-  // El perfil que esté abierto se actualiza (botones Aceptar/Añadir/Eliminar...).
-  if(friendProfile && !modalHidden($('#friend-profile-modal'))){
-    const id = friendProfile.id;
-    const before = friendProfile._rel;
-    const now = profileRelation(id);
-    if(before !== now){
-      const fr = friends.find(f=> f.id===id);
-      openFriendProfile(fr || friendProfile);
-    }
+  // El perfil que esté abierto se actualiza (botones, platos visibles...).
+  if(friendProfile && !modalHidden($('#friend-profile-modal')) && friendProfile._rel !== relationKey(friendProfile.id)){
+    renderProfileHeader();
+    loadFriendRepo();
   }
+  if(followListState && !modalHidden($('#follow-list-modal'))) renderFollowList();
 }
 let friendsLoadedOnce = false;
 function renderFriendsList(){
   const box = $('#friends-list');
-  if(!friends.length){ box.innerHTML = '<div class="empty-hint">Aún no tienes amigos añadidos.</div>'; return; }
+  if(!friends.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes amigos. Cuando sigas a alguien y te siga, aparecerá aquí.</div>'; return; }
   box.innerHTML = friends.map(f=> `<div class="user-row user-row-clickable" data-friend-id="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span><button type="button" class="friend-msg-btn" data-msg-friend="${f.id}" aria-label="Escribir a @${escapeHtml(f.username)}">${ICON_CHAT}</button></div>`).join('');
   $all('#friends-list [data-friend-id]').forEach(row=>{
     row.onclick = e=>{
@@ -4626,63 +4944,194 @@ function renderIncomingRequests(){
   $all('[data-accept]').forEach(b=> b.onclick = ()=> respondFriendRequest(b.dataset.accept, true));
   $all('[data-reject]').forEach(b=> b.onclick = ()=> respondFriendRequest(b.dataset.reject, false));
 }
-// Aceptar o rechazar se ve al instante; la escritura va por detrás y, si
-// fallara, se vuelve a cargar el estado real.
-async function respondFriendRequest(id, accept){
-  const req = incomingRequests.find(r=> r.id===id);
-  incomingRequests = incomingRequests.filter(r=> r.id!==id);
-  if(accept && req && req.requester && !friends.some(f=> f.id===req.requester_id)){
-    friends = [...friends, { ...req.requester, friendship_id: req.id }];
+// Todo se ve al instante; la escritura va por detrás y luego se relee el
+// estado real (si fallara, vuelve a como estaba).
+async function respondFriendRequest(followerId, accept){
+  const row = followRows.find(r=> r.follower_id===followerId && r.followed_id===currentUser.id);
+  if(row){
+    if(accept) row.status = 'accepted'; else followRows = followRows.filter(r=> r!==row);
+    applyFollowRows();
   }
-  renderFriendsList();
-  renderIncomingRequests();
-  updateNotifBadges();
-  const { error } = accept
-    ? await sb.from('friendships').update({ status:'accepted' }).eq('id', id)
-    : await sb.from('friendships').delete().eq('id', id);
+  const { error } = await sb.rpc('respond_follow_request', { p_follower: followerId, p_accept: !!accept });
   if(error) alert(error.message);
   await loadFriendshipsState();
-  if(accept && !error){ loadWallFeed(); loadChats(); }
 }
+async function followUser(id){
+  if(!currentUser || id===currentUser.id) return;
+  const u = profileCache[id] || {};
+  if(!followRows.some(r=> r.follower_id===currentUser.id && r.followed_id===id)){
+    followRows = [...followRows, { follower_id: currentUser.id, followed_id: id, status: u.is_public===false ? 'pending' : 'accepted', followed: u.id ? u : null }];
+    applyFollowRows();
+  }
+  const { error } = await sb.rpc('follow_user', { p_target: id });
+  if(error) alert(error.message);
+  await loadFriendshipsState();
+}
+async function unfollowUser(id){
+  const u = profileCache[id] || friends.find(f=> f.id===id) || { username:'?' };
+  const r = followRelation(id);
+  const msg = r.iFollow==='pending' ? `¿Cancelar la solicitud para seguir a @${u.username}?`
+    : isFriend(id) ? `¿Dejar de seguir a @${u.username}? Dejaréis de ser amigos: ya no podréis chatear ni enviaros recetas (los mensajes que ya tenéis no se borran).`
+    : `¿Dejar de seguir a @${u.username}?`;
+  if(!confirm(msg)) return;
+  followRows = followRows.filter(x=> !(x.follower_id===currentUser.id && x.followed_id===id));
+  applyFollowRows();
+  const { error } = await sb.rpc('unfollow_user', { p_target: id });
+  if(error) alert(error.message);
+  await loadFriendshipsState();
+}
+async function removeFollower(id){
+  const u = profileCache[id] || { username:'?' };
+  if(!confirm(`¿Eliminar a @${u.username} de tus seguidores?${isFriend(id) ? ' Dejaréis de ser amigos.' : ''}`)) return;
+  followRows = followRows.filter(x=> !(x.follower_id===id && x.followed_id===currentUser.id));
+  applyFollowRows();
+  const { error } = await sb.rpc('remove_follower', { p_follower: id });
+  if(error) alert(error.message);
+  await loadFriendshipsState();
+  if(followListState) loadFollowList();
+}
+// Compatibilidad con lo que ya llamaba a estas funciones.
+function sendFriendRequest(profileId){ return followUser(profileId); }
+function removeFriend(friend){ return friend ? unfollowUser(friend.id) : null; }
+// Botones Seguir / Siguiendo / Eliminar seguidor, estén donde estén.
+document.addEventListener('click', e=>{
+  const b = e.target.closest && e.target.closest('[data-follow],[data-unfollow],[data-remove-follower]');
+  if(!b || !currentUser) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(b.dataset.follow) followUser(b.dataset.follow);
+  else if(b.dataset.unfollow) unfollowUser(b.dataset.unfollow);
+  else removeFollower(b.dataset.removeFollower);
+}, true);
 
 let socialSearchTimer = null;
 $('#social-search').addEventListener('input', e=>{
   clearTimeout(socialSearchTimer);
   const term = e.target.value.trim();
-  if(!term){ $('#social-search-results').innerHTML = ''; return; }
+  if(!term){ lastSearchResults = []; $('#social-search-results').innerHTML = ''; return; }
   socialSearchTimer = setTimeout(()=> runUserSearch(term), 300);
 });
 async function runUserSearch(term){
-  const { data, error } = await sb.from('profiles').select('id,username,avatar_url')
+  const { data, error } = await sb.from('profiles').select('id,username,avatar_url,is_public,bio')
     .ilike('username', `%${term}%`).neq('id', currentUser.id).limit(15);
   if(error){ $('#social-search-results').innerHTML = '<div class="empty-hint">Error buscando.</div>'; return; }
-  renderSearchResults(data||[]);
+  lastSearchResults = data||[];
+  renderSearchResults(lastSearchResults);
 }
 function renderSearchResults(list){
   const box = $('#social-search-results');
   if(!list.length){ box.innerHTML = '<div class="empty-hint">Sin resultados.</div>'; return; }
   box.innerHTML = list.map(u=>{
-    const st = friendshipStatusWith(u.id);
-    let action = `<button class="btn-mini" data-add-friend="${u.id}">Añadir</button>`;
-    if(st==='friends') action = `<span class="chip-status">Amigos</span>`;
-    else if(st==='pending-out') action = `<span class="chip-status">Pendiente</span>`;
-    else if(st==='pending-in') action = `<span class="chip-status">Te ha escrito</span>`;
-    profileCache[u.id] = u;
-    return `<div class="user-row">${profileAvatarHtml(u)}<span class="user-row-name profile-link"${profileAttr(u.id)}>@${escapeHtml(u.username)}</span>${action}</div>`;
+    rememberProfile(u);
+    const r = followRelation(u.id);
+    const sub = isFriend(u.id) ? 'Amigos' : r.followsMe==='accepted' ? 'Te sigue' : r.followsMe==='pending' ? 'Quiere seguirte' : '';
+    return `<div class="user-row">${profileAvatarHtml(u)}<span class="user-row-name profile-link"${profileAttr(u.id)}>@${escapeHtml(u.username)}${sub ? ` <span class="user-row-sub">· ${sub}</span>` : ''}</span>${followBtnHtml(u)}</div>`;
   }).join('');
-  $all('[data-add-friend]').forEach(btn=> btn.onclick = ()=> sendFriendRequest(btn.dataset.addFriend));
 }
-async function sendFriendRequest(profileId){
-  const tmp = { id:'tmp-'+uuid(), requester_id: currentUser.id, addressee_id: profileId, status:'pending' };
-  outgoingRequests = [...outgoingRequests, tmp];
-  const term0 = $('#social-search').value.trim();
-  if(term0) runUserSearch(term0);
-  const { error } = await sb.from('friendships').insert({ requester_id: currentUser.id, addressee_id: profileId, status:'pending' });
-  if(error){ outgoingRequests = outgoingRequests.filter(r=> r!==tmp); alert(error.message); return; }
-  await loadFriendshipsState();
-  const term = $('#social-search').value.trim();
-  if(term) runUserSearch(term);
+
+// ---------- Tu perfil (arriba: foto, publicaciones, seguidores, seguidos) ----------
+function renderMyProfileHeader(){
+  if(!currentUser || !$('#pf-bar')) return;
+  const u = currentUser;
+  $('#pf-bar-avatar').innerHTML = u.avatar_url ? `<img src="${u.avatar_url}" alt="">` : escapeHtml((u.username||'?')[0].toUpperCase());
+  $('#pf-n-dishes').textContent = fmtCount(typeof dishes!=='undefined' ? dishes.length : 0);
+  $('#pf-n-followers').textContent = fmtCount(followersList.length);
+  $('#pf-n-following').textContent = fmtCount(followingList.length);
+  $('#pf-intro-name').textContent = '@'+u.username;
+  const bio = (u.bio||'').trim();
+  $('#pf-intro-bio').textContent = bio;
+  $('#pf-intro-bio').classList.toggle('hidden', !bio);
+  $('#pf-bio-add').classList.toggle('hidden', !!bio);
 }
+$('#pf-bar-avatar').onclick = ()=>{
+  if(currentUser && currentUser.avatar_url) openPhotoViewer([currentUser.avatar_url], 0);
+  else setSection('settings');
+};
+$all('[data-pf-stat]').forEach(b=> b.onclick = ()=>{
+  const k = b.dataset.pfStat;
+  if(k==='dishes'){ window.scrollTo({ top:0, behavior:'smooth' }); return; }
+  openFollowList(currentUser, k);
+});
+$('#pf-bio-add').onclick = ()=>{
+  setSection('settings');
+  setTimeout(()=>{ try{ $('#bio-input').focus(); }catch(e){} }, 350);
+};
+// Tocar tu propio nombre o tu foto en cualquier sitio te lleva a tu Perfil
+// (la vista previa es para ver el de los demás).
+function goToMyProfile(){
+  if(!modalHidden($('#follow-list-modal'))) closeFollowList();
+  if(!modalHidden($('#friend-profile-modal'))) closeFriendProfile();
+  if(!modalHidden($('#likers-modal'))) closeWallLikers();
+  if(!modalHidden($('#wall-comments-modal'))) closeWallComments();
+  if(!modalHidden($('#group-info-modal'))) closeGroupInfo();
+  if(!modalHidden($('#chat-modal'))) closeChat();
+  if(!modalHidden($('#shared-preview-modal'))) closeSharedPreview();
+  if(!modalHidden($('#dish-modal'))) closeDishModal();
+  closeDrawer();
+  setSection('platos');
+  requestAnimationFrame(()=> window.scrollTo(0, 0));
+}
+
+// ---------- Lista de seguidores / seguidos ----------
+let followListState = null; // { user, kind, rows }
+function openFollowList(user, kind){
+  if(!user) return;
+  followListState = { user, kind: kind==='following' ? 'following' : 'followers', rows: null };
+  $('#fl-title').textContent = '@' + user.username;
+  renderFollowList();
+  lockBodyScroll();
+  showModal($('#follow-list-modal'));
+  loadFollowList();
+}
+async function loadFollowList(){
+  const st = followListState; if(!st) return;
+  const kind = st.kind, id = st.user.id;
+  const q = kind==='followers'
+    ? sb.from('follows').select('*, p:follower_id(id,username,avatar_url,is_public)').eq('followed_id', id).eq('status', 'accepted')
+    : sb.from('follows').select('*, p:followed_id(id,username,avatar_url,is_public)').eq('follower_id', id).eq('status', 'accepted');
+  const { data, error } = await q.order('created_at', { ascending:false });
+  if(followListState!==st || st.kind!==kind) return;
+  if(error) console.error(error);
+  st.rows = (data||[]).map(r=> r.p).filter(Boolean);
+  st.rows.forEach(rememberProfile);
+  renderFollowList();
+}
+function renderFollowList(){
+  const st = followListState; if(!st) return;
+  const i = st.kind==='following' ? 1 : 0;
+  $all('#fl-tabs .np-tab').forEach(t=> t.classList.toggle('active', t.dataset.fl===st.kind));
+  $('#fl-ink').style.transform = `translateX(calc(${i} * (100% + 4px)))`;
+  const box = $('#fl-list');
+  const mine = currentUser && st.user.id===currentUser.id;
+  if(st.rows===null){ box.innerHTML = '<div class="empty-hint">Cargando...</div>'; return; }
+  if(!st.rows.length){
+    box.innerHTML = `<div class="empty-hint">${st.kind==='followers'
+      ? (mine ? 'Todavía no tienes seguidores.' : 'Todavía no tiene seguidores.')
+      : (mine ? 'Todavía no sigues a nadie.' : 'Todavía no sigue a nadie.')}</div>`;
+    return;
+  }
+  box.innerHTML = st.rows.map(p=>{
+    const me = currentUser && p.id===currentUser.id;
+    let actions = followBtnHtml(p);
+    if(mine && st.kind==='followers'){
+      const r = followRelation(p.id);
+      actions = (r.iFollow ? '' : followBtnHtml(p)) + `<button type="button" class="btn-mini btn-mini-ghost" data-remove-follower="${escapeHtml(p.id)}">Eliminar</button>`;
+    }
+    return `<div class="user-row">${profileAvatarHtml(p)}<span class="user-row-name profile-link"${profileAttr(p.id)}>@${escapeHtml(p.username)}${me ? ' (tú)' : ''}</span>${actions}</div>`;
+  }).join('');
+}
+$all('#fl-tabs .np-tab').forEach(t=> t.onclick = ()=>{
+  const st = followListState; if(!st || st.kind===t.dataset.fl) return;
+  st.kind = t.dataset.fl; st.rows = null;
+  renderFollowList(); loadFollowList();
+});
+function closeFollowList(){
+  hideModal($('#follow-list-modal'));
+  unlockBodyScroll();
+  followListState = null;
+}
+$('#follow-list-close').onclick = closeFollowList;
+$('#follow-list-modal').addEventListener('click', e=>{ if(e.target.id==='follow-list-modal') closeFollowList(); });
 
 async function loadSharedDishes(){
   const { data, error } = await sb.from('shared_dishes').select('*, from:from_user_id(username,avatar_url)')
@@ -4849,67 +5298,96 @@ let friendProfile = null;       // { id, username, avatar_url, is_public }
 let friendRepoDishes = [];
 let friendRepoFolders = [];
 let friendProfileFolderId = null; // null = raíz del repositorio; si no, dentro de esa carpeta
+let friendProfileChannel = null;
 async function openFriendProfile(friend){
+  if(!friend) return;
+  if(currentUser && friend.id===currentUser.id){ goToMyProfile(); return; }
+  if(!modalHidden($('#follow-list-modal'))) closeFollowList();
   const wasOpen = !modalHidden($('#friend-profile-modal'));
-  friendProfile = friend;
+  const same = friendProfile && friendProfile.id===friend.id;
+  friendProfile = { ...(profileCache[friend.id]||{}), ...friend, _stats: same ? friendProfile._stats : null };
+  delete friendProfile.friendship_id;
   friendProfileFolderId = null;
   friendRepoDishes = [];
   friendRepoFolders = [];
   renderProfileHeader();
+  $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>';
   if(!wasOpen) lockBodyScroll();
   showModal($('#friend-profile-modal'));
-  const st = profileRelation(friend.id);
-  if(st==='friends' || st==='me'){
-    $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>';
-    await loadFriendRepo();
-  } else {
-    $('#friend-profile-body').innerHTML = `<div class="empty-hint">${st==='pending-out'
-      ? 'Le has enviado una solicitud. Cuando la acepte podréis ver vuestros repositorios y chatear.'
-      : st==='pending-in'
-        ? '@'+escapeHtml(friend.username)+' quiere ser tu amigo. Acepta para ver su repositorio y poder chatear.'
-        : 'Aún no sois amigos. Añádelo para ver su repositorio y poder chatear.'}</div>`;
-  }
+  watchFriendProfile(friend.id);
+  loadProfileStats(friend.id);
+  await loadFriendRepo();
 }
 function profileRelation(id){
   return id===currentUser.id ? 'me' : friendshipStatusWith(id);
 }
-// Cabecera del perfil: según la relación, Escribir + Eliminar amigo,
-// Añadir amigo, Aceptar, o "Solicitud enviada".
+// Cabecera estilo Instagram: foto, publicaciones, seguidores y seguidos;
+// nombre y descripción; Seguir/Siguiendo (+ Mensaje si sois amigos).
 function renderProfileHeader(){
   const u = friendProfile;
   if(!u) return;
-  const st = profileRelation(u.id);
-  u._rel = st;
-  let actions = '';
-  if(st==='friends'){
-    actions = `<button type="button" class="friend-msg-btn" id="fp-msg-btn" aria-label="Escribir a @${escapeHtml(u.username)}">${ICON_CHAT}</button>
-      <button type="button" class="btn-mini btn-mini-ghost fp-unfriend" id="fp-unfriend-btn">Eliminar amigo</button>`;
-  } else if(st==='none'){
-    actions = `<button type="button" class="btn-mini" id="fp-add-btn">Añadir amigo</button>`;
-  } else if(st==='pending-in'){
-    actions = `<button type="button" class="btn-mini" id="fp-accept-btn">Aceptar</button>`;
-  } else if(st==='pending-out'){
-    actions = `<span class="chip-status">Solicitud enviada</span>`;
-  } else if(st==='me'){
-    actions = `<span class="chip-status">Tú</span>`;
-  }
-  $('#friend-profile-header').innerHTML = `${avatarHtml(u)}<span class="fp-name">@${escapeHtml(u.username)}</span>${actions}`;
-  const fr = friends.find(f=> f.id===u.id);
-  if($('#fp-unfriend-btn')) $('#fp-unfriend-btn').onclick = ()=> removeFriend(fr || u);
+  u._rel = relationKey(u.id);
+  const r = followRelation(u.id);
+  const st = u._stats;
+  const n = (k)=> st ? fmtCount(st[k]) : '–';
+  const av = u.avatar_url ? `<img src="${u.avatar_url}" alt="">` : escapeHtml((u.username||'?')[0].toUpperCase());
+  $('#friend-profile-header').innerHTML = `
+    <div class="fp-top">
+      <button type="button" class="fp-avatar" id="fp-avatar" aria-label="Foto de @${escapeHtml(u.username||'')}">${av}</button>
+      <div class="fp-stats">
+        <div class="pf-stat"><b>${n('dishes')}</b><span>publicaciones</span></div>
+        <button type="button" class="pf-stat" data-fp-list="followers"><b>${n('followers')}</b><span>seguidores</span></button>
+        <button type="button" class="pf-stat" data-fp-list="following"><b>${n('following')}</b><span>seguidos</span></button>
+      </div>
+    </div>
+    <div class="fp-name">@${escapeHtml(u.username||'')}${isFriend(u.id) ? '<span class="fp-friend-chip">Amigos</span>' : (r.followsMe==='accepted' ? '<span class="fp-friend-chip">Te sigue</span>' : '')}</div>
+    ${(u.bio||'').trim() ? `<div class="fp-bio">${escapeHtml(u.bio.trim())}</div>` : ''}
+    <div class="fp-actions">${followBtnHtml(u, { big:true })}${isFriend(u.id) ? `<button type="button" class="fp-main-btn fp-following" id="fp-msg-btn">Mensaje</button>` : ''}</div>
+    ${r.followsMe==='pending' ? `<div class="fp-request"><span>@${escapeHtml(u.username||'')} quiere seguirte</span><button type="button" class="btn-mini" id="fp-accept-btn">Aceptar</button><button type="button" class="btn-mini btn-mini-ghost" id="fp-reject-btn">Rechazar</button></div>` : ''}`;
+  $('#fp-avatar').onclick = ()=>{ if(u.avatar_url) openPhotoViewer([u.avatar_url], 0); };
+  $all('#friend-profile-header [data-fp-list]').forEach(b=> b.onclick = ()=>{
+    const rr = followRelation(u.id);
+    if(u.is_public===false && rr.iFollow!=='accepted') return; // perfil privado: las listas solo las ven sus seguidores
+    openFollowList(u, b.dataset.fpList);
+  });
   if($('#fp-msg-btn')) $('#fp-msg-btn').onclick = ()=>{ const id = u.id; closeFriendProfile(); openDirectChat(id); };
-  if($('#fp-add-btn')) $('#fp-add-btn').onclick = async ()=>{
-    $('#fp-add-btn').disabled = true;
-    await sendFriendRequest(u.id);
-    if(friendProfile && friendProfile.id===u.id) openFriendProfile(u);
-  };
-  if($('#fp-accept-btn')) $('#fp-accept-btn').onclick = async ()=>{
-    const req = incomingRequests.find(r=> r.requester_id===u.id);
-    if(!req) return;
-    $('#fp-accept-btn').disabled = true;
-    await respondFriendRequest(req.id, true);
-    const nowFriend = friends.find(f=> f.id===u.id);
-    if(friendProfile && friendProfile.id===u.id) openFriendProfile(nowFriend || u);
-  };
+  if($('#fp-accept-btn')) $('#fp-accept-btn').onclick = ()=> respondFriendRequest(u.id, true);
+  if($('#fp-reject-btn')) $('#fp-reject-btn').onclick = ()=> respondFriendRequest(u.id, false);
+}
+async function loadProfileStats(id){
+  const { data, error } = await sb.rpc('profile_stats', { p_id: id });
+  if(error || !data || !friendProfile || friendProfile.id!==id) return;
+  friendProfile._stats = typeof data==='string' ? JSON.parse(data) : data;
+  renderProfileHeader();
+}
+// Mientras ves un perfil, sus platos y carpetas se actualizan al momento.
+function watchFriendProfile(id){
+  unwatchFriendProfile();
+  try{
+    const onChange = ()=> liveRefresh('prof', refreshOpenProfile, 400);
+    const onDelete = (p)=>{
+      const old = (p && p.old) || {};
+      if(friendRepoDishes.some(d=> d.id===old.id) || friendRepoFolders.some(f=> f.id===old.id)) onChange();
+    };
+    friendProfileChannel = sb.channel('nf-prof-'+id+'-'+Date.now())
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'dishes', filter:`user_id=eq.${id}` }, onChange)
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'dishes', filter:`user_id=eq.${id}` }, onChange)
+      .on('postgres_changes', { event:'DELETE', schema:'public', table:'dishes' }, onDelete)
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'dish_folders', filter:`user_id=eq.${id}` }, onChange)
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'dish_folders', filter:`user_id=eq.${id}` }, onChange)
+      .on('postgres_changes', { event:'DELETE', schema:'public', table:'dish_folders' }, onDelete)
+      .subscribe();
+  }catch(e){ friendProfileChannel = null; }
+}
+function unwatchFriendProfile(){
+  if(!friendProfileChannel) return;
+  try{ sb.removeChannel ? sb.removeChannel(friendProfileChannel) : null; }catch(e){}
+  friendProfileChannel = null;
+}
+function refreshOpenProfile(){
+  if(!friendProfile || modalHidden($('#friend-profile-modal'))) return;
+  loadProfileStats(friendProfile.id);
+  loadFriendRepo();
 }
 // Abre el perfil de cualquier usuario a partir de su id o de su @nombre
 // (desde el Muro, el chat, los grupos, las solicitudes...).
@@ -4919,24 +5397,26 @@ async function openUserProfile(idOrUser, byUsername){
   let u = null;
   if(byUsername){
     const name = String(idOrUser).replace(/^@/, '');
+    if(name===currentUser.username){ goToMyProfile(); return; }
     u = friends.find(f=> f.username===name) || Object.values(profileCache).find(p=> p.username===name) || null;
     if(!u){
-      const { data } = await sb.from('profiles').select('id,username,avatar_url,is_public').eq('username', name).maybeSingle();
+      const { data } = await sb.from('profiles').select('id,username,avatar_url,is_public,bio').eq('username', name).maybeSingle();
       u = data || null;
     }
     if(!u){ alert('No se ha encontrado a @'+name+'.'); return; }
   } else {
     const id = String(idOrUser);
+    if(id===currentUser.id){ goToMyProfile(); return; }
     u = friends.find(f=> f.id===id) || (id===currentUser.id ? currentUser : null) || profileCache[id] || null;
     if(!u){
-      const { data } = await sb.from('profiles').select('id,username,avatar_url,is_public').eq('id', id).maybeSingle();
+      const { data } = await sb.from('profiles').select('id,username,avatar_url,is_public,bio').eq('id', id).maybeSingle();
       u = data || null;
     }
     if(!u) return;
   }
-  profileCache[u.id] = u;
-  const fr = friends.find(f=> f.id===u.id);
-  openFriendProfile(fr || { id:u.id, username:u.username, avatar_url:u.avatar_url, is_public:u.is_public });
+  rememberProfile(u);
+  if(u.id===currentUser.id){ goToMyProfile(); return; }
+  openFriendProfile({ ...(profileCache[u.id]||{}), id:u.id, username:u.username, avatar_url:u.avatar_url, is_public:u.is_public });
 }
 // Cualquier elemento con data-profile-id (o data-profile-user="@nombre")
 // abre ese perfil al tocarlo. Va en fase de captura para adelantarse a lo
@@ -4944,28 +5424,14 @@ async function openUserProfile(idOrUser, byUsername){
 document.addEventListener('click', e=>{
   const el = e.target.closest && e.target.closest('[data-profile-id],[data-profile-user]');
   if(!el || !currentUser) return;
+  if(e.target.closest('[data-follow],[data-unfollow],[data-remove-follower]')) return; // lo lleva el botón Seguir
   e.preventDefault();
   e.stopPropagation();
   if(el.dataset.profileId) openUserProfile(el.dataset.profileId);
   else openUserProfile(el.dataset.profileUser, true);
 }, true);
-// Eliminar a un amigo: se borra la amistad (los dos dejáis de ser amigos:
-// ya no podéis cotillear vuestros repositorios ni crear chats nuevos). Los
-// mensajes que ya teníais en el chat no se borran.
-async function removeFriend(friend){
-  if(!friend || !confirm(`¿Eliminar a @${friend.username} de tus amigos?`)) return;
-  let q = sb.from('friendships').delete();
-  q = friend.friendship_id ? q.eq('id', friend.friendship_id)
-    : q.or(`and(requester_id.eq.${currentUser.id},addressee_id.eq.${friend.id}),and(requester_id.eq.${friend.id},addressee_id.eq.${currentUser.id})`);
-  const { error } = await q;
-  if(error){ alert(error.message); return; }
-  closeFriendProfile();
-  friends = friends.filter(f=> f.id!==friend.id);
-  renderFriendsList();
-  await loadFriendshipsState();
-  loadWallFeed(); loadChats();
-}
 function closeFriendProfile(){
+  unwatchFriendProfile();
   hideModal($('#friend-profile-modal'));
   unlockBodyScroll();
   friendProfile = null;
@@ -4973,24 +5439,30 @@ function closeFriendProfile(){
 }
 async function loadFriendRepo(){
   if(!friendProfile) return;
-  // Se relee is_public al vuelo (la lista de amigos puede llevar un rato
-  // cargada y el amigo pudo cambiar su privacidad mientras tanto).
-  const { data: freshProfile } = await sb.from('profiles').select('id,username,avatar_url,is_public').eq('id', friendProfile.id).maybeSingle();
-  if(freshProfile) friendProfile.is_public = freshProfile.is_public;
-  if(friendProfile.is_public === false && friendProfile.id !== currentUser.id){
-    $('#friend-profile-body').innerHTML = '<div class="empty-hint">Este perfil es privado — no puedes ver su repositorio.</div>';
+  const id = friendProfile.id;
+  // Se relee el perfil al vuelo (foto, descripción, privacidad...).
+  const { data: fresh } = await sb.from('profiles').select('id,username,avatar_url,is_public,bio').eq('id', id).maybeSingle();
+  if(!friendProfile || friendProfile.id!==id) return;
+  if(fresh){ Object.assign(friendProfile, fresh); rememberProfile(fresh); renderProfileHeader(); }
+  const r = followRelation(id);
+  const canSee = friendProfile.is_public !== false || r.iFollow==='accepted' || isFriend(id);
+  if(!canSee){
+    friendRepoDishes = []; friendRepoFolders = [];
+    $('#friend-profile-body').innerHTML = `<div class="fp-locked">${ICON_LOCK}<b>Esta cuenta es privada</b>${r.iFollow==='pending'
+      ? 'Solicitud enviada. Cuando @'+escapeHtml(friendProfile.username)+' te acepte verás sus platos.'
+      : 'Síguela para ver sus platos y sus publicaciones.'}</div>`;
     return;
   }
-  // Gracias a las políticas RLS de "amigo puede ver" (actualizar_privacidad.sql)
-  // estas dos consultas ya llegan filtradas solas: si el amigo tiene alguna
-  // carpeta privada, sus platos y la carpeta en sí simplemente no aparecen.
+  // Las reglas de la base de datos ya dejan fuera las carpetas privadas y sus platos.
   const [{ data: dData, error: dErr }, { data: fData, error: fErr }] = await Promise.all([
-    sb.from('dishes').select('*').eq('user_id', friendProfile.id).order('created_at', {ascending:true}),
-    sb.from('dish_folders').select('*').eq('user_id', friendProfile.id).order('created_at', {ascending:true})
+    sb.from('dishes').select('*').eq('user_id', id).order('created_at', {ascending:true}),
+    sb.from('dish_folders').select('*').eq('user_id', id).order('created_at', {ascending:true})
   ]);
-  if(dErr || fErr){ $('#friend-profile-body').innerHTML = '<div class="empty-hint">Error cargando el repositorio.</div>'; return; }
+  if(!friendProfile || friendProfile.id!==id) return;
+  if(dErr || fErr){ $('#friend-profile-body').innerHTML = '<div class="empty-hint">Error cargando el perfil.</div>'; return; }
   friendRepoDishes = dData||[];
   friendRepoFolders = fData||[];
+  if(friendProfileFolderId && !friendRepoFolders.some(f=> f.id===friendProfileFolderId)) friendProfileFolderId = null;
   renderFriendProfileBody();
 }
 function renderFriendProfileBody(){
@@ -5014,7 +5486,7 @@ function renderFriendProfileBody(){
   }
   const unfiled = friendRepoDishes.filter(d=>!d.folder_id);
   if(!friendRepoFolders.length && !unfiled.length){
-    $('#friend-profile-body').innerHTML = '<div class="empty-hint">Este repositorio todavía está vacío.</div>';
+    $('#friend-profile-body').innerHTML = '<div class="empty-hint">Todavía no tiene platos en su perfil.</div>';
     return;
   }
   $('#friend-profile-body').innerHTML = '<div class="gallery" id="friend-profile-gallery"></div>';
@@ -5038,7 +5510,7 @@ async function addFriendDishToRepo(dish, fromUsername){
     servings_base: dish.servings_base || 1
   });
   if(error){ alert(error.message); return; }
-  alert('Añadido a tu repositorio.');
+  alert('Añadido a tu perfil.');
   await loadDishes();
 }
 $('#friend-profile-close').onclick = closeFriendProfile;
@@ -6273,7 +6745,7 @@ async function addWallDishToRepo(postId){
     servings_base: d.servings_base || 1
   });
   if(error){ alert(error.message); return; }
-  alert('Añadido a tu repositorio.');
+  alert('Añadido a tu perfil.');
   await loadDishes();
 }
 
@@ -6636,8 +7108,17 @@ function setDespensaPos(px, animate){ setPagerPos('despensa', px, animate); }
 function setDespensaPage(i, smooth){ setPagerPage('despensa', i, smooth); }
 function syncDespensaHeight(){ /* ya no hace falta: cada pantalla tiene su propio scroll */ }
 ['despensa', 'explorar'].forEach(k=> $all(PAGERS[k].tabs).forEach(t=> t.onclick = ()=> setPagerPage(k, Number(t.dataset.np), true)));
-$('#open-password-page').onclick = ()=> setPagerPage('settings', 1, true);
+function openSettingsSub(name){
+  $('#sub-password').classList.toggle('hidden', name!=='password');
+  $('#sub-username').classList.toggle('hidden', name!=='username');
+  $('#set-sub').scrollTop = 0;
+  if(name==='username'){ $('#new-username').value = currentUser ? currentUser.username : ''; checkUsername(); }
+  setPagerPage('settings', 1, true);
+}
+$('#open-password-page').onclick = ()=> openSettingsSub('password');
+$('#open-username-page').onclick = ()=> openSettingsSub('username');
 $('#password-back').onclick = ()=> setPagerPage('settings', 0, true);
+$('#username-back').onclick = ()=> setPagerPage('settings', 0, true);
 window.addEventListener('resize', ()=>{ syncAppbarHeight(); const k = currentPagerKey(); if(k) setPagerPage(k, PAGERS[k].idx, false); });
 
 /* ===================== GESTOS (menú lateral y Nevera/Carrito) =====================
