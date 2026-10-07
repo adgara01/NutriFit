@@ -1201,6 +1201,60 @@ body.sec-platos .appbar #pf-bar{display:flex;}
 .ingredient-input::placeholder{color:var(--muted); opacity:.7; font-style:italic;}
 #dish-modal:not(.dish-view-locked) .ingredient-row:focus-within .ingredient-row-inner{box-shadow:inset 0 0 0 1.5px var(--accent);}
 .dish-view-locked .ingredient-input::placeholder{color:transparent;}
+/* ---------- Buscador y filtros del Perfil ---------- */
+.pf-search-wrap{margin:-2px 0 14px;}
+.pf-search-row{display:flex; gap:8px; align-items:center;}
+.pf-search-row .cart-search{flex:1; min-width:0;}
+#pf-search-input{width:100%; padding:11px 36px 11px 38px; border-radius:12px; border:1px solid var(--border); background:var(--card2); font-size:16px; color:var(--text);}
+#pf-search-input:focus{outline:none; border-color:var(--accent);}
+.pf-filter-btn{position:relative; width:44px; height:44px; flex-shrink:0; border-radius:12px; border:1px solid var(--border); background:var(--card2); color:var(--text);
+  display:flex; align-items:center; justify-content:center;}
+.pf-filter-btn.on{border-color:var(--accent); color:var(--accent);}
+.pf-filter-count{position:absolute; top:-5px; right:-5px; min-width:18px; height:18px; padding:0 5px; border-radius:999px; background:var(--accent); color:#fff;
+  font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+.pf-modes{display:flex; align-items:center; gap:6px; margin-top:8px; font-size:12.5px; color:var(--muted);}
+.pf-chip{padding:6px 12px; border-radius:999px; border:1px solid var(--border-strong); background:var(--card); color:var(--text); font-size:13px; font-weight:600; flex-shrink:0;}
+.pf-chip.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.pf-filters{margin-top:10px; padding:12px; border-radius:14px; background:var(--card); border:1px solid var(--border);}
+.pf-filter-group + .pf-filter-group{margin-top:10px;}
+.pf-filter-label{font-size:12px; font-weight:700; color:var(--muted); margin-bottom:6px;}
+.pf-filter-chips{display:flex; flex-wrap:wrap; gap:6px;}
+.pf-filter-clear{margin-top:12px; background:none; padding:0; color:var(--accent); font-weight:700; font-size:13px;}
+.pf-result-info{font-size:12.5px; color:var(--muted); margin:-4px 2px 10px;}
+/* ---------- Modo cocina (estilo historias) ---------- */
+.cook{position:fixed; inset:0; z-index:450; background:#0d1110; color:#fff; display:flex; flex-direction:column; user-select:none; -webkit-user-select:none;
+  touch-action:none; animation:nf-fade-in .2s ease-out; overscroll-behavior:none;}
+.cook.hidden{display:none;}
+.cook-bars{display:flex; gap:4px; padding:calc(10px + env(safe-area-inset-top)) 12px 0; position:relative; z-index:3;}
+.cook-bars span{flex:1; height:3px; border-radius:3px; background:rgba(255,255,255,.3); overflow:hidden; position:relative;}
+.cook-bars span.done::after, .cook-bars span.on::after{content:''; position:absolute; inset:0; background:#fff;}
+.cook-top{display:flex; align-items:center; gap:10px; padding:10px 14px 0; position:relative; z-index:3;}
+.cook-title{flex:1; min-width:0; display:flex; flex-direction:column;}
+.cook-title b{font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cook-title span{font-size:12.5px; opacity:.75;}
+.cook-close{width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.16); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.cook-stage{position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; justify-content:center; overflow:hidden;}
+.cook-photo-bg{position:absolute; inset:-40px; width:calc(100% + 80px); height:calc(100% + 80px); object-fit:cover; filter:blur(28px) brightness(.55); transform:scale(1.05);}
+.cook-photo{position:absolute; inset:0; width:100%; height:100%; object-fit:contain;}
+.cook-over{position:absolute; left:0; right:0; bottom:0; padding:60px 22px calc(34px + env(safe-area-inset-bottom));
+  background:linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.78) 45%); z-index:2;}
+.cook-num{display:inline-block; font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:4px 10px; border-radius:999px;
+  background:var(--accent); color:#fff; margin-bottom:10px;}
+.cook-text{font-weight:700; line-height:1.3; white-space:pre-line; word-break:break-word;}
+.cook-plain{padding:90px 26px 70px; text-align:left; background:radial-gradient(circle at 20% 15%, rgba(47,179,127,.28), transparent 55%), #0d1110; height:100%;
+  display:flex; flex-direction:column; justify-content:center;}
+.cook-ing-list{list-style:none; margin:6px 0 0; padding:0; overflow-y:auto; max-height:62vh; touch-action:pan-y;}
+.cook-ing-list li{display:flex; justify-content:space-between; gap:12px; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.12); font-size:19px; font-weight:600;}
+.cook-ing-list li span:last-child{opacity:.75; font-weight:500; white-space:nowrap;}
+.cook-h{font-size:28px; font-weight:800; margin-bottom:8px;}
+.cook-end{align-items:center; text-align:center;}
+.cook-end svg{width:64px; height:64px; color:#5ccf9f; margin-bottom:14px;}
+.cook-end-btn{margin-top:26px; padding:14px 34px; border-radius:999px; background:#fff; color:#0d1110; font-weight:800; font-size:16px;}
+.cook-hint{position:absolute; left:0; right:0; bottom:calc(10px + env(safe-area-inset-bottom)); text-align:center; font-size:12px; opacity:.55; z-index:3; pointer-events:none;}
+.cook-start{width:100%; display:flex; align-items:center; justify-content:center; gap:8px; margin:14px 0 4px; padding:13px; border-radius:12px;
+  background:var(--accent); color:#fff; font-weight:800; font-size:16px;}
+.cook-start svg{width:18px; height:18px;}
+@media (min-width:700px){ .cook-stage{max-width:520px; margin:0 auto;} .cook-bars, .cook-top{max-width:520px; margin-left:auto; margin-right:auto; width:100%; box-sizing:border-box;} }
 </style>
 </head>
 <body>
@@ -1324,7 +1378,46 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <button id="edit-gallery-btn" class="btn-mini btn-mini-ghost" type="button">Editar</button>
         </div>
       </div>
-      <button id="gallery-delete-btn" class="btn-mini btn-mini-danger hidden" type="button" style="margin-bottom:12px;">Eliminar (0)</button>
+      <div class="pf-search-wrap" id="pf-search-wrap">
+        <div class="pf-search-row">
+          <div class="cart-search">
+            <svg class="cart-search-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="pf-search-input" name="nf-pf-q" placeholder="Busca un plato: paella, curry…"
+              autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+            <button type="button" id="pf-search-clear" class="cart-search-clear hidden" aria-label="Borrar búsqueda">×</button>
+            <div class="ingredient-suggest hidden" id="pf-search-suggest"></div>
+          </div>
+          <button type="button" class="pf-filter-btn" id="pf-filter-btn" aria-label="Filtros"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg><span class="pf-filter-count hidden" id="pf-filter-count"></span></button>
+        </div>
+        <div class="pf-modes" id="pf-modes">
+          <span>Buscar por</span>
+          <button type="button" class="pf-chip on" data-pf-mode="name">Nombre</button>
+          <button type="button" class="pf-chip" data-pf-mode="ingredient">Ingrediente</button>
+        </div>
+        <div class="pf-filters hidden" id="pf-filters">
+          <div class="pf-filter-group"><div class="pf-filter-label">Tipo</div><div class="pf-filter-chips">
+            <button type="button" class="pf-chip" data-pf-q="bueno">Healthy</button>
+            <button type="button" class="pf-chip" data-pf-q="normal">Normal</button>
+            <button type="button" class="pf-chip" data-pf-q="malo">Cheat meal</button>
+          </div></div>
+          <div class="pf-filter-group"><div class="pf-filter-label">Tiempo</div><div class="pf-filter-chips">
+            <button type="button" class="pf-chip" data-pf-t="15">≤ 15 min</button>
+            <button type="button" class="pf-chip" data-pf-t="30">≤ 30 min</button>
+            <button type="button" class="pf-chip" data-pf-t="60">≤ 1 h</button>
+          </div></div>
+          <div class="pf-filter-group"><div class="pf-filter-label">Calorías por ración</div><div class="pf-filter-chips">
+            <button type="button" class="pf-chip" data-pf-k="0-400">&lt; 400</button>
+            <button type="button" class="pf-chip" data-pf-k="400-700">400–700</button>
+            <button type="button" class="pf-chip" data-pf-k="700-99999">&gt; 700</button>
+          </div></div>
+          <button type="button" class="pf-filter-clear" id="pf-filter-clear">Quitar filtros</button>
+        </div>
+      </div>
+      <div class="pf-result-info hidden" id="pf-result-info"></div>
+      <div class="section-actions" id="gallery-sel-actions" style="margin-bottom:12px;">
+        <button id="gallery-duplicate-btn" class="btn-mini hidden" type="button">Duplicar (0)</button>
+        <button id="gallery-delete-btn" class="btn-mini btn-mini-danger hidden" type="button">Eliminar (0)</button>
+      </div>
       <div class="gallery" id="gallery"></div>
       <button class="fab" id="add-dish-btn" aria-label="Nuevo plato">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -1768,6 +1861,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button class="btn-secondary hidden" id="dish-edit-btn" style="flex:1; justify-content:center;">Editar</button>
       <button class="btn-primary hidden" id="dish-edit-save-btn" style="flex:1;">Guardar</button>
       <button class="btn-danger hidden" id="dish-delete-btn" style="flex:1; text-align:center;">Eliminar</button>
+      <button class="btn-secondary hidden" id="dish-send-btn" style="flex:1; justify-content:center;">Enviar</button>
       <button class="btn-primary hidden" id="dish-add-btn" style="flex:1;">Añadir a mi perfil</button>
     </div>
   </div>
@@ -1791,6 +1885,19 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   </div>
 </div>
 
+<!-- ================= MODO COCINA (pasos estilo historias) ================= -->
+<div id="cook-mode" class="cook hidden" role="dialog" aria-label="Modo cocina">
+  <div class="cook-bars" id="cook-bars"></div>
+  <div class="cook-top">
+    <div class="cook-title"><b id="cook-dish"></b><span id="cook-label"></span></div>
+    <button type="button" class="cook-close" id="cook-close" aria-label="Salir del modo cocina">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="cook-stage" id="cook-stage"></div>
+  <div class="cook-hint" id="cook-hint">Toca a la derecha para avanzar · a la izquierda para volver</div>
+</div>
+
 <!-- ================= DESCRIPCIÓN POP-UP ================= -->
 <div id="desc-modal" class="modal desc-modal-overlay hidden">
   <div class="desc-modal-card">
@@ -1808,9 +1915,9 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 <!-- ================= COMPARTIR CON AMIGO / MURO POP-UP ================= -->
 <div id="share-modal" class="modal desc-modal-overlay hidden">
   <div class="desc-modal-card">
-    <div style="font-weight:700; margin-bottom:12px;">Compartir</div>
+    <div style="font-weight:700; margin-bottom:12px;" id="share-title">Compartir</div>
     <button type="button" id="share-to-wall-btn" class="btn-primary" style="width:100%; justify-content:center; margin-bottom:16px;">Publicar en el Muro</button>
-    <div style="font-weight:700; margin-bottom:6px; font-size:13px; color:var(--muted);">O enviar por chat a...</div>
+    <div style="font-weight:700; margin-bottom:6px; font-size:13px; color:var(--muted);" id="share-sub">O enviar por chat a...</div>
     <div id="share-friends-list"></div>
   </div>
 </div>
@@ -2064,7 +2171,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.12-1';
+const APP_VERSION = '2026.10.13-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2158,6 +2265,7 @@ function hideModal(el){
 function modalHidden(el){ return el.classList.contains('hidden') || el.classList.contains('closing'); }
 const ICON_PLATE = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>';
 const ICON_HEART = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+const ICON_SEND = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 3.5 10.5 13.5"/><path d="M21.5 3.5 14.5 21l-4-7.5-7.5-4z"/></svg>';
 const ICON_COMMENT = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
 const ICON_PLUS_CIRCLE = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>';
 const ICON_MULTI_PHOTO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><rect x="7" y="7" width="13" height="13" rx="2.5"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/></svg>';
@@ -2504,7 +2612,7 @@ if('serviceWorker' in navigator){
 const VERSION_RE = new RegExp("APP_VERSION = '" + "([0-9A-Za-z.\\-]+)'");
 let lastUpdateCheck = 0;
 function appBusy(){
-  if(pvOpen) return true;
+  if(pvOpen || (typeof cookOpen!=='undefined' && cookOpen)) return true;
   if($all('.modal').some(m=> !m.classList.contains('hidden'))) return true;
   const a = document.activeElement;
   if(a && (a.tagName==='INPUT' || a.tagName==='TEXTAREA') && a.value) return true;
@@ -2973,6 +3081,20 @@ function renderGallery(){
   updateFitnessSettingsExtras(); // la elegibilidad de "Sugerir platos" depende del nº de platos con calorías
   renderNeveraSuggestions(); // se recalcula solo si Nevera ya tiene datos cargados (ver dentro)
   const box = $('#gallery');
+  // Buscando o filtrando: lista plana con TODOS los platos que encajan
+  // (también los que están dentro de carpetas).
+  if(pfFiltering()){
+    const found = dishes.filter(pfMatches);
+    const info = $('#pf-result-info');
+    info.textContent = found.length===1 ? '1 plato' : `${found.length} platos`;
+    info.classList.remove('hidden');
+    if(!found.length){ box.innerHTML = '<div class="empty-hint">Ningún plato coincide con la búsqueda.</div>'; applyEditModeVisuals(); return; }
+    layoutMasonry(box, found.map(d=> dishCardHtml(d)));
+    attachGalleryCardHandlers();
+    applyEditModeVisuals();
+    return;
+  }
+  $('#pf-result-info').classList.add('hidden');
   const unfiled = dishes.filter(d=>!d.folder_id);
   if(!folders.length && !unfiled.length){
     box.innerHTML = '<div class="empty-hint">Aún no hay platos. Pulsa "+" para añadir el primero.</div>';
@@ -2983,6 +3105,74 @@ function renderGallery(){
   attachGalleryCardHandlers();
   applyEditModeVisuals();
 }
+// ---------- Buscador y filtros del Perfil ----------
+const pfSearch = { q:'', mode:'name', quality:new Set(), time:null, kcal:null };
+function pfNorm(t){ return stripAccents(String(t||'').toLowerCase()).trim(); }
+function pfFiltering(){ return !!(pfSearch.q.trim() || pfSearch.quality.size || pfSearch.time || pfSearch.kcal); }
+function pfMatches(d){
+  const q = pfSearch.q.trim();
+  if(q){
+    if(pfSearch.mode==='name'){
+      if(!pfNorm(d.name).includes(pfNorm(q))) return false;
+    } else {
+      // Varios ingredientes separados por comas: tienen que estar todos.
+      const names = (d.ingredients||[]).map(i=> pfNorm(normalizeIngredientItem(i).name));
+      const terms = q.split(',').map(pfNorm).filter(Boolean);
+      if(!terms.every(t=> names.some(n=> n.includes(t)))) return false;
+    }
+  }
+  if(pfSearch.quality.size && !pfSearch.quality.has(d.quality)) return false;
+  if(pfSearch.time && !(d.duration_min && Number(d.duration_min) <= pfSearch.time)) return false;
+  if(pfSearch.kcal){
+    const [a, b] = pfSearch.kcal.split('-').map(Number);
+    const k = Number(d.calories);
+    if(!k || k < a || k > b) return false;
+  }
+  return true;
+}
+function pfFilterCount(){ return pfSearch.quality.size + (pfSearch.time ? 1 : 0) + (pfSearch.kcal ? 1 : 0); }
+function renderPfSearchUi(){
+  $all('[data-pf-mode]').forEach(b=> b.classList.toggle('on', b.dataset.pfMode===pfSearch.mode));
+  $all('[data-pf-q]').forEach(b=> b.classList.toggle('on', pfSearch.quality.has(b.dataset.pfQ)));
+  $all('[data-pf-t]').forEach(b=> b.classList.toggle('on', Number(b.dataset.pfT)===pfSearch.time));
+  $all('[data-pf-k]').forEach(b=> b.classList.toggle('on', b.dataset.pfK===pfSearch.kcal));
+  const n = pfFilterCount();
+  $('#pf-filter-count').textContent = String(n);
+  $('#pf-filter-count').classList.toggle('hidden', !n);
+  $('#pf-filter-btn').classList.toggle('on', n>0 || !$('#pf-filters').classList.contains('hidden'));
+  $('#pf-filter-clear').classList.toggle('hidden', !n);
+  $('#pf-search-clear').classList.toggle('hidden', !pfSearch.q);
+  $('#pf-search-input').placeholder = pfSearch.mode==='name' ? 'Busca un plato: paella, curry…' : 'Ingredientes: pollo, arroz…';
+}
+function pfRefresh(){ renderPfSearchUi(); renderGallery(); }
+$('#pf-search-input').addEventListener('input', e=>{ pfSearch.q = e.target.value; pfRefresh(); });
+$('#pf-search-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); e.target.blur(); } });
+$('#pf-search-clear').onclick = ()=>{ pfSearch.q = ''; $('#pf-search-input').value = ''; pfRefresh(); };
+$all('[data-pf-mode]').forEach(b=> b.onclick = ()=>{
+  pfSearch.mode = b.dataset.pfMode;
+  pfSearch.q = ''; $('#pf-search-input').value = '';
+  pfRefresh();
+  $('#pf-search-input').focus();
+});
+$('#pf-filter-btn').onclick = ()=>{ $('#pf-filters').classList.toggle('hidden'); renderPfSearchUi(); };
+$all('[data-pf-q]').forEach(b=> b.onclick = ()=>{ const v = b.dataset.pfQ; if(pfSearch.quality.has(v)) pfSearch.quality.delete(v); else pfSearch.quality.add(v); pfRefresh(); });
+$all('[data-pf-t]').forEach(b=> b.onclick = ()=>{ const v = Number(b.dataset.pfT); pfSearch.time = pfSearch.time===v ? null : v; pfRefresh(); });
+$all('[data-pf-k]').forEach(b=> b.onclick = ()=>{ const v = b.dataset.pfK; pfSearch.kcal = pfSearch.kcal===v ? null : v; pfRefresh(); });
+$('#pf-filter-clear').onclick = ()=>{ pfSearch.quality.clear(); pfSearch.time = null; pfSearch.kcal = null; pfRefresh(); };
+// En modo Ingrediente, sugerencias del catálogo (se añaden separadas por comas).
+wireIngredientAutocomplete($('#pf-search-input'), $('#pf-search-suggest'), (name)=>{
+  if(pfSearch.mode!=='ingredient') return;
+  const parts = $('#pf-search-input').value.split(',');
+  parts[parts.length-1] = ' ' + name;
+  const v = parts.map(p=> p.trim()).filter(Boolean).join(', ') + ', ';
+  $('#pf-search-input').value = v;
+  pfSearch.q = v;
+  pfRefresh();
+});
+// Las sugerencias solo en modo Ingrediente.
+$('#pf-search-input').addEventListener('input', ()=>{ if(pfSearch.mode!=='ingredient'){ $('#pf-search-suggest').classList.add('hidden'); $('#pf-search-suggest').innerHTML = ''; } });
+$('#pf-search-input').addEventListener('focus', ()=>{ if(pfSearch.mode!=='ingredient') setTimeout(()=>{ $('#pf-search-suggest').classList.add('hidden'); $('#pf-search-suggest').innerHTML = ''; }, 0); });
+
 function attachGalleryCardHandlers(){
   $all('#gallery .dish-card').forEach(card=>{
     card.onclick = ()=>{
@@ -3012,6 +3202,8 @@ function applyEditModeVisuals(){
   $('#edit-gallery-btn').textContent = galleryEditMode ? 'Listo' : 'Editar';
   $('#gallery-delete-btn').classList.toggle('hidden', !(galleryEditMode && selectedDishIds.size>0));
   $('#gallery-delete-btn').textContent = `Eliminar (${selectedDishIds.size})`;
+  $('#gallery-duplicate-btn').classList.toggle('hidden', !(galleryEditMode && selectedDishIds.size>0));
+  $('#gallery-duplicate-btn').textContent = `Duplicar (${selectedDishIds.size})`;
 }
 function toggleDishSelection(id){
   if(selectedDishIds.has(id)) selectedDishIds.delete(id); else selectedDishIds.add(id);
@@ -3030,7 +3222,7 @@ $('#edit-gallery-btn').onclick = ()=>{
 $('#section-platos').addEventListener('click', e=>{
   if(suppressNextSectionClick){ suppressNextSectionClick = false; return; }
   if(!galleryEditMode) return;
-  if(e.target.closest('.dish-card, .folder-card, .section-actions, #gallery-delete-btn, .fab')) return;
+  if(e.target.closest('.dish-card, .folder-card, .section-actions, #gallery-delete-btn, #gallery-duplicate-btn, .fab, #pf-search-wrap')) return;
   exitGalleryEditMode();
 });
 $('#gallery-delete-btn').onclick = async ()=>{
@@ -3041,6 +3233,31 @@ $('#gallery-delete-btn').onclick = async ()=>{
   if(error){ alert(error.message); return; }
   exitGalleryEditMode();
   await loadDishes();
+};
+// Duplicar: copia tal cual los platos seleccionados (en la misma carpeta),
+// con "(copia)" en el nombre para distinguirlos. Las fotos se comparten: no
+// se borran nunca del almacenamiento, así que no hay riesgo.
+let duplicateInFlight = false;
+$('#gallery-duplicate-btn').onclick = async ()=>{
+  if(!selectedDishIds.size || duplicateInFlight) return;
+  duplicateInFlight = true;
+  const btn = $('#gallery-duplicate-btn');
+  btn.textContent = 'Duplicando…';
+  try{
+    const src = dishes.filter(d=> selectedDishIds.has(d.id));
+    const t0 = Date.now();
+    const rows = src.map((d, i)=>{
+      const { id, created_at, updated_at, ...rest } = d;
+      return { ...rest, id: uuid(), user_id: currentUser.id, name: `${d.name || 'Plato'} (copia)`, created_at: new Date(t0 + i).toISOString() };
+    });
+    const { error } = await sb.from('dishes').insert(rows);
+    if(error){ alert('No se ha podido duplicar: '+error.message); return; }
+    exitGalleryEditMode();
+    await loadDishes();
+  } finally {
+    duplicateInFlight = false;
+    applyEditModeVisuals();
+  }
 };
 $('#new-folder-btn').onclick = async ()=>{
   const name = prompt('Nombre de la carpeta:');
@@ -3377,8 +3594,13 @@ function unlockBodyScroll(){
 let dishPreview = null; // null = ficha normal de un plato mío; { onAdd } = vista previa
 function openDishPreview(dish, opts){
   opts = opts || {};
-  openDishModal({ ...dish, id: 'preview-'+uuid(), shared_from_username: opts.fromUsername || null }, { onAdd: opts.onAdd || null });
+  openDishModal({ ...dish, id: 'preview-'+uuid(), shared_from_username: opts.fromUsername || null }, { onAdd: opts.onAdd || null, dish });
 }
+$('#dish-send-btn').onclick = ()=>{
+  const p = dishPreview;
+  if(!p || !p.dish) return;
+  openShareSheet(dishSnapshotOf(p.dish));
+};
 $('#dish-add-btn').onclick = async ()=>{
   const p = dishPreview;
   if(!p || !p.onAdd) return;
@@ -3446,6 +3668,7 @@ function applyDishModalButtons(){
   if(dishPreview){
     ['#dish-cancel-btn','#dish-save-btn','#dish-share-btn','#dish-edit-btn','#dish-edit-save-btn','#dish-delete-btn'].forEach(sel=> $(sel).classList.add('hidden'));
     $('#dish-add-btn').classList.toggle('hidden', !dishPreview.onAdd);
+    $('#dish-send-btn').classList.toggle('hidden', !dishPreview.dish || !friends.length && !chatSummaries.some(c=> c.is_group));
     $('#dish-macros-btn').classList.toggle('hidden', !currentUser.show_macros);
     $('#servings-scale-minus').classList.remove('hidden');
     $('#servings-scale-plus').classList.remove('hidden');
@@ -3453,6 +3676,7 @@ function applyDishModalButtons(){
   }
   $('#dish-cancel-btn').classList.remove('hidden');
   $('#dish-add-btn').classList.add('hidden');
+  $('#dish-send-btn').classList.add('hidden');
   const editing = dishExistsRemote && !dishViewMode;
   const viewing = dishExistsRemote && dishViewMode;
   $('#dish-share-btn').classList.toggle('hidden', !viewing);
@@ -3909,13 +4133,14 @@ function renderSteps(focusKey){
   $('#steps-done').classList.toggle('hidden', !edit);
   if(!edit){
     const list = dishSteps.filter(st=> (st.text||'').trim() || st.url || st.preview);
-    box.innerHTML = list.length ? list.map((st,i)=> `<div class="step">
+    box.innerHTML = (list.length ? `<button type="button" class="cook-start" id="cook-start-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>Cocinar</button>` : '') + (list.length ? list.map((st,i)=> `<div class="step">
         <div class="step-num">${i+1}.</div>
         <div class="step-main">
           ${(st.text||'').trim() ? `<div class="step-text">${escapeHtml(st.text.trim())}</div>` : ''}
           ${st.url || st.preview ? `<div class="step-photo" data-step-view="${i}"><img src="${st.url || st.preview}" alt=""></div>` : ''}
         </div>
-      </div>`).join('') : '<div class="steps-empty">Este plato todavía no tiene los pasos explicados.</div>';
+      </div>`).join('') : '<div class="steps-empty">Este plato todavía no tiene los pasos explicados.</div>');
+    if($('#cook-start-btn')) $('#cook-start-btn').onclick = ()=> openCookMode();
     box.querySelectorAll('[data-step-view]').forEach(el=> el.onclick = ()=>{
       const urls = list.filter(st=> st.url || st.preview).map(st=> st.url || st.preview);
       const mine = list[Number(el.dataset.stepView)];
@@ -3979,6 +4204,104 @@ $('#step-photo-input').addEventListener('change', async e=>{
     renderSteps(); updateDescPreview(); scheduleDishAutosave(true);
   }catch(err){ alert('No se pudo procesar esa foto, prueba con otra: '+err.message); }
 });
+/* ===================== MODO COCINA =====================
+   Los pasos a pantalla completa, uno a uno, como las historias de Instagram:
+   primero lo que necesitas, luego cada paso (con su foto si la tiene, si no
+   el texto en grande) y al final "¡A comer!". Tocar a la derecha avanza, a la
+   izquierda vuelve; deslizar hacia abajo sale. La pantalla no se apaga. */
+let cookOpen = false, cookSlides = [], cookIdx = 0, cookWake = null;
+function cookIngredients(){
+  return $all('#ingredients-list .ingredient-row').map(row=>{
+    const name = row.querySelector('.ingredient-input').value.trim();
+    if(!name) return null;
+    const q = row.querySelector('.ingredient-qty').value;
+    const u = row.querySelector('.ingredient-unit-badge').textContent.trim();
+    return { name, qty: q!=='' ? `${Math.round(Number(q)*100)/100}${u ? ' '+u : ''}` : '' };
+  }).filter(Boolean);
+}
+function openCookMode(){
+  const steps = dishSteps.filter(st=> (st.text||'').trim() || st.url || st.preview);
+  if(!steps.length) return;
+  const ings = cookIngredients();
+  cookSlides = [];
+  if(ings.length) cookSlides.push({ type:'ing', ings });
+  steps.forEach((st, i)=> cookSlides.push({ type:'step', n:i+1, total:steps.length, text:(st.text||'').trim(), photo: st.url || st.preview || null }));
+  cookSlides.push({ type:'end' });
+  cookIdx = 0;
+  $('#cook-dish').textContent = $('#dish-name').value.trim() || 'Receta';
+  cookOpen = true;
+  $('#cook-mode').classList.remove('hidden');
+  lockBodyScroll();
+  renderCook();
+  cookKeepAwake();
+}
+function closeCookMode(){
+  if(!cookOpen) return;
+  cookOpen = false;
+  $('#cook-mode').classList.add('hidden');
+  unlockBodyScroll();
+  try{ if(cookWake) cookWake.release(); }catch(e){}
+  cookWake = null;
+}
+async function cookKeepAwake(){
+  try{ if(cookOpen && navigator.wakeLock && navigator.wakeLock.request) cookWake = await navigator.wakeLock.request('screen'); }catch(e){ cookWake = null; }
+}
+document.addEventListener('visibilitychange', ()=>{ if(cookOpen && document.visibilityState==='visible') cookKeepAwake(); });
+function cookTextSize(t){ const n = (t||'').length; return n <= 70 ? 32 : n <= 140 ? 27 : n <= 260 ? 23 : 19; }
+function renderCook(){
+  const sl = cookSlides[cookIdx]; if(!sl) return;
+  $('#cook-bars').innerHTML = cookSlides.map((_, i)=> `<span class="${i < cookIdx ? 'done' : i===cookIdx ? 'on' : ''}"></span>`).join('');
+  const stage = $('#cook-stage');
+  if(sl.type==='ing'){
+    $('#cook-label').textContent = 'Antes de empezar';
+    stage.innerHTML = `<div class="cook-plain"><div class="cook-h">Vas a necesitar</div><ul class="cook-ing-list">${sl.ings.map(it=> `<li><span>${escapeHtml(it.name)}</span><span>${escapeHtml(it.qty)}</span></li>`).join('')}</ul></div>`;
+  } else if(sl.type==='step'){
+    $('#cook-label').textContent = `Paso ${sl.n} de ${sl.total}`;
+    const txt = sl.text ? `<div class="cook-text" style="font-size:${sl.photo ? Math.min(24, cookTextSize(sl.text)) : cookTextSize(sl.text)}px">${escapeHtml(sl.text)}</div>` : '';
+    stage.innerHTML = sl.photo
+      ? `<img class="cook-photo-bg" src="${sl.photo}" alt=""><img class="cook-photo" src="${sl.photo}" alt=""><div class="cook-over"><span class="cook-num">Paso ${sl.n}</span>${txt}</div>`
+      : `<div class="cook-plain"><div><span class="cook-num">Paso ${sl.n}</span></div>${txt}</div>`;
+  } else {
+    $('#cook-label').textContent = '¡Terminado!';
+    stage.innerHTML = `<div class="cook-plain cook-end"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg><div class="cook-h">¡A comer!</div><div style="opacity:.75; font-size:15px;">Que aproveche.</div><button type="button" class="cook-end-btn" id="cook-end-btn">Terminar</button></div>`;
+    $('#cook-end-btn').onclick = (e)=>{ e.stopPropagation(); closeCookMode(); };
+  }
+  $('#cook-hint').classList.toggle('hidden', cookIdx > 0);
+}
+function cookGo(d){
+  const i = cookIdx + d;
+  if(i < 0 || i >= cookSlides.length) return;
+  cookIdx = i;
+  renderCook();
+}
+(function(){
+  const el = $('#cook-mode');
+  let st = null;
+  el.addEventListener('pointerdown', e=>{
+    if(e.target.closest('.cook-close, .cook-end-btn')) { st = null; return; }
+    st = { x:e.clientX, y:e.clientY, t:Date.now() };
+  });
+  el.addEventListener('pointerup', e=>{
+    const s0 = st; st = null;
+    if(!s0) return;
+    const dx = e.clientX - s0.x, dy = e.clientY - s0.y;
+    if(dy > 90 && Math.abs(dy) > Math.abs(dx)){ closeCookMode(); return; }      // deslizar abajo: salir
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){ cookGo(dx < 0 ? 1 : -1); return; } // deslizar a los lados
+    if(Math.abs(dx) < 12 && Math.abs(dy) < 12){
+      const w = el.getBoundingClientRect().width;
+      cookGo(e.clientX > w * 0.33 ? 1 : -1);                                      // tocar: derecha avanza, izquierda vuelve
+    }
+  });
+  el.addEventListener('pointercancel', ()=>{ st = null; });
+  $('#cook-close').onclick = (e)=>{ e.stopPropagation(); closeCookMode(); };
+  document.addEventListener('keydown', e=>{
+    if(!cookOpen) return;
+    if(e.key==='ArrowRight' || e.key===' '){ e.preventDefault(); cookGo(1); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); cookGo(-1); }
+    else if(e.key==='Escape'){ e.preventDefault(); closeCookMode(); }
+  });
+})();
+
 function openStepsModal(){
   renderSteps();
   showModal($('#steps-modal'));
@@ -5599,16 +5922,29 @@ function renderShareTargets(){
   $all('[data-share-to]').forEach(b=> b.onclick = ()=> shareDishWith({ friendId: b.dataset.shareTo }));
   $all('[data-share-chat]').forEach(b=> b.onclick = ()=> shareDishWith({ chatId: b.dataset.shareChat }));
 }
-$('#dish-share-btn').onclick = ()=>{
+// shareSource: null = el plato tuyo abierto (también se puede publicar en el
+// Muro); si no, la "foto fija" de un plato ajeno (del Muro, Explorar...) que
+// solo se puede enviar por chat.
+let shareSource = null;
+function openShareSheet(snapshot){
+  shareSource = snapshot || null;
+  $('#share-to-wall-btn').classList.toggle('hidden', !!shareSource);
+  $('#share-title').textContent = shareSource ? 'Enviar a…' : 'Compartir';
+  $('#share-sub').classList.toggle('hidden', !!shareSource);
   renderShareTargets();
   showModal($('#share-modal'));
-};
+}
+$('#dish-share-btn').onclick = ()=> openShareSheet(null);
 $('#share-modal').addEventListener('click', e=>{ if(e.target.id==='share-modal') hideModal($('#share-modal')); });
 let shareInFlight = false;
 async function shareDishWith(target){
-  if(!editingDishId || shareInFlight) return;
-  const dish = dishes.find(d=>d.id===editingDishId);
-  if(!dish) return;
+  if(shareInFlight) return;
+  let snapshot = shareSource;
+  if(!snapshot){
+    const dish = editingDishId && dishes.find(d=>d.id===editingDishId);
+    if(!dish) return;
+    snapshot = dishSnapshotOf(dish);
+  }
   shareInFlight = true;
   hideModal($('#share-modal'));
   try{
@@ -5618,7 +5954,7 @@ async function shareDishWith(target){
       if(error){ alert('Error al compartir: '+error.message); return; }
       chatId = data;
     }
-    const { error } = await sb.from('chat_messages').insert({ chat_id: chatId, sender_id: currentUser.id, dish_snapshot: dishSnapshotOf(dish) });
+    const { error } = await sb.from('chat_messages').insert({ chat_id: chatId, sender_id: currentUser.id, dish_snapshot: snapshot });
     if(error){ alert('Error al compartir: '+error.message); return; }
     alert('Receta enviada por el chat.');
     loadChats();
@@ -6581,6 +6917,7 @@ function renderWallFeed(){
         <div class="wall-action-left">
           <button type="button" class="wall-action-btn ${liked?'liked':''}" data-wall-like="${p.id}" aria-label="Me gusta">${ICON_HEART}</button>
           <button type="button" class="wall-action-btn" data-wall-comment="${p.id}" aria-label="Comentarios">${ICON_COMMENT}</button>
+          <button type="button" class="wall-action-btn" data-wall-send="${p.id}" aria-label="Enviar por chat">${ICON_SEND}</button>
         </div>
         <div class="wall-action-right">${rightBtn}</div>
       </div>
@@ -6605,6 +6942,10 @@ function renderWallFeed(){
   $all('[data-wall-add]').forEach(b=> b.onclick = ()=> addWallDishToRepo(b.dataset.wallAdd));
   $all('[data-wall-delete]').forEach(b=> b.onclick = ()=> deleteWallPost(b.dataset.wallDelete));
   $all('[data-wall-likers]').forEach(b=> b.onclick = ()=> openWallLikers(b.dataset.wallLikers));
+  $all('[data-wall-send]').forEach(b=> b.onclick = ()=>{
+    const p = wallPosts.find(x=> x.id===b.dataset.wallSend);
+    if(p && p.dish_snapshot) openShareSheet(p.dish_snapshot);
+  });
 }
 // "Le gusta a @beto y 3 personas más" (primero tus amigos, como Instagram).
 function wallLikesLine(postId){
@@ -7197,7 +7538,7 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); const k = currentPag
 (function(){
   const drawer = $('#drawer'), overlay = $('#drawer-overlay');
   let g = null, raf = 0;
-  function anyModalOpen(){ return pvOpen || $all('.modal').some(m=> !m.classList.contains('hidden')); }
+  function anyModalOpen(){ return pvOpen || cookOpen || $all('.modal').some(m=> !m.classList.contains('hidden')); }
   function decide(dx){
     const drawerOpen = drawer.classList.contains('open');
     if(drawerOpen) return dx < 0 ? 'drawer-close' : 'none';
