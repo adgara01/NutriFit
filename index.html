@@ -2299,7 +2299,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.20-1';
+const APP_VERSION = '2026.10.21-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2551,7 +2551,7 @@ async function enterApp(profile, cache){
   setSection('platos');
   if(cache) renderGallery();
   openDrawer();
-  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems(), loadCart(), loadChats()]);
+  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems(), loadCart(), loadChats(), loadMenuRemote()]);
   await migrateLegacyIngredientsIfNeeded();
   backfillDishNutrition();
   // Por detrás y sin molestar al arranque: tamaños ligeros de tus fotos, foto
@@ -2611,6 +2611,7 @@ function refreshAllSocial(){
   if(!currentUser) return;
   lastResumeRefresh = Date.now();
   loadFriendshipsState(); loadSharedDishes(); loadChats(); loadWallFeed();
+  loadCart(); loadMenuRemote(); // por si lo cambiaste en otro dispositivo
   if(openChatId && !modalHidden($('#chat-modal'))) loadChatMessages(openChatId);
 }
 document.addEventListener('visibilitychange', ()=>{
@@ -2670,6 +2671,18 @@ function subscribeLiveUpdates(){
       .on('postgres_changes', { event:'*', schema:'public', table:'wall_comment_likes' }, ()=> liveRefresh('wall', loadWallFeed, 400))
       .on('postgres_changes', { event:'DELETE', schema:'public', table:'wall_posts' }, ()=> liveRefresh('wall', loadWallFeed, 400))
       .on('postgres_changes', { event:'*', schema:'public', table:'shared_dishes' }, ()=> liveRefresh('shared', loadSharedDishes))
+      // Carrito y platos marcados: cambios hechos desde tus otros dispositivos.
+      .on('postgres_changes', { event:'*', schema:'public', table:'cart_menu', filter:`user_id=eq.${me}` }, payload=>{
+        const n = payload && payload.new;
+        if(n && n.data && !(n.data.rev && menuSentRevs.has(n.data.rev))){ applyRemoteMenu(n.data); liveRefresh('cart', loadCart, 250); }
+      })
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'cart_items', filter:`user_id=eq.${me}` }, ()=> liveRefresh('cart', loadCart, 300))
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'cart_items', filter:`user_id=eq.${me}` }, ()=> liveRefresh('cart', loadCart, 300))
+      // (los borrados no se pueden filtrar por usuario: solo traen el id)
+      .on('postgres_changes', { event:'DELETE', schema:'public', table:'cart_items' }, payload=>{
+        const o = payload && payload.old;
+        if(o && o.id && cartItems.some(c=> c.id===o.id)) liveRefresh('cart', loadCart, 300);
+      })
       .subscribe(status=>{
         // Si la conexión se cayó (p. ej. con el móvil bloqueado) y vuelve,
         // se recarga todo una vez por si algo pasó mientras tanto.
@@ -8618,6 +8631,8 @@ async function loadCart(){
   const { data, error } = await sb.from('cart_items').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:true});
   if(error){ console.error(error); return; }
   if(cartSyncBusy()) return; // ha habido cambios mientras tanto: manda lo que hay en pantalla
+  const sig = (arr)=> arr.map(c=> [c.id, c.name, c.quantity==null || c.quantity==='' ? '' : Number(c.quantity), c.unit||''].join('|')).join('\n');
+  if(cartLoadedOnce && sig(data||[]) === sig(cartItems)) return; // igual que lo que ya tenemos (p. ej. el eco de nuestros cambios)
   cartItems = data||[];
   cartLoadedOnce = true;
   try{ await tidyCart(); }catch(e){ console.error(e); }
@@ -8698,6 +8713,7 @@ async function removeCartItem(id){
   const item = cartItems.find(c=> c.id===id);
   if(!item) return;
   cartDropLine(item);
+  pruneMenu(loadMenu()); // si era lo último que había puesto un plato, el plato se desmarca
   onCartChanged();
 }
 // Pasa una línea del carrito a la Nevera: si ya tenías ese ingrediente (y la
@@ -8872,7 +8888,47 @@ $('#dish-cart-all').onclick = async ()=>{
    que había añadido él. */
 function menuKey(){ return 'nutrifit_menu_' + (currentUser ? currentUser.id : ''); }
 function loadMenu(){ try{ const m = JSON.parse(localStorage.getItem(menuKey()) || 'null'); if(m && Array.isArray(m.ids)) return m; }catch(e){} return { ids: [], parts: {}, used: {} }; }
-function saveMenu(m){ try{ localStorage.setItem(menuKey(), JSON.stringify(m)); }catch(e){} }
+/* Los platos marcados se guardan en el móvil (para pintarlos al instante) y
+   en tu cuenta (tabla cart_menu), así se ven igual en todos tus
+   dispositivos y cambian en vivo. Cada guardado lleva un "rev" para
+   reconocer el eco de nuestros propios cambios. Si aún no se ha ejecutado el
+   SQL, funciona como antes: solo en este dispositivo. */
+let menuSyncTimer = null, menuRemoteReady = false;
+const menuSentRevs = new Set();
+function saveMenu(m){
+  m.rev = uuid(); m.ts = Date.now();
+  try{ localStorage.setItem(menuKey(), JSON.stringify(m)); }catch(e){}
+  pushMenu();
+}
+function pushMenu(){
+  if(!currentUser) return;
+  clearTimeout(menuSyncTimer);
+  menuSyncTimer = setTimeout(async ()=>{
+    menuSyncTimer = null;
+    const m = loadMenu();
+    if(!m.rev) m.rev = uuid();
+    menuSentRevs.add(m.rev);
+    const { error } = await sb.from('cart_menu').upsert({ user_id: currentUser.id, data: m, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+    if(error) console.warn('cart_menu', error.message);
+  }, 150);
+}
+function applyRemoteMenu(d){
+  if(!d || !Array.isArray(d.ids)) return;
+  if(d.rev && menuSentRevs.has(d.rev)) return; // es nuestro propio cambio
+  if(menuSyncTimer) return;                     // hay un cambio nuestro a punto de salir: manda ese
+  const cur = loadMenu();
+  if(cur.rev && d.rev && cur.rev===d.rev) return;
+  try{ localStorage.setItem(menuKey(), JSON.stringify({ ids: d.ids, parts: d.parts||{}, used: d.used||{}, rev: d.rev||null, ts: d.ts||0 })); }catch(e){}
+  renderMenuCard();
+}
+async function loadMenuRemote(){
+  if(!currentUser) return;
+  const { data, error } = await sb.from('cart_menu').select('data').eq('user_id', currentUser.id).maybeSingle();
+  if(error) return; // sin el SQL: solo en este dispositivo
+  menuRemoteReady = true;
+  if(data && data.data && Array.isArray(data.data.ids)) applyRemoteMenu(data.data);
+  else if(loadMenu().ids.length) pushMenu(); // primera vez: sube lo que ya tenía marcado este móvil
+}
 // Tocar un plato de la tira: entra (sus ingredientes al carrito) o sale
 // (se quita lo que había puesto). Es instantáneo: no espera a la red.
 function toggleMenuDish(id){
@@ -8940,7 +8996,6 @@ function menuTileHtml(d, on, eager){
 function renderMenuCard(){
   const box = $('#menu-dishes'); if(!box || !currentUser) return;
   const m = loadMenu();
-  pruneMenu(m);
   const live = new Set(m.ids.filter(id=> dishes.some(d=> d.id===id)));
   $('#menu-clear-btn').classList.toggle('hidden', !live.size);
   // Si los platos son los mismos, solo se cambia la marca (sin rehacer las fotos).
