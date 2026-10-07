@@ -14,6 +14,7 @@
 <script>try{if(localStorage.getItem('nutrifit_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');document.querySelector('meta[name="theme-color"]').setAttribute('content','#0e1211');}}catch(e){}</script>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://aqxccqmfmbduzznosyiz.supabase.co" crossorigin>
+<link rel="preconnect" href="https://aqxccqmfmbduzznosyiz.supabase.co">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <!-- Iconos incrustados en el propio index.html (no dependen de que los .png
      estén subidos al repo, así no se pierden al actualizar la app).
@@ -1071,7 +1072,7 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 /* ---------- MURO ---------- */
 /* Publicaciones sin marco, como en Instagram: la foto de lado a lado */
 #wall-feed{max-width:540px; margin:0 auto;}
-.wall-post{background:none; border:none; border-radius:0; margin:0 -16px 26px;}
+.wall-post{background:none; border:none; border-radius:0; margin:0 -16px 26px; content-visibility:auto; contain-intrinsic-size:auto 640px;}
 @media (min-width:600px){ .wall-post{margin:0 0 30px;} .wall-post-photo{border-radius:6px;} }
 .wall-post-header{display:flex; align-items:center; gap:10px; padding:4px 14px 10px;}
 .wall-post-user{font-weight:700; font-size:14px; flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
@@ -2298,7 +2299,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.19-1';
+const APP_VERSION = '2026.10.20-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2553,7 +2554,11 @@ async function enterApp(profile, cache){
   await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems(), loadCart(), loadChats()]);
   await migrateLegacyIngredientsIfNeeded();
   backfillDishNutrition();
-  setTimeout(()=> backfillPhotoVariants(), 6000); // sin molestar al arranque
+  // Por detrás y sin molestar al arranque: tamaños ligeros de tus fotos, foto
+  // de perfil ligera y "precalentar" las fotos de las otras pantallas.
+  setTimeout(()=> idleRun(()=> backfillPhotoVariants()), 3500);
+  setTimeout(()=> idleRun(()=> backfillAvatar()), 5000);
+  setTimeout(()=> idleRun(()=> warmImages()), 1800);
   renderNeveraSuggestions();
   renderWeekBoard();
   loadWeeklyLogs();
@@ -2933,6 +2938,9 @@ function setSection(section){
   $all('.app-section').forEach(s=> s.classList.remove('active'));
   $('#section-'+section).classList.add('active');
   $all('.drawer-link').forEach(b=> b.classList.toggle('active', b.dataset.section===section));
+  // Mosaico que se colocó estando oculto (sin medidas): se recoloca al verse.
+  const g = $('#gallery');
+  if(section==='platos' && g && g._mhidden) requestAnimationFrame(()=> distributeMasonry(g));
 }
 // El fondo oscuro aparece/desaparece a la vez que se desliza el menú (antes
 // salía y se iba de golpe mientras el menú aún se movía).
@@ -3140,11 +3148,11 @@ async function loadFolders(){
 }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
 
-function dishCardHtml(d){
+function dishCardHtml(d, eager){
   return `
     <div class="dish-card" data-id="${d.id}" data-type="dish">
       <div class="dish-thumb-wrap">
-        ${d.image_url ? `<img class="dish-thumb" src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async" draggable="false" data-ar-lead ${ratioBoxAttrs(d.image_url, 0.66, 1.91, null)} onload="nfImgLoaded(this)">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
+        ${d.image_url ? `<img class="dish-thumb" ${pimg(d.image_url, 't')} alt="" ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} decoding="async" draggable="false" data-ar-lead ${ratioBoxAttrs(d.image_url, 0.66, 1.91, null)} onload="nfImgLoaded(this)">` : `<div class="dish-thumb dish-thumb-empty">${ICON_PLATE}</div>`}
         ${dishPhotoList(d).length>1 ? `<span class="multi-photo-badge">${ICON_MULTI_PHOTO}</span>` : ''}
         ${d.shared_from_username ? `<span class="shared-watermark">@${escapeHtml(d.shared_from_username)}</span>` : ''}
       </div>
@@ -3160,7 +3168,7 @@ function folderCardHtml(f){
     const d = inside[i];
     if(!d) return `<div class="folder-mini-thumb empty"></div>`;
     return d.image_url
-      ? `<div class="folder-mini-thumb"><img src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async" draggable="false"></div>`
+      ? `<div class="folder-mini-thumb"><img ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async" draggable="false"></div>`
       : `<div class="folder-mini-thumb dish-thumb-empty">${ICON_PLATE}</div>`;
   }).join('');
   return `
@@ -3178,38 +3186,74 @@ function folderCardHtml(f){
    propia altura sin estirar a las vecinas. Las medidas de altura son fiables
    al instante porque las miniaturas usan aspect-ratio en CSS (reservan su
    hueco sin esperar a que la imagen cargue). */
+/* RENDIMIENTO: las tarjetas que no han cambiado NO se vuelven a crear —
+   se reutiliza el mismo nodo (con su <img> ya cargada y decodificada), así
+   repintar el mosaico no hace parpadear ni volver a descargar ninguna foto.
+   Las alturas se leen todas de una vez (una sola maquetación) y luego se
+   reparten, en vez de medir tarjeta a tarjeta. */
+function masonryKey(html){ return html.replace(/ style="aspect-ratio:[^"]*"/g, '').replace(/ loading="[a-z]+"( fetchpriority="high")?/g, ''); }
+const MASONRY_CACHE = {}; // por id de contenedor (sobrevive aunque el contenedor se vuelva a crear)
 function layoutMasonry(container, htmlItems){
-  container.innerHTML = '';
-  if(!htmlItems.length) return;
+  const cache = MASONRY_CACHE[container.id] || container._mcache || new Map();
+  const next = new Map();
+  const nodes = [];
+  htmlItems.forEach(html=>{
+    const key = masonryKey(html.trim());
+    let node = cache.get(key);
+    if(node && !next.has(key)){
+      node.classList.remove('dragging', 'drag-group-dim', 'drop-hover');
+      node.style.transform = ''; node.style.opacity = ''; node.style.transition = ''; node.style.pointerEvents = '';
+    } else {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = html.trim();
+      node = tmp.firstElementChild;
+      if(!node) return;
+    }
+    next.set(key, node);
+    nodes.push(node);
+  });
+  container._mcache = next;
+  if(container.id) MASONRY_CACHE[container.id] = next;
+  container._mnodes = nodes;
+  distributeMasonry(container);
+}
+function distributeMasonry(container){
+  const nodes = container._mnodes || [];
   const colWidth = 150, gap = 12;
   const availWidth = container.clientWidth || container.getBoundingClientRect().width || 320;
   // OJO: el número de columnas NO depende de cuántas tarjetas hay que
-  // colocar, solo del ancho disponible — si se limitaba al nº de tarjetas,
-  // con una sola tarjeta salía una única columna que ocupaba TODO el ancho
-  // (la tarjeta se veía a doble tamaño, como si fuera un 2x2). Con las
-  // columnas fijas de siempre, una tarjeta suelta simplemente cae en la
-  // primera y dejas la segunda vacía — el tamaño no cambia haya 1 o 20.
+  // colocar, solo del ancho disponible (con una sola tarjeta no debe salir
+  // a doble tamaño).
   const numCols = Math.max(1, Math.floor((availWidth + gap) / (colWidth + gap)));
-  const wrap = document.createElement('div');
-  wrap.className = 'masonry-cols';
-  const cols = [];
-  for(let i=0;i<numCols;i++){
-    const col = document.createElement('div');
-    col.className = 'masonry-col';
-    wrap.appendChild(col);
-    cols.push({ el: col, height: 0 });
+  let wrap = container.firstElementChild;
+  if(!wrap || !wrap.classList.contains('masonry-cols') || wrap.children.length!==numCols || container.children.length!==1){
+    container.innerHTML = '';
+    wrap = document.createElement('div');
+    wrap.className = 'masonry-cols';
+    for(let i=0;i<numCols;i++){ const col = document.createElement('div'); col.className = 'masonry-col'; wrap.appendChild(col); }
+    container.appendChild(wrap);
   }
-  container.appendChild(wrap);
-  htmlItems.forEach(html=>{
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html.trim();
-    const node = tmp.firstElementChild;
-    if(!node) return;
-    let target = cols[0];
-    for(const c of cols) if(c.height < target.height) target = c;
-    target.el.appendChild(node);
-    target.height += node.offsetHeight + gap;
+  const cols = Array.from(wrap.children);
+  if(!nodes.length){ cols.forEach(c=> c.textContent = ''); return; }
+  // 1) todas a la primera columna (mismo ancho que tendrán) y se miden de golpe
+  const first = cols[0];
+  const frag = document.createDocumentFragment();
+  nodes.forEach(n=> frag.appendChild(n));
+  cols.forEach(c=> c.textContent = '');
+  first.appendChild(frag);
+  const hs = nodes.map(n=> n.offsetHeight);
+  // 2) cada una a la columna más baja en ese momento (rellena por filas)
+  const heights = cols.map(()=> 0);
+  const buckets = cols.map(()=> []);
+  nodes.forEach((n, i)=>{
+    let t = 0;
+    for(let c=1;c<cols.length;c++) if(heights[c] < heights[t]) t = c;
+    buckets[t].push(n);
+    heights[t] += hs[i] + gap;
   });
+  // (los de la primera columna ya están en su sitio y en orden)
+  cols.forEach((c, k)=>{ if(k===0) return; const f = document.createDocumentFragment(); buckets[k].forEach(n=> f.appendChild(n)); c.appendChild(f); });
+  container._mhidden = !container.offsetParent; // medido oculto: se recoloca al verse
 }
 function renderGallery(){
   renderMyProfileHeader();
@@ -3225,7 +3269,7 @@ function renderGallery(){
     info.textContent = found.length===1 ? '1 plato' : `${found.length} platos`;
     info.classList.remove('hidden');
     if(!found.length){ box.innerHTML = '<div class="empty-hint">Ningún plato coincide con la búsqueda.</div>'; applyEditModeVisuals(); return; }
-    layoutMasonry(box, found.map(d=> dishCardHtml(d)));
+    layoutMasonry(box, found.map((d, i)=> dishCardHtml(d, i<6)));
     attachGalleryCardHandlers();
     applyEditModeVisuals();
     return;
@@ -3236,7 +3280,7 @@ function renderGallery(){
     box.innerHTML = '<div class="empty-hint">Aún no hay platos. Pulsa "+" para añadir el primero.</div>';
     return;
   }
-  const items = folders.map(f=>folderCardHtml(f)).concat(unfiled.map(d=>dishCardHtml(d)));
+  const items = folders.map(f=>folderCardHtml(f)).concat(unfiled.map((d, i)=>dishCardHtml(d, i + folders.length < 6)));
   layoutMasonry(box, items);
   attachGalleryCardHandlers();
   applyEditModeVisuals();
@@ -3457,6 +3501,8 @@ function positionDragGhostStack(stack, dx, dy){
   });
 }
 function attachCardDrag(card){
+  if(card._dragWired) return; // la tarjeta se reutiliza entre repintados
+  card._dragWired = true;
   let startX=0, startY=0, dragging=false;
   let ghostStack = [], dimmedEls = [];
   function cleanupGroupVisuals(){
@@ -3601,7 +3647,7 @@ function renderFolderGallery(){
   if(!currentFolderId) return;
   const box = $('#folder-gallery');
   const inside = dishes.filter(d=>d.folder_id===currentFolderId);
-  if(inside.length) layoutMasonry(box, inside.map(d=>dishCardHtml(d)));
+  if(inside.length) layoutMasonry(box, inside.map((d, i)=>dishCardHtml(d, i<6)));
   else box.innerHTML = '<div class="empty-hint">Carpeta vacía. Ciérrala y arrastra platos aquí desde el mosaico.</div>';
   $all('#folder-gallery .dish-card').forEach(card=>{
     card.classList.toggle('jiggle', folderEditMode);
@@ -4285,7 +4331,7 @@ function updateDescPreview(){
   else sub = `${n} ${n===1?'paso':'pasos'}${photos.length ? ` · ${photos.length} ${photos.length===1?'foto':'fotos'}` : ''}${first ? ' — ' + first.text.trim() : ''}`;
   $('#dish-desc-preview').textContent = sub;
   const th = $('#steps-card-thumb');
-  if(photos.length){ th.innerHTML = `<img src="${photos[0].url ? photoVariant(photos[0].url, 't') : photos[0].preview}" alt="">`; th.classList.remove('hidden'); }
+  if(photos.length){ th.innerHTML = `<img ${photos[0].url ? pimg(photos[0].url, 't') : `src="${photos[0].preview}"`} alt="">`; th.classList.remove('hidden'); }
   else { th.innerHTML = ''; th.classList.add('hidden'); }
   $('#dish-desc-trigger').classList.toggle('filled', !!n);
   $('#dish-desc').value = stepsToDescription(dishSteps);
@@ -4302,7 +4348,7 @@ function renderSteps(focusKey){
         <div class="step-num">${i+1}.</div>
         <div class="step-main">
           ${(st.text||'').trim() ? `<div class="step-text">${escapeHtml(st.text.trim())}</div>` : ''}
-          ${st.url || st.preview ? `<div class="step-photo" data-step-view="${i}"><img src="${st.url ? photoVariant(st.url, 'm') : st.preview}" alt="" loading="lazy" decoding="async"></div>` : ''}
+          ${st.url || st.preview ? `<div class="step-photo" data-step-view="${i}"><img ${st.url ? pimg(st.url, 'm') : `src="${st.preview}"`} alt="" loading="lazy" decoding="async"></div>` : ''}
         </div>
       </div>`).join('') : '<div class="steps-empty">Este plato todavía no tiene los pasos explicados.</div>');
     if($('#cook-start-btn')) $('#cook-start-btn').onclick = ()=> openCookMode();
@@ -4318,7 +4364,7 @@ function renderSteps(focusKey){
       <div class="step-num">${i+1}.</div>
       <div class="step-main">
         <textarea rows="2" placeholder="${i===0 ? 'Ej.: Corta la cebolla en dados pequeños…' : 'Describe este paso…'}" data-step-text="${st.key}">${escapeHtml(st.text||'')}</textarea>
-        ${st.url || st.preview ? `<div class="step-photo"><img src="${st.url || st.preview}" alt=""><button type="button" class="step-photo-del" data-step-photo-del="${st.key}" aria-label="Quitar foto">×</button></div>` : ''}
+        ${st.url || st.preview ? `<div class="step-photo"><img ${st.url ? pimg(st.url, 't') : `src="${st.preview}"`} alt="" decoding="async"><button type="button" class="step-photo-del" data-step-photo-del="${st.key}" aria-label="Quitar foto">×</button></div>` : ''}
         <div class="step-tools">
           ${st.url || st.preview ? '' : `<button type="button" class="step-tool" data-step-photo="${st.key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Foto</button>`}
           ${dishSteps.length>1 ? `<button type="button" class="step-tool step-tool-del" data-step-del="${st.key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg></button>` : ''}
@@ -4424,7 +4470,7 @@ function renderCook(){
     $('#cook-label').textContent = `Paso ${sl.n} de ${sl.total}`;
     const txt = sl.text ? `<div class="cook-text" style="font-size:${sl.photo ? Math.min(24, cookTextSize(sl.text)) : cookTextSize(sl.text)}px">${escapeHtml(sl.text)}</div>` : '';
     stage.innerHTML = sl.photo
-      ? `<img class="cook-photo-bg" src="${photoVariant(sl.photo, 't')}" alt=""><img class="cook-photo" src="${photoVariant(sl.photo, 'm')}" alt=""><div class="cook-over"><span class="cook-num">Paso ${sl.n}</span>${txt}</div>`
+      ? `<img class="cook-photo-bg" ${pimg(sl.photo, 't')} alt=""><img class="cook-photo" ${pimg(sl.photo, 'm')} alt=""><div class="cook-over"><span class="cook-num">Paso ${sl.n}</span>${txt}</div>`
       : `<div class="cook-plain"><div><span class="cook-num">Paso ${sl.n}</span></div>${txt}</div>`;
   } else {
     $('#cook-label').textContent = '¡Terminado!';
@@ -4564,7 +4610,7 @@ async function normalizeImageFile(file){
   }catch(e){
     bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
   }
-  const maxDim = 1600;
+  const maxDim = 1440;
   let { width, height } = bitmap;
   if(width > maxDim || height > maxDim){
     const scale = maxDim / Math.max(width, height);
@@ -4576,7 +4622,7 @@ async function normalizeImageFile(file){
   ctx.drawImage(bitmap.img || bitmap, 0, 0, width, height);
   if(bitmap.close) bitmap.close();
   const blob = await new Promise((resolve, reject)=>{
-    canvas.toBlob(b=> b ? resolve(b) : reject(new Error('No se pudo procesar la imagen')), 'image/jpeg', 0.85);
+    canvas.toBlob(b=> b ? resolve(b) : reject(new Error('No se pudo procesar la imagen')), 'image/jpeg', 0.82);
   });
   const out = new File([blob], 'foto.jpg', { type:'image/jpeg' });
   out.nfRatio = width / height; // proporción real (ancho/alto) para pintarla sin recortes
@@ -4589,11 +4635,15 @@ async function normalizeImageFile(file){
 const RATIO_KEY = 'nutrifit_ratios';
 let ratioCache = {};
 try{ ratioCache = JSON.parse(localStorage.getItem(RATIO_KEY) || '{}') || {}; }catch(e){ ratioCache = {}; }
+// La misma foto se pide ahora en varios tamaños (-t, -m, original con o sin
+// ?v=): todas comparten proporción, así que se guarda por una clave común.
+function ratioKey(url){ return String(url||'').split('#')[0].split('?')[0].replace(/-(t|m)\.jpg$/i, '.jpg'); }
+Object.keys(ratioCache).forEach(k=>{ const n = ratioKey(k); if(n!==k && !ratioCache[n]) ratioCache[n] = ratioCache[k]; });
 function photoRatio(url){
   if(!url) return null;
   const m = /#ar=([\d.]+)/.exec(url);
   if(m) return Number(m[1]) || null;
-  return ratioCache[String(url).split('#')[0]] || null;
+  return ratioCache[ratioKey(url)] || ratioCache[String(url).split('#')[0]] || null;
 }
 function clampRatio(r, min, max){ return Math.max(min, Math.min(max, r)); }
 function ratioBoxAttrs(url, min, max, fallback){
@@ -4627,7 +4677,7 @@ function nfImgLoaded(img){
     applyBoxRatio(img.matches('[data-ar-min]') ? img : img.closest('[data-ar-min]'), r);
   }
   if(known || src.startsWith('data:')) return;
-  ratioCache[src.split('#')[0]] = Math.round(r*10000)/10000;
+  ratioCache[ratioKey(src)] = Math.round(r*10000)/10000;
   clearTimeout(ratioSaveTimer);
   ratioSaveTimer = setTimeout(()=>{ try{ localStorage.setItem(RATIO_KEY, JSON.stringify(ratioCache)); }catch(e){} }, 800);
   // En el mosaico, al conocer la altura real se recolocan las columnas una vez.
@@ -4635,9 +4685,8 @@ function nfImgLoaded(img){
     clearTimeout(galleryRelayoutTimer);
     galleryRelayoutTimer = setTimeout(()=>{
       if(galleryEditMode || folderEditMode || document.querySelector('.dish-card.dragging')) return;
-      renderGallery();
-      if(!modalHidden($('#folder-modal'))) renderFolderGallery();
-    }, 600);
+      $all('#gallery, #folder-gallery').forEach(c=>{ if(c._mnodes && c.offsetParent) distributeMasonry(c); });
+    }, 400);
   }
 }
 
@@ -4756,7 +4805,7 @@ function scrollCarouselTo(track, i){
 function renderDishPhotos(goTo){
   const wrap = $('#dish-photo-wrap'), track = $('#dish-photo-track');
   track.innerHTML = dishPhotos.map((p,i)=>{ const r = p.ratio || photoRatio(p.url);
-    return `<div class="photo-slide" data-photo-i="${i}" data-r="${r ? r.toFixed(4) : ''}"><img src="${p.url ? photoVariant(p.url, 'm') : p.preview}" alt="" ${i ? 'loading="lazy" ' : ''}decoding="async" draggable="false" onload="nfImgLoaded(this)"></div>`; }).join('');
+    return `<div class="photo-slide" data-photo-i="${i}" data-r="${r ? r.toFixed(4) : ''}"><img ${p.url ? pimg(p.url, 'm') : `src="${p.preview}"`} alt="" ${i ? 'loading="lazy" ' : 'fetchpriority="high" '}decoding="async" draggable="false" onload="nfImgLoaded(this)"></div>`; }).join('');
   wrap.classList.toggle('has-photo', dishPhotos.length>0);
   const idx = Math.max(0, Math.min(goTo||0, dishPhotos.length-1));
   // La caja toma la forma de la PRIMERA foto (entre 4:5 vertical y 1,91:1
@@ -4837,8 +4886,20 @@ function openPhotoViewer(urls, index){
   urls = (urls||[]).filter(Boolean);
   if(!urls.length) return;
   const v = $('#photo-viewer'), track = $('#pv-track');
-  track.innerHTML = urls.map(u=> `<div class="pv-slide"><img src="${u}" alt="" draggable="false"></div>`).join('');
+  // Primero la versión mediana (casi siempre ya está descargada: sale al
+  // instante) y, cuando llega la original, se cambia sin que se note.
+  track.innerHTML = urls.map(u=> `<div class="pv-slide"><img ${pimg(u, 'm')} alt="" draggable="false"></div>`).join('');
   const i = Math.max(0, Math.min(index||0, urls.length-1));
+  Array.from(track.querySelectorAll('img')).forEach((img, k)=>{
+    const full = urls[k];
+    if(!full || img.getAttribute('src')===full) return;
+    setTimeout(()=>{
+      const hi = new Image();
+      hi.decoding = 'async';
+      hi.onload = ()=>{ const go = ()=>{ if(img.isConnected){ img.removeAttribute('data-orig'); img.src = full; } }; hi.decode ? hi.decode().then(go, go) : go(); };
+      hi.src = full;
+    }, Math.abs(k - (index||0)) * 250);
+  });
   $('#pv-dots').innerHTML = photoDotsHtml(urls.length, i);
   const setCount = (k)=> $('#pv-count').textContent = urls.length>1 ? `${k+1} / ${urls.length}` : '';
   setCount(i);
@@ -4903,14 +4964,50 @@ document.addEventListener('keydown', e=>{
    continuación, de forma silenciosa (si falla el borrado no importa, es
    solo limpieza). */
 /* ---------- Fotos ligeras ----------
-   Cada foto se sube en 3 tamaños: la original (hasta 1600 px, para verla a
-   pantalla completa), una mediana "-m" (1080 px, para el Muro y la ficha) y
-   una miniatura "-t" (480 px, para mosaicos y listas). La URL lleva "v=2"
-   cuando tiene esos tamaños; las fotos antiguas se quedan como estaban hasta
-   que la app les crea los tamaños por detrás (backfillPhotoVariants). */
+   Cada foto se sube en 3 tamaños: la original (hasta 1440 px, solo para verla
+   a pantalla completa), una mediana "-m" (960 px, para el Muro y la ficha) y
+   una miniatura "-t" (420 px, para mosaicos, listas y la tira del Carrito).
+   Se pide SIEMPRE la versión ligera de cualquier foto de platos (también de
+   las antiguas y de las de otros): si todavía no existe, la <img> cae sola a
+   la original (nfImgErr) y se recuerda un día para no volver a intentarlo.
+   Mientras tanto, cada usuario genera por detrás los tamaños que le faltan a
+   sus fotos (backfillPhotoVariants), así que en poco tiempo todo va ligero. */
+const PV_MISS_KEY = 'nutrifit_pv_miss';
+let pvMiss = {}, pvMissTimer = null;
+try{ pvMiss = JSON.parse(localStorage.getItem(PV_MISS_KEY) || '{}') || {}; }catch(e){ pvMiss = {}; }
+function savePvMiss(){ clearTimeout(pvMissTimer); pvMissTimer = setTimeout(()=>{ try{ localStorage.setItem(PV_MISS_KEY, JSON.stringify(pvMiss)); }catch(e){} }, 600); }
+// Partes de una URL de foto de plato: { clean (sin ?query ni #), base (sin .jpg), hash }
+function photoParts(url){
+  if(!url || typeof url!=='string') return null;
+  const hi = url.indexOf('#');
+  const hash = hi>=0 ? url.slice(hi) : '';
+  const noHash = hi>=0 ? url.slice(0, hi) : url;
+  const qi = noHash.indexOf('?');
+  const clean = qi>=0 ? noHash.slice(0, qi) : noHash;
+  if(!/\/dish-photos\/.+\.jpg$/i.test(clean) || /-(t|m)\.jpg$/i.test(clean)) return null;
+  return { clean, base: clean.slice(0, -4), hash, fetchUrl: noHash };
+}
 function photoVariant(url, kind){
-  if(!url || typeof url!=='string' || url.startsWith('data:') || !/[#&]v=2\b/.test(url)) return url;
-  return url.replace(/\.jpg(?=#)/, `-${kind}.jpg`);
+  const p = photoParts(url);
+  if(!p) return url;
+  if(!/[#&]v=2\b/.test(p.hash)){
+    const t = pvMiss[p.base];
+    if(t && Date.now() - t < 864e5) return url; // ayer no existía: la original
+  }
+  return `${p.base}-${kind}.jpg${p.hash}`;
+}
+// Atributos de una <img> de plato: versión ligera + plan B a la original.
+function pimg(url, kind){
+  const v = photoVariant(url, kind);
+  return v===url ? `src="${url}"` : `src="${v}" data-orig="${url}" onerror="nfImgErr(this)"`;
+}
+function nfImgErr(img){
+  const o = img.getAttribute('data-orig');
+  if(!o) return;
+  img.removeAttribute('data-orig');
+  const p = photoParts(o);
+  if(p){ pvMiss[p.base] = Date.now(); savePvMiss(); }
+  img.src = o;
 }
 async function makeVariant(fileOrBlob, maxSide, quality){
   let bmp;
@@ -4920,17 +5017,26 @@ async function makeVariant(fileOrBlob, maxSide, quality){
   width = Math.max(1, Math.round(width * sc)); height = Math.max(1, Math.round(height * sc));
   const canvas = document.createElement('canvas');
   canvas.width = width; canvas.height = height;
-  canvas.getContext('2d').drawImage(bmp, 0, 0, width, height);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(bmp, 0, 0, width, height);
   if(bmp.close) bmp.close();
-  return await new Promise(res=> canvas.toBlob(b=> res(b), 'image/jpeg', quality));
+  const out = await new Promise(res=> canvas.toBlob(b=> res(b), 'image/jpeg', quality));
+  canvas.width = canvas.height = 0; // libera la memoria del lienzo (iOS es muy justo)
+  return out;
 }
+const VARIANT_T = [420, 0.7], VARIANT_M = [960, 0.74];
 async function uploadVariants(bucket, base, source){
-  const [t, m] = await Promise.all([makeVariant(source, 480, 0.72), makeVariant(source, 1080, 0.8)]);
+  // De una en una: en el iPhone dos lienzos grandes a la vez gastan mucha memoria.
+  const m = await makeVariant(source, VARIANT_M[0], VARIANT_M[1]);
+  const t = m ? await makeVariant(m, VARIANT_T[0], VARIANT_T[1]) : null;
   if(!t || !m) return false;
   const st = sb.storage.from(bucket);
   const opts = { upsert:true, contentType:'image/jpeg', cacheControl:'31536000' };
   const [a, b] = await Promise.all([st.upload(`${base}-t.jpg`, t, opts), st.upload(`${base}-m.jpg`, m, opts)]);
-  return !(a && a.error) && !(b && b.error);
+  const ok = !(a && a.error) && !(b && b.error);
+  if(ok){ const k = (sb.storage.from(bucket).getPublicUrl(base + '.jpg').data || {}).publicUrl; if(k && pvMiss[k.slice(0, -4)]){ delete pvMiss[k.slice(0, -4)]; savePvMiss(); } }
+  return ok;
 }
 async function uploadDishPhoto(dishId, file){
   const base = `${currentUser.id}/${dishId}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
@@ -5127,45 +5233,117 @@ async function backfillDishNutrition(){
   if(touched){ renderGallery(); saveBootCache(); }
 }
 
-let variantsBackfillDone = false;
-function needsVariants(u, me){ return typeof u==='string' && !u.startsWith('data:') && u.includes('/dish-photos/'+me+'/') && !/[#&]v=2\b/.test(u) && /\.jpg(#|$)/.test(u); }
-async function makeVariantsFor(u){
-  const clean = u.split('#')[0];
-  const path = decodeURIComponent(clean.split('/dish-photos/')[1] || '');
-  if(!path) return null;
-  const resp = await fetch(clean, { cache:'force-cache' });
-  if(!resp.ok) return null;
-  const ok = await uploadVariants('dish-photos', path.replace(/\.jpg$/, ''), await resp.blob());
-  if(!ok) return null;
-  return clean + (u.includes('#') ? u.slice(u.indexOf('#')) + '&v=2' : '#v=2');
+function idleRun(fn){ if(window.requestIdleCallback) requestIdleCallback(()=> fn(), { timeout: 2000 }); else setTimeout(fn, 0); }
+/* Precalentar: deja descargadas (y en la caché del móvil) las primeras fotos
+   de las pantallas que aún no has abierto — tus platos, la tira del Carrito y
+   las primeras del Muro —, así al llegar a ellas ya están. */
+function warmImages(){
+  if(!currentUser) return;
+  const urls = [];
+  const add = (u, kind)=>{ if(u && !u.startsWith('data:')) urls.push([photoVariant(u, kind), u]); };
+  dishes.slice(0, 14).forEach(d=> add(d.image_url, 't'));
+  (wallPosts||[]).slice(0, 5).forEach(p=>{ const ph = dishPhotoList(p.dish_snapshot||{}); add(ph[0], 'm'); });
+  (wallPosts||[]).slice(0, 8).forEach(p=>{ if(p.author && p.author.avatar_url) urls.push([p.author.avatar_url, p.author.avatar_url]); });
+  const seen = new Set();
+  const list = urls.filter(([v])=> !seen.has(v) && seen.add(v));
+  let i = 0;
+  const next = ()=>{
+    if(i >= list.length) return;
+    const [v, orig] = list[i++];
+    const im = new Image();
+    im.decoding = 'async';
+    im.onload = next;
+    im.onerror = ()=>{ if(v!==orig){ const p = photoParts(orig); if(p){ pvMiss[p.base] = Date.now(); savePvMiss(); } const o = new Image(); o.onload = o.onerror = next; o.src = orig; } else next(); };
+    im.src = v;
+  };
+  next(); next(); next();
 }
+let variantsBackfillDone = false;
+function needsVariants(u, me){
+  const p = photoParts(u);
+  return !!p && p.clean.includes('/dish-photos/'+me+'/') && !/[#&]v=2\b/.test(p.hash);
+}
+function withV2(u){ const p = photoParts(u); return p.fetchUrl + (p.hash ? p.hash + '&v=2' : '#v=2'); }
+async function makeVariantsFor(u){
+  const p = photoParts(u);
+  if(!p) return null;
+  // ¿Ya los creó otro móvil? Entonces basta con marcar la URL.
+  try{
+    const [a, b] = await Promise.all([fetch(p.base + '-t.jpg', { method:'HEAD', cache:'no-store' }), fetch(p.base + '-m.jpg', { method:'HEAD', cache:'no-store' })]);
+    if(a.ok && b.ok){ delete pvMiss[p.base]; savePvMiss(); return withV2(u); }
+  }catch(e){}
+  const path = decodeURIComponent(p.clean.split('/dish-photos/')[1] || '');
+  if(!path) return null;
+  const resp = await fetch(p.fetchUrl, { cache:'force-cache' });
+  if(!resp.ok) return null;
+  const ok = await uploadVariants('dish-photos', path.replace(/\.jpg$/i, ''), await resp.blob());
+  if(!ok) return null;
+  delete pvMiss[p.base]; savePvMiss();
+  return withV2(u);
+}
+/* Crea por detrás los tamaños ligeros de TODAS tus fotos que aún no los
+   tienen (de 2 en 2, empezando por los platos de arriba del mosaico), y
+   guarda cada plato en cuanto sus fotos están listas. */
 async function backfillPhotoVariants(){
   if(variantsBackfillDone || !currentUser || !window.createImageBitmap) return;
   variantsBackfillDone = true;
   const me = currentUser.id;
-  let budget = 8, touched = false;
+  const queue = [];
   for(const d of dishes.slice()){
-    if(budget <= 0) break;
     if(d.user_id && d.user_id!==me) continue;
     const urls = dishPhotoList(d);
     const steps = Array.isArray(d.steps) ? d.steps : [];
     const todo = [...new Set(urls.concat(steps.map(st=> st.image_url)).filter(u=> needsVariants(u, me)))];
-    if(!todo.length) continue;
+    if(todo.length) queue.push({ d, todo });
+  }
+  if(!queue.length) return;
+  let budget = 80, touched = false;
+  const doDish = async ({ d, todo })=>{
     const map = {};
     for(const u of todo){
-      if(budget <= 0) break;
-      budget--;
+      if(budget-- <= 0) break;
       try{ const nu = await makeVariantsFor(u); if(nu) map[u] = nu; }catch(e){ console.warn(e); }
     }
-    if(!Object.keys(map).length) continue;
+    if(!Object.keys(map).length) return;
+    // Se vuelve a leer el plato por si lo has editado mientras tanto.
+    const cur = dishes.find(x=> x.id===d.id) || d;
+    const urls = dishPhotoList(cur);
+    const steps = Array.isArray(cur.steps) ? cur.steps : [];
     const image_urls = urls.map(u=> map[u] || u);
     const upd = { image_urls, image_url: image_urls[0] || null };
     if(steps.length) upd.steps = steps.map(st=> st.image_url && map[st.image_url] ? { ...st, image_url: map[st.image_url] } : st);
     const { error } = await sb.from('dishes').update(upd).eq('id', d.id);
-    if(error){ console.warn(error); continue; }
-    Object.assign(d, upd); touched = true;
-  }
-  if(touched){ renderGallery(); saveBootCache(); }
+    if(error){ console.warn(error); return; }
+    Object.assign(cur, upd); touched = true;
+  };
+  const workers = Array.from({ length: 2 }, async ()=>{
+    while(queue.length && budget > 0){ await doDish(queue.shift()); }
+  });
+  await Promise.all(workers);
+  if(touched){ saveBootCache(); renderGallery(); }
+}
+// Fotos de perfil antiguas subidas a tamaño completo: se rehacen a 320 px.
+async function backfillAvatar(){
+  try{
+    const u = currentUser && currentUser.avatar_url;
+    if(!u || /#a2\b/.test(u) || !window.createImageBitmap) return;
+    const flag = 'nutrifit_avatar_ok_' + currentUser.id;
+    if(localStorage.getItem(flag) === u) return;
+    const resp = await fetch(u.split('#')[0], { cache:'force-cache' });
+    if(!resp.ok) return;
+    const blob = await resp.blob();
+    if(blob.size < 70000){ localStorage.setItem(flag, u); return; } // ya es ligera
+    const small = await makeVariant(blob, 320, 0.8);
+    if(!small) return;
+    const path = `${currentUser.id}/avatar-${Date.now()}.jpg`;
+    const { error } = await sb.storage.from('profile-photos').upload(path, small, { upsert:false, contentType:'image/jpeg', cacheControl:'31536000' });
+    if(error) return;
+    const avatar_url = sb.storage.from('profile-photos').getPublicUrl(path).data.publicUrl + '#a2';
+    const { error: e2 } = await sb.from('profiles').update({ avatar_url }).eq('id', currentUser.id);
+    if(e2) return;
+    currentUser.avatar_url = avatar_url;
+    renderDrawerProfile(); saveBootCache();
+  }catch(e){ console.warn(e); }
 }
 
 /* ===================== ETIQUETAS ===================== */
@@ -5543,15 +5721,16 @@ $('#avatar-input').addEventListener('change', async e=>{
   const file = e.target.files[0];
   if(!file) return;
   try{
-    // Se reduce a 512 px (una foto de perfil se ve pequeña: no hace falta más).
-    const small = await makeVariant(file, 512, 0.85);
+    // Se reduce a 320 px (una foto de perfil se ve pequeña: no hace falta más)
+    // y va a una ruta nueva cada vez, así se puede guardar en caché para siempre.
+    const small = await makeVariant(file, 320, 0.8);
     const up = small || file;
     const ext = small ? 'jpg' : (file.name.split('.').pop()||'jpg').toLowerCase();
-    const path = `${currentUser.id}/avatar.${ext}`;
-    const { error } = await sb.storage.from('profile-photos').upload(path, up, { upsert:true, contentType: small ? 'image/jpeg' : file.type, cacheControl:'3600' });
+    const path = `${currentUser.id}/avatar-${Date.now()}.${ext}`;
+    const { error } = await sb.storage.from('profile-photos').upload(path, up, { upsert:false, contentType: small ? 'image/jpeg' : file.type, cacheControl:'31536000' });
     if(error) throw error;
     const { data } = sb.storage.from('profile-photos').getPublicUrl(path);
-    const avatar_url = data.publicUrl + '?v=' + Date.now();
+    const avatar_url = data.publicUrl + (small ? '#a2' : '?v=' + Date.now());
     const { error: updErr } = await sb.from('profiles').update({ avatar_url }).eq('id', currentUser.id);
     if(updErr) throw updErr;
     currentUser.avatar_url = avatar_url;
@@ -6022,7 +6201,7 @@ function renderSharedDishes(){
   box.innerHTML = sharedDishesReceived.map(s=>{
     const d = s.dish_snapshot || {};
     return `<div class="shared-dish-row" data-id="${s.id}">
-      ${d.image_url ? `<img class="shared-dish-thumb" src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
+      ${d.image_url ? `<img class="shared-dish-thumb" ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
       <div class="shared-dish-info">
         <span class="name">${escapeHtml(d.name||'Receta')}</span>
         <span class="from">de <span class="profile-link"${profileAttr(s.from_user_id)}>@${escapeHtml((s.from&&s.from.username)||'?')}</span></span>
@@ -6351,7 +6530,7 @@ function renderFriendProfileBody(){
       <div class="gallery" id="friend-profile-gallery"></div>`;
     $('#fp-back-btn').onclick = ()=>{ friendProfileFolderId = null; renderFriendProfileBody(); };
     const box = $('#friend-profile-gallery');
-    if(inside.length) layoutMasonry(box, inside.map(d=>dishCardHtml(d)));
+    if(inside.length) layoutMasonry(box, inside.map((d, i)=>dishCardHtml(d, i<6)));
     else box.innerHTML = '<div class="empty-hint">Carpeta vacía.</div>';
     $all('#friend-profile-gallery .dish-card').forEach(card=>{
       card.onclick = ()=> openFriendDishPreview(friendRepoDishes.find(d=>d.id===card.dataset.id));
@@ -6365,7 +6544,7 @@ function renderFriendProfileBody(){
   }
   $('#friend-profile-body').innerHTML = '<div class="gallery" id="friend-profile-gallery"></div>';
   const box = $('#friend-profile-gallery');
-  const items = friendRepoFolders.map(f=>folderCardHtml(f)).concat(unfiled.map(d=>dishCardHtml(d)));
+  const items = friendRepoFolders.map(f=>folderCardHtml(f)).concat(unfiled.map((d, i)=>dishCardHtml(d, i + friendRepoFolders.length < 6)));
   layoutMasonry(box, items);
   $all('#friend-profile-gallery .dish-card').forEach(card=>{
     card.onclick = ()=> openFriendDishPreview(friendRepoDishes.find(d=>d.id===card.dataset.id));
@@ -6804,7 +6983,7 @@ function renderChatMessages(scrollToEnd){
     if(m.dish_snapshot){
       const d = m.dish_snapshot;
       content = `<button type="button" class="msg-dish" data-msg-dish="${m.id}">
-        ${d.image_url ? `<img src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async">` : `<span class="msg-dish-noimg">${ICON_PLATE}</span>`}
+        ${d.image_url ? `<img ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : `<span class="msg-dish-noimg">${ICON_PLATE}</span>`}
         <span class="msg-dish-body"><span class="msg-dish-name">${escapeHtml(d.name||'Receta')}</span><span class="msg-dish-sub">${d.calories ? d.calories+' kcal · ' : ''}Toca para ver</span></span>
       </button>`;
     }
@@ -7424,14 +7603,46 @@ function updateWallUnreadCount(){
   updateNotifBadges();
 }
 
+/* RENDIMIENTO: el Muro se repinta a menudo (me gusta, comentarios, en vivo).
+   En vez de rehacerlo entero, cada publicación que no ha cambiado se queda
+   tal cual, y si solo cambian los me gusta o los comentarios se conserva su
+   bloque de fotos (la misma <img>, ya cargada, y en la foto en la que estabas). */
+function patchWallPosts(box, items){
+  const old = new Map();
+  Array.from(box.children).forEach(n=>{ if(n.dataset && n.dataset.post) old.set(n.dataset.post, n); else n.remove(); });
+  let prev = null;
+  items.forEach(it=>{
+    let node = old.get(it.id);
+    if(!node || node._html !== it.html){
+      const tmp = document.createElement('div');
+      tmp.innerHTML = it.html.trim();
+      const fresh = tmp.firstElementChild;
+      if(node && node._photoSig === it.photoSig && it.photoSig){
+        const keep = node.querySelector(':scope > .wall-post-photo'), slot = fresh.querySelector(':scope > .wall-post-photo');
+        if(keep && slot) slot.replaceWith(keep);
+      }
+      fresh._html = it.html; fresh._photoSig = it.photoSig;
+      if(node) node.replaceWith(fresh);
+      node = fresh;
+    }
+    old.delete(it.id);
+    const want = prev ? prev.nextSibling : box.firstChild;
+    if(want !== node) box.insertBefore(node, want);
+    prev = node;
+  });
+  old.forEach(n=> n.remove());
+}
 function renderWallFeed(){
   const box = $('#wall-feed');
   // Al repintar (p. ej. tras un me gusta) cada carrusel sigue en la foto que estabas viendo.
   const photoPos = {};
   $all('#wall-feed .wall-post').forEach(el=>{ const t = el.querySelector('.photo-track'); if(t) photoPos[el.dataset.post] = carouselIndex(t); });
   if(!wallPosts.length){ box.innerHTML = '<div class="empty-hint">Todavía no hay nada en el Muro. ¡Publica tu primera receta desde su ficha!</div>'; return; }
-  box.innerHTML = wallPosts.map(p=>{
+  const items = wallPosts.map((p, idx)=>{
     const d = p.dish_snapshot || {};
+    // Solo las 2 primeras publicaciones piden su foto ya; el resto al acercarte.
+    const photoHtml = (()=>{ const ph = dishPhotoList(d); if(!ph.length) return '';
+        return `<div class="wall-post-photo" data-wall-open="${p.id}" ${ratioBoxAttrs(ph[0], 0.8, 1.91, 4/3)}><div class="photo-track">${ph.map((u, k)=> `<div class="photo-slide" data-r="${photoRatio(u) ? photoRatio(u).toFixed(4) : ''}"><img ${pimg(u, 'm')} alt="" ${k || idx>1 ? 'loading="lazy" ' : 'fetchpriority="high" '}decoding="async" draggable="false" onload="nfImgLoaded(this)"></div>`).join('')}</div><div class="photo-dots">${photoDotsHtml(ph.length, 0)}</div></div>`; })();
     const liked = wallLikes.some(l=> l.post_id===p.id && l.user_id===currentUser.id);
     const likeCount = wallLikes.filter(l=> l.post_id===p.id).length;
     const commentCount = wallComments.filter(c=> c.post_id===p.id).length;
@@ -7439,15 +7650,14 @@ function renderWallFeed(){
     const rightBtn = isOwn
       ? `<button type="button" class="wall-action-btn wall-danger" data-wall-delete="${p.id}" aria-label="Eliminar publicación">${ICON_TRASH}</button>`
       : `<button type="button" class="wall-action-btn" data-wall-add="${p.id}">${ICON_PLUS_CIRCLE}<span>Añadir</span></button>`;
-    return `<div class="wall-post" data-post="${p.id}">
+    const html = `<div class="wall-post" data-post="${p.id}">
       <div class="wall-post-header">
         ${profileAvatarHtml(p.author, p.user_id)}
         <span class="wall-post-user profile-link"${profileAttr(p.user_id)}>@${escapeHtml((p.author&&p.author.username)||'?')}</span>
         ${wallWithHtml(p)}
         <span class="wall-post-time">${timeAgo(p.created_at)}</span>
       </div>
-      ${(()=>{ const ph = dishPhotoList(d); if(!ph.length) return '';
-        return `<div class="wall-post-photo" data-wall-open="${p.id}" ${ratioBoxAttrs(ph[0], 0.8, 1.91, 4/3)}><div class="photo-track">${ph.map((u, k)=> `<div class="photo-slide" data-r="${photoRatio(u) ? photoRatio(u).toFixed(4) : ''}"><img src="${photoVariant(u, 'm')}" alt="" ${k ? 'loading="lazy" ' : ''}decoding="async" draggable="false" onload="nfImgLoaded(this)"></div>`).join('')}</div><div class="photo-dots">${photoDotsHtml(ph.length, 0)}</div></div>`; })()}
+      ${photoHtml}
       <div class="wall-post-actions">
         <div class="wall-action-left">
           <button type="button" class="wall-action-btn ${liked?'liked':''}" data-wall-like="${p.id}" aria-label="Me gusta">${ICON_HEART}</button>
@@ -7465,7 +7675,9 @@ function renderWallFeed(){
       </div>
       <button type="button" class="wall-comments-link" data-wall-comment="${p.id}">${commentCount ? (commentCount===1 ? 'Ver 1 comentario' : `Ver los ${commentCount} comentarios`) : 'Añade un comentario…'}</button>
     </div>`;
-  }).join('');
+    return { id: p.id, html, photoSig: photoHtml.replace(/ style="aspect-ratio:[^"]*"/g, '').replace(/ (loading="lazy"|fetchpriority="high") /g, ' ') };
+  });
+  patchWallPosts(box, items);
   $all('[data-wall-open]').forEach(el=> el.onclick = ()=> openWallDishPreview(el.dataset.wallOpen));
   $all('#wall-feed .wall-post').forEach(post=>{
     const ph = post.querySelector('.wall-post-photo'); if(!ph) return;
@@ -7976,7 +8188,7 @@ function renderNeveraSuggestions(){
         return `<button type="button" class="missing-chip ${inCart?'in-cart':''}" data-dish="${d.id}" data-missing="${idx}">${escapeHtml(m.name)}${inCart?ICON_CART_CHECK:ICON_CART_PLUS}</button>`;
       }).join('')}</div>`;
     return `<div class="shared-dish-row" data-open-dish="${d.id}">
-      ${d.image_url ? `<img class="shared-dish-thumb" src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
+      ${d.image_url ? `<img class="shared-dish-thumb" ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
       <div class="shared-dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
         ${full ? '<span class="from" style="color:var(--good);">Ya lo puedes hacer</span>' : missingHtml}
@@ -8110,7 +8322,7 @@ function renderExploreList(mode, box, total){
     const who = r.from ? `<span class="profile-link"${profileAttr(r.from.id)}>@${escapeHtml(r.from.username)}</span>` : 'Comunidad';
     const match = total>1 && r.matched ? ` · <span class="explore-match">${r.matched} de ${total}</span>` : '';
     return `<div class="shared-dish-row" data-explore-open="${mode}:${i}">
-      ${d.image_url ? `<img class="shared-dish-thumb" src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
+      ${d.image_url ? `<img class="shared-dish-thumb" ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
       <div class="shared-dish-info">
         <span class="name">${escapeHtml(d.name||'Receta')}</span>
         <span class="from">${who}${d.calories ? ' · '+d.calories+' kcal' : ''}${match}</span>
@@ -8336,10 +8548,78 @@ function fmtQty(q, unit){
   const n = Math.round(Number(q)*100)/100;
   return unit ? `${n} ${unit}` : String(n);
 }
+/* ===================== CARRITO AL INSTANTE =====================
+   Todo cambio del carrito se aplica YA en pantalla (líneas en memoria) y se
+   guarda en Supabase por detrás, en tandas y en paralelo. Así tocar un plato
+   en la tira marca el plato y mete sus ingredientes en el mismo instante,
+   sin esperar a la red. Una línea nueva lleva id "tmp-..." hasta que la base
+   de datos le da el suyo; si mientras tanto la cambias o la borras, se aplica
+   en cuanto llega. */
+const cartPending = new Set(), cartToDelete = new Set();
+let cartFlushing = null, cartLoadedOnce = false;
+function isTmpId(id){ return String(id).startsWith('tmp-'); }
+function cartMarkDirty(line){ if(line && !line._gone){ cartPending.add(line); scheduleCartFlush(); } }
+function cartDropLine(line){
+  if(!line) return;
+  line._gone = true;
+  cartItems = cartItems.filter(c=> c!==line);
+  cartPending.delete(line);
+  if(!isTmpId(line.id)) cartToDelete.add(line.id); // si aún se está creando, se borra al llegar su id
+  scheduleCartFlush();
+}
+function cartSyncBusy(){ return !!cartFlushing || cartPending.size>0 || cartToDelete.size>0; }
+function scheduleCartFlush(){
+  if(cartFlushing) return cartFlushing;
+  cartFlushing = new Promise(r=> setTimeout(r, 0)).then(flushCart).catch(e=> console.error(e)).finally(()=>{
+    cartFlushing = null;
+    if(cartPending.size || cartToDelete.size) scheduleCartFlush();
+  });
+  return cartFlushing;
+}
+function retagCartDom(oldId, newId){
+  ['data-cart-id', 'data-cart-qty', 'data-cart-fridge', 'data-cart-del'].forEach(a=>
+    document.querySelectorAll(`[${a}="${oldId}"]`).forEach(el=> el.setAttribute(a, newId)));
+}
+async function flushCart(){
+  let guard = 0;
+  while((cartPending.size || cartToDelete.size) && guard++ < 20){
+    const lines = [...cartPending]; cartPending.clear();
+    const dels = [...cartToDelete]; cartToDelete.clear();
+    const ops = [];
+    if(dels.length) ops.push(sb.from('cart_items').delete().in('id', dels).then(({ error })=>{ if(error) console.error(error); }));
+    for(const c of lines){
+      if(c._gone) continue;
+      if(isTmpId(c.id)){
+        const row = { user_id: currentUser.id, name: c.name, quantity: c.quantity!=null && c.quantity!=='' ? c.quantity : null, unit: c.unit || null, source_dish_name: c.source_dish_name || null };
+        if(c.ingredient_id) row.ingredient_id = c.ingredient_id;
+        const sent = { quantity: row.quantity, unit: row.unit, name: row.name };
+        ops.push(sb.from('cart_items').insert(row).select().single().then(({ data, error })=>{
+          if(error || !data){
+            console.error(error);
+            if(!c._gone){ cartItems = cartItems.filter(x=> x!==c); onCartChanged(); showToast('No se ha podido guardar en el carrito'); }
+            return;
+          }
+          const tmpId = c.id;
+          c.id = data.id; c.created_at = data.created_at; c.user_id = data.user_id;
+          retagCartDom(tmpId, c.id);
+          if(c._gone){ cartToDelete.add(c.id); return; }
+          if(c.quantity!==sent.quantity || (c.unit||null)!==sent.unit || c.name!==sent.name) cartPending.add(c); // cambió mientras se creaba
+        }));
+      } else {
+        ops.push(sb.from('cart_items').update({ name: c.name, quantity: c.quantity!=null && c.quantity!=='' ? c.quantity : null, unit: c.unit || null }).eq('id', c.id)
+          .then(({ error })=>{ if(error) console.error(error); }));
+      }
+    }
+    await Promise.all(ops);
+  }
+}
 async function loadCart(){
+  if(cartSyncBusy()){ try{ await cartFlushing; }catch(e){} } // no pisar lo que aún se está guardando
   const { data, error } = await sb.from('cart_items').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:true});
   if(error){ console.error(error); return; }
+  if(cartSyncBusy()) return; // ha habido cambios mientras tanto: manda lo que hay en pantalla
   cartItems = data||[];
+  cartLoadedOnce = true;
   try{ await tidyCart(); }catch(e){ console.error(e); }
   onCartChanged();
 }
@@ -8368,27 +8648,21 @@ async function toggleCartItem(item){
   if(parsed.quantity!=null && item.quantity==null){ item = { ...item, name: parsed.name, quantity: parsed.quantity, unit: item.unit || parsed.unit }; }
   item = { ...item, name: canonicalIngredientName(item.name) };
   const existing = findCartItem(item.name);
-  if(existing){ await removeCartItem(existing.id); return; }
-  const optimistic = {
+  if(existing){ removeCartItem(existing.id); return; }
+  const line = {
     id: 'tmp-'+uuid(), user_id: currentUser.id, ingredient_id: item.ingredient_id || null,
     name: item.name, quantity: item.quantity!=null && !isNaN(item.quantity) ? item.quantity : null,
     unit: item.unit || lookupDefaultUnit(item.name) || null, source_dish_name: item.source_dish_name || null
   };
-  cartItems.push(optimistic);
+  cartItems.push(line);
+  cartMarkDirty(line);
   onCartChanged();
-  const { id, ...row } = optimistic;
-  const { data, error } = await sb.from('cart_items').insert(row).select().single();
-  if(error){ cartItems = cartItems.filter(c=> c!==optimistic); onCartChanged(); alert('No se pudo añadir al carrito: '+error.message); return; }
-  Object.assign(optimistic, data);
-  renderCartList(); // ya con el id real (los botones de la lista lo usan)
 }
 async function updateCartItemQty(id, qtyVal){
   const item = cartItems.find(c=> c.id===id);
-  if(!item || String(id).startsWith('tmp-')) return;
-  const quantity = qtyVal!=='' && qtyVal!=null && !isNaN(Number(qtyVal)) ? Number(qtyVal) : null;
-  item.quantity = quantity;
-  const { error } = await sb.from('cart_items').update({ quantity }).eq('id', id);
-  if(error) alert(error.message);
+  if(!item) return;
+  item.quantity = qtyVal!=='' && qtyVal!=null && !isNaN(Number(qtyVal)) ? Number(qtyVal) : null;
+  cartMarkDirty(item);
 }
 // Limpia el carrito de antes: "arroz 150" pasa a "Arroz" con 150 al lado y
 // si un ingrediente estaba repetido se junta en una sola línea.
@@ -8423,17 +8697,14 @@ async function tidyCart(){
 async function removeCartItem(id){
   const item = cartItems.find(c=> c.id===id);
   if(!item) return;
-  cartItems = cartItems.filter(c=> c!==item);
+  cartDropLine(item);
   onCartChanged();
-  if(String(id).startsWith('tmp-')) return;
-  const { error } = await sb.from('cart_items').delete().eq('id', id);
-  if(error){ console.error(error); cartItems.push(item); onCartChanged(); }
 }
 // Pasa una línea del carrito a la Nevera: si ya tenías ese ingrediente (y la
 // unidad cuadra) se suma a lo que había; si no, entra como ítem nuevo.
 async function moveCartItemToFridge(id){
   const item = cartItems.find(c=> c.id===id);
-  if(!item || String(id).startsWith('tmp-')) return;
+  if(!item) return;
   const row = document.querySelector(`.cart-row[data-cart-id="${id}"]`);
   if(row) row.classList.add('busy');
   try{
@@ -8454,7 +8725,7 @@ async function moveCartItemToFridge(id){
     }
     renderFridgeList();
     updateIngredientTicks();
-    await removeCartItem(id);
+    await removeCartItem(item.id); // (el id puede haber pasado de "tmp-" al real mientras tanto)
     renderNeveraSuggestions();
   } finally {
     if(row) row.classList.remove('busy');
@@ -8524,38 +8795,37 @@ function dishCartItems(dish, servingsFactor){
   }));
 }
 function fridgeFor(k){ return fridgeItems.find(f=> normName(canonicalIngredientName(f.name))===k) || null; }
-// Suma `qty` a la línea del carrito (o la crea). Devuelve si la línea es nueva.
-async function cartAdd(name, qty, unit, source){
+// Suma `qty` a la línea del carrito (o la crea), al instante.
+// Devuelve 'new' (línea nueva), 'merged' (sumado a una que ya había) o 'none'.
+function cartAdd(name, qty, unit, source){
   const k = normName(name);
   const ex = cartItems.find(c=> normName(canonicalIngredientName(c.name))===k);
   if(ex){
     if(qty!=null && (sameUnit(ex.unit, unit) || !ex.unit || !unit)){
-      const nq = Math.round(((Number(ex.quantity)||0) + qty) * 100) / 100;
-      ex.quantity = nq; ex.unit = ex.unit || unit;
-      if(!String(ex.id).startsWith('tmp-')) await sb.from('cart_items').update({ quantity: nq, unit: ex.unit }).eq('id', ex.id);
+      ex.quantity = Math.round(((Number(ex.quantity)||0) + qty) * 100) / 100;
+      ex.unit = ex.unit || unit;
+      cartMarkDirty(ex);
+      return 'merged';
     }
-    return false;
+    return 'none';
   }
-  const row = { user_id: currentUser.id, name, quantity: qty!=null ? Math.round(qty*100)/100 : null, unit: unit || null, source_dish_name: source || null };
-  const tmp = { id: 'tmp-'+uuid(), ...row };
-  cartItems.push(tmp);
-  const { data, error } = await sb.from('cart_items').insert(row).select().single();
-  if(error){ cartItems = cartItems.filter(c=> c!==tmp); console.error(error); return false; }
-  Object.assign(tmp, data);
-  return true;
+  const line = { id: 'tmp-'+uuid(), user_id: currentUser.id, name, quantity: qty!=null ? Math.round(qty*100)/100 : null, unit: unit || null, source_dish_name: source || null };
+  cartItems.push(line);
+  cartMarkDirty(line);
+  return 'new';
 }
 // Resta `qty` de la línea (o la quita si era nuestra y se queda en nada).
-async function cartSub(name, qty, removeIfEmpty){
+function cartSub(name, qty, removeIfEmpty){
   const k = normName(name);
   const ex = cartItems.find(c=> normName(canonicalIngredientName(c.name))===k);
   if(!ex) return;
-  const left = qty!=null && ex.quantity!=null ? Math.round((Number(ex.quantity) - qty) * 100) / 100 : null;
-  if((left!=null && left <= 0) || (left==null && removeIfEmpty)){ await removeCartItem(ex.id); return; }
-  if(left!=null){ ex.quantity = left; if(!String(ex.id).startsWith('tmp-')) await sb.from('cart_items').update({ quantity: left }).eq('id', ex.id); }
+  const left = qty!=null && ex.quantity!=null && ex.quantity!=='' ? Math.round((Number(ex.quantity) - qty) * 100) / 100 : null;
+  if((left!=null && left <= 0) || (left==null && removeIfEmpty)){ cartDropLine(ex); return; }
+  if(left!=null){ ex.quantity = left; cartMarkDirty(ex); }
 }
-// Añade un plato entero. `used` = lo de la Nevera ya "reservado" por otros
-// platos del menú (para no contar dos veces lo mismo). Devuelve el detalle.
-async function addDishToCart(dish, opts){
+// Añade un plato entero (al instante). `used` = lo de la Nevera ya "reservado"
+// por otros platos de la tira (para no contar dos veces lo mismo).
+function addDishToCart(dish, opts){
   opts = opts || {};
   const used = opts.used || {};
   const res = { added: 0, have: 0, parts: [] };
@@ -8563,7 +8833,7 @@ async function addDishToCart(dish, opts){
     const fr = fridgeFor(it.k);
     let toCart = it.qty, consumed = 0;
     if(fr){
-      if(it.qty==null || fr.quantity==null || fr.quantity===''){ toCart = null; consumed = 0; res.have++; res.parts.push({ k: it.k, name: it.name, toCart: 0, consumed: 0, skipped: true }); continue; }
+      if(it.qty==null || fr.quantity==null || fr.quantity===''){ res.have++; res.parts.push({ k: it.k, name: it.name, toCart: 0, consumed: 0, skipped: true }); continue; }
       if(sameUnit(fr.unit, it.unit)){
         const avail = Math.max(0, Number(fr.quantity) - (used[it.k]||0));
         consumed = Math.min(avail, it.qty);
@@ -8572,9 +8842,9 @@ async function addDishToCart(dish, opts){
         if(toCart <= 0){ res.have++; res.parts.push({ k: it.k, name: it.name, toCart: 0, consumed }); continue; }
       }
     }
-    const created = await cartAdd(it.name, toCart, it.unit, opts.source || dish.name || null);
+    const how = cartAdd(it.name, toCart, it.unit, opts.source || dish.name || null);
     res.added++;
-    res.parts.push({ k: it.k, name: it.name, toCart, consumed, created });
+    res.parts.push({ k: it.k, name: it.name, toCart, consumed, created: how==='new', merged: how==='merged' });
   }
   onCartChanged();
   return res;
@@ -8591,7 +8861,7 @@ $('#dish-cart-all').onclick = async ()=>{
       return { name, quantity: q!=='' ? Number(q) : null, unit: row.querySelector('.ingredient-unit-badge').textContent.trim() || null };
     }).filter(Boolean);
     if(!items.length){ showToast('Este plato no tiene ingredientes.'); return; }
-    const r = await addDishToCart({ name: $('#dish-name').value.trim() || 'Receta', ingredients: items });
+    const r = addDishToCart({ name: $('#dish-name').value.trim() || 'Receta', ingredients: items });
     showToast(r.added ? `Añadidos ${r.added} ${r.added===1 ? 'ingrediente' : 'ingredientes'} al carrito${r.have ? ` · ${r.have} ya los tienes en la Nevera` : ''}` : 'Ya tienes todo en la Nevera');
   } finally { delete btn.dataset.busy; }
 };
@@ -8603,39 +8873,55 @@ $('#dish-cart-all').onclick = async ()=>{
 function menuKey(){ return 'nutrifit_menu_' + (currentUser ? currentUser.id : ''); }
 function loadMenu(){ try{ const m = JSON.parse(localStorage.getItem(menuKey()) || 'null'); if(m && Array.isArray(m.ids)) return m; }catch(e){} return { ids: [], parts: {}, used: {} }; }
 function saveMenu(m){ try{ localStorage.setItem(menuKey(), JSON.stringify(m)); }catch(e){} }
-let menuBusy = false;
-async function toggleMenuDish(id){
-  if(menuBusy) return;
+// Tocar un plato de la tira: entra (sus ingredientes al carrito) o sale
+// (se quita lo que había puesto). Es instantáneo: no espera a la red.
+function toggleMenuDish(id){
   const dish = dishes.find(d=> d.id===id); if(!dish) return;
-  menuBusy = true;
   const m = loadMenu();
-  try{
-    if(m.ids.includes(id)){
-      // Quitar: se resta del carrito lo que había puesto este plato.
-      for(const p of (m.parts[id]||[])){
-        if(p.toCart || p.created) await cartSub(p.name, p.toCart || null, !!p.created);
-        if(p.consumed) m.used[p.k] = Math.max(0, (m.used[p.k]||0) - p.consumed);
-      }
-      m.ids = m.ids.filter(x=> x!==id); delete m.parts[id];
-      saveMenu(m);
-      onCartChanged();
-      $('#menu-status').textContent = `Quitado "${dish.name}" del carrito`;
-    } else {
-      m.ids.push(id);
-      const r = await addDishToCart(dish, { used: m.used, source: dish.name });
-      m.parts[id] = r.parts;
-      saveMenu(m);
-      $('#menu-status').textContent = r.added
-        ? `"${dish.name}": ${r.added} ${r.added===1 ? 'ingrediente' : 'ingredientes'} al carrito${r.have ? ` · ${r.have} ya los tienes` : ''}`
-        : `"${dish.name}": ya tienes todo en la Nevera`;
+  if(m.ids.includes(id)){
+    for(const p of (m.parts[id]||[])){
+      if(p.created){
+        // Si otro plato marcado también usa ese ingrediente (sin cantidad), la línea se queda.
+        const shared = m.ids.some(o=> o!==id && (m.parts[o]||[]).some(q=> q.k===p.k && (q.created || q.merged)));
+        cartSub(p.name, p.toCart || null, !shared);
+      } else if(p.merged || (p.merged===undefined && p.toCart)) cartSub(p.name, p.toCart || null, false);
+      if(p.consumed) m.used[p.k] = Math.max(0, (m.used[p.k]||0) - p.consumed);
     }
-  } finally {
-    menuBusy = false;
-    renderMenuCard();
+    m.ids = m.ids.filter(x=> x!==id); delete m.parts[id];
+    saveMenu(m);
+    $('#menu-status').textContent = `Quitado «${dish.name}» del carrito`;
+  } else {
+    m.ids.push(id);
+    const r = addDishToCart(dish, { used: m.used, source: dish.name });
+    m.parts[id] = r.parts;
+    saveMenu(m);
+    const n = dishCartItems(dish).length;
+    $('#menu-status').textContent = !n
+      ? `«${dish.name}» no tiene ingredientes`
+      : r.added
+        ? `«${dish.name}»: ${r.added} ${r.added===1 ? 'ingrediente' : 'ingredientes'} al carrito${r.have ? ` · ${r.have} ya en la Nevera` : ''}`
+        : `«${dish.name}»: ya lo tienes todo en la Nevera`;
   }
+  onCartChanged();
+}
+// Si vacías a mano lo que había puesto un plato, el plato se desmarca solo.
+function pruneMenu(m){
+  if(!cartLoadedOnce || !dishes.length) return false;
+  let changed = false;
+  for(const id of m.ids.slice()){
+    if(!dishes.some(d=> d.id===id)) continue;
+    const put = (m.parts[id]||[]).filter(p=> p.created || p.merged);
+    if(!put.length) continue;
+    if(put.some(p=> findCartItem(p.name) || cartItems.some(c=> normName(canonicalIngredientName(c.name))===p.k))) continue;
+    (m.parts[id]||[]).forEach(p=>{ if(p.consumed) m.used[p.k] = Math.max(0, (m.used[p.k]||0) - p.consumed); });
+    m.ids = m.ids.filter(x=> x!==id); delete m.parts[id];
+    changed = true;
+  }
+  if(changed) saveMenu(m);
+  return changed;
 }
 function menuDishHtml(d, on){
-  const thumb = d.image_url ? `<img src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async">` : ICON_PLATE;
+  const thumb = d.image_url ? `<img ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : ICON_PLATE;
   const meta = [d.calories ? d.calories+' kcal' : '', d.duration_min ? d.duration_min+' min' : '', (d.ingredients||[]).length ? (d.ingredients.length+' ingr.') : ''].filter(Boolean).join(' · ');
   return `<button type="button" class="menu-dish ${on ? 'on' : ''}" data-menu-dish="${d.id}">
     <span class="menu-dish-thumb">${thumb}</span>
@@ -8643,8 +8929,8 @@ function menuDishHtml(d, on){
     <span class="menu-dish-check">${on ? ICON_CHECK : ''}</span>
   </button>`;
 }
-function menuTileHtml(d, on){
-  const img = d.image_url ? `<img src="${photoVariant(d.image_url, 't')}" alt="" loading="lazy" decoding="async" draggable="false">` : ICON_PLATE;
+function menuTileHtml(d, on, eager){
+  const img = d.image_url ? `<img ${pimg(d.image_url, 't')} alt="" ${eager ? '' : 'loading="lazy" '}decoding="async" draggable="false">` : ICON_PLATE;
   return `<button type="button" class="menu-tile ${on ? 'on' : ''}" data-menu-dish="${d.id}" aria-pressed="${on}">
     <span class="menu-tile-img">${img}</span><span class="menu-tile-check">${ICON_CHECK}</span>
     <span class="menu-tile-name">${escapeHtml(d.name||'Plato')}</span></button>`;
@@ -8654,19 +8940,32 @@ function menuTileHtml(d, on){
 function renderMenuCard(){
   const box = $('#menu-dishes'); if(!box || !currentUser) return;
   const m = loadMenu();
-  const live = m.ids.filter(id=> dishes.some(d=> d.id===id));
+  pruneMenu(m);
+  const live = new Set(m.ids.filter(id=> dishes.some(d=> d.id===id)));
+  $('#menu-clear-btn').classList.toggle('hidden', !live.size);
+  // Si los platos son los mismos, solo se cambia la marca (sin rehacer las fotos).
+  const sig = dishes.map(d=> d.id + '|' + (d.image_url||'') + '|' + (d.name||'')).join('\n');
+  if(box._sig === sig && dishes.length){
+    box.querySelectorAll('[data-menu-dish]').forEach(b=>{
+      const on = live.has(b.dataset.menuDish);
+      b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+    });
+    return;
+  }
+  box._sig = sig;
   const keep = box.scrollLeft; // que no salte al principio al repintar
   box.innerHTML = dishes.length
-    ? dishes.map(d=> menuTileHtml(d, live.includes(d.id))).join('')
+    ? dishes.map((d, i)=> menuTileHtml(d, live.has(d.id), i<5)).join('')
     : '<div class="empty-hint" style="padding:6px 0;">Todavía no tienes platos en tu perfil.</div>';
   box.scrollLeft = keep;
-  $('#menu-clear-btn').classList.toggle('hidden', !live.length);
-  box.querySelectorAll('[data-menu-dish]').forEach(b=> b.onclick = ()=>{
-    if(Date.now() - menuStripDragAt < 250) return; // venía de arrastrar con el ratón
-    b.classList.add('busy');
-    toggleMenuDish(b.dataset.menuDish);
-  });
 }
+// Un solo manejador para toda la tira (sirve aunque se repinte).
+$('#menu-dishes').addEventListener('click', e=>{
+  const b = e.target.closest('[data-menu-dish]');
+  if(!b) return;
+  if(Date.now() - menuStripDragAt < 250) return; // venía de arrastrar con el ratón
+  toggleMenuDish(b.dataset.menuDish);
+});
 // En ordenador: la rueda del ratón y arrastrar también mueven la tira.
 let menuStripDragAt = 0;
 (function(){
@@ -8687,7 +8986,7 @@ let menuStripDragAt = 0;
 $('#menu-clear-btn').onclick = async ()=>{
   const m = loadMenu();
   if(!m.ids.length || !confirm('¿Quitar todos los platos? Se quitará del carrito lo que habían añadido.')) return;
-  for(const id of m.ids.slice()) await toggleMenuDish(id);
+  for(const id of m.ids.slice()) toggleMenuDish(id);
   $('#menu-status').textContent = 'Platos quitados del carrito';
 };
 
