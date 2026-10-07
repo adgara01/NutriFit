@@ -156,19 +156,33 @@ html.nf-boot #boot-splash{position:fixed; inset:0; z-index:300; background:var(-
 main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:80px;}
 .app-section{display:none;}
 /* ---------- NEVERA / CARRITO (una página, dos pantallas) ---------- */
-.np-tabs{position:relative; display:flex; gap:4px; padding:4px; margin:2px 0 16px; background:var(--card2); border:1px solid var(--border); border-radius:14px;}
-.np-tab{flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 8px; border-radius:10px; background:none;
-  font-size:16px; font-weight:800; color:var(--muted); position:relative; z-index:1; transition:color .2s;}
+.np-tabs{position:relative; display:flex; gap:4px; padding:3px; background:var(--card2); border:1px solid var(--border); border-radius:12px;}
+.np-tab{flex:1; display:flex; align-items:center; justify-content:center; gap:7px; padding:7px 6px; border-radius:9px; background:none;
+  font-size:15px; font-weight:800; color:var(--muted); position:relative; z-index:1; transition:color .2s;}
 .np-tab svg{width:20px; height:20px;}
 .np-tab.active{color:var(--accent);}
-.np-ink{position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 6px); border-radius:10px; background:var(--card);
+.np-ink{position:absolute; top:3px; bottom:3px; left:3px; width:calc(50% - 5px); border-radius:9px; background:var(--card);
   box-shadow:0 1px 4px rgba(0,0,0,.08); transition:transform .25s cubic-bezier(.32,.72,0,1); will-change:transform;}
 .np-count{font-size:11px; font-weight:800; color:#fff; background:var(--accent); border-radius:999px; padding:1px 7px;}
-.np-pager{display:flex; align-items:flex-start; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; touch-action:pan-y;
-  -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; margin:0 -16px; transition:height .2s;}
-.np-pager::-webkit-scrollbar{display:none;}
-.np-page{flex:0 0 100%; min-width:0; scroll-snap-align:start; scroll-snap-stop:always; padding:0 16px 24px; box-sizing:border-box; touch-action:pan-y;}
-#section-despensa{min-height:calc(100vh - 120px); touch-action:pan-y;}
+/* Nevera y Carrito: dos pantallas fijas de alto completo, cada una con su
+   propio scroll vertical (sin hueco debajo y sin cargarse "a medias"); el
+   paso de una a otra lo mueve la app con el dedo (ver gestos más abajo). */
+.appbar .np-tabs{display:none; flex:1; margin:0 0 0 16px;}
+body.sec-despensa .appbar .np-tabs{display:flex;}
+body.sec-despensa main{padding-bottom:0;}
+#section-despensa.active{position:fixed; left:0; right:0; top:var(--appbar-h, 64px); bottom:0; z-index:1; overflow:hidden;}
+#np-pager{display:flex; height:100%; overflow:hidden;}
+.np-page{flex:0 0 100%; min-width:0; height:100%; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  padding:6px 16px calc(28px + env(safe-area-inset-bottom)); box-sizing:border-box; touch-action:pan-y;
+  transform:translate3d(var(--np-x, 0px),0,0); transition:transform .32s cubic-bezier(.32,.72,0,1); will-change:transform;}
+#np-pager.np-dragging .np-page{transition:none;}
+.np-page > *{max-width:868px; margin-left:auto; margin-right:auto;}
+@media (min-width:1024px){
+  #section-despensa.active{left:290px;}
+  body.sec-despensa .appbar{display:flex; padding-left:24px; padding-right:24px;}
+  body.sec-despensa #menu-btn{display:none;}
+  body.sec-despensa .appbar .np-tabs{margin:0 auto; max-width:560px;}
+}
 .drawer-icon-pair{display:flex; gap:2px; flex-shrink:0;}
 .drawer-icon-pair svg{width:24px !important; height:26px !important;}
 .app-section.active{display:block;}
@@ -712,7 +726,17 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 /* El chat ocupa toda la pantalla visible, como una app de mensajes, y se
    encaja con JS a la parte que queda libre encima del teclado (ver
    fitChatToViewport). */
-#chat-modal{align-items:stretch;}
+#chat-modal{align-items:stretch; background:var(--bg2);}
+/* Mientras se encaja al teclado: fondo opaco y, por si el teclado va un
+   fotograma por delante, una franja del mismo color por encima y por debajo. */
+.modal.kb-fit{background:var(--bg2) !important; align-items:stretch; overflow:visible;}
+.modal.kb-fit::before, .modal.kb-fit::after{content:''; position:absolute; left:0; right:0; height:100vh; background:var(--bg2); pointer-events:none;}
+.modal.kb-fit::before{bottom:100%;}
+.modal.kb-fit::after{top:100%;}
+#wall-comments-modal.kb-fit > .modal-sheet{height:100%; max-height:none; max-width:none; border-radius:0; display:flex; flex-direction:column; overflow:hidden; animation:none;
+  padding-top:calc(14px + env(safe-area-inset-top)); padding-bottom:8px;}
+#wall-comments-modal.kb-fit #wall-comments-list{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;}
+#wall-comments-modal.kb-fit .sheet-close-btn{top:calc(8px + env(safe-area-inset-top));}
 .chat-sheet{
   display:flex; flex-direction:column; overflow:hidden; height:100%; max-height:none; border-radius:0;
   padding-top:calc(12px + env(safe-area-inset-top)); padding-bottom:calc(10px + env(safe-area-inset-bottom));
@@ -740,6 +764,23 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .msg-dish-name{display:block; font-weight:700; font-size:14px; color:var(--text);}
 .msg-dish-sub{display:block; font-size:12px; color:var(--muted);}
 .chat-input-row{display:flex; align-items:center; gap:8px; padding-top:10px; border-top:1px solid var(--border); flex-shrink:0;}
+.chat-edit-bar{display:flex; align-items:center; justify-content:space-between; padding:8px 12px; margin-top:6px; border-radius:10px; background:rgba(18,135,94,.10);
+  color:var(--accent); font-size:13px; font-weight:700; flex-shrink:0;}
+.chat-edit-bar button{background:none; color:var(--accent); font-size:20px; line-height:1; padding:0 4px;}
+.chat-edit-bar + .chat-input-row{border-top:none; padding-top:6px;}
+.msg-bubble, .msg-dish{-webkit-touch-callout:none; -webkit-user-select:none; user-select:none;}
+.msg.mine .msg-bubble, .msg.mine .msg-dish{cursor:context-menu;}
+.msg-bubble.msg-deleted{font-style:italic; opacity:.75;}
+.msg.mine .msg-bubble.msg-deleted{background:transparent; color:var(--muted); border:1px solid var(--border);}
+.msg.pressing .msg-bubble, .msg.pressing .msg-dish{transform:scale(.96); transition:transform .15s;}
+.msg-edited{font-style:italic;}
+.msg-actions-sheet{padding:10px 14px calc(14px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:6px;}
+.msg-actions-preview{font-size:13px; color:var(--muted); padding:6px 6px 10px; border-bottom:1px solid var(--border); margin-bottom:4px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.msg-action{display:flex; align-items:center; gap:12px; width:100%; padding:13px 12px; border-radius:12px; background:var(--card2); font-size:16px; font-weight:600; color:var(--text); text-align:left;}
+.msg-action svg{width:19px; height:19px;}
+.msg-action-danger{color:var(--bad);}
+.msg-action-cancel{justify-content:center; background:none; color:var(--muted); margin-top:4px;}
 #chat-input{flex:1; min-width:0; border:1px solid var(--border); border-radius:999px; padding:10px 14px; font-size:16px; background:var(--card2); color:var(--text);}
 #chat-input:focus{outline:none; border-color:var(--accent);}
 .chat-send-btn{width:42px; height:42px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
@@ -988,7 +1029,8 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 .wall-reply-bar{display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding:8px 10px; border-top:1px solid var(--border);
   font-size:12.5px; color:var(--muted); background:var(--card2); border-radius:10px;}
 .wall-reply-bar button{background:none; font-size:20px; line-height:1; color:var(--muted); padding:0 4px;}
-#wall-comment-input{flex:1; min-width:0; border:1px solid var(--border); border-radius:999px; padding:9px 14px; font-size:14px; background:var(--card2);}
+#wall-comment-input{flex:1; min-width:0; border:1px solid var(--border); border-radius:999px; padding:9px 14px; font-size:16px; background:var(--card2);}
+#wall-comment-input:focus{outline:none; border-color:var(--accent);}
 #wall-comments-list{max-height:50vh; overflow-y:auto;}
 </style>
 </head>
@@ -1034,6 +1076,11 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       <span id="menu-notif-badge" class="notif-badge hidden">0</span>
     </button>
+    <div class="np-tabs" role="tablist">
+        <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg><span>Nevera</span></button>
+        <button type="button" class="np-tab" data-np="1" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg><span>Carrito</span><span class="np-count hidden" id="np-cart-count">0</span></button>
+        <span class="np-ink" id="np-ink"></span>
+      </div>
   </header>
 
   <div id="drawer-overlay" class="drawer-overlay hidden"></div>
@@ -1101,11 +1148,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 
     <!-- NEVERA / CARRITO: dos pantallas, se pasa de una a otra deslizando -->
     <section id="section-despensa" class="app-section">
-      <div class="np-tabs" role="tablist">
-        <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg><span>Nevera</span></button>
-        <button type="button" class="np-tab" data-np="1" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg><span>Carrito</span><span class="np-count hidden" id="np-cart-count">0</span></button>
-        <span class="np-ink" id="np-ink"></span>
-      </div>
       <div class="np-pager" id="np-pager">
         <div class="np-page" id="section-nevera">
 
@@ -1577,6 +1619,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-edit-bar hidden" id="chat-edit-bar"><span>Editando mensaje</span><button type="button" id="chat-edit-cancel" aria-label="Cancelar edición">×</button></div>
     <div class="chat-input-row">
       <input type="text" id="chat-input" placeholder="Escribe un mensaje..."
         autocomplete="off" autocapitalize="sentences" autocorrect="on" enterkeyhint="send">
@@ -1686,6 +1729,20 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   </div>
 </div>
 
+<!-- ================= ACCIONES DE UN MENSAJE (editar / eliminar) ================= -->
+<div id="msg-actions-modal" class="modal hidden">
+  <div class="modal-sheet msg-actions-sheet">
+    <div class="msg-actions-preview" id="msg-actions-preview"></div>
+    <button type="button" class="msg-action" id="msg-action-edit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Editar</button>
+    <button type="button" class="msg-action" id="msg-action-copy">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copiar</button>
+    <button type="button" class="msg-action msg-action-danger" id="msg-action-delete">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg>Eliminar</button>
+    <button type="button" class="msg-action msg-action-cancel" id="msg-action-cancel">Cancelar</button>
+  </div>
+</div>
+
 <!-- ================= QUIÉN HA DADO ME GUSTA ================= -->
 <div id="likers-modal" class="modal hidden">
   <div class="modal-sheet sheet-with-close">
@@ -1712,7 +1769,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.07-1';
+const APP_VERSION = '2026.10.07-2';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2255,6 +2312,8 @@ function setSection(section){
     section = 'despensa';
     requestAnimationFrame(()=> setDespensaPage(page, false));
   }
+  document.body.classList.toggle('sec-despensa', section==='despensa');
+  if(section==='despensa') requestAnimationFrame(()=>{ syncAppbarHeight(); setDespensaPage(despensaIdx, false); });
   $all('.app-section').forEach(s=> s.classList.remove('active'));
   $('#section-'+section).classList.add('active');
   $all('.drawer-link').forEach(b=> b.classList.toggle('active', b.dataset.section===section));
@@ -2397,7 +2456,7 @@ function attachDrawerSwipe(){
     document.addEventListener('pointercancel', onUp, {once:true});
   });
 }
-attachDrawerSwipe();
+// (attachDrawerSwipe ya no se usa: el gesto del menú está en el gestor táctil único)
 
 function applyFitnessVisibility(){
   const link = document.querySelector('.drawer-link[data-section="fitness"]');
@@ -4754,7 +4813,7 @@ function chatAvatarHtml(c){
   return c.is_group ? groupAvatarHtml(c.photo_url) : avatarHtml({ username: c.other_username, avatar_url: c.other_avatar });
 }
 function chatPreviewText(c){
-  if(!c.last_body && !c.last_dish_name) return 'Sin mensajes todavía';
+  if(!c.last_body && !c.last_dish_name) return c.last_sender_id ? (c.last_sender_id===currentUser.id ? 'Tú: ' : '') + 'Mensaje eliminado' : 'Sin mensajes todavía';
   const who = c.last_sender_id===currentUser.id ? 'Tú: ' : '';
   return who + (c.last_dish_name ? 'Receta: '+c.last_dish_name : c.last_body);
 }
@@ -4876,6 +4935,7 @@ async function openChat(chatId){
   if(!c){ alert('No se encontró la conversación.'); return; }
   openChatId = chatId;
   openChatMessages = []; openChatMembers = []; openChatProfiles = {};
+  chatEditingMsg = null; $('#chat-edit-bar').classList.add('hidden');
   refreshChatHeader();
   $('#chat-messages').innerHTML = '<div class="empty-hint">Cargando...</div>';
   $('#chat-input').value = '';
@@ -4892,38 +4952,65 @@ async function openChat(chatId){
    teclado. No depende de comparar con window.innerHeight, que en algunos
    iPhone también cambia con el teclado y hacía que el ajuste no se aplicase.
    Si estabas viendo los últimos mensajes, se sigue viendo el final. */
-let chatFullH = 0;
-function fitChatToViewport(){
-  const modal = $('#chat-modal');
-  if(modalHidden(modal)) return;
-  const box = $('#chat-messages');
-  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+/* Con el teclado abierto, el chat (y los comentarios del Muro) ocupan
+   EXACTAMENTE la parte de pantalla que se ve encima del teclado, con fondo
+   opaco: arriba el título, en medio los mensajes y abajo lo que escribes.
+   Nada de lo que hay detrás asoma, y lo último escrito sigue a la vista.
+   Mientras el teclado sube o baja se reencaja en cada fotograma. */
+let kbFullH = 0;
+const KB_MODALS = ['#chat-modal', '#wall-comments-modal'];
+function kbListOf(m){ return m.id==='chat-modal' ? $('#chat-messages') : $('#wall-comments-list'); }
+function fitKeyboardModals(){
   const vv = window.visualViewport;
-  if(vv){
-    chatFullH = Math.max(chatFullH, vv.height, document.documentElement.clientHeight || 0);
-    modal.style.top = vv.offsetTop + 'px';
-    modal.style.bottom = 'auto';
-    modal.style.height = vv.height + 'px';
-    modal.classList.toggle('kb-open', vv.height < chatFullH - 120);
-  }
-  if(atBottom) box.scrollTop = box.scrollHeight;
+  kbFullH = Math.max(kbFullH, vv ? vv.height : 0, window.innerHeight || 0, document.documentElement.clientHeight || 0);
+  const a = document.activeElement;
+  const typingIn = a && (a.tagName==='INPUT' || a.tagName==='TEXTAREA') ? a.closest(KB_MODALS.join(',')) : null;
+  KB_MODALS.forEach(sel=>{
+    const m = $(sel);
+    if(!m) return;
+    if(modalHidden(m)){ resetKeyboardFit(m); return; }
+    const isChat = m.id==='chat-modal';
+    const kbOpen = !!vv && vv.height < kbFullH - 120;
+    // El chat siempre va a pantalla completa; los comentarios, solo mientras escribes.
+    if(!isChat && !(typingIn===m && kbOpen)){ resetKeyboardFit(m); return; }
+    const list = kbListOf(m);
+    const atBottom = !list || list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+    m.classList.add('kb-fit');
+    m.classList.toggle('kb-open', kbOpen);
+    if(vv){
+      m.style.top = vv.offsetTop + 'px';
+      m.style.bottom = 'auto';
+      m.style.height = vv.height + 'px';
+    }
+    if(list && (atBottom || (isChat && typingIn===m))) list.scrollTop = list.scrollHeight;
+  });
 }
-function resetChatViewportFit(){
-  const modal = $('#chat-modal');
-  modal.style.top = modal.style.height = modal.style.bottom = '';
-  modal.classList.remove('kb-open');
+function resetKeyboardFit(m){
+  if(!m.classList.contains('kb-fit') && !m.style.height) return;
+  m.style.top = m.style.height = m.style.bottom = '';
+  m.classList.remove('kb-open', 'kb-fit');
 }
+// Compatibilidad con llamadas antiguas
+function fitChatToViewport(){ fitKeyboardModals(); }
+function resetChatViewportFit(){ resetKeyboardFit($('#chat-modal')); }
+let kbRaf = 0, kbUntil = 0;
+function refitKeyboardFor(ms){
+  kbUntil = Math.max(kbUntil, Date.now() + (ms || 700));
+  if(kbRaf) return;
+  const loop = ()=>{ fitKeyboardModals(); if(Date.now() < kbUntil) kbRaf = requestAnimationFrame(loop); else kbRaf = 0; };
+  kbRaf = requestAnimationFrame(loop);
+}
+function refitChatSoon(){ refitKeyboardFor(700); }
 if(window.visualViewport){
-  window.visualViewport.addEventListener('resize', fitChatToViewport);
-  window.visualViewport.addEventListener('scroll', fitChatToViewport);
+  window.visualViewport.addEventListener('resize', ()=> refitKeyboardFor(300));
+  window.visualViewport.addEventListener('scroll', ()=> refitKeyboardFor(300));
 }
-window.addEventListener('resize', fitChatToViewport);
-// El teclado tarda un poco en terminar de abrirse o cerrarse: se reencaja
-// varias veces durante la animación.
-function refitChatSoon(){ [0, 60, 180, 350, 600].forEach(ms=> setTimeout(fitChatToViewport, ms)); }
-$('#chat-input').addEventListener('focus', refitChatSoon);
-$('#chat-input').addEventListener('blur', refitChatSoon);
+window.addEventListener('resize', ()=> refitKeyboardFor(300));
+document.addEventListener('focusin', e=>{ if(e.target.closest && e.target.closest(KB_MODALS.join(','))) refitKeyboardFor(900); });
+document.addEventListener('focusout', e=>{ if(e.target.closest && e.target.closest(KB_MODALS.join(','))) refitKeyboardFor(900); });
 function closeChat(){
+  if(chatEditingMsg) cancelChatEdit();
+  closeMsgActions();
   resetChatViewportFit();
   hideModal($('#chat-modal'));
   unlockBodyScroll();
@@ -4981,20 +5068,125 @@ function renderChatMessages(scrollToEnd){
         <span class="msg-dish-body"><span class="msg-dish-name">${escapeHtml(d.name||'Receta')}</span><span class="msg-dish-sub">${d.calories ? d.calories+' kcal · ' : ''}Toca para ver</span></span>
       </button>`;
     }
-    if(m.body) content += `<div class="msg-bubble">${escapeHtml(m.body)}</div>`;
-    return `<div class="msg ${mine?'mine':'theirs'} ${m._pending?'pending':''}">
+    if(m.deleted_at) content = `<div class="msg-bubble msg-deleted">${mine ? 'Eliminaste este mensaje' : 'Mensaje eliminado'}</div>`;
+    else if(m.body) content += `<div class="msg-bubble">${escapeHtml(m.body)}</div>`;
+    return `<div class="msg ${mine?'mine':'theirs'} ${m._pending?'pending':''}" data-msg-id="${m.id}">
       ${showSender ? `<div class="msg-sender"><span class="profile-link"${profileAttr(m.sender_id)}>@${escapeHtml(sender ? sender.username : '?')}</span></div>` : ''}
       ${content}
-      ${showTime ? `<div class="msg-time">${m._pending ? 'Enviando…' : msgTime(m.created_at)}</div>` : ''}
+      ${showTime || (m.edited_at && !m.deleted_at) ? `<div class="msg-time">${m._pending ? 'Enviando…' : (m.edited_at && !m.deleted_at ? '<span class="msg-edited">editado</span> · ' : '') + msgTime(m.created_at)}</div>` : ''}
     </div>`;
   }).join('');
-  $all('#chat-messages [data-msg-dish]').forEach(b=> b.onclick = ()=> openChatDishPreview(b.dataset.msgDish));
+  $all('#chat-messages [data-msg-dish]').forEach(b=> b.onclick = (e)=>{ if(msgLongPressFired){ msgLongPressFired = false; e.preventDefault(); return; } openChatDishPreview(b.dataset.msgDish); });
   if(scrollToEnd){
     box.scrollTop = box.scrollHeight;
     box.querySelectorAll('img').forEach(img=> img.addEventListener('load', ()=>{ box.scrollTop = box.scrollHeight; }, {once:true}));
   }
 }
+/* --- Editar y eliminar mensajes propios ---
+   Mantén pulsado un mensaje tuyo (o clic derecho en el ordenador) para ver
+   Editar / Copiar / Eliminar. Al eliminarlo queda "Mensaje eliminado" para
+   todos; al editarlo sale "editado" junto a la hora. */
+let msgActionTarget = null, chatEditingMsg = null, msgLongPressFired = false;
+function openMsgActions(msgId){
+  const m = openChatMessages.find(x=> x.id===msgId);
+  if(!m || m.deleted_at || m._pending || String(m.id).startsWith('tmp-')) return;
+  const mine = m.sender_id===currentUser.id;
+  if(!mine && !m.body) return;
+  msgActionTarget = m;
+  $('#msg-actions-preview').textContent = m.body ? m.body : ('Receta: ' + ((m.dish_snapshot && m.dish_snapshot.name) || ''));
+  $('#msg-action-edit').classList.toggle('hidden', !mine || !m.body);
+  $('#msg-action-delete').classList.toggle('hidden', !mine);
+  $('#msg-action-copy').classList.toggle('hidden', !m.body);
+  try{ if(navigator.vibrate) navigator.vibrate(10); }catch(e){}
+  showModal($('#msg-actions-modal'));
+}
+function closeMsgActions(){ hideModal($('#msg-actions-modal')); }
+$('#msg-action-cancel').onclick = closeMsgActions;
+$('#msg-actions-modal').addEventListener('click', e=>{ if(e.target.id==='msg-actions-modal') closeMsgActions(); });
+$('#msg-action-copy').onclick = async ()=>{
+  const m = msgActionTarget; closeMsgActions();
+  if(!m || !m.body) return;
+  try{ await navigator.clipboard.writeText(m.body); }catch(e){}
+};
+$('#msg-action-edit').onclick = ()=>{
+  const m = msgActionTarget; closeMsgActions();
+  if(!m) return;
+  chatEditingMsg = m;
+  $('#chat-edit-bar').classList.remove('hidden');
+  const input = $('#chat-input');
+  input.value = m.body || '';
+  setTimeout(()=>{ input.focus(); try{ input.setSelectionRange(input.value.length, input.value.length); }catch(e){} }, 220);
+};
+function cancelChatEdit(){
+  chatEditingMsg = null;
+  $('#chat-edit-bar').classList.add('hidden');
+  $('#chat-input').value = '';
+}
+$('#chat-edit-cancel').onclick = cancelChatEdit;
+$('#msg-action-delete').onclick = async ()=>{
+  const m = msgActionTarget; closeMsgActions();
+  if(!m || !confirm('¿Eliminar este mensaje para todos?')) return;
+  const before = { body: m.body, dish_snapshot: m.dish_snapshot, deleted_at: m.deleted_at };
+  m.deleted_at = new Date().toISOString(); m.body = null; m.dish_snapshot = null;
+  if(chatEditingMsg===m) cancelChatEdit();
+  renderChatMessages(false);
+  const { error } = await sb.rpc('delete_chat_message', { p_id: m.id });
+  if(error){
+    Object.assign(m, before); renderChatMessages(false);
+    alert(/delete_chat_message/.test(error.message) ? 'Falta actualizar la base de datos (ejecuta el SQL de esta versión en Supabase).' : 'No se pudo eliminar: '+error.message);
+    return;
+  }
+  loadChats();
+};
+async function saveChatEdit(){
+  const m = chatEditingMsg;
+  const input = $('#chat-input');
+  const body = input.value.trim();
+  if(!m) return;
+  if(!body || body===m.body){ cancelChatEdit(); return; }
+  const before = { body: m.body, edited_at: m.edited_at };
+  m.body = body; m.edited_at = new Date().toISOString();
+  cancelChatEdit();
+  renderChatMessages(false);
+  const { error } = await sb.rpc('edit_chat_message', { p_id: m.id, p_body: body });
+  if(error){
+    Object.assign(m, before); renderChatMessages(false);
+    alert(/edit_chat_message/.test(error.message) ? 'Falta actualizar la base de datos (ejecuta el SQL de esta versión en Supabase).' : 'No se pudo editar: '+error.message);
+    return;
+  }
+  loadChats();
+}
+// Mantener pulsado (móvil) o clic derecho (ordenador) sobre un mensaje.
+(function(){
+  const box = $('#chat-messages');
+  let timer = 0, x0 = 0, y0 = 0, row = null, lpAt = 0;
+  // El "clic" que llega al soltar el dedo tras mantener pulsado no debe cerrar el menú recién abierto.
+  document.addEventListener('click', e=>{ if(lpAt && Date.now() - lpAt < 700){ lpAt = 0; e.stopPropagation(); e.preventDefault(); } }, true);
+  const clear = ()=>{ clearTimeout(timer); timer = 0; if(row){ row.classList.remove('pressing'); row = null; } };
+  box.addEventListener('pointerdown', e=>{
+    if(e.pointerType==='mouse') return;
+    const b = e.target.closest('.msg-bubble, .msg-dish');
+    if(!b) return;
+    row = b.closest('.msg'); x0 = e.clientX; y0 = e.clientY;
+    msgLongPressFired = false;
+    row.classList.add('pressing');
+    const id = row.dataset.msgId;
+    timer = setTimeout(()=>{ timer = 0; msgLongPressFired = true; lpAt = Date.now(); if(row) row.classList.remove('pressing'); row = null; openMsgActions(id); }, 450);
+  });
+  box.addEventListener('pointermove', e=>{ if(timer && (Math.abs(e.clientX-x0) > 10 || Math.abs(e.clientY-y0) > 10)) clear(); });
+  box.addEventListener('pointerup', clear);
+  box.addEventListener('pointercancel', clear);
+  box.addEventListener('scroll', clear, { passive:true });
+  box.addEventListener('contextmenu', e=>{
+    const b = e.target.closest('.msg-bubble, .msg-dish');
+    if(!b) return;
+    e.preventDefault();
+    openMsgActions(b.closest('.msg').dataset.msgId);
+  });
+})();
+
 async function sendChatMessage(){
+  if(chatEditingMsg){ await saveChatEdit(); return; }
   const chatId = openChatId;
   const input = $('#chat-input');
   const body = input.value.trim();
@@ -5028,6 +5220,15 @@ function subscribeChatRealtime(){
   chatRealtimeStarted = true;
   try{
     sb.channel('chat-messages-live')
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'chat_messages' }, payload=>{
+        const m = payload && payload.new;
+        if(!m) return;
+        if(m.chat_id===openChatId && !modalHidden($('#chat-modal'))){
+          const local = openChatMessages.find(x=> x.id===m.id);
+          if(local){ Object.assign(local, m); renderChatMessages(false); }
+        }
+        liveRefresh('chats', loadChats, 300);
+      })
       .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages' }, async payload=>{
         const m = payload && payload.new;
         if(!m) return;
@@ -5618,6 +5819,7 @@ $('#wall-reply-cancel').onclick = cancelWallReply;
 $('#likers-close').onclick = closeWallLikers;
 $('#likers-modal').addEventListener('click', e=>{ if(e.target.id==='likers-modal') closeWallLikers(); });
 function openWallComments(postId){
+  resetKeyboardFit($('#wall-comments-modal'));
   openingCommentsForPost = postId;
   wallReplyTo = null;
   $('#wall-reply-bar').classList.add('hidden');
@@ -5628,6 +5830,8 @@ function openWallComments(postId){
   showModal($('#wall-comments-modal'));
 }
 function closeWallComments(){
+  try{ document.activeElement && document.activeElement.blur(); }catch(e){}
+  resetKeyboardFit($('#wall-comments-modal'));
   hideModal($('#wall-comments-modal'));
   unlockBodyScroll();
   openingCommentsForPost = null;
@@ -6003,86 +6207,152 @@ $all('[data-explore-mode]').forEach(b=> b.onclick = ()=>{ exploreMode = b.datase
 $('#explore-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addExploreTerm($('#explore-input').value); } });
 wireIngredientAutocomplete($('#explore-input'), $('#explore-suggest'), (name)=> addExploreTerm(name));
 
-/* ===================== NEVERA / CARRITO: deslizar entre las dos ===================== */
-const DRAWER_EDGE = 30; // px desde el borde izquierdo que abren el menú en el Carrito
-function despensaPage(){ const p = $('#np-pager'); return p ? Math.round(p.scrollLeft / (p.clientWidth||1)) : 0; }
+/* ===================== NEVERA / CARRITO: dos pantallas ===================== */
+const DRAWER_EDGE = 30; // px desde el borde izquierdo que abren el menú estando en el Carrito
+let despensaIdx = 0;
+function despensaPage(){ return despensaIdx; }
+function syncAppbarHeight(){
+  const bar = document.querySelector('.appbar');
+  if(bar && bar.offsetHeight) document.documentElement.style.setProperty('--appbar-h', bar.offsetHeight + 'px');
+}
+// Coloca las dos pantallas (px = desplazamiento, 0 = Nevera, -ancho = Carrito).
+function setDespensaPos(px, animate){
+  const p = $('#np-pager'); if(!p) return;
+  const w = p.clientWidth || window.innerWidth || 1;
+  p.classList.toggle('np-dragging', !animate);
+  p.style.setProperty('--np-x', px + 'px');
+  const f = Math.max(0, Math.min(1, -px / w));
+  const ink = $('#np-ink');
+  if(ink){ ink.style.transition = animate ? '' : 'none'; ink.style.transform = `translateX(calc(${f} * (100% + 4px)))`; }
+}
 function setDespensaPage(i, smooth){
+  const changed = i!==despensaIdx;
+  despensaIdx = i;
   const p = $('#np-pager'); if(!p) return;
-  p.scrollTo({ left: i * p.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
-  updateDespensaTabs(i);
+  setDespensaPos(-i * (p.clientWidth || window.innerWidth), smooth!==false);
+  updateDespensaTabs(i, changed);
 }
-function updateDespensaTabs(i){
+function updateDespensaTabs(i, changed){
   $all('.np-tab').forEach(t=> t.classList.toggle('active', Number(t.dataset.np)===i));
-  syncDespensaHeight();
+  if(changed!==false){ if(i===1) renderCartList(); else renderNeveraSuggestions(); }
 }
-// La página mide lo que mide la pantalla visible (así no queda hueco debajo).
-function syncDespensaHeight(){
-  const p = $('#np-pager'); if(!p) return;
-  const page = p.children[despensaPage()];
-  if(page) p.style.height = page.scrollHeight + 'px';
-}
+function syncDespensaHeight(){ /* ya no hace falta: cada pantalla tiene su propio scroll */ }
+$all('.np-tab').forEach(t=> t.onclick = ()=> setDespensaPage(Number(t.dataset.np), true));
+window.addEventListener('resize', ()=>{ syncAppbarHeight(); setDespensaPage(despensaIdx, false); });
+
+/* ===================== GESTOS (menú lateral y Nevera/Carrito) =====================
+   Un único gestor con eventos táctiles: en cuanto el dedo deja claro que va en
+   horizontal, la app se queda el gesto (preventDefault) y el navegador ya no
+   lo convierte en scroll, así el menú sale siempre igual.
+   - Menú cerrado: deslizar a la derecha lo abre (en el Carrito, solo
+     empezando en el borde izquierdo; en el resto del Carrito, vuelve a la
+     Nevera). Rápido o pasado un 30 %, se abre.
+   - Menú abierto: deslizar a la izquierda lo cierra.
+   - Nevera ↔ Carrito: se arrastran con el dedo. */
 (function(){
-  const p = $('#np-pager'), ink = $('#np-ink');
-  let raf = 0, last = 0;
-  p.addEventListener('scroll', ()=>{
-    if(raf) return;
-    raf = requestAnimationFrame(()=>{
-      raf = 0;
-      const f = p.scrollLeft / (p.clientWidth||1);
-      ink.style.transform = `translateX(calc(${Math.max(0, Math.min(1, f))} * (100% + 4px)))`;
-      const i = Math.round(f);
-      if(i!==last){ last = i; updateDespensaTabs(i); if(i===1) renderCartList(); else renderNeveraSuggestions(); }
-    });
-  }, { passive:true });
-  $all('.np-tab').forEach(t=> t.onclick = ()=> setDespensaPage(Number(t.dataset.np), true));
-  // El paso de una pantalla a otra lo lleva la app (no el navegador), así se
-  // puede deslizar desde cualquier punto (también la zona vacía de abajo) y
-  // no se pelea con el gesto del menú.
-  let x0 = 0, y0 = 0, s0 = 0, t0 = 0, lastX = 0, mode = null, pid = null, startPage = 0;
-  document.addEventListener('pointerdown', e=>{
-    if(e.pointerType==='mouse' || isDesktopLayout()) return;
-    if(!$('#section-despensa').classList.contains('active')) return;
-    if($all('.modal').some(m=> !m.classList.contains('hidden')) || $('#drawer').classList.contains('open')) return;
-    if(e.target.closest('input, textarea, select, #drawer, .ingredient-suggest')) return;
-    startPage = despensaPage();
-    if(startPage===1 && e.clientX <= DRAWER_EDGE) return; // eso abre el menú
-    x0 = lastX = e.clientX; y0 = e.clientY; s0 = p.scrollLeft; t0 = Date.now(); mode = null; pid = e.pointerId;
-  }, true);
-  document.addEventListener('pointermove', e=>{
-    if(pid===null || e.pointerId!==pid) return;
-    lastX = e.clientX;
-    const dx = e.clientX - x0, dy = e.clientY - y0;
-    if(!mode){
-      if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-      mode = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
-      if(mode==='h' && startPage===0 && dx > 0) mode = 'skip'; // en la Nevera, a la derecha = menú
-      if(mode==='h') p.style.scrollSnapType = 'none';
+  const drawer = $('#drawer'), overlay = $('#drawer-overlay');
+  let g = null, raf = 0;
+  function anyModalOpen(){ return pvOpen || $all('.modal').some(m=> !m.classList.contains('hidden')); }
+  function decide(dx){
+    const drawerOpen = drawer.classList.contains('open');
+    if(drawerOpen) return dx < 0 ? 'drawer-close' : 'none';
+    if(anyModalOpen()) return 'none';
+    const t = g.target;
+    if(t.closest && t.closest('.photo-track, .week-board, input, textarea, select, .ingredient-suggest')) return 'none';
+    if((galleryEditMode || folderEditMode) && t.closest && t.closest('#gallery, #folder-gallery')) return 'none';
+    if(dx < 0 && t.closest && t.closest('.chat-swipe')) return 'none'; // deslizar un chat = borrarlo
+    if(document.body.classList.contains('sec-despensa')){
+      if(despensaIdx===1) return (g.x0 <= DRAWER_EDGE && dx > 0) ? 'drawer-open' : 'pager';
+      return dx > 0 ? 'drawer-open' : 'pager';
     }
-    if(mode!=='h') return;
-    const w = p.clientWidth || 1;
-    p.scrollLeft = Math.max(0, Math.min(w, s0 - dx));
-  }, true);
-  const endSwipe = e=>{
-    if(pid===null || e.pointerId!==pid) return;
-    pid = null;
-    if(mode!=='h'){ mode = null; return; }
-    mode = null;
-    // (en un "pointercancel" la posición viene a 0: se usa la última conocida)
-    const w = p.clientWidth || 1, dx = lastX - x0, fast = Math.abs(dx) > 40 && (Date.now() - t0) < 280;
-    let target = startPage;
-    if(dx < -w*0.22 || (fast && dx < 0)) target = 1;
-    else if(dx > w*0.22 || (fast && dx > 0)) target = 0;
-    p.scrollTo({ left: target * w, behavior:'smooth' });
-    setTimeout(()=>{ p.style.scrollSnapType = ''; }, 380);
-    updateDespensaTabs(target);
-  };
-  document.addEventListener('pointerup', endSwipe, true);
-  document.addEventListener('pointercancel', endSwipe, true);
-  if(window.ResizeObserver){
-    const ro = new ResizeObserver(()=> syncDespensaHeight());
-    Array.from(p.children).forEach(c=> ro.observe(c));
+    return dx > 0 ? 'drawer-open' : 'none';
   }
-  window.addEventListener('resize', ()=>{ const i = despensaPage(); p.scrollLeft = i * p.clientWidth; syncDespensaHeight(); });
+  function frame(){
+    raf = 0;
+    if(!g || !g.owner || g.owner==='none') return;
+    const dx = g.lastX - g.x0;
+    if(g.owner==='drawer-open'){
+      const x = Math.min(0, dx - g.w);
+      drawer.style.transform = `translateX(${x}px)`;
+      overlay.style.opacity = String(Math.max(0, Math.min(1, (x + g.w) / g.w)));
+    } else if(g.owner==='drawer-close'){
+      const x = Math.max(-g.w, Math.min(0, dx));
+      drawer.style.transform = `translateX(${x}px)`;
+      overlay.style.opacity = String(1 + x / g.w);
+    } else if(g.owner==='pager'){
+      let x = -g.startIdx * g.w + dx;
+      if(x > 0) x = x / 3; else if(x < -g.w) x = -g.w + (x + g.w) / 3; // resistencia en los extremos
+      setDespensaPos(x, false);
+    }
+  }
+  function start(){
+    if(g.owner==='drawer-open' || g.owner==='drawer-close'){
+      g.w = drawer.getBoundingClientRect().width || 300;
+      drawer.style.transition = 'none';
+      overlay.style.transition = 'none';
+      clearTimeout(drawerOverlayTimer);
+      if(g.owner==='drawer-open'){ overlay.classList.remove('hidden', 'closing'); overlay.classList.add('no-anim'); overlay.style.opacity = '0'; }
+    } else if(g.owner==='pager'){
+      g.w = $('#np-pager').clientWidth || window.innerWidth;
+      g.startIdx = despensaIdx;
+    }
+  }
+  function finish(){
+    const dx = g.lastX - g.x0, vx = g.vx;
+    if(g.owner==='drawer-open' || g.owner==='drawer-close'){
+      const open = g.owner==='drawer-open'
+        ? (dx > g.w * 0.3 || vx > 0.35) && !(vx < -0.2)
+        : !(dx < -g.w * 0.25 || vx < -0.35);
+      drawer.style.transition = 'transform .28s cubic-bezier(.32,.72,0,1)';
+      overlay.style.transition = 'opacity .28s cubic-bezier(.32,.72,0,1)';
+      drawer.style.transform = open ? 'translateX(0)' : `translateX(-${g.w}px)`;
+      overlay.style.opacity = open ? '1' : '0';
+      setTimeout(()=>{
+        drawer.style.transition = ''; drawer.style.transform = '';
+        overlay.style.transition = ''; overlay.style.opacity = '';
+        drawer.classList.toggle('open', open);
+        overlay.classList.toggle('hidden', !open);
+        overlay.classList.remove('no-anim');
+      }, 280);
+    } else if(g.owner==='pager'){
+      let target = g.startIdx;
+      if(dx < -g.w * 0.2 || vx < -0.3) target = 1;
+      else if(dx > g.w * 0.2 || vx > 0.3) target = 0;
+      setDespensaPage(target, true);
+    }
+  }
+  document.addEventListener('touchstart', e=>{
+    g = null;
+    if(isDesktopLayout() || e.touches.length!==1 || $('#app-view').classList.contains('hidden')) return;
+    const t = e.touches[0], now = Date.now();
+    g = { x0:t.clientX, y0:t.clientY, lastX:t.clientX, lastT:now, vx:0, owner:null, target:e.target };
+  }, { passive:true });
+  document.addEventListener('touchmove', e=>{
+    if(!g) return;
+    if(e.touches.length!==1){ if(g.owner && g.owner!=='none') finish(); g = null; return; }
+    const t = e.touches[0], now = Date.now();
+    const dt = Math.max(1, now - g.lastT);
+    g.vx = g.vx * 0.4 + ((t.clientX - g.lastX) / dt) * 0.6;
+    g.lastX = t.clientX; g.lastT = now;
+    const dx = t.clientX - g.x0, dy = t.clientY - g.y0;
+    if(!g.owner){
+      if(Math.abs(dx) < 7 && Math.abs(dy) < 7) return;
+      if(Math.abs(dx) < Math.abs(dy) * 1.1){ g.owner = 'none'; return; }
+      g.owner = decide(dx);
+      if(g.owner==='none') return;
+      start();
+    }
+    if(g.owner==='none') return;
+    if(e.cancelable) e.preventDefault();
+    if(!raf) raf = requestAnimationFrame(frame);
+  }, { passive:false });
+  const end = ()=>{
+    if(!g) return;
+    if(g.owner && g.owner!=='none'){ if(raf){ cancelAnimationFrame(raf); raf = 0; } frame(); finish(); }
+    g = null;
+  };
+  document.addEventListener('touchend', end, { passive:true });
+  document.addEventListener('touchcancel', end, { passive:true });
 })();
 
 /* ===================== CARRITO DE LA COMPRA ===================== */
