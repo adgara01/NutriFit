@@ -48,6 +48,12 @@ button{cursor:pointer; border:none;}
   display:flex; align-items:center; gap:12px; padding:11px 16px; border-radius:999px; background:#1d2622; color:#fff; font-size:13px;
   box-shadow:0 8px 24px rgba(0,0,0,.25); white-space:nowrap; animation:nf-fade-in .25s ease-out;}
 .update-banner b{color:#7fe0b4;}
+.push-prompt-card{text-align:center; padding:26px 22px 14px; max-width:340px;}
+.push-prompt-icon{width:56px; height:56px; margin:0 auto 14px; border-radius:18px; background:rgba(18,135,94,.12); color:var(--accent); display:flex; align-items:center; justify-content:center;}
+.push-prompt-icon svg{width:28px; height:28px;}
+.push-prompt-title{font-size:19px; font-weight:800; margin-bottom:8px;}
+.push-prompt-text{font-size:14px; color:var(--muted); line-height:1.45; margin-bottom:18px;}
+.push-prompt-no{width:100%; margin-top:6px; padding:12px; background:none; color:var(--muted); font-weight:600; font-size:15px;}
 #updating-screen{position:fixed; inset:0; z-index:600; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
   animation:nf-fade-in .2s ease-out;}
 #updating-screen.hidden{display:none;}
@@ -376,8 +382,8 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 }
 .dish-photo-wrap img{width:100%; height:100%; object-fit:cover; display:block;}
 /* Carrusel de fotos (ficha y Muro): se desliza con el dedo, puntos abajo */
-.photo-track{position:absolute; inset:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch; scrollbar-width:none; overscroll-behavior-x:contain;}
+.photo-track{position:absolute; inset:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; overscroll-behavior:none;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none; }
 .photo-track::-webkit-scrollbar{display:none;}
 .photo-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always;}
 .photo-slide img{width:100%; height:100%; object-fit:contain; display:block; -webkit-user-drag:none; user-select:none;}
@@ -388,7 +394,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .car-arrow.car-off{visibility:hidden; pointer-events:none;}
 @media (hover:hover) and (pointer:fine){ .car-arrow{display:flex;} .photo-track{cursor:grab;} }
 .photo-viewer .car-arrow{background:rgba(255,255,255,.18); color:#fff; width:44px; height:44px; margin-top:-22px;}
-.dish-photo-wrap, .wall-post-photo{transition:aspect-ratio .25s cubic-bezier(.32,.72,0,1);}
+/* (sin animación al cambiar de forma: daba sensación de rebote) */
 .photo-dots{position:absolute; left:0; right:0; bottom:9px; display:flex; justify-content:center; gap:5px; z-index:2; pointer-events:none;}
 .photo-dots span{width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.55); box-shadow:0 0 3px rgba(0,0,0,.35); transition:transform .2s, background .2s;}
 .photo-dots span.on{background:#fff; transform:scale(1.25);}
@@ -413,7 +419,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
   background:linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,0));}
 .pv-close{width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.16); color:#fff; display:flex; align-items:center; justify-content:center;}
 .pv-stage{flex:1; position:relative; will-change:transform;}
-.pv-track{position:absolute; inset:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch;}
+.pv-track{position:absolute; inset:0; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; overscroll-behavior:none;}
 .pv-track::-webkit-scrollbar{display:none;}
 .pv-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always; display:flex; align-items:center; justify-content:center;}
 .pv-slide img{max-width:100%; max-height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none;}
@@ -514,6 +520,47 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .meta-servings-cell{ grid-column:2; grid-row:2; }
 .meta-servings-cell .servings-row{display:flex; align-items:center; justify-content:center; gap:6px;}
 .desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
+/* "Cómo se hace": tarjeta que invita a entrar y ver la receta paso a paso */
+.steps-card{grid-column:1; grid-row:1; display:flex; align-items:center; gap:9px; padding:8px 8px 8px 10px; border-radius:14px; text-align:left; min-width:0; overflow:hidden;
+  background:linear-gradient(135deg, rgba(18,135,94,.13), rgba(18,135,94,.04)); border:1px solid rgba(18,135,94,.28); color:var(--text);}
+.steps-card-icon{width:32px; height:32px; border-radius:10px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.steps-card-icon svg{width:17px; height:17px;}
+.steps-card-body{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;}
+.steps-card-title{font-size:14px; font-weight:800; color:var(--text); line-height:1.15;}
+.steps-card-sub{font-size:11.5px; color:var(--muted); line-height:1.25; overflow:hidden; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;}
+.steps-card-thumb{width:40px; height:40px; border-radius:9px; overflow:hidden; flex-shrink:0; background:var(--card2);}
+.steps-card-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+.steps-card-chev{color:var(--accent); flex-shrink:0; display:flex;}
+.steps-card-chev svg{width:16px; height:16px;}
+.dish-view-locked .steps-card{pointer-events:auto;}
+/* Pantalla de pasos */
+#steps-modal{align-items:stretch; background:var(--bg2);}
+#steps-modal > .modal-sheet{height:100%; max-height:none; max-width:none; border-radius:0; display:flex; flex-direction:column; padding:0; overflow:hidden;}
+.steps-head{display:flex; align-items:center; gap:10px; padding:calc(12px + env(safe-area-inset-top)) 16px 12px; border-bottom:1px solid var(--border); flex-shrink:0;}
+.steps-head-text{flex:1; min-width:0;}
+.steps-head-title{font-size:19px; font-weight:800;}
+.steps-head-sub{font-size:12.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+#steps-list{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:6px 16px calc(24px + env(safe-area-inset-bottom));}
+.step{display:flex; gap:12px; padding:16px 0; border-bottom:1px solid var(--border);}
+.step:last-of-type{border-bottom:none;}
+.step-num{flex-shrink:0; width:30px; height:30px; border-radius:50%; background:rgba(18,135,94,.12); color:var(--accent); font-weight:800; font-size:14px;
+  display:flex; align-items:center; justify-content:center;}
+.step-main{flex:1; min-width:0; display:flex; flex-direction:column; gap:10px;}
+.step-text{font-size:15.5px; line-height:1.5; white-space:pre-wrap; word-break:break-word; color:var(--text); padding-top:4px;}
+.step-photo{position:relative; border-radius:14px; overflow:hidden; background:var(--card2); cursor:zoom-in;}
+.step-photo img{width:100%; display:block; max-height:340px; object-fit:cover;}
+.step-edit textarea{width:100%; min-height:56px; resize:none; border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:16px; line-height:1.45;
+  background:var(--card2); color:var(--text); font-family:inherit; overflow:hidden;}
+.step-edit textarea:focus{outline:none; border-color:var(--accent);}
+.step-tools{display:flex; gap:8px; align-items:center;}
+.step-tool{display:flex; align-items:center; gap:6px; padding:7px 11px; border-radius:999px; background:var(--card2); border:1px solid var(--border); font-size:13px; font-weight:600; color:var(--text);}
+.step-tool svg{width:15px; height:15px;}
+.step-tool-del{margin-left:auto; color:var(--bad);}
+.step-photo-del{position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:50%; background:rgba(20,25,23,.6); color:#fff; font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center;}
+.steps-add{width:100%; margin-top:14px; padding:13px; border-radius:12px; border:1.5px dashed #b3beb7; background:none; font-size:15px; font-weight:700; color:var(--text);}
+.steps-empty{padding:40px 10px; text-align:center; color:var(--muted); font-size:14px; line-height:1.5;}
+.steps-done{flex:0 0 auto !important; margin:0 16px calc(12px + env(safe-area-inset-bottom)); padding:14px; }
+#steps-modal.kb-fit .steps-done{display:none;}
 .ingredients-hint{font-size:12px; color:var(--muted); margin:-2px 0 10px; line-height:1.4;}
 /* Modo MOSTRAR (vista) vs modo EDITAR — dos aspectos deliberadamente
    distintos, nunca una versión "apagada" el uno del otro:
@@ -537,7 +584,10 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .meta-desc-label{display:none;}
 .dish-view-locked .meta-section-title{display:none;}
 .dish-view-locked .meta-chip.meta-desc-big{border-color:var(--border); position:relative; padding-top:19px; padding-bottom:4px;}
-.dish-view-locked .meta-desc-big .meta-value{-webkit-line-clamp:1;}
+.dish-view-locked .dish-meta-grid{grid-template-columns:1fr 112px;}
+.dish-view-locked #quality-group .pill-btn:not(.active){display:none;}
+.dish-view-locked #quality-group:not(:has(.pill-btn.active)){visibility:hidden;}
+.dish-view-locked #quality-group .pill-btn.active{flex:0 1 auto; width:100%; font-size:12px; border-radius:999px; height:34px; align-self:center;}
 .dish-view-locked .meta-desc-label{
   display:block; position:absolute; top:6px; left:10px; font-size:9px; color:var(--muted);
   font-style:italic; text-align:left;
@@ -683,6 +733,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .cart-sugg-row:last-child{border-bottom:none;}
 .cart-sugg-name{flex:1; min-width:0; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .cart-sugg-name b{font-weight:700;}
+.cart-sugg-qty{color:var(--accent); font-weight:700;}
 .cart-sugg-unit{font-size:12px; color:var(--muted); width:40px; text-align:right; flex-shrink:0;}
 .cart-sugg-btn{width:36px; height:36px; border-radius:10px; border:1px solid var(--border); background:var(--card2); color:var(--text);
   display:flex; align-items:center; justify-content:center; flex-shrink:0;}
@@ -694,6 +745,8 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .cart-row.busy{opacity:.5; pointer-events:none;}
 .cart-row-info{flex:1; min-width:0;}
 .cart-row-name{font-size:15px; font-weight:700; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cart-row .btn-mini{padding:7px 10px; font-size:12px; flex-shrink:0;}
+.cart-row .fridge-item-unit{flex:0 0 30px; width:30px;}
 .cart-row-sub{font-size:12px; color:var(--muted);}
 .cart-row-sub i{font-size:11px;}
 .drawer-count{
@@ -736,6 +789,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 #wall-comments-modal.kb-fit > .modal-sheet{height:100%; max-height:none; max-width:none; border-radius:0; display:flex; flex-direction:column; overflow:hidden; animation:none;
   padding-top:calc(14px + env(safe-area-inset-top)); padding-bottom:8px;}
 #wall-comments-modal.kb-fit #wall-comments-list{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain;}
+#dish-modal.kb-fit > .modal-sheet{height:100%; max-height:none; border-radius:0; animation:none; padding-bottom:220px;}
 #wall-comments-modal.kb-fit .sheet-close-btn{top:calc(8px + env(safe-area-inset-top));}
 .chat-sheet{
   display:flex; flex-direction:column; overflow:hidden; height:100%; max-height:none; border-radius:0;
@@ -1470,10 +1524,14 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 
     <div class="meta-section-title">Descripción, calorías por plato y tiempo de elaboración</div>
     <div class="dish-meta-grid">
-      <button type="button" id="dish-desc-trigger" class="meta-chip meta-desc meta-desc-big">
-        <span class="meta-desc-label">Descripción</span>
-        <span class="desc-expand-btn" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg></span>
-        <span id="dish-desc-preview" class="meta-value">Descripción</span>
+      <button type="button" id="dish-desc-trigger" class="meta-desc-big steps-card">
+        <span class="steps-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.4"/><circle cx="4.5" cy="12" r="1.4"/><circle cx="4.5" cy="18" r="1.4"/></svg></span>
+        <span class="steps-card-body">
+          <span class="steps-card-title">Cómo se hace</span>
+          <span id="dish-desc-preview" class="steps-card-sub">Añade los pasos</span>
+        </span>
+        <span class="steps-card-thumb hidden" id="steps-card-thumb"></span>
+        <span class="steps-card-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
       </button>
       <div class="pill-group meta-quality-cell" id="quality-group">
         <button type="button" class="pill-btn" data-q="bueno">Healthy</button>
@@ -1519,6 +1577,24 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button class="btn-danger hidden" id="dish-delete-btn" style="flex:1; text-align:center;">Eliminar</button>
       <button class="btn-primary hidden" id="dish-add-btn" style="flex:1;">Añadir a mi repositorio</button>
     </div>
+  </div>
+</div>
+
+<!-- ================= CÓMO SE HACE (pasos) ================= -->
+<div id="steps-modal" class="modal hidden">
+  <div class="modal-sheet">
+    <div class="steps-head">
+      <div class="steps-head-text">
+        <div class="steps-head-title">Cómo se hace</div>
+        <div class="steps-head-sub" id="steps-head-sub"></div>
+      </div>
+      <button type="button" class="sheet-close-btn" id="steps-close" aria-label="Cerrar" style="position:static;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="steps-list"></div>
+    <button type="button" class="btn-primary steps-done hidden" id="steps-done" style="justify-content:center;">Listo</button>
+    <input type="file" id="step-photo-input" accept="image/*" class="visually-hidden">
   </div>
 </div>
 
@@ -1743,6 +1819,17 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   </div>
 </div>
 
+<!-- ================= ¿ACTIVAR NOTIFICACIONES? (primera vez) ================= -->
+<div id="push-prompt-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card push-prompt-card">
+    <div class="push-prompt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+    <div class="push-prompt-title">¿Activar las notificaciones?</div>
+    <div class="push-prompt-text">Te avisaremos cuando te escriban, te manden una receta, te pidan amistad o comenten y den me gusta a tus publicaciones, aunque tengas la app cerrada.</div>
+    <button type="button" class="btn-primary" id="push-prompt-yes" style="width:100%; justify-content:center;">Activar</button>
+    <button type="button" class="push-prompt-no" id="push-prompt-no">Ahora no</button>
+  </div>
+</div>
+
 <!-- ================= QUIÉN HA DADO ME GUSTA ================= -->
 <div id="likers-modal" class="modal hidden">
   <div class="modal-sheet sheet-with-close">
@@ -1769,7 +1856,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.07-2';
+const APP_VERSION = '2026.10.08-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -3038,6 +3125,7 @@ function openDishModal(dish, preview){
 
   $('#dish-name').value = dish ? dish.name : '';
   $('#dish-desc').value = dish ? (dish.description||'') : '';
+  dishSteps = stepsFromDish(dish);
   updateDescPreview();
   $('#dish-calories').value = dish ? (dish.calories||'') : '';
   $('#dish-duration').value = dish ? (dish.duration_min||'') : '';
@@ -3095,6 +3183,7 @@ function applyDishModalButtons(){
 // existente abierto en modo vista no se puede tocar hasta pulsar "Editar";
 // uno nuevo (todavía sin fila en la BD) siempre está editable.
 function applyDishFieldsLock(){
+  setTimeout(updateDescPreview, 0);
   // El bloqueo real ya lo hace el CSS de arriba (pointer-events, según la
   // clase .dish-view-locked) — nunca el atributo `disabled`, precisamente
   // para que el texto se vea siempre igual en los dos modos. La foto, la
@@ -3447,18 +3536,140 @@ function updateIngredientTicks(){
   });
 }
 
-/* --- Descripción: chip abre pop-up, click fuera lo cierra --- */
-function updateDescPreview(){
-  const v = $('#dish-desc').value.trim();
-  $('#dish-desc-preview').textContent = v ? (v.length>90 ? v.slice(0,90)+'…' : v) : 'Descripción';
-  $('#dish-desc-trigger').classList.toggle('filled', !!v);
+/* --- "Cómo se hace": la receta paso a paso (1., 2., 3.…) ---
+   Cada paso es un párrafo con foto opcional. Se guarda en dishes.steps
+   ([{text, image_url}]) y, para que todo lo antiguo siga funcionando, también
+   como texto en "description". Los platos antiguos con descripción se
+   convierten solos en pasos (un paso por párrafo). */
+let dishSteps = []; // [{key, text, url?, file?, preview?}]
+function stepsFromDish(d){
+  if(!d) return [];
+  if(Array.isArray(d.steps) && d.steps.length){
+    return d.steps.filter(st=> st && ((st.text||'').trim() || st.image_url)).map(st=> ({ key: uuid(), text: st.text || '', url: st.image_url || null }));
+  }
+  const desc = (d.description || '').trim();
+  if(!desc) return [];
+  let parts = desc.split(/\n\s*\n/).map(x=> x.trim()).filter(Boolean);
+  if(parts.length===1 && /\n\s*\d+[.)]\s/.test('\n'+parts[0])) parts = parts[0].split(/\n(?=\s*\d+[.)]\s)/).map(x=> x.trim()).filter(Boolean);
+  return parts.map(t=> ({ key: uuid(), text: t.replace(/^\d+[.)]\s+/, ''), url: null }));
 }
+function stepsToDescription(steps){
+  return steps.filter(st=> (st.text||'').trim()).map((st,i)=> `${i+1}. ${st.text.trim()}`).join('\n\n');
+}
+function updateDescPreview(){
+  const n = dishSteps.filter(st=> (st.text||'').trim() || st.url || st.preview).length;
+  const photos = dishSteps.filter(st=> st.url || st.preview);
+  const first = dishSteps.find(st=> (st.text||'').trim());
+  let sub;
+  if(!n) sub = dishFieldsLocked() ? 'Sin pasos todavía' : 'Toca para escribir los pasos';
+  else sub = `${n} ${n===1?'paso':'pasos'}${photos.length ? ` · ${photos.length} ${photos.length===1?'foto':'fotos'}` : ''}${first ? ' — ' + first.text.trim() : ''}`;
+  $('#dish-desc-preview').textContent = sub;
+  const th = $('#steps-card-thumb');
+  if(photos.length){ th.innerHTML = `<img src="${photos[0].url || photos[0].preview}" alt="">`; th.classList.remove('hidden'); }
+  else { th.innerHTML = ''; th.classList.add('hidden'); }
+  $('#dish-desc-trigger').classList.toggle('filled', !!n);
+  $('#dish-desc').value = stepsToDescription(dishSteps);
+}
+function stepsEditable(){ return !dishFieldsLocked() && !dishPreview; }
+function renderSteps(focusKey){
+  const edit = stepsEditable();
+  const box = $('#steps-list');
+  $('#steps-head-sub').textContent = $('#dish-name').value.trim() || 'Receta';
+  $('#steps-done').classList.toggle('hidden', !edit);
+  if(!edit){
+    const list = dishSteps.filter(st=> (st.text||'').trim() || st.url || st.preview);
+    box.innerHTML = list.length ? list.map((st,i)=> `<div class="step">
+        <div class="step-num">${i+1}.</div>
+        <div class="step-main">
+          ${(st.text||'').trim() ? `<div class="step-text">${escapeHtml(st.text.trim())}</div>` : ''}
+          ${st.url || st.preview ? `<div class="step-photo" data-step-view="${i}"><img src="${st.url || st.preview}" alt=""></div>` : ''}
+        </div>
+      </div>`).join('') : '<div class="steps-empty">Este plato todavía no tiene los pasos explicados.</div>';
+    box.querySelectorAll('[data-step-view]').forEach(el=> el.onclick = ()=>{
+      const urls = list.filter(st=> st.url || st.preview).map(st=> st.url || st.preview);
+      const mine = list[Number(el.dataset.stepView)];
+      openPhotoViewer(urls, urls.indexOf(mine.url || mine.preview));
+    });
+    return;
+  }
+  if(!dishSteps.length) dishSteps.push({ key: uuid(), text: '' });
+  box.innerHTML = dishSteps.map((st,i)=> `<div class="step step-edit" data-step-key="${st.key}">
+      <div class="step-num">${i+1}.</div>
+      <div class="step-main">
+        <textarea rows="2" placeholder="${i===0 ? 'Ej.: Corta la cebolla en dados pequeños…' : 'Describe este paso…'}" data-step-text="${st.key}">${escapeHtml(st.text||'')}</textarea>
+        ${st.url || st.preview ? `<div class="step-photo"><img src="${st.url || st.preview}" alt=""><button type="button" class="step-photo-del" data-step-photo-del="${st.key}" aria-label="Quitar foto">×</button></div>` : ''}
+        <div class="step-tools">
+          ${st.url || st.preview ? '' : `<button type="button" class="step-tool" data-step-photo="${st.key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Foto</button>`}
+          ${dishSteps.length>1 ? `<button type="button" class="step-tool step-tool-del" data-step-del="${st.key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg></button>` : ''}
+        </div>
+      </div>
+    </div>`).join('') + '<button type="button" class="steps-add" id="steps-add-btn">+ Añadir paso</button>';
+  box.querySelectorAll('textarea[data-step-text]').forEach(ta=>{
+    const autoGrow = ()=>{ ta.style.height = 'auto'; ta.style.height = Math.max(56, ta.scrollHeight) + 'px'; };
+    autoGrow();
+    ta.addEventListener('input', ()=>{
+      capitalizeFirstLetter(ta); autoGrow();
+      const st = dishSteps.find(x=> x.key===ta.dataset.stepText); if(st) st.text = ta.value;
+      updateDescPreview(); scheduleDishAutosave(false);
+    });
+    ta.addEventListener('focus', ()=> refitKeyboardFor(900));
+  });
+  box.querySelectorAll('[data-step-photo]').forEach(b=> b.onclick = ()=>{ stepPhotoTarget = b.dataset.stepPhoto; $('#step-photo-input').click(); });
+  box.querySelectorAll('[data-step-photo-del]').forEach(b=> b.onclick = ()=>{
+    const st = dishSteps.find(x=> x.key===b.dataset.stepPhotoDel); if(!st) return;
+    st.url = null; delete st.file; delete st.preview;
+    renderSteps(); updateDescPreview(); scheduleDishAutosave(true);
+  });
+  box.querySelectorAll('[data-step-del]').forEach(b=> b.onclick = ()=>{
+    const st = dishSteps.find(x=> x.key===b.dataset.stepDel); if(!st) return;
+    if(((st.text||'').trim() || st.url || st.preview) && !confirm('¿Quitar este paso?')) return;
+    dishSteps = dishSteps.filter(x=> x!==st);
+    renderSteps(); updateDescPreview(); scheduleDishAutosave(true);
+  });
+  $('#steps-add-btn').onclick = ()=>{
+    const st = { key: uuid(), text: '' };
+    dishSteps.push(st);
+    renderSteps(st.key);
+  };
+  if(focusKey){
+    const ta = box.querySelector(`textarea[data-step-text="${focusKey}"]`);
+    if(ta){ ta.focus(); ta.scrollIntoView({ block:'center', behavior:'smooth' }); }
+  }
+}
+let stepPhotoTarget = null;
+$('#step-photo-input').addEventListener('change', async e=>{
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  const st = dishSteps.find(x=> x.key===stepPhotoTarget);
+  if(!file || !st) return;
+  try{
+    const normalized = await normalizeImageFile(file);
+    st.file = normalized; st.preview = await readAsDataUrl(normalized); st.url = null;
+    renderSteps(); updateDescPreview(); scheduleDishAutosave(true);
+  }catch(err){ alert('No se pudo procesar esa foto, prueba con otra: '+err.message); }
+});
+function openStepsModal(){
+  renderSteps();
+  showModal($('#steps-modal'));
+  if(stepsEditable()){
+    const empty = dishSteps.find(st=> !(st.text||'').trim() && !st.url && !st.preview);
+    if(empty && dishSteps.length===1) setTimeout(()=>{ const ta = $(`#steps-list textarea[data-step-text="${empty.key}"]`); if(ta) ta.focus(); }, 300);
+  }
+}
+function closeStepsModal(){
+  try{ document.activeElement && document.activeElement.blur(); }catch(e){}
+  resetKeyboardFit($('#steps-modal'));
+  hideModal($('#steps-modal'));
+  // Los pasos vacíos no se guardan.
+  dishSteps = dishSteps.filter(st=> (st.text||'').trim() || st.url || st.preview || st.file);
+  updateDescPreview();
+  scheduleDishAutosave(true);
+}
+$('#steps-close').onclick = closeStepsModal;
+$('#steps-done').onclick = closeStepsModal;
 // En modo vista el pop-up es solo para leer (readOnly, sin sacar el teclado);
 // creando/editando se abre ya con el cursor puesto para escribir.
-function openDescModal(){
-  showModal($('#desc-modal'));
-  if(!dishFieldsLocked()) $('#dish-desc').focus();
-}
+function openDescModal(){ openStepsModal(); }
 function closeDescModal(){ hideModal($('#desc-modal')); updateDescPreview(); }
 $('#dish-desc-trigger').onclick = openDescModal;
 $('#desc-modal-close').onclick = closeDescModal;
@@ -3474,7 +3685,7 @@ function capitalizeFirstLetter(el){
   try{ el.setSelectionRange(a, b); }catch(e){}
 }
 $('#dish-name').addEventListener('input', ()=>{ capitalizeFirstLetter($('#dish-name')); scheduleDishAutosave(false); });
-$('#dish-desc').addEventListener('input', ()=>{ capitalizeFirstLetter($('#dish-desc')); updateDescPreview(); scheduleDishAutosave(false); });
+// (el texto de los pasos se escribe en la pantalla "Cómo se hace")
 /* "+ Añadir ingrediente": lo mismo que Enter, pero a la vista. Si la última
    fila ya está vacía, simplemente se pone el cursor ahí (no se apilan huecos). */
 $('#add-ingredient-btn').onclick = ()=>{
@@ -3916,7 +4127,8 @@ function captureDishSnapshot(){
       };
     }).filter(Boolean),
     servings_base: $('#dish-servings-base').value ? Number($('#dish-servings-base').value) : 1,
-    description: $('#dish-desc').value.trim(),
+    description: stepsToDescription(dishSteps),
+    steps: dishSteps.filter(st=> (st.text||'').trim() || st.url || st.file).map(st=> st.url ? { key:st.key, text:(st.text||'').trim(), url:st.url } : (st.file ? { key:st.key, text:(st.text||'').trim(), file:st.file } : { key:st.key, text:(st.text||'').trim() })),
     calories: $('#dish-calories').value ? Number($('#dish-calories').value) : null,
     duration_min: $('#dish-duration').value ? Number($('#dish-duration').value) : null,
     quality: selectedQuality,
@@ -3990,6 +4202,12 @@ async function doSaveDishSnapshot(snap){
       snap.photos.forEach((p,i)=>{ const live = dishPhotos.find(x=> x.key===p.key); if(live && !live.url){ live.url = image_urls[i]; delete live.file; } });
       $('#dish-photo-wrap').classList.remove('photo-busy');
     }
+    // Fotos de los pasos
+    const stepUrls = await Promise.all(snap.steps.map(st=> st.url ? st.url : (st.file ? uploadDishPhotoOnce(snap.id, { key: st.key, file: st.file }) : null)));
+    const steps = snap.steps.map((st,i)=> ({ text: st.text, image_url: stepUrls[i] || null }));
+    if(snap.id===editingDishId){
+      snap.steps.forEach((st,i)=>{ const live = dishSteps.find(x=> x.key===st.key); if(live && !live.url && stepUrls[i]){ live.url = stepUrls[i]; delete live.file; } });
+    }
     // Cada ingrediente se enlaza con el catálogo compartido (se crea uno
     // nuevo la primera vez que se escribe, si no existía todavía).
     const resolvedIngredients = await Promise.all(snap.ingredients.map(async ing=> ({
@@ -4000,10 +4218,16 @@ async function doSaveDishSnapshot(snap){
       id: snap.id, user_id: currentUser.id, name: snap.name,
       ingredients: resolvedIngredients, servings_base: snap.servings_base || 1, description: snap.description,
       calories: snap.calories, duration_min: snap.duration_min,
-      quality: snap.quality, image_url: image_urls[0] || null, image_urls,
+      quality: snap.quality, image_url: image_urls[0] || null, image_urls, steps,
       protein_g: snap.protein_g, carbs_g: snap.carbs_g, fat_g: snap.fat_g, fiber_g: snap.fiber_g
     };
-    const { error } = await updateWithRetry(()=> sb.from('dishes').upsert(payload));
+    let { error } = await updateWithRetry(()=> sb.from('dishes').upsert(payload));
+    if(error && /steps/.test(error.message||'')){
+      // Aún no se ha ejecutado el SQL de los pasos: se guarda sin ellos (van en la descripción).
+      delete payload.steps;
+      ({ error } = await updateWithRetry(()=> sb.from('dishes').upsert(payload)));
+      if(!error && !window.__stepsWarned){ window.__stepsWarned = true; alert('Para guardar las fotos de los pasos falta ejecutar el SQL de esta versión en Supabase.'); }
+    }
     if(error) throw error;
     const idx = dishes.findIndex(d=>d.id===snap.id);
     if(idx>=0) Object.assign(dishes[idx], payload); else dishes.unshift(payload);
@@ -4400,7 +4624,7 @@ async function addSharedDish(sharedId){
     const d = shared.dish_snapshot || {};
     const { error } = await sb.from('dishes').insert({
       id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
-      image_url: d.image_url||null, image_urls: dishPhotoList(d), ingredients: d.ingredients||[], description: d.description||'',
+      image_url: d.image_url||null, image_urls: dishPhotoList(d), steps: Array.isArray(d.steps) ? d.steps : [], ingredients: d.ingredients||[], description: d.description||'',
       calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
       shared_from_username: (shared.from && shared.from.username) || null,
       protein_g: d.protein_g||null, carbs_g: d.carbs_g||null, fat_g: d.fat_g||null, fiber_g: d.fiber_g||null,
@@ -4700,7 +4924,7 @@ function renderFriendProfileBody(){
 async function addFriendDishToRepo(dish, fromUsername){
   const { error } = await sb.from('dishes').insert({
     id: uuid(), user_id: currentUser.id, name: dish.name||'Receta',
-    image_url: dish.image_url||null, image_urls: dishPhotoList(dish), ingredients: dish.ingredients||[], description: dish.description||'',
+    image_url: dish.image_url||null, image_urls: dishPhotoList(dish), steps: Array.isArray(dish.steps) ? dish.steps : [], ingredients: dish.ingredients||[], description: dish.description||'',
     calories: dish.calories||null, quality: dish.quality||null, duration_min: dish.duration_min||null,
     shared_from_username: fromUsername || null,
     protein_g: dish.protein_g||null, carbs_g: dish.carbs_g||null, fat_g: dish.fat_g||null, fiber_g: dish.fiber_g||null,
@@ -4719,7 +4943,7 @@ $('#friend-profile-modal').addEventListener('click', e=>{ if(e.target.id==='frie
 // que siempre: si luego editas tu plato, lo ya enviado no cambia.
 function dishSnapshotOf(dish){
   return {
-    name: dish.name, image_url: dish.image_url, image_urls: dishPhotoList(dish), ingredients: dish.ingredients,
+    name: dish.name, image_url: dish.image_url, image_urls: dishPhotoList(dish), steps: Array.isArray(dish.steps) ? dish.steps : [], ingredients: dish.ingredients,
     description: dish.description, calories: dish.calories, quality: dish.quality,
     duration_min: dish.duration_min, servings_base: dish.servings_base || 1,
     protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g
@@ -4958,8 +5182,25 @@ async function openChat(chatId){
    Nada de lo que hay detrás asoma, y lo último escrito sigue a la vista.
    Mientras el teclado sube o baja se reencaja en cada fotograma. */
 let kbFullH = 0;
-const KB_MODALS = ['#chat-modal', '#wall-comments-modal'];
-function kbListOf(m){ return m.id==='chat-modal' ? $('#chat-messages') : $('#wall-comments-list'); }
+const KB_MODALS = ['#chat-modal', '#wall-comments-modal', '#dish-modal', '#steps-modal'];
+function kbListOf(m){
+  if(m.id==='chat-modal') return $('#chat-messages');
+  if(m.id==='wall-comments-modal') return $('#wall-comments-list');
+  if(m.id==='steps-modal') return $('#steps-list');
+  return m.querySelector('.modal-sheet');
+}
+// Que el campo en el que escribes (y, en un ingrediente, su lista de
+// sugerencias) quede siempre a la vista encima del teclado.
+function keepFocusedVisible(m){
+  const a = document.activeElement;
+  if(!a || !m.contains(a)) return;
+  const sc = kbListOf(m);
+  if(!sc) return;
+  const r = a.getBoundingClientRect(), sr = sc.getBoundingClientRect();
+  const extra = a.classList.contains('ingredient-input') ? 190 : 24;
+  if(r.bottom + extra > sr.bottom) sc.scrollTop += Math.min(r.bottom + extra - sr.bottom, r.top - sr.top - 12);
+  else if(r.top < sr.top + 8) sc.scrollTop -= (sr.top + 8 - r.top);
+}
 function fitKeyboardModals(){
   const vv = window.visualViewport;
   kbFullH = Math.max(kbFullH, vv ? vv.height : 0, window.innerHeight || 0, document.documentElement.clientHeight || 0);
@@ -4982,6 +5223,7 @@ function fitKeyboardModals(){
       m.style.bottom = 'auto';
       m.style.height = vv.height + 'px';
     }
+    if(m.id==='dish-modal' || m.id==='steps-modal'){ if(typingIn===m) keepFocusedVisible(m); return; }
     if(list && (atBottom || (isChat && typingIn===m))) list.scrollTop = list.scrollHeight;
   });
 }
@@ -5492,7 +5734,41 @@ async function syncPushOnLogin(){
     }
   }
   renderPushSetting();
+  maybeAskForPush();
 }
+/* Recién instalada (o mientras no se haya decidido), la app pregunta
+   directamente si quieres notificaciones. "Ahora no" la calla 3 días; si las
+   activas o las bloqueas en el iPhone, ya no vuelve a preguntar. */
+const PUSH_ASK_KEY = 'nutrifit_push_ask_after';
+function maybeAskForPush(){
+  if(!pushSupported() || Notification.permission!=='default' || pushOptedOut()) return;
+  let after = 0; try{ after = Number(localStorage.getItem(PUSH_ASK_KEY)) || 0; }catch(e){}
+  if(Date.now() < after) return;
+  setTimeout(()=>{
+    if(Notification.permission!=='default' || !currentUser) return;
+    if($all('.modal').some(m=> !m.classList.contains('hidden'))) return; // no interrumpir
+    showModal($('#push-prompt-modal'));
+  }, 1200);
+}
+$('#push-prompt-yes').onclick = async ()=>{
+  const btn = $('#push-prompt-yes');
+  btn.disabled = true; btn.textContent = 'Activando…';
+  try{
+    setPushOptOut(false);
+    const perm = await Notification.requestPermission(); // directamente desde el toque (iOS lo exige)
+    if(perm==='granted'){ await subscribeAndSavePush(); showToast('Notificaciones activadas'); }
+  }catch(e){
+    alert('No se pudieron activar las notificaciones: '+(e && e.message ? e.message : e));
+  }finally{
+    btn.disabled = false; btn.textContent = 'Activar';
+    hideModal($('#push-prompt-modal'));
+    renderPushSetting();
+  }
+};
+$('#push-prompt-no').onclick = ()=>{
+  try{ localStorage.setItem(PUSH_ASK_KEY, String(Date.now() + 3*24*3600*1000)); }catch(e){}
+  hideModal($('#push-prompt-modal'));
+};
 async function renderPushSetting(){
   const btn = $('#toggle-push-btn'), hint = $('#push-hint');
   btn.classList.remove('switch-disabled');
@@ -5883,7 +6159,7 @@ async function addWallDishToRepo(postId){
   const d = post.dish_snapshot || {};
   const { error } = await sb.from('dishes').insert({
     id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
-    image_url: d.image_url||null, image_urls: dishPhotoList(d), ingredients: d.ingredients||[], description: d.description||'',
+    image_url: d.image_url||null, image_urls: dishPhotoList(d), steps: Array.isArray(d.steps) ? d.steps : [], ingredients: d.ingredients||[], description: d.description||'',
     calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
     shared_from_username: (post.author && post.author.username) || null,
     protein_g: d.protein_g||null, carbs_g: d.carbs_g||null, fat_g: d.fat_g||null, fiber_g: d.fiber_g||null,
@@ -6132,7 +6408,7 @@ async function loadExploreFriendDishes(){
   const ids = friends.map(f=> f.id);
   if(!ids.length){ exploreFriendDishes = []; return; }
   const { data, error } = await sb.from('dishes')
-    .select('id,user_id,name,image_url,image_urls,ingredients,description,calories,quality,duration_min,servings_base,protein_g,carbs_g,fat_g,fiber_g,created_at')
+    .select('*')
     .in('user_id', ids).order('created_at', {ascending:false}).limit(1000);
   if(error){ console.error(error); exploreFriendDishes = []; return; }
   exploreFriendDishes = data||[];
@@ -6360,6 +6636,20 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); setDespensaPage(desp
 // sin preguntar cantidad: entra con la de la receta. Desde el carrito cada
 // línea puede pasar a la Nevera o eliminarse.
 function normName(n){ return stripAccents((n||'').trim().toLowerCase()); }
+// "arroz 150", "arroz 150g", "arroz 150 g" → { name:'arroz', quantity:150, unit:'g' }
+function splitNameQty(text){
+  const t = (text||'').trim();
+  const m = t.match(/^(.*?\S)\s+(\d+(?:[.,]\d+)?)\s*([a-zA-ZñÑáéíóú.]{0,10})$/);
+  if(!m) return { name: t, quantity: null, unit: null };
+  return { name: m[1].trim(), quantity: Number(m[2].replace(',', '.')), unit: (m[3]||'').replace(/\.$/,'') || null };
+}
+// Nombre "oficial" del catálogo (así "arroz", "Arroz" y "arroz " son el mismo).
+function canonicalIngredientName(name){
+  const k = normName(name);
+  const ic = ingredientCatalog.find(x=> normName(x.name)===k);
+  const n = ic ? ic.name : (name||'').trim();
+  return n ? n[0].toUpperCase() + n.slice(1) : n;
+}
 function findCartItem(name){ const k = normName(name); return cartItems.find(c=> normName(c.name)===k); }
 function isInCart(name){ return !!findCartItem(name); }
 function fmtQty(q, unit){
@@ -6371,6 +6661,7 @@ async function loadCart(){
   const { data, error } = await sb.from('cart_items').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:true});
   if(error){ console.error(error); return; }
   cartItems = data||[];
+  try{ await tidyCart(); }catch(e){ console.error(e); }
   onCartChanged();
 }
 function syncRowCartButton(row){
@@ -6394,6 +6685,9 @@ function onCartChanged(){
   if(npc){ npc.textContent = String(cartItems.length); npc.classList.toggle('hidden', !cartItems.length); }
 }
 async function toggleCartItem(item){
+  const parsed = splitNameQty(item.name);
+  if(parsed.quantity!=null && item.quantity==null){ item = { ...item, name: parsed.name, quantity: parsed.quantity, unit: item.unit || parsed.unit }; }
+  item = { ...item, name: canonicalIngredientName(item.name) };
   const existing = findCartItem(item.name);
   if(existing){ await removeCartItem(existing.id); return; }
   const optimistic = {
@@ -6408,6 +6702,44 @@ async function toggleCartItem(item){
   if(error){ cartItems = cartItems.filter(c=> c!==optimistic); onCartChanged(); alert('No se pudo añadir al carrito: '+error.message); return; }
   Object.assign(optimistic, data);
   renderCartList(); // ya con el id real (los botones de la lista lo usan)
+}
+async function updateCartItemQty(id, qtyVal){
+  const item = cartItems.find(c=> c.id===id);
+  if(!item || String(id).startsWith('tmp-')) return;
+  const quantity = qtyVal!=='' && qtyVal!=null && !isNaN(Number(qtyVal)) ? Number(qtyVal) : null;
+  item.quantity = quantity;
+  const { error } = await sb.from('cart_items').update({ quantity }).eq('id', id);
+  if(error) alert(error.message);
+}
+// Limpia el carrito de antes: "arroz 150" pasa a "Arroz" con 150 al lado y
+// si un ingrediente estaba repetido se junta en una sola línea.
+async function tidyCart(){
+  const fixes = [], removals = [];
+  const seen = new Map();
+  for(const c of cartItems){
+    const p = splitNameQty(c.name);
+    const name = canonicalIngredientName(p.name);
+    let quantity = c.quantity, unit = c.unit;
+    if(p.quantity!=null && (quantity==null || quantity==='')){ quantity = p.quantity; unit = unit || p.unit; }
+    const k = normName(name);
+    const prev = seen.get(k);
+    if(prev){
+      if(quantity!=null && (prev.unit===unit || !prev.unit || !unit)){
+        prev.quantity = (Number(prev.quantity)||0) + Number(quantity); prev.unit = prev.unit || unit; prev._dirty = true;
+      }
+      removals.push(c);
+      continue;
+    }
+    if(name!==c.name || quantity!==c.quantity || unit!==c.unit){ c.name = name; c.quantity = quantity; c.unit = unit; c._dirty = true; }
+    seen.set(k, c);
+  }
+  if(!removals.length && !cartItems.some(c=> c._dirty)) return false;
+  cartItems = cartItems.filter(c=> !removals.includes(c));
+  await Promise.all([
+    ...cartItems.filter(c=> c._dirty).map(c=>{ delete c._dirty; return sb.from('cart_items').update({ name:c.name, quantity:c.quantity, unit:c.unit }).eq('id', c.id); }),
+    ...removals.map(c=> sb.from('cart_items').delete().eq('id', c.id))
+  ]);
+  return true;
 }
 async function removeCartItem(id){
   const item = cartItems.find(c=> c.id===id);
@@ -6454,19 +6786,23 @@ async function moveCartItemToFridge(id){
    tiene su botón de carrito para añadirlo (o quitarlo) ahí mismo. */
 function renderCartSearch(){
   const input = $('#cart-search-input'), box = $('#cart-search-results');
-  const term = input.value.trim();
-  $('#cart-search-clear').classList.toggle('hidden', !term);
-  if(!term){ box.classList.add('hidden'); box.innerHTML=''; return; }
+  const raw = input.value.trim();
+  $('#cart-search-clear').classList.toggle('hidden', !raw);
+  if(!raw){ box.classList.add('hidden'); box.innerHTML=''; return; }
+  const parsed = splitNameQty(raw);
+  const term = parsed.name;
   const t = stripAccents(term.toLowerCase());
   const matches = ingredientCatalog.filter(ic=> stripAccents(ic.name.toLowerCase()).startsWith(t)).slice(0, 8);
   const exact = matches.some(m=> normName(m.name)===normName(term));
   const rows = matches.map(m=> ({ name: m.name, unit: m.default_unit || guessUnit(m.name) || '', id: m.id, isNew:false }));
   if(!exact) rows.push({ name: capitalizeText(term), unit: guessUnit(term) || '', id:null, isNew:true });
+  rows.forEach(r=>{ r.qty = parsed.quantity; if(parsed.unit) r.unit = parsed.unit; });
   box.innerHTML = rows.map((r,i)=>{
     const inCart = isInCart(r.name);
-    const label = r.isNew
+    const label = (r.isNew
       ? `Añadir «${escapeHtml(r.name)}»`
-      : `<b>${escapeHtml(r.name.slice(0, term.length))}</b>${escapeHtml(r.name.slice(term.length))}`;
+      : `<b>${escapeHtml(r.name.slice(0, term.length))}</b>${escapeHtml(r.name.slice(term.length))}`)
+      + (r.qty!=null ? ` <span class="cart-sugg-qty">· ${r.qty}${r.unit ? ' '+escapeHtml(r.unit) : ''}</span>` : '');
     return `<button type="button" class="cart-sugg-row ${r.isNew?'cart-sugg-new':''}" data-sugg="${i}">
       <span class="cart-sugg-name">${label}</span>
       <span class="cart-sugg-unit">${escapeHtml(r.unit)}</span>
@@ -6478,7 +6814,10 @@ function renderCartSearch(){
     b.addEventListener('pointerdown', e=> e.preventDefault()); // que no se cierre el teclado al tocar
     b.onclick = async ()=>{
       const r = rows[Number(b.dataset.sugg)];
-      await toggleCartItem({ name: r.name, quantity: null, unit: r.unit || null, ingredient_id: r.id || null });
+      const ex = findCartItem(r.name);
+      if(ex && r.qty!=null){ await updateCartItemQty(ex.id, r.qty); renderCartList(); }
+      else await toggleCartItem({ name: r.name, quantity: r.qty!=null ? r.qty : null, unit: r.unit || null, ingredient_id: r.id || null });
+      if(r.qty!=null){ input.value = ''; }
       renderCartSearch();
     };
   });
@@ -6502,13 +6841,16 @@ function renderCartList(){
   }
   box.innerHTML = cartItems.map(c=> `<div class="cart-row" data-cart-id="${c.id}">
     <div class="cart-row-info">
-      <span class="cart-row-name">${escapeHtml(c.name)}</span>
-      ${(c.quantity!=null && c.quantity!=='') || c.source_dish_name ? `<span class="cart-row-sub">${c.quantity!=null && c.quantity!=='' ? escapeHtml(fmtQty(c.quantity, c.unit)) : ''}${c.source_dish_name ? ` <i>${c.quantity!=null && c.quantity!=='' ? '· ' : ''}${escapeHtml(c.source_dish_name)}</i>` : ''}</span>` : ''}
+      <span class="cart-row-name">${escapeHtml(canonicalIngredientName(c.name))}</span>
+      ${c.source_dish_name ? `<span class="cart-row-sub"><i>${escapeHtml(c.source_dish_name)}</i></span>` : ''}
     </div>
+    <input type="number" inputmode="decimal" class="fridge-item-qty-input cart-qty" data-cart-qty="${c.id}" placeholder="Cant." value="${c.quantity!=null && c.quantity!=='' ? Math.round(Number(c.quantity)*100)/100 : ''}">
+    <span class="fridge-item-unit">${escapeHtml(c.unit || lookupDefaultUnit(c.name) || '')}</span>
     <button type="button" class="btn-mini" data-cart-fridge="${c.id}">A la nevera</button>
     <button type="button" class="fridge-item-del" data-cart-del="${c.id}" aria-label="Eliminar">${ICON_TRASH}</button>
   </div>`).join('');
   $all('[data-cart-fridge]').forEach(b=> b.onclick = ()=> moveCartItemToFridge(b.dataset.cartFridge));
+  $all('[data-cart-qty]').forEach(inp=> inp.addEventListener('change', ()=> updateCartItemQty(inp.dataset.cartQty, inp.value)));
   $all('[data-cart-del]').forEach(b=> b.onclick = ()=> removeCartItem(b.dataset.cartDel));
 }
 
