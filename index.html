@@ -1192,7 +1192,7 @@ body.sec-platos .appbar #pf-bar{display:flex;}
 .bio-wrap:focus-within .bio-foot, .bio-foot.show{display:flex;}
 .auth-link{display:block; width:100%; background:none; border:none; color:var(--accent); font-weight:600; font-size:14px; padding:12px 4px 2px; text-align:center;}
 .auth-link.muted{color:var(--muted); font-weight:500;}
-.code-input{text-align:center; font-size:24px !important; letter-spacing:.35em; font-variant-numeric:tabular-nums; font-weight:700;}
+.code-input{text-align:center; font-size:24px !important; letter-spacing:.25em; font-variant-numeric:tabular-nums; font-weight:700;}
 .recover-title{font-weight:800; font-size:18px; margin-bottom:6px;}
 .recover-sub{color:var(--muted); font-size:14px; margin-bottom:16px; line-height:1.4;}
 .email-now{font-size:14px; color:var(--muted); margin-bottom:14px; line-height:1.4;}
@@ -1410,7 +1410,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div id="recover-step2" class="hidden">
         <div class="recover-sub" id="recover-sent-msg"></div>
         <div class="field"><label for="recover-code">Código</label>
-          <input id="recover-code" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="••••••"></div>
+          <input id="recover-code" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Código del correo"></div>
         <div class="field"><label for="recover-pass">Nueva contraseña</label><input id="recover-pass" type="password" autocomplete="new-password"></div>
         <div class="field"><label for="recover-pass2">Repite la contraseña</label><input id="recover-pass2" type="password" autocomplete="new-password"></div>
         <button type="button" id="recover-save-btn" class="btn-primary" style="width:100%;">Cambiar contraseña y entrar</button>
@@ -1923,7 +1923,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <div id="email-step2" class="hidden">
             <div class="recover-sub" id="email-sent-msg"></div>
             <div class="field"><label for="email-code">Código</label>
-              <input id="email-code" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="••••••" enterkeyhint="done"></div>
+              <input id="email-code" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Código del correo" enterkeyhint="done"></div>
             <button type="button" id="email-verify-btn" class="btn-primary" style="width:100%; justify-content:center;">Confirmar</button>
             <button type="button" class="auth-link" id="email-resend">Reenviar el código</button>
             <button type="button" class="auth-link muted" id="email-change-again">Usar otro correo</button>
@@ -2363,7 +2363,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.22-1';
+const APP_VERSION = '2026.10.22-2';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -5914,9 +5914,9 @@ $('#change-username-btn').onclick = async ()=>{
   if(!error && data === 'no_auth'){
     // La base de datos no deja cambiar el usuario de entrada desde ahí: lo
     // cambia la app con la sesión y luego se cambia el nombre.
-    // Solo si la cuenta usa el correo interno (un correo real no se toca). Si
-    // no se puede, da igual: con @usuario se entra a través de nf-auth.
-    if(!isRealEmail(await getAuthEmail())){ try{ await sb.auth.updateUser({ email: fakeEmail(v) }); }catch(e){} }
+    // Ya no se cambia el correo interno desde aquí: con la confirmación por
+    // código activada, Supabase intentaría mandar un correo a la dirección
+    // inventada (y rebotaría). Da igual: con @usuario se entra vía nf-auth.
     ({ data, error } = await sb.rpc('change_username', { p_new: v, p_auth_done: true }));
   }
   if(error){ setUnameStatus('Error: '+error.message, 'err'); return; }
