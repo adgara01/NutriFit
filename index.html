@@ -1091,7 +1091,7 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
   font-size:13px; font-weight:700; padding:4px;
 }
 .wall-action-btn svg{flex-shrink:0;}
-.wall-action-btn.liked{color:var(--accent);}
+.wall-action-btn.liked{color:var(--like);}
 .wall-action-btn.liked svg .hat-body{fill:currentColor;}
 .wall-action-btn.liked svg .hat-line{stroke:var(--bg);}
 .wall-action-btn.cooked{color:var(--cook);}
@@ -1105,7 +1105,7 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 .wall-comment-body{flex:1; min-width:0; font-size:13px; line-height:1.4;}
 .wc-like-btn{flex-shrink:0; align-self:flex-start; margin-top:2px; background:none; padding:4px; color:var(--muted);}
 .wc-like-btn svg{width:14px; height:14px;}
-.wc-like-btn.liked{color:var(--accent);}
+.wc-like-btn.liked{color:var(--like);}
 .wc-like-btn.liked svg .hat-body{fill:currentColor;}
 .wc-like-btn.liked svg .hat-line{stroke:var(--bg2);}
 .wc-likes{font-weight:700;}
@@ -1473,7 +1473,7 @@ body.sec-platos .ab-settings{display:flex; margin-left:8px;}
 }
 
 /* ===================== COCINADOS Y RACHAS (estilo Strava) ===================== */
-:root{--cook:#f2701d;}
+:root{--cook:#f2701d; --like:#f2385f;} /* gorro de chef marcado: rojo rosado, como un me gusta */
 body.no-cooks [data-wall-cook], body.no-cooks #ab-streak, body.no-cooks #create-cooked, body.no-cooks #dish-cooked-btn{display:none !important;}
 .wall-cooks-line{display:flex; align-items:center; gap:6px; background:none; padding:2px 14px 0; font-size:14px; color:var(--text); text-align:left;}
 .wall-cooks-line svg{width:16px; height:16px; color:var(--cook); flex-shrink:0;}
@@ -2639,7 +2639,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.25-1';
+const APP_VERSION = '2026.10.25-5';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2733,7 +2733,7 @@ function hideModal(el){
 function modalHidden(el){ return el.classList.contains('hidden') || el.classList.contains('closing'); }
 const ICON_PLATE = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>';
 // Los "me gusta" son gorros de chef (estilo kudos de Strava).
-const ICON_HAT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path class="hat-body" d="M6.5 20v-5.5A4.2 4.2 0 0 1 5.6 6.3 5 5 0 0 1 12 3.2a5 5 0 0 1 6.4 3.1 4.2 4.2 0 0 1-.9 8.2V20z"/><path class="hat-line" d="M6.5 16.6h11"/></svg>';
+const ICON_HAT = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path class="hat-body" d="M7.4 10.96A3.6 3.6 0 1 1 7.77 4.17A4.5 4.5 0 0 1 16.23 4.17A3.6 3.6 0 1 1 16.6 10.96L15.9 22.6H8.1Z"/></svg>';
 const ICON_HEART = ICON_HAT;
 const ICON_POT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path class="pot-body" d="M4.5 11h15v5.5a3.5 3.5 0 0 1-3.5 3.5H8a3.5 3.5 0 0 1-3.5-3.5z"/><path d="M2.5 11h19"/><path d="M9 7.5c0-1.2 1-1.4 1-2.6M14 7.5c0-1.2 1-1.4 1-2.6"/></svg>';
 const ICON_FLAME = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5c3.9 0 6.8-2.7 6.8-6.6 0-3.3-2.1-5.4-3.6-7.3-.4 1.7-1.4 2.7-2.6 3.1.3-3.4-1.2-6.3-3.9-8.2.1 3.2-1.3 5.2-2.8 7C4.7 11.1 5.2 13 5.2 14.9c0 3.9 2.9 6.6 6.8 6.6z"/></svg>';
