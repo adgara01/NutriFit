@@ -76,6 +76,9 @@ button{cursor:pointer; border:none;}
 .push-prompt-icon svg{width:28px; height:28px;}
 .push-prompt-title{font-size:19px; font-weight:800; margin-bottom:8px;}
 .push-prompt-text{font-size:14px; color:var(--muted); line-height:1.45; margin-bottom:18px;}
+.ep-input{width:100%; box-sizing:border-box; font-size:16px; padding:12px 14px; border-radius:12px; border:1px solid var(--border); background:var(--card2); color:var(--text); margin-bottom:12px;}
+.ep-input:focus{outline:none; border-color:var(--accent);}
+.code-input::placeholder{letter-spacing:normal; font-size:16px; font-weight:500;}
 .push-prompt-no{width:100%; margin-top:6px; padding:12px; background:none; color:var(--muted); font-weight:600; font-size:15px;}
 #updating-screen{position:fixed; inset:0; z-index:600; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
   animation:nf-fade-in .2s ease-out;}
@@ -2322,6 +2325,26 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   </div>
 </div>
 
+<div id="email-prompt-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card push-prompt-card">
+    <div class="push-prompt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg></div>
+    <div class="push-prompt-title">Añade tu correo</div>
+    <div id="ep-step1">
+      <div class="push-prompt-text">Así podrás recuperar la contraseña si un día la olvidas. No lo ve nadie más y sigues entrando con tu @usuario.</div>
+      <input type="email" id="ep-email" class="ep-input" placeholder="tucorreo@gmail.com" inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send">
+      <button type="button" class="btn-primary" id="ep-send" style="width:100%; justify-content:center;">Enviarme un código</button>
+    </div>
+    <div id="ep-step2" class="hidden">
+      <div class="push-prompt-text" id="ep-sent"></div>
+      <input type="text" id="ep-code" class="ep-input code-input" placeholder="Código del correo" inputmode="numeric" autocomplete="one-time-code" maxlength="10" enterkeyhint="done">
+      <button type="button" class="btn-primary" id="ep-verify" style="width:100%; justify-content:center;">Confirmar</button>
+      <button type="button" class="auth-link" id="ep-other">Usar otro correo</button>
+    </div>
+    <div id="ep-msg" class="auth-error hidden" style="margin:12px 0 0;"></div>
+    <button type="button" class="push-prompt-no" id="ep-later">Ahora no</button>
+  </div>
+</div>
+
 <!-- ================= QUIÉN HA DADO ME GUSTA ================= -->
 <div id="likers-modal" class="modal hidden">
   <div class="modal-sheet sheet-with-close">
@@ -2363,7 +2386,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.22-2';
+const APP_VERSION = '2026.10.23-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -3126,6 +3149,7 @@ $('#settings-logout-btn').onclick = async ()=>{
   $('#login-view').classList.remove('hidden');
   $('#auth-username').value=''; $('#auth-password').value=''; $('#auth-confirm').value='';
   hideAuthError(); openRecover(false);
+  emailPromptDismissed = false; hideModal($('#email-prompt-modal'));
 };
 
 /* ===================== NAVEGACIÓN: DRAWER + SECCIONES ===================== */
@@ -6019,44 +6043,54 @@ async function refreshEmailUI(){
   return e;
 }
 function emailStep(n){ $('#email-step1').classList.toggle('hidden', n!==1); $('#email-step2').classList.toggle('hidden', n!==2); }
-async function emailSend(){
-  const email = $('#new-email').value.trim().toLowerCase();
-  setEmailMsg('');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !isRealEmail(email)){ setEmailMsg('Ese correo no parece válido.'); return; }
+// Núcleo común (Configuración y la ventana de bienvenida).
+// startEmailChange → { status:'saved' | 'code' | 'same' | 'error', msg }
+async function startEmailChange(raw){
+  const email = String(raw||'').trim().toLowerCase();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || !isRealEmail(email)) return { status:'error', msg:'Ese correo no parece válido.' };
   const cur = await getAuthEmail();
-  if(cur && cur.toLowerCase() === email){ setEmailMsg('Ese ya es tu correo.', true); return; }
+  if(cur && cur.toLowerCase() === email) return { status:'same', msg:'Ese ya es tu correo.' };
+  const { data, error } = await sb.auth.updateUser({ email });
+  if(error) return { status:'error', msg: emailErrorText(error) };
+  const now = data && data.user && data.user.email;
+  if(now && now.toLowerCase() === email) return { status:'saved', email }; // Supabase lo aplica al momento
+  return { status:'code', email };
+}
+// confirmEmailChange → { ok, msg }
+async function confirmEmailChange(email, rawCode){
+  const code = String(rawCode||'').replace(/\s+/g, '');
+  if(!/^\d{6,10}$/.test(code)) return { ok:false, msg:'Escribe el código que te ha llegado (solo números).' };
+  const { error } = await sb.auth.verifyOtp({ email, token: code, type: 'email_change' });
+  if(error) return { ok:false, msg:'El código no es correcto o ha caducado.' };
+  try{ await sb.auth.refreshSession(); }catch(e){}
+  const now = await getAuthEmail();
+  if(!now || now.toLowerCase() !== email) return { ok:false, msg:'Código aceptado, pero el correo aún no ha cambiado. En Supabase hay que desactivar "Secure email change".' };
+  return { ok:true };
+}
+const sentText = (email)=> `Te hemos enviado un código a ${email}. Escríbelo aquí para confirmar que es tuyo. Si no lo ves, mira en correo no deseado.`;
+async function emailSend(){
+  setEmailMsg('');
   const btn = $('#email-send-btn'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Enviando…';
   try{
-    const { data, error } = await sb.auth.updateUser({ email });
-    if(error){ setEmailMsg(emailErrorText(error)); return; }
-    const now = data && data.user && data.user.email;
-    if(now && now.toLowerCase() === email){
-      // Guardado al momento (Supabase sin confirmación de correo activada).
-      pendingEmail = null; emailStep(1); $('#new-email').value = '';
-      await refreshEmailUI(); setEmailMsg('Correo guardado.', true); return;
-    }
-    pendingEmail = email;
-    $('#email-sent-msg').textContent = `Te hemos enviado un código a ${email}. Escríbelo aquí para confirmar que es tuyo. Si no lo ves, mira en correo no deseado.`;
+    const r = await startEmailChange($('#new-email').value);
+    if(r.status==='error'){ setEmailMsg(r.msg); return; }
+    if(r.status==='same'){ setEmailMsg(r.msg, true); return; }
+    if(r.status==='saved'){ pendingEmail = null; emailStep(1); $('#new-email').value = ''; await refreshEmailUI(); setEmailMsg('Correo guardado.', true); return; }
+    pendingEmail = r.email;
+    $('#email-sent-msg').textContent = sentText(r.email);
     $('#email-code').value = '';
     emailStep(2);
     setTimeout(()=> $('#email-code').focus(), 50);
   } finally { btn.disabled = false; btn.textContent = label; }
 }
 async function emailVerify(){
-  const code = $('#email-code').value.replace(/\s+/g, '');
   setEmailMsg('');
   if(!pendingEmail){ emailStep(1); return; }
-  if(!/^\d{6,10}$/.test(code)){ setEmailMsg('Escribe el código que te ha llegado (solo números).'); return; }
   const btn = $('#email-verify-btn'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Comprobando…';
   try{
-    const { error } = await sb.auth.verifyOtp({ email: pendingEmail, token: code, type: 'email_change' });
-    if(error){ setEmailMsg('El código no es correcto o ha caducado.'); return; }
-    try{ await sb.auth.refreshSession(); }catch(e){}
-    const e = await refreshEmailUI();
-    if(!e || e.toLowerCase() !== pendingEmail){
-      setEmailMsg('Código aceptado, pero el correo aún no ha cambiado. En Supabase hay que desactivar "Secure email change".');
-      return;
-    }
+    const r = await confirmEmailChange(pendingEmail, $('#email-code').value);
+    await refreshEmailUI();
+    if(!r.ok){ setEmailMsg(r.msg); return; }
     pendingEmail = null; $('#new-email').value = ''; emailStep(1);
     setEmailMsg('¡Listo! Ya puedes recuperar la contraseña con este correo.', true);
   } finally { btn.disabled = false; btn.textContent = label; }
@@ -6067,6 +6101,62 @@ $('#email-verify-btn').onclick = emailVerify;
 $('#email-code').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); emailVerify(); } });
 $('#email-resend').onclick = ()=>{ if(pendingEmail){ $('#new-email').value = pendingEmail; emailSend(); } };
 $('#email-change-again').onclick = ()=>{ pendingEmail = null; setEmailMsg(''); emailStep(1); setTimeout(()=> $('#new-email').focus(), 50); };
+
+/* ---------- Ventana "Añade tu correo" ----------
+   Igual que la de las notificaciones: sale al entrar (y nada más crear la
+   cuenta) mientras la cuenta no tenga correo. "Ahora no" la cierra hasta la
+   próxima vez que abras la app. No bloquea del todo a propósito: si un día
+   falla el envío de correos, nadie se quedaría sin poder entrar. */
+let emailPromptDismissed = false, epPending = null;
+function epMsg(msg){ const b = $('#ep-msg'); b.textContent = msg || ''; b.classList.toggle('hidden', !msg); }
+function epStep(n){ $('#ep-step1').classList.toggle('hidden', n!==1); $('#ep-step2').classList.toggle('hidden', n!==2); }
+async function maybeAskForEmail(delay){
+  if(emailPromptDismissed || !currentUser) return false;
+  if(isRealEmail(await getAuthEmail())) return false;
+  setTimeout(()=>{
+    if(!currentUser || emailPromptDismissed) return;
+    if($all('.modal').some(m=> !m.classList.contains('hidden'))) return; // no interrumpir
+    epPending = null; epMsg(''); epStep(1); $('#ep-email').value = ''; $('#ep-code').value = '';
+    showModal($('#email-prompt-modal'));
+  }, delay==null ? 700 : delay);
+  return true;
+}
+function closeEmailPrompt(){
+  hideModal($('#email-prompt-modal'));
+  setTimeout(()=>{ try{ maybeAskForPush(); }catch(e){} }, 400); // y después, si toca, las notificaciones
+}
+async function epSend(){
+  epMsg('');
+  const btn = $('#ep-send'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Enviando…';
+  try{
+    const r = await startEmailChange($('#ep-email').value);
+    if(r.status==='error'){ epMsg(r.msg); return; }
+    if(r.status==='same' || r.status==='saved'){ refreshEmailUI(); closeEmailPrompt(); showToast('Correo guardado'); return; }
+    epPending = r.email;
+    $('#ep-sent').textContent = sentText(r.email);
+    $('#ep-code').value = '';
+    epStep(2);
+    setTimeout(()=> $('#ep-code').focus(), 50);
+  } finally { btn.disabled = false; btn.textContent = label; }
+}
+async function epVerify(){
+  epMsg('');
+  if(!epPending){ epStep(1); return; }
+  const btn = $('#ep-verify'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Comprobando…';
+  try{
+    const r = await confirmEmailChange(epPending, $('#ep-code').value);
+    if(!r.ok){ epMsg(r.msg); return; }
+    epPending = null; refreshEmailUI();
+    closeEmailPrompt();
+    showToast('¡Listo! Correo añadido');
+  } finally { btn.disabled = false; btn.textContent = label; }
+}
+$('#ep-send').onclick = epSend;
+$('#ep-email').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); epSend(); } });
+$('#ep-verify').onclick = epVerify;
+$('#ep-code').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); epVerify(); } });
+$('#ep-other').onclick = ()=>{ epPending = null; epMsg(''); epStep(1); setTimeout(()=> $('#ep-email').focus(), 50); };
+$('#ep-later').onclick = ()=>{ emailPromptDismissed = true; closeEmailPrompt(); };
 
 // Modo oscuro: se guarda en este dispositivo y se aplica antes de pintar nada
 // (script en el <head>), así no hay destello blanco al abrir la app.
@@ -7688,7 +7778,8 @@ async function syncPushOnLogin(){
     }
   }
   renderPushSetting();
-  maybeAskForPush();
+  // Primero el correo (si falta); las notificaciones, al cerrar esa ventana.
+  if(!(await maybeAskForEmail())) maybeAskForPush();
 }
 /* Recién instalada (o mientras no se haya decidido), la app pregunta
    directamente si quieres notificaciones. "Ahora no" la calla 3 días; si las
