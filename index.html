@@ -210,7 +210,6 @@ body.sec-pager main{padding-bottom:0;}
   transform:translate3d(var(--np-x, 0px),0,0); transition:transform .32s cubic-bezier(.32,.72,0,1); will-change:transform;}
 .pager.np-dragging .pager-page{transition:none;}
 .pager-page > *{max-width:868px; margin-left:auto; margin-right:auto;}
-.explore-hint{margin:2px 4px 10px;}
 .explore-sep{font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; padding:10px 2px 4px;}
 .explore-sep:first-child{padding-top:0;}
 .explore-have{color:var(--accent); font-weight:700;}
@@ -788,9 +787,11 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .cart-row:last-child{border-bottom:none;}
 .cart-row.busy{opacity:.5; pointer-events:none;}
 .cart-row-info{flex:1; min-width:0;}
-.cart-row-name{font-size:15px; font-weight:700; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.cart-row-name{font-size:15px; font-weight:700; display:block; line-height:1.25; overflow-wrap:anywhere;}
+.cart-row-qty{display:flex; align-items:center; gap:6px; margin-top:6px;}
+.cart-row-qty .fridge-item-qty-input{flex:0 0 64px; width:64px; padding:5px 7px;}
 .cart-row .btn-mini{padding:7px 10px; font-size:12px; flex-shrink:0;}
-.cart-row .fridge-item-unit{flex:0 0 30px; width:30px;}
+.cart-row .fridge-item-unit{flex:0 0 auto; width:auto; max-width:60px;}
 .cart-row-sub{font-size:12px; color:var(--muted);}
 .cart-row-sub i{font-size:11px;}
 .drawer-count{
@@ -934,6 +935,15 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 #explore-chips:empty{display:none;}
 .explore-chip-x{font-weight:800; margin-left:2px; color:var(--muted);}
 .explore-match{color:var(--accent); font-weight:700;}
+.explore-cats{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;}
+.explore-cats.hidden{display:none;}
+.ex-cat{position:relative; overflow:hidden; height:88px; border-radius:16px; padding:13px 14px; text-align:left; color:#fff; background:var(--cat); font-size:17px; font-weight:800; letter-spacing:-.01em; display:flex; align-items:flex-start; touch-action:manipulation; -webkit-tap-highlight-color:transparent; transition:transform .12s, filter .12s; box-shadow:0 1px 2px rgba(0,0,0,.08);}
+.ex-cat::before{content:""; position:absolute; inset:0; background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,0) 60%); pointer-events:none;}
+.ex-cat:active{transform:scale(.97); filter:brightness(.94);}
+.ex-cat svg{position:absolute; right:-6px; bottom:-8px; width:62px; height:62px; transform:rotate(-14deg); opacity:.9; fill:none; stroke:#fff; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
+.ex-cat:last-child:nth-child(odd){grid-column:1 / -1;}
+.missing-chip.cat-chip{background:var(--cat); border-color:var(--cat); color:#fff;}
+.missing-chip.cat-chip .explore-chip-x{color:rgba(255,255,255,.85);}
 
 /* ---------- NOTIFICACIONES ---------- */
 .notif-badge{
@@ -1583,7 +1593,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     <div id="recover-view" class="hidden" style="text-align:left;">
       <div class="recover-title">Recuperar contraseña</div>
       <div id="recover-step1">
-        <div class="recover-sub">Te mandamos un código a tu correo. Solo funciona si añadiste tu correo en Configuración.</div>
+        <div class="recover-sub">Te mandamos un código a tu correo.</div>
         <div class="field"><label for="recover-id">Tu usuario o tu correo</label>
           <input id="recover-id" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send"></div>
         <button type="button" id="recover-send-btn" class="btn-primary" style="width:100%;">Enviarme un código</button>
@@ -1790,7 +1800,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <span class="card-title">Tus platos</span>
           <button type="button" class="menu-clear" id="menu-clear-btn">Quitar todos</button>
         </div>
-        <div class="menu-hint">Toca un plato y sus ingredientes van al carrito (menos lo que ya tienes en la Nevera). Otra vez, para quitarlos.</div>
         <div class="menu-strip" id="menu-dishes"></div>
         <div class="menu-status" id="menu-status"></div>
       </div>
@@ -1806,18 +1815,17 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div class="pager-top">
         <div class="card">
           <div class="ingredient-name-wrap explore-input-wrap">
-            <input type="search" id="explore-input" name="nf-explore-q" placeholder="Busca un plato o ingredientes: curry, pollo…"
+            <input type="search" id="explore-input" name="nf-explore-q" placeholder="Busca un plato o ingrediente"
               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
             <div class="ingredient-suggest hidden" id="explore-suggest"></div>
           </div>
           <div class="missing-chips" id="explore-chips"></div>
-          <div class="explore-tags" id="explore-tags"></div>
         </div>
       </div>
       <div class="pager" id="ex-pager">
         <div class="pager-page" id="ex-page-platos">
-          <div class="settings-hint explore-hint">Primero, los de tus amigos; después, los de toda la comunidad (sin nombres). Cada receta sale una sola vez: la original.</div>
-          <div class="card"><div id="explore-results"></div></div>
+          <div class="explore-cats" id="explore-cats"></div>
+          <div class="card hidden" id="explore-results-card"><div id="explore-results"></div></div>
         </div>
         <div class="pager-page" id="ex-page-gente">
       <div class="card">
@@ -1830,7 +1838,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 
       <div class="card">
         <div style="font-weight:700;">Amigos</div>
-        <div class="settings-hint" style="margin:2px 0 6px;">Gente a la que sigues y que te sigue. Con ellos puedes chatear, hacer grupos y enviaros recetas.</div>
         <div id="friends-list"><div class="empty-hint">Todavía no tienes amigos.</div></div>
       </div>
         </div>
@@ -2037,7 +2044,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <span style="font-weight:600;">Modo oscuro</span>
           <button type="button" id="toggle-dark-btn" class="switch" aria-label="Modo oscuro"></button>
         </div>
-        <div class="settings-hint">Fondo oscuro con bordes en gris suave, más cómodo de noche. Se recuerda en este dispositivo.</div>
       </div>
 
       <div class="card">
@@ -2045,7 +2051,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <span style="font-weight:600;">Perfil público</span>
           <button type="button" id="toggle-public-btn" class="switch" aria-label="Perfil público"></button>
         </div>
-        <div class="settings-hint">Público: cualquiera de la app puede seguirte al momento y ver los platos de tu perfil. Privado: tienes que aceptar a quien quiera seguirte y solo tus seguidores ven tus platos y tus publicaciones del Muro. Las carpetas privadas no las ve nadie más que tú.</div>
       </div>
 
       <div class="card">
@@ -2053,7 +2058,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <span style="font-weight:600;">Mis platos en Explorar</span>
           <button type="button" id="toggle-explore-btn" class="switch" aria-label="Mis platos en Explorar"></button>
         </div>
-        <div class="settings-hint">Tus platos pueden salir en Explorar → Público <b>sin tu nombre</b>, para que otros usuarios de la app encuentren ideas. Las carpetas privadas no salen nunca.</div>
       </div>
 
       <div class="card">
@@ -2085,7 +2089,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           </div>
           <button type="button" id="update-now-btn" class="btn-mini">Actualizar</button>
         </div>
-        <div class="settings-hint">La app se actualiza sola al abrirla. Este botón fuerza una recarga limpia por si algo se ve raro; no se cierra tu sesión.</div>
       </div>
 
       <button id="settings-logout-btn" class="btn-secondary" style="width:100%; justify-content:center;">Cerrar sesión</button>
@@ -2103,7 +2106,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <div id="password-msg" class="auth-error hidden"></div>
           <button id="change-password-btn" class="btn-primary" style="width:100%; justify-content:center;">Cambiar contraseña</button>
         </div>
-        <div class="settings-hint" style="margin:0 4px;">Mínimo 6 caracteres. Seguirás con la sesión abierta en este dispositivo.</div>
        </div>
        <div id="sub-email" class="hidden">
         <div class="subpage-head">
@@ -2127,7 +2129,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           </div>
           <div id="email-msg" class="auth-error hidden" style="margin-top:12px; margin-bottom:0;"></div>
         </div>
-        <div class="settings-hint" style="margin:0 4px;">Sirve para recuperar la contraseña si la olvidas. No lo ve nadie más. Puedes seguir entrando con tu @usuario, o con el correo si lo prefieres.</div>
        </div>
        <div id="sub-username" class="hidden">
         <div class="subpage-head">
@@ -2142,7 +2143,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <div class="uname-status" id="username-status"></div>
           <button id="change-username-btn" class="btn-primary btn-off" style="width:100%; justify-content:center;">Cambiar nombre</button>
         </div>
-        <div class="settings-hint" style="margin:0 4px;">Letras minúsculas, números y guion bajo (3 a 20). Solo se puede usar si nadie lo tiene. A partir de ahora entrarás a la app con el nombre nuevo; la contraseña no cambia.</div>
        </div>
       </div>
      </div>
@@ -2237,7 +2237,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 
     <div class="field">
       <div class="ing-label-row"><label style="margin:0;">Ingredientes</label><button type="button" class="dish-cart-all" id="dish-cart-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg><span id="dish-cart-all-label">Todo al carrito</span></button></div>
-      <div class="ingredients-hint">Desliza un ingrediente a la izquierda para eliminarlo</div>
       <div id="ingredients-list"></div>
       <button type="button" id="add-ingredient-btn" class="add-ingredient-btn">+ Añadir ingrediente</button>
     </div>
@@ -2287,7 +2286,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     </button>
   </div>
   <div class="cook-stage" id="cook-stage"></div>
-  <div class="cook-hint" id="cook-hint">Toca a la derecha para avanzar · a la izquierda para volver</div>
+  <div class="cook-hint" id="cook-hint"></div>
 </div>
 
 <!-- ================= DESCRIPCIÓN POP-UP ================= -->
@@ -2523,7 +2522,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   <div class="desc-modal-card push-prompt-card">
     <div class="push-prompt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
     <div class="push-prompt-title">¿Activar las notificaciones?</div>
-    <div class="push-prompt-text">Te avisaremos cuando te escriban, te manden una receta, te pidan amistad o comenten y den me gusta a tus publicaciones, aunque tengas la app cerrada.</div>
+    <div class="push-prompt-text">Mensajes, recetas y me gusta, aunque tengas la app cerrada.</div>
     <button type="button" class="btn-primary" id="push-prompt-yes" style="width:100%; justify-content:center;">Activar</button>
     <button type="button" class="push-prompt-no" id="push-prompt-no">Ahora no</button>
   </div>
@@ -2534,7 +2533,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     <div class="push-prompt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg></div>
     <div class="push-prompt-title">Añade tu correo</div>
     <div id="ep-step1">
-      <div class="push-prompt-text">Así podrás recuperar la contraseña si un día la olvidas. No lo ve nadie más y sigues entrando con tu @usuario.</div>
+      <div class="push-prompt-text">Para recuperar la contraseña si la olvidas.</div>
       <input type="email" id="ep-email" class="ep-input" placeholder="tucorreo@gmail.com" inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send">
       <button type="button" class="btn-primary" id="ep-send" style="width:100%; justify-content:center;">Enviarme un código</button>
     </div>
@@ -2599,7 +2598,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     <div style="margin-bottom:2px;"><input type="search" class="ep-input" id="new-chat-search" placeholder="Busca a un amigo" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search"></div>
     <button type="button" class="pick-row nc-group" id="new-chat-group"><span class="nc-group-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="user-row-name">Crear un grupo</span></button>
     <div id="new-chat-results"></div>
-    <div class="settings-hint" style="margin-top:10px;">Puedes escribir a tus amigos (gente a la que sigues y que te sigue).</div>
   </div>
 </div>
 
@@ -2644,7 +2642,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.26-1';
+const APP_VERSION = '2026.10.27-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -3580,7 +3578,7 @@ function updateFitnessSettingsExtras(){
     suggestBtn.classList.remove('switch-disabled');
     suggestBtn.classList.toggle('on', currentUser.suggest_meals);
   } else {
-    hint.textContent = 'No tienes suficientes platos con calorías indicadas en tu perfil como para que la app te sugiera platos en el planning.';
+    hint.textContent = 'Necesitas más de 10 platos con kcal.';
     suggestBtn.classList.add('switch-disabled');
     suggestBtn.classList.remove('on');
     // Si estaba activado y el repositorio se ha quedado corto (p.ej. borraste
@@ -3751,7 +3749,7 @@ function renderGallery(){
   $('#pf-result-info').classList.add('hidden');
   const unfiled = dishes.filter(d=>!d.folder_id);
   if(!folders.length && !unfiled.length){
-    box.innerHTML = '<div class="empty-hint">Aún no hay platos. Pulsa "+" para añadir el primero.</div>';
+    box.innerHTML = '<div class="empty-hint">Aún no hay platos.</div>';
     return;
   }
   const items = folders.map(f=>folderCardHtml(f)).concat(unfiled.map((d, i)=>dishCardHtml(d, i + folders.length < 6)));
@@ -4129,7 +4127,7 @@ function renderFolderGallery(){
   const box = $('#folder-gallery');
   const inside = dishes.filter(d=>d.folder_id===currentFolderId);
   if(inside.length) layoutMasonry(box, inside.map((d, i)=>dishCardHtml(d, i<6)));
-  else box.innerHTML = '<div class="empty-hint">Carpeta vacía. Ciérrala y arrastra platos aquí desde el mosaico.</div>';
+  else box.innerHTML = '<div class="empty-hint">Carpeta vacía.</div>';
   $all('#folder-gallery .dish-card').forEach(card=>{
     card.classList.toggle('jiggle', folderEditMode);
     card.classList.toggle('selected', folderSelectedDishIds.has(card.dataset.id));
@@ -5661,22 +5659,20 @@ function renderNutriHint(){
   const parts = [];
   const autoKcal = !dishKcalManual || (dishPreview && r.kcal!=null && Number($('#dish-calories').value)===r.kcal);
   if(r.kcal!=null){
-    if(autoKcal) parts.push(`<span class="nutri-auto">${ICON_SPARK}Calorías calculadas con los ingredientes (por ración)</span>`);
-    else if(Number($('#dish-calories').value)!==r.kcal) parts.push(`<span>Con los ingredientes salen <b>${r.kcal} kcal</b> por ración</span>` + (dishPreview ? '' : ` <button type="button" class="nutri-use" id="nutri-use-btn">Usar</button>`));
+    if(!autoKcal && !dishPreview && Number($('#dish-calories').value)!==r.kcal) parts.push(`<span><b>${r.kcal} kcal</b></span> <button type="button" class="nutri-use" id="nutri-use-btn">Usar</button>`);
   }
   const miss = [];
   if(r.noQty.length) miss.push(`sin cantidad: ${r.noQty.slice(0, 3).map(escapeHtml).join(', ')}${r.noQty.length>3 ? '…' : ''}`);
   if(r.noData.length) miss.push(`sin datos: ${r.noData.slice(0, 3).map(escapeHtml).join(', ')}${r.noData.length>3 ? '…' : ''}`);
-  if(miss.length && r.kcal!=null) parts.push(`<span class="nutri-miss">(no cuenta ${miss.join('; ')})</span>`);
-  else if(miss.length) parts.push(`<span class="nutri-miss">Pon las cantidades de los ingredientes para calcular las calorías solas.</span>`);
+
   el.innerHTML = parts.join(' ');
   el.classList.toggle('hidden', !parts.length);
   if($('#nutri-use-btn')) $('#nutri-use-btn').onclick = ()=>{ dishKcalManual = false; dishMacrosManual = false; recomputeDishNutrition(true); scheduleDishAutosave(false); };
   // En el pop-up de macros
   if(r.kcal!=null){
-    mh.innerHTML = (!dishMacrosManual || dishPreview) ? `<span class="nutri-auto">${ICON_SPARK}Calculado con los ingredientes</span>`
-      : `<span>Con los ingredientes: ${r.protein} g prot · ${r.carbs} g hidr · ${r.fat} g grasa</span>` + (dishPreview ? '' : ` <button type="button" class="nutri-use" id="macros-use-btn">Usar</button>`);
-    mh.classList.remove('hidden');
+    mh.innerHTML = (!dishMacrosManual || dishPreview) ? ''
+      : `<span>${r.protein} g prot · ${r.carbs} g hidr · ${r.fat} g grasa</span> <button type="button" class="nutri-use" id="macros-use-btn">Usar</button>`;
+    mh.classList.toggle('hidden', !mh.innerHTML);
     if($('#macros-use-btn')) $('#macros-use-btn').onclick = ()=>{ dishMacrosManual = false; recomputeDishNutrition(true); scheduleDishAutosave(false); };
   } else mh.classList.add('hidden');
 }
@@ -5831,7 +5827,7 @@ async function backfillAvatar(){
 }
 
 /* ===================== ETIQUETAS ===================== */
-const DISH_TAGS = ['Desayuno','Comida','Cena','Snack','Postre','Vegano','Vegetariano','Sin gluten','Sin lactosa','Alto en proteína','Ligero','Tupper','Rápido','Picante','Mediterráneo','Italiano','Asiático','Chino','Japonés','Indio','Mexicano','Árabe','Americano'];
+const DISH_TAGS = ['Desayuno','Comida','Cena','Snack','Postre','Carne','Pescado','Vegano','Vegetariano','Sin gluten','Sin lactosa','Alto en proteína','Ligero','Tupper','Rápido','Picante','Mediterráneo','Italiano','Asiático','Chino','Japonés','Indio','Mexicano','Árabe','Americano'];
 let dishTags = [], dishTagsOpen = false;
 function allKnownTags(extra){
   const set = new Set(DISH_TAGS);
@@ -6575,7 +6571,7 @@ function applyFollowRows(){
 let friendsLoadedOnce = false;
 function renderFriendsList(){
   const box = $('#friends-list');
-  if(!friends.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes amigos. Cuando sigas a alguien y te siga, aparecerá aquí.</div>'; return; }
+  if(!friends.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes amigos.</div>'; return; }
   box.innerHTML = friends.map(f=> `<div class="user-row user-row-clickable" data-friend-id="${f.id}">${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span><button type="button" class="friend-msg-btn" data-msg-friend="${f.id}" aria-label="Escribir a @${escapeHtml(f.username)}">${ICON_CHAT}</button></div>`).join('');
   $all('#friends-list [data-friend-id]').forEach(row=>{
     row.onclick = e=>{
@@ -7336,7 +7332,7 @@ const ICON_BELL_SM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
 function renderActivity(){
   const box = $('#activity-list');
   if(!box) return;
-  if(!activityItems.length){ box.innerHTML = '<div class="empty-hint">Aquí verás quién te sigue, los me gusta, los comentarios y cuando te mencionan o etiquetan.</div>'; return; }
+  if(!activityItems.length){ box.innerHTML = '<div class="empty-hint">Nada por aquí todavía.</div>'; return; }
   box.innerHTML = activityItems.map((n, i)=>{
     const fresh = new Date(n.created_at).getTime() > activitySeenBefore;
     return `<button type="button" class="act-row ${fresh ? 'act-new' : ''}" data-act="${i}">
@@ -7591,7 +7587,7 @@ function renderPickDish(){
   const q = pfNorm($('#pick-dish-search').value);
   const list = dishes.filter(d=> !q || pfNorm(d.name).includes(q));
   const box = $('#pick-dish-list');
-  if(!dishes.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes platos. Crea uno primero con "Nueva receta"' + (pickDishMode==='cook' ? ', o toca la olla de una publicación del Muro.' : '.') + '</div>'; return; }
+  if(!dishes.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes platos.</div>'; return; }
   if(!list.length){ box.innerHTML = '<div class="empty-hint">Ningún plato se llama así.</div>'; return; }
   box.innerHTML = list.map(d=> `<button type="button" class="pick-row" data-pick-dish="${d.id}">
     <span class="pick-thumb">${d.image_url ? `<img ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : ICON_PLATE}</span>
@@ -7632,7 +7628,7 @@ function renderNewChat(){
       const inp = $('#social-search'); inp.value = raw; inp.dispatchEvent(new Event('input'));
     };
   } else {
-    box.innerHTML = '<div class="empty-hint">Todavía no tienes amigos. Cuando sigas a alguien y te siga, podréis escribiros.</div>';
+    box.innerHTML = '<div class="empty-hint">Todavía no tienes amigos.</div>';
   }
   box.querySelectorAll('[data-nc]').forEach(b=> b.onclick = ()=>{ hideModal($('#new-chat-modal')); openDirectChat(b.dataset.nc); });
 }
@@ -7681,7 +7677,7 @@ function renderChatList(){
   if(!chatSummaries.length){
     chatEditMode = false;
     $('#chat-edit-btn').classList.add('hidden');
-    box.innerHTML = '<div class="empty-hint">Aún no tienes chats. Toca el bocadillo junto a un amigo para escribirle, o crea un grupo.</div>';
+    box.innerHTML = '<div class="empty-hint">Aún no tienes chats.</div>';
     return;
   }
   $('#chat-edit-btn').classList.remove('hidden');
@@ -7701,7 +7697,7 @@ function renderChatList(){
           : (unread ? `<span class="chat-unread">${unread>9?'9+':unread}</span>` : '')}
       </button>
     </div>`;
-  }).join('') + `<div class="settings-hint">${chatEditMode ? 'Borrar un chat lo quita solo para ti (tu amigo sigue en Amigos). En un grupo, sales de él.' : 'Toca "Editar" o desliza un chat a la izquierda para borrarlo.'}</div>`;
+  }).join('');
   $all('#chat-list [data-chat]').forEach(b=>{
     b.onclick = (e)=>{
       if(chatEditMode){ if(e.target.closest('[data-del-chat]')) deleteChatFromList(b.dataset.chat); return; }
@@ -8152,7 +8148,7 @@ function openGroupModal(mode){
   $('#group-modal-confirm').textContent = mode==='add' ? 'Añadir' : 'Crear grupo';
   $('#group-pick-list').innerHTML = list.length
     ? list.map(f=> `<button type="button" class="pick-row" data-pick="${f.id}"><span class="pick-check">${ICON_CHECK}</span>${avatarHtml(f)}<span class="user-row-name">@${escapeHtml(f.username)}</span></button>`).join('')
-    : `<div class="empty-hint">${mode==='add' ? 'Todos tus amigos ya están en el grupo.' : 'Primero añade amigos en Social.'}</div>`;
+    : `<div class="empty-hint">${mode==='add' ? 'Todos tus amigos ya están en el grupo.' : 'Todavía no tienes amigos.'}</div>`;
   $all('#group-pick-list [data-pick]').forEach(b=> b.onclick = ()=>{
     const id = b.dataset.pick;
     if(groupPicked.has(id)) groupPicked.delete(id); else groupPicked.add(id);
@@ -8409,22 +8405,20 @@ async function renderPushSetting(){
   if(!pushSupported()){
     btn.classList.remove('on'); btn.classList.add('switch-disabled');
     hint.textContent = (isIOSDevice() && !isStandaloneApp())
-      ? 'En iPhone, primero añade NutriFit a la pantalla de inicio (Compartir → Añadir a pantalla de inicio), ábrela desde su icono y activa esto ahí.'
+      ? 'Añade NutriFit a la pantalla de inicio y actívalas desde ahí.'
       : 'Este navegador no admite notificaciones.';
     return;
   }
   if(Notification.permission==='denied'){
     btn.classList.remove('on'); btn.classList.add('switch-disabled');
-    hint.textContent = 'Están bloqueadas. Actívalas en Ajustes del iPhone → Notificaciones → NutriFit.';
+    hint.textContent = 'Bloqueadas en los ajustes del iPhone.';
     return;
   }
   const sub = await currentPushSubscription().catch(()=> null);
   const on = !!sub && Notification.permission==='granted';
   btn.classList.toggle('on', on);
   $('#push-test-btn').classList.toggle('hidden', !on);
-  hint.textContent = on
-    ? 'Te avisaremos de mensajes y recetas del chat y de lo que publiquen tus amigos en el Muro.'
-    : 'Actívalo para recibir avisos en este móvil aunque la app esté cerrada.';
+  hint.textContent = '';
 }
 $('#toggle-push-btn').onclick = async ()=>{
   const btn = $('#toggle-push-btn');
@@ -8600,7 +8594,7 @@ function renderWallFeed(){
   // Al repintar (p. ej. tras un me gusta) cada carrusel sigue en la foto que estabas viendo.
   const photoPos = {};
   $all('#wall-feed .wall-post').forEach(el=>{ const t = el.querySelector('.photo-track'); if(t) photoPos[el.dataset.post] = carouselIndex(t); });
-  if(!wallPosts.length){ box.innerHTML = '<div class="empty-hint">Todavía no hay nada en el Muro. ¡Publica tu primera receta desde su ficha!</div>'; return; }
+  if(!wallPosts.length){ box.innerHTML = '<div class="empty-hint">Todavía no hay nada en el Muro.</div>'; return; }
   const items = wallPosts.map((p, idx)=>{
     const d = p.dish_snapshot || {};
     // Solo las 2 primeras publicaciones piden su foto ya; el resto al acercarte.
@@ -9150,7 +9144,7 @@ function renderNeveraSuggestions(){
   const box = $('#nevera-suggestions');
   if(!fridgeItems.length){ box.innerHTML = '<div class="empty-hint">Añade cosas a la nevera para ver sugerencias.</div>'; return; }
   const results = computeDishSuggestionsFromFridge();
-  if(!results.length){ box.innerHTML = '<div class="empty-hint">Ninguno de tus platos coincide todavía — revisa que tengan ingredientes con nombre.</div>'; return; }
+  if(!results.length){ box.innerHTML = '<div class="empty-hint">Ninguno de tus platos coincide.</div>'; return; }
   box.innerHTML = results.map(r=>{
     const d = r.dish;
     const full = r.have===r.total;
@@ -9191,13 +9185,39 @@ function renderNeveraSuggestions(){
 // SIN nombre (anónimo), vía explore_public_dishes(). Palabra completa, sin
 // tildes, singular/plural ("huevos" encuentra "huevo").
 let exploreTerms = [];
-let exploreTags = new Set();
-function renderExploreTags(){
-  $('#explore-tags').innerHTML = DISH_TAGS.map(t=> `<button type="button" class="tag-chip ${exploreTags.has(t) ? 'on' : ''}" data-ex-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join('');
-  $all('[data-ex-tag]').forEach(b=> b.onclick = ()=>{
-    const t = b.dataset.exTag;
-    if(exploreTags.has(t)) exploreTags.delete(t); else exploreTags.add(t);
-    renderExploreTags(); runExploreSearch();
+/* Categorías grandes: al tocar una, salen los platos de ese tipo (primero
+   de tus amigos y luego del resto). Cuenta la etiqueta del plato y, para
+   carne y pescado, también si lleva un ingrediente de ese tipo. */
+const MEAT_WORDS = ['carne','pollo','pavo','ternera','vaca','buey','cerdo','lomo','solomillo','chuleta','costilla','jamon','bacon','beicon','panceta','chorizo','salchichon','salchicha','longaniza','butifarra','morcilla','cordero','conejo','pato','hamburguesa','albondiga','entrecot','secreto iberico','pechuga','muslo','alita','fuet','sobrasada','codillo','rabo','higado','cabrito','jabali','ciervo','pepperoni','mortadela','kebab','carrillera','magro','picada'];
+const FISH_WORDS = ['pescado','merluza','salmon','atun','bacalao','dorada','lubina','sardina','boqueron','anchoa','caballa','rape','rodaballo','trucha','lenguado','emperador','pez espada','gamba','langostino','mejillon','almeja','calamar','sepia','pulpo','chipiron','berberecho','navaja','vieira','cigala','bogavante','langosta','cangrejo','surimi','marisco','gula','pota','perca','panga','tilapia','bonito','palometa','jurel','salmonete','besugo','mero','abadejo','carabinero','marrajo'];
+const EXPLORE_CATS = [
+  { k:'desayuno', label:'Desayuno', color:'#e8930c', tags:['Desayuno'], icon:'<path d="M4 9.5h12v4.5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M16 11h1.6a2.4 2.4 0 0 1 0 4.8H16"/><path d="M8 3.5c-.7.9-.7 1.8 0 2.7M12 3.5c-.7.9-.7 1.8 0 2.7"/>' },
+  { k:'comida', label:'Comida', color:'#e8590c', tags:['Comida'], icon:'<circle cx="12.5" cy="12" r="6"/><circle cx="12.5" cy="12" r="3.2"/><path d="M2.5 3v5.3a1.25 1.25 0 0 0 2.5 0V3M3.75 3v18"/><path d="M21.5 21V3c-1.6 1-2.2 3-2.2 6.2 0 2.2.9 3 2.2 3"/>' },
+  { k:'cena', label:'Cena', color:'#4c4fd6', tags:['Cena'], icon:'<path d="M19.5 14.6A8 8 0 1 1 9.4 4.5a6.4 6.4 0 0 0 10.1 10.1z"/><path d="M17 3.5v3M15.5 5h3"/>' },
+  { k:'vegano', label:'Vegano', color:'#2f9e44', tags:['Vegano'], icon:'<path d="M5 19C5 10.5 10 5 20 4c-.7 10-6.5 15-15 15z"/><path d="M5 19 13.5 10.5"/>' },
+  { k:'carne', label:'Carne', color:'#c92a2a', tags:['Carne'], words:MEAT_WORDS, not:['Vegano','Vegetariano'], icon:'<ellipse cx="15" cy="9" rx="6" ry="4.8" transform="rotate(-45 15 9)"/><path d="M11 13 6.6 17.4"/><circle cx="5" cy="17.2" r="1.6"/><circle cx="6.8" cy="19" r="1.6"/>' },
+  { k:'pescado', label:'Pescado', color:'#1c7ed6', tags:['Pescado'], words:FISH_WORDS, not:['Vegano','Vegetariano'], icon:'<path d="M6.5 12c2.5-3.5 5.5-5 8.5-5 2.8 0 5 2 6.5 5-1.5 3-3.7 5-6.5 5-3 0-6-1.5-8.5-5z"/><path d="M6.5 12 2.5 8.5v7z"/><circle cx="17" cy="11" r=".6"/>' },
+  { k:'postres', label:'Postres', color:'#d6336c', tags:['Postre'], icon:'<path d="M5 12h14l-2 8H7z"/><path d="M10 12l.5 8M14 12l-.5 8"/><path d="M5 12a3 3 0 0 1 1.6-5.4 5.5 5.5 0 0 1 10.8 0A3 3 0 0 1 19 12"/><path d="M12 2.8v1.4"/>' },
+];
+let exploreCat = null; // clave de la categoría elegida (o null)
+function exploreCatDef(){ return EXPLORE_CATS.find(c=> c.k===exploreCat) || null; }
+const normTag = (t)=> stripAccents(String(t||'').toLowerCase()).trim();
+let catRegsCache = {};
+function dishInCat(d, cat){
+  if(!cat) return true;
+  const tags = (d.tags||[]).map(normTag);
+  if((cat.not||[]).some(t=> tags.includes(normTag(t)))) return false;
+  if(cat.tags.some(t=> tags.includes(normTag(t)))) return true;
+  if(!cat.words) return false;
+  const regs = catRegsCache[cat.k] || (catRegsCache[cat.k] = cat.words.map(exploreTermRegex).filter(Boolean));
+  return dishMatchCount(d, regs) > 0;
+}
+function renderExploreCats(){
+  const box = $('#explore-cats');
+  box.innerHTML = EXPLORE_CATS.map(c=> `<button type="button" class="ex-cat" style="--cat:${c.color}" data-ex-cat="${c.k}">${c.label}<svg viewBox="0 0 24 24" aria-hidden="true">${c.icon}</svg></button>`).join('');
+  box.querySelectorAll('[data-ex-cat]').forEach(b=> b.onclick = ()=>{
+    exploreCat = b.dataset.exCat;
+    renderExploreChips(); runExploreSearch();
   });
 }
 let exploreFriendDishes = null; // se carga al entrar en la sección
@@ -9216,8 +9236,8 @@ function dishMatchCount(dish, regs){
   return regs.filter(r=> r.test(title) || tags.some(t=> r.test(t)) || names.some(n=> r.test(n))).length;
 }
 async function openExploreSection(){
+  if(!$('#explore-cats').children.length) renderExploreCats();
   renderExploreChips();
-  renderExploreTags();
   if(exploreFriendDishes===null) await loadExploreFriendDishes();
   runExploreSearch();
 }
@@ -9231,9 +9251,11 @@ async function loadExploreFriendDishes(){
   exploreFriendDishes = data||[];
 }
 function renderExploreChips(){
-  $('#explore-chips').innerHTML = exploreTerms.map((t, i)=>
+  const cat = exploreCatDef();
+  $('#explore-chips').innerHTML = (cat ? `<button type="button" class="missing-chip cat-chip" style="--cat:${cat.color}" data-explore-cat-del>${cat.label}<span class="explore-chip-x">×</span></button>` : '') + exploreTerms.map((t, i)=>
     `<button type="button" class="missing-chip in-cart" data-explore-del="${i}">${escapeHtml(t)}<span class="explore-chip-x">×</span></button>`).join('');
   $all('[data-explore-del]').forEach(b=> b.onclick = ()=>{ exploreTerms.splice(Number(b.dataset.exploreDel), 1); renderExploreChips(); runExploreSearch(); });
+  $all('[data-explore-cat-del]').forEach(b=> b.onclick = ()=>{ exploreCat = null; renderExploreChips(); runExploreSearch(); });
 }
 function addExploreTerm(raw){
   const t = (raw||'').trim().toLowerCase();
@@ -9271,13 +9293,12 @@ function exploreMerge(friendRes, publicRes){
 async function runExploreSearch(){
   const box = $('#explore-results');
   const seq = ++exploreSeq;
-  const tagList = [...exploreTags];
-  const hasTags = (d)=> tagList.every(t=> (d.tags||[]).includes(t));
-  if(!exploreTerms.length && !tagList.length){
-    exploreList = [];
-    box.innerHTML = '<div class="empty-hint">Escribe un plato o uno o varios ingredientes, o elige etiquetas, para ver qué recetas encajan.</div>';
-    return;
-  }
+  const cat = exploreCatDef();
+  const hasTags = (d)=> dishInCat(d, cat);
+  const idle = !exploreTerms.length && !cat;
+  $('#explore-cats').classList.toggle('hidden', !idle);
+  $('#explore-results-card').classList.toggle('hidden', idle);
+  if(idle){ exploreList = []; box.innerHTML = ''; return; }
   const regs = exploreTerms.map(exploreTermRegex).filter(Boolean);
   const total = regs.length;
   // Tus amigos: al momento (ya están en el móvil)
@@ -9290,9 +9311,11 @@ async function runExploreSearch(){
   exploreList = exploreMerge(friendRes, null);
   renderExploreList(box, total, true);
   // La comunidad (base de datos)
-  let { data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms, p_tags: tagList });
-  if(error && /p_tags|function/.test(error.message||'')){
-    ({ data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms }));
+  const catArgs = cat ? { p_cat_tags: cat.tags, p_cat_words: cat.words || [], p_cat_not: cat.not || [] } : {};
+  let { data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms, p_tags: [], ...catArgs });
+  if(error && /p_cat|function/.test(error.message||'')){
+    // Por si aún no se ha ejecutado el SQL nuevo: solo por la etiqueta.
+    ({ data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms, p_tags: cat ? cat.tags.slice(0, 1) : [] }));
   }
   if(seq!==exploreSeq) return; // llegó otra búsqueda más nueva mientras tanto
   if(error){ console.error(error); renderExploreList(box, total, false, true); return; }
@@ -9852,7 +9875,7 @@ $('#dish-cart-all').onclick = async ()=>{
     }).filter(Boolean);
     if(!items.length){ showToast('Este plato no tiene ingredientes.'); return; }
     const r = addDishToCart({ name: $('#dish-name').value.trim() || 'Receta', ingredients: items });
-    showToast(r.added ? `Añadidos ${r.added} ${r.added===1 ? 'ingrediente' : 'ingredientes'} al carrito${r.have ? ` · ${r.have} ya los tienes en la Nevera` : ''}` : 'Ya tienes todo en la Nevera');
+    showToast(r.added ? 'Añadido al carrito' : 'Ya lo tienes en la Nevera');
   } finally { delete btn.dataset.busy; }
 };
 
@@ -9919,18 +9942,11 @@ function toggleMenuDish(id){
     }
     m.ids = m.ids.filter(x=> x!==id); delete m.parts[id];
     saveMenu(m);
-    $('#menu-status').textContent = `Quitado «${dish.name}» del carrito`;
   } else {
     m.ids.push(id);
     const r = addDishToCart(dish, { used: m.used, source: dish.name });
     m.parts[id] = r.parts;
     saveMenu(m);
-    const n = dishCartItems(dish).length;
-    $('#menu-status').textContent = !n
-      ? `«${dish.name}» no tiene ingredientes`
-      : r.added
-        ? `«${dish.name}»: ${r.added} ${r.added===1 ? 'ingrediente' : 'ingredientes'} al carrito${r.have ? ` · ${r.have} ya en la Nevera` : ''}`
-        : `«${dish.name}»: ya lo tienes todo en la Nevera`;
   }
   onCartChanged();
 }
@@ -10016,7 +10032,6 @@ $('#menu-clear-btn').onclick = async ()=>{
   const m = loadMenu();
   if(!m.ids.length || !confirm('¿Quitar todos los platos? Se quitará del carrito lo que habían añadido.')) return;
   for(const id of m.ids.slice()) toggleMenuDish(id);
-  $('#menu-status').textContent = 'Platos quitados del carrito';
 };
 
 function renderCartList(){
@@ -10024,16 +10039,17 @@ function renderCartList(){
   const box = $('#cart-list');
   if(!box) return;
   if(!cartItems.length){
-    box.innerHTML = '<div class="empty-hint">Tu carrito está vacío. Búscalos arriba, o añádelos con el botón del carrito desde un plato o desde las sugerencias de la Nevera.</div>';
+    box.innerHTML = '<div class="empty-hint">Tu carrito está vacío.</div>';
     return;
   }
   box.innerHTML = cartItems.map(c=> `<div class="cart-row" data-cart-id="${c.id}">
     <div class="cart-row-info">
       <span class="cart-row-name">${escapeHtml(canonicalIngredientName(c.name))}</span>
-      ${c.source_dish_name ? `<span class="cart-row-sub"><i>${escapeHtml(c.source_dish_name)}</i></span>` : ''}
+      <span class="cart-row-qty">
+        <input type="number" inputmode="decimal" class="fridge-item-qty-input cart-qty" data-cart-qty="${c.id}" placeholder="Cant." value="${c.quantity!=null && c.quantity!=='' ? Math.round(Number(c.quantity)*100)/100 : ''}">
+        <span class="fridge-item-unit">${escapeHtml(c.unit || lookupDefaultUnit(c.name) || '')}</span>
+      </span>
     </div>
-    <input type="number" inputmode="decimal" class="fridge-item-qty-input cart-qty" data-cart-qty="${c.id}" placeholder="Cant." value="${c.quantity!=null && c.quantity!=='' ? Math.round(Number(c.quantity)*100)/100 : ''}">
-    <span class="fridge-item-unit">${escapeHtml(c.unit || lookupDefaultUnit(c.name) || '')}</span>
     <button type="button" class="btn-mini" data-cart-fridge="${c.id}">A la nevera</button>
     <button type="button" class="fridge-item-del" data-cart-del="${c.id}" aria-label="Eliminar">${ICON_TRASH}</button>
   </div>`).join('');
