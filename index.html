@@ -211,11 +211,16 @@ body.sec-pager main{padding-bottom:0;}
 .pager.np-dragging .pager-page{transition:none;}
 .pager-page > *{max-width:868px; margin-left:auto; margin-right:auto;}
 .explore-hint{margin:2px 4px 10px;}
+.explore-sep{font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; padding:10px 2px 4px;}
+.explore-sep:first-child{padding-top:0;}
+.explore-have{color:var(--accent); font-weight:700;}
+.copy-badge{display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:700; color:var(--muted); background:var(--card2); border:1px solid var(--border); border-radius:999px; padding:1px 7px; margin-left:4px;}
+.copy-badge svg{width:11px; height:11px;}
 @media (min-width:1024px){
   body.sec-despensa .appbar .np-tabs, body.sec-explorar .appbar .np-tabs{margin:0 auto; max-width:560px;}
 }
 /* Explorar tiene 3 pestañas; en "Gente" el buscador de ingredientes se recoge. */
-#ex-ink{width:calc((100% - 14px) / 3);}
+#ex-ink{width:calc(50% - 5px);}
 #section-explorar .pager-top{max-height:420px; transition:max-height .28s cubic-bezier(.32,.72,0,1), opacity .2s, padding .28s; overflow:hidden;}
 body.ex-people #section-explorar .pager-top{max-height:0; opacity:0; padding-top:0; padding-bottom:0;}
 /* Ajustes: fila que lleva a otra pantalla (como en los ajustes del iPhone) */
@@ -1026,7 +1031,12 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .avatar-wrap img{width:100%; height:100%; object-fit:cover;}
 .avatar-placeholder{font-size:30px; font-weight:800; color:var(--accent);}
 .settings-row{display:flex; align-items:center; justify-content:space-between; gap:12px;}
-.switch{width:46px; height:28px; border-radius:999px; background:var(--card2); border:1px solid var(--border); position:relative; flex-shrink:0;}
+.switch{width:46px; height:28px; border-radius:999px; background:var(--card2); border:1px solid var(--border); position:relative; flex-shrink:0;
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent; transition:background-color .18s ease, border-color .18s ease;}
+.switch:active::after{width:26px;}
+.switch.on:active::after{transform:translateX(14px);}
+.settings-link{touch-action:manipulation; -webkit-tap-highlight-color:transparent;}
+.settings-link:active{opacity:.6;}
 .switch::after{content:''; position:absolute; top:2px; left:2px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .18s ease;}
 .switch.on{background:var(--accent); border-color:var(--accent);}
 .switch.on::after{transform:translateX(18px);}
@@ -1615,9 +1625,8 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <span class="np-ink" id="np-ink"></span>
       </div>
     <div class="np-tabs" id="ex-tabs" role="tablist">
-        <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.2 3-5 6-5s5.4 1.8 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.6c2.4.1 4 1.6 4.5 4.4"/></svg><span>Amigos</span></button>
-        <button type="button" class="np-tab" data-np="1" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></svg><span>Público</span></button>
-        <button type="button" class="np-tab" data-np="2" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><span>Gente</span></button>
+        <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M2.5 11h19"/><path d="M8 3.5c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3.5M16 3.5c0 1.5 1 1.5 1 3"/></svg><span>Platos</span></button>
+        <button type="button" class="np-tab" data-np="1" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.2 3-5 6-5s5.4 1.8 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16.5 14.6c2.4.1 4 1.6 4.5 4.4"/></svg><span>Gente</span></button>
         <span class="np-ink" id="ex-ink"></span>
       </div>
     <button type="button" id="ab-new-chat" class="ab-btn ab-new-chat" aria-label="Nuevo mensaje"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
@@ -1797,7 +1806,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div class="pager-top">
         <div class="card">
           <div class="ingredient-name-wrap explore-input-wrap">
-            <input type="search" id="explore-input" name="nf-explore-q" placeholder="Añade ingredientes: pollo, arroz…"
+            <input type="search" id="explore-input" name="nf-explore-q" placeholder="Busca un plato o ingredientes: curry, pollo…"
               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
             <div class="ingredient-suggest hidden" id="explore-suggest"></div>
           </div>
@@ -1806,13 +1815,9 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         </div>
       </div>
       <div class="pager" id="ex-pager">
-        <div class="pager-page" id="ex-page-amigos">
-          <div class="settings-hint explore-hint">Platos de tus amigos con perfil público que llevan esos ingredientes.</div>
-          <div class="card"><div id="explore-results-amigos"></div></div>
-        </div>
-        <div class="pager-page" id="ex-page-publico">
-          <div class="settings-hint explore-hint">Platos de cualquier usuario de NutriFit que lo permita, sin nombres (anónimo).</div>
-          <div class="card"><div id="explore-results-publico"></div></div>
+        <div class="pager-page" id="ex-page-platos">
+          <div class="settings-hint explore-hint">Primero, los de tus amigos; después, los de toda la comunidad (sin nombres). Cada receta sale una sola vez: la original.</div>
+          <div class="card"><div id="explore-results"></div></div>
         </div>
         <div class="pager-page" id="ex-page-gente">
       <div class="card">
@@ -2639,7 +2644,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.25-5';
+const APP_VERSION = '2026.10.26-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -3420,8 +3425,8 @@ $('#settings-logout-btn').onclick = async ()=>{
 var PAGERS = {
   despensa: { pager:'#np-pager', tabs:'#np-tabs .np-tab', ink:'#np-ink', idx:0, pages:2,
     onChange(i){ if(i===1) renderCartList(); else renderNeveraSuggestions(); } },
-  explorar: { pager:'#ex-pager', tabs:'#ex-tabs .np-tab', ink:'#ex-ink', idx:0, pages:3,
-    onChange(i){ if(i<2) exploreMode = i===1 ? 'publico' : 'amigos'; if(i===2) renderFriendsList(); } },
+  explorar: { pager:'#ex-pager', tabs:'#ex-tabs .np-tab', ink:'#ex-ink', idx:0, pages:2,
+    onChange(i){ if(i===1) renderFriendsList(); } },
   settings: { pager:'#set-pager', idx:0, pages:2, noForwardSwipe:true,
     onChange(i){ if(i===0){ const a = document.activeElement; if(a && a.closest && a.closest('#set-sub') && a.blur) a.blur(); $('#password-msg').classList.add('hidden'); } } },
 };
@@ -3626,10 +3631,11 @@ function dishCardHtml(d, eager){
       </div>
       <div class="dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
-        ${d.quality ? `<span class="quality-badge quality-${d.quality}">${QUALITY_LABELS[d.quality]||d.quality}</span>` : ''}
+        ${d.quality ? `<span class="quality-badge quality-${d.quality}">${QUALITY_LABELS[d.quality]||d.quality}</span>` : ''}${isCopyDish(d) ? `<span class="copy-badge" title="Receta copiada${d.shared_from_username ? ' de @'+escapeHtml(d.shared_from_username) : ''}">${ICON_COPY_SM}Copia</span>` : ''}
       </div>
     </div>`;
 }
+const ICON_COPY_SM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2.5"/><path d="M16 8V5.5A2.5 2.5 0 0 0 13.5 3h-8A2.5 2.5 0 0 0 3 5.5v8A2.5 2.5 0 0 0 5.5 16H8"/></svg>';
 function folderCardHtml(f){
   const inside = dishes.filter(d=>d.folder_id===f.id);
   const cells = [0,1,2,3].map(i=>{
@@ -3910,6 +3916,13 @@ $('#gallery-delete-btn').onclick = async ()=>{
 let duplicateInFlight = false;
 $('#gallery-duplicate-btn').onclick = async ()=>{
   if(!selectedDishIds.size || duplicateInFlight) return;
+  const copies = dishes.filter(d=> selectedDishIds.has(d.id) && isCopyDish(d));
+  if(copies.length){
+    alert(copies.length===selectedDishIds.size
+      ? 'Las recetas copiadas de otra persona no se pueden duplicar. Solo puedes duplicar las tuyas.'
+      : 'Has elegido alguna receta copiada de otra persona: esas no se pueden duplicar. Quítalas de la selección y vuelve a probar.');
+    return;
+  }
   duplicateInFlight = true;
   const btn = $('#gallery-duplicate-btn');
   btn.textContent = 'Duplicando…';
@@ -3917,7 +3930,7 @@ $('#gallery-duplicate-btn').onclick = async ()=>{
     const src = dishes.filter(d=> selectedDishIds.has(d.id));
     const t0 = Date.now();
     const rows = src.map((d, i)=>{
-      const { id, created_at, updated_at, ...rest } = d;
+      const { id, created_at, updated_at, origin_dish_id, ...rest } = d;
       return { ...rest, id: uuid(), user_id: currentUser.id, name: `${d.name || 'Plato'} (copia)`, created_at: new Date(t0 + i).toISOString() };
     });
     const { error } = await sb.from('dishes').insert(rows);
@@ -6406,49 +6419,36 @@ $('#toggle-dark-btn').onclick = ()=>{
   try{ localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); }catch(e){}
 };
 
-$('#toggle-fitness-btn').onclick = async ()=>{
-  const newVal = !currentUser.show_fitness;
-  const { error } = await sb.from('profiles').update({ show_fitness: newVal }).eq('id', currentUser.id);
-  if(error){ alert(error.message); return; }
-  currentUser.show_fitness = newVal;
+/* Los interruptores cambian AL INSTANTE y se guardan por detrás (antes
+   esperaban a Supabase y se notaba el retraso). Si falla, vuelven solos. */
+const profileFlagSeq = {};
+function toggleProfileFlag(field, apply){
+  const newVal = !currentUser[field];
+  currentUser[field] = newVal;
+  apply();
+  const seq = profileFlagSeq[field] = (profileFlagSeq[field] || 0) + 1;
+  sb.from('profiles').update({ [field]: newVal }).eq('id', currentUser.id).then(({ error })=>{
+    if(!error){ if(currentUser.profileRow) currentUser.profileRow[field] = newVal; saveBootCache(); return; }
+    if(seq!==profileFlagSeq[field]) return; // ya hay un cambio más nuevo
+    currentUser[field] = !newVal; apply();
+    showToast('No se ha podido guardar: ' + (error.message || 'sin conexión'));
+  });
+}
+$('#toggle-fitness-btn').onclick = ()=> toggleProfileFlag('show_fitness', ()=>{
   renderDrawerProfile();
   applyFitnessVisibility();
-  updateFitnessSettingsExtras(); // dishes ya están cargados a estas alturas, a diferencia del arranque
-};
-
-$('#toggle-public-btn').onclick = async ()=>{
-  const newVal = !currentUser.is_public;
-  const { error } = await sb.from('profiles').update({ is_public: newVal }).eq('id', currentUser.id);
-  if(error){ alert(error.message); return; }
-  currentUser.is_public = newVal;
-  renderDrawerProfile();
-};
-$('#toggle-explore-btn').onclick = async ()=>{
-  const newVal = !currentUser.share_explore;
-  const { error } = await sb.from('profiles').update({ share_explore: newVal }).eq('id', currentUser.id);
-  if(error){ alert(error.message); return; }
-  currentUser.share_explore = newVal;
-  renderDrawerProfile();
-};
-$('#toggle-macros-btn').onclick = async ()=>{
-  const newVal = !currentUser.show_macros;
-  const { error } = await sb.from('profiles').update({ show_macros: newVal }).eq('id', currentUser.id);
-  if(error){ alert(error.message); return; }
-  currentUser.show_macros = newVal;
+  updateFitnessSettingsExtras();
+});
+$('#toggle-public-btn').onclick = ()=> toggleProfileFlag('is_public', renderDrawerProfile);
+$('#toggle-explore-btn').onclick = ()=> toggleProfileFlag('share_explore', renderDrawerProfile);
+$('#toggle-macros-btn').onclick = ()=> toggleProfileFlag('show_macros', ()=>{
   applyFitnessVisibility();
   // Si la ficha de un plato está abierta ahora mismo, refleja el cambio al instante.
-  if(!modalHidden($('#dish-modal'))){
-    $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
-  }
-};
-$('#toggle-suggest-btn').onclick = async ()=>{
+  if(!modalHidden($('#dish-modal'))) $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
+});
+$('#toggle-suggest-btn').onclick = ()=>{
   if($('#toggle-suggest-btn').classList.contains('switch-disabled')) return;
-  const newVal = !currentUser.suggest_meals;
-  const { error } = await sb.from('profiles').update({ suggest_meals: newVal }).eq('id', currentUser.id);
-  if(error){ alert(error.message); return; }
-  currentUser.suggest_meals = newVal;
-  updateFitnessSettingsExtras();
-  renderWeekBoard();
+  toggleProfileFlag('suggest_meals', ()=>{ updateFitnessSettingsExtras(); renderWeekBoard(); });
 };
 
 /* ===================== SOCIAL ===================== */
@@ -6834,6 +6834,7 @@ async function addSharedDish(sharedId){
     if(!shared) return;
     const d = shared.dish_snapshot || {};
     const { error } = await insertDishSafe({
+      origin_dish_id: d.origin_dish_id || undefined,
       id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
       image_url: d.image_url||null, image_urls: dishPhotoList(d), steps: Array.isArray(d.steps) ? d.steps : [], ingredients: d.ingredients||[], description: d.description||'',
       calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
@@ -7159,15 +7160,27 @@ function renderFriendProfileBody(){
 // y el estado de las calorías; si aún no está el SQL de esta versión, sin eso.
 async function insertDishSafe(row, src){
   src = src || {};
+  if(row.origin_dish_id===undefined) delete row.origin_dish_id;
   const full = { ...row, tags: Array.isArray(src.tags) ? src.tags : [],
     kcal_manual: src.kcal_manual!==undefined ? !!src.kcal_manual : src.calories!=null,
     macros_manual: src.macros_manual!==undefined ? !!src.macros_manual : [src.protein_g, src.carbs_g, src.fat_g, src.fiber_g].some(v=> v!=null) };
   let res = await sb.from('dishes').insert(full);
+  if(res.error && /origin_dish_id/.test(res.error.message||'')){ // aún sin el SQL de originales
+    delete full.origin_dish_id; delete row.origin_dish_id;
+    res = await sb.from('dishes').insert(full);
+  }
   if(res.error && /tags|kcal_manual|macros_manual/.test(res.error.message||'')) res = await sb.from('dishes').insert(row);
   return res;
 }
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// La receta original de la que viene algo (para no tenerla dos veces).
+function originOf(d, fallbackId){ return (d && d.origin_dish_id) || (d && UUID_RE.test(String(d.id||'')) ? d.id : null) || fallbackId || null; }
+function alreadyHave(originId){ return !!originId && dishes.some(x=> dishOriginKey(x)===originId); }
 async function addFriendDishToRepo(dish, fromUsername){
+  const origin = originOf(dish);
+  if(alreadyHave(origin)){ alert('Ya tienes esta receta en tu perfil.'); return; }
   const { error } = await insertDishSafe({
+    origin_dish_id: origin || undefined,
     id: uuid(), user_id: currentUser.id, name: dish.name||'Receta',
     image_url: dish.image_url||null, image_urls: dishPhotoList(dish), steps: Array.isArray(dish.steps) ? dish.steps : [], ingredients: dish.ingredients||[], description: dish.description||'',
     calories: dish.calories||null, quality: dish.quality||null, duration_min: dish.duration_min||null,
@@ -7192,7 +7205,8 @@ function dishSnapshotOf(dish){
     description: dish.description, calories: dish.calories, quality: dish.quality,
     duration_min: dish.duration_min, servings_base: dish.servings_base || 1,
     protein_g: dish.protein_g, carbs_g: dish.carbs_g, fat_g: dish.fat_g, fiber_g: dish.fiber_g,
-    tags: Array.isArray(dish.tags) ? dish.tags : [], kcal_manual: dish.kcal_manual, macros_manual: dish.macros_manual
+    tags: Array.isArray(dish.tags) ? dish.tags : [], kcal_manual: dish.kcal_manual, macros_manual: dish.macros_manual,
+    origin_dish_id: originOf(dish), shared_from_username: dish.shared_from_username || null
   };
 }
 function renderShareTargets(){
@@ -7614,7 +7628,7 @@ function renderNewChat(){
     $('#nc-find').onclick = ()=>{
       hideModal($('#new-chat-modal'));
       navigate('explorar');
-      setPagerPage('explorar', 2, false);
+      setPagerPage('explorar', 1, false);
       const inp = $('#social-search'); inp.value = raw; inp.dispatchEvent(new Event('input'));
     };
   } else {
@@ -8938,7 +8952,10 @@ async function addWallDishToRepo(postId){
   const post = wallPosts.find(p=> p.id===postId);
   if(!post) return;
   const d = post.dish_snapshot || {};
+  const origin = d.origin_dish_id || post.dish_id || null;
+  if(post.user_id!==currentUser.id && alreadyHave(origin)){ alert('Ya tienes esta receta en tu perfil.'); return; }
   const { error } = await insertDishSafe({
+    origin_dish_id: origin || undefined,
     id: uuid(), user_id: currentUser.id, name: d.name||'Receta',
     image_url: d.image_url||null, image_urls: dishPhotoList(d), steps: Array.isArray(d.steps) ? d.steps : [], ingredients: d.ingredients||[], description: d.description||'',
     calories: d.calories||null, quality: d.quality||null, duration_min: d.duration_min||null,
@@ -9168,13 +9185,11 @@ function renderNeveraSuggestions(){
 }
 
 /* ===================== EXPLORAR ===================== */
-// Buscar platos por ingredientes: en "Amigos", los repositorios de tus amigos
-// con perfil público (las reglas de la base de datos ya dejan fuera los
-// perfiles privados y las carpetas privadas); en "Público", los platos de
-// cualquier usuario de la app que lo permita, SIN nombre (anónimo), vía
-// explore_public_dishes(). Mismo criterio de búsqueda en los dos: palabra
-// completa, sin tildes, singular/plural ("huevos" encuentra "huevo").
-let exploreMode = 'amigos';
+// Buscar platos por nombre o ingredientes: primero los repositorios de tus
+// amigos (las reglas de la base de datos ya dejan fuera los perfiles privados
+// y las carpetas privadas) y debajo los de toda la comunidad que lo permita,
+// SIN nombre (anónimo), vía explore_public_dishes(). Palabra completa, sin
+// tildes, singular/plural ("huevos" encuentra "huevo").
 let exploreTerms = [];
 let exploreTags = new Set();
 function renderExploreTags(){
@@ -9186,7 +9201,6 @@ function renderExploreTags(){
   });
 }
 let exploreFriendDishes = null; // se carga al entrar en la sección
-let exploreResultsBy = { amigos: [], publico: [] };
 let exploreSeq = 0;
 function exploreTermRegex(term){
   let t = stripAccents((term||'').toLowerCase()).replace(/[^a-z0-9 ]/g, '').trim();
@@ -9194,9 +9208,12 @@ function exploreTermRegex(term){
   t = t.replace(/s$/, '');
   return new RegExp('(^| )' + t + '(e?s)?( |$)');
 }
+// Cada palabra cuenta si sale en el nombre del plato, en sus etiquetas o en un ingrediente.
 function dishMatchCount(dish, regs){
-  const names = (dish.ingredients||[]).map(i=> stripAccents(normalizeIngredientItem(i).name.toLowerCase()));
-  return regs.filter(r=> names.some(n=> r.test(n))).length;
+  const norm = (t)=> stripAccents(String(t||'').toLowerCase()).replace(/[^a-z0-9 ]/g, ' ');
+  const names = (dish.ingredients||[]).map(i=> norm(normalizeIngredientItem(i).name));
+  const title = norm(dish.name), tags = (dish.tags||[]).map(norm);
+  return regs.filter(r=> r.test(title) || tags.some(t=> r.test(t)) || names.some(n=> r.test(n))).length;
 }
 async function openExploreSection(){
   renderExploreChips();
@@ -9227,75 +9244,95 @@ function addExploreTerm(raw){
   renderExploreChips();
   runExploreSearch();
 }
-// Rellena las dos pantallas a la vez (Amigos y Público), así al deslizar de
-// una a otra los resultados ya están ahí.
+/* Una sola lista: primero lo de tus amigos y después lo de la comunidad
+   (anónimo). Cada receta sale UNA vez: si varias personas tienen copias de
+   la misma, se enseña la original (o, si no se puede ver, una sola copia).
+   Las tuyas no salen; las que ya copiaste salen marcadas "Ya la tienes". */
+let exploreList = [];
+function dishOriginKey(d){ return (d && (d.origin_dish_id || d.id)) || null; }
+function isCopyDish(d){ return !!(d && (d.origin_dish_id || d.shared_from_username || d.is_copy)); }
+function exploreMerge(friendRes, publicRes){
+  const mineOwn = new Set(dishes.filter(d=> !isCopyDish(d)).map(d=> d.id));
+  const mineHave = new Set(dishes.map(dishOriginKey));
+  const groups = new Map(), order = [];
+  const take = (r, src)=>{
+    const k = dishOriginKey(r.dish);
+    if(!k || mineOwn.has(k)) return; // es tuya
+    const orig = !isCopyDish(r.dish);
+    const g = groups.get(k);
+    if(!g){ const ng = { ...r, src, orig, key:k, have: mineHave.has(k) }; groups.set(k, ng); order.push(k); return; }
+    if(orig && !g.orig) Object.assign(g, r, { orig:true, src: g.src, from: g.from || r.from }); // se queda la original, en su sitio (y con tu amigo si venía de él)
+  };
+  friendRes.forEach(r=> take(r, 'amigos'));
+  (publicRes||[]).forEach(r=> take(r, 'publico'));
+  const all = order.map(k=> groups.get(k));
+  return all.filter(g=> g.src==='amigos').concat(all.filter(g=> g.src==='publico'));
+}
 async function runExploreSearch(){
-  const boxA = $('#explore-results-amigos'), boxP = $('#explore-results-publico');
+  const box = $('#explore-results');
   const seq = ++exploreSeq;
   const tagList = [...exploreTags];
   const hasTags = (d)=> tagList.every(t=> (d.tags||[]).includes(t));
   if(!exploreTerms.length && !tagList.length){
-    exploreResultsBy = { amigos: [], publico: [] };
-    const empty = '<div class="empty-hint">Escribe uno o varios ingredientes, o elige etiquetas, para ver qué platos encajan.</div>';
-    boxA.innerHTML = empty; boxP.innerHTML = empty;
+    exploreList = [];
+    box.innerHTML = '<div class="empty-hint">Escribe un plato o uno o varios ingredientes, o elige etiquetas, para ver qué recetas encajan.</div>';
     return;
   }
   const regs = exploreTerms.map(exploreTermRegex).filter(Boolean);
   const total = regs.length;
-  // Amigos (en el móvil, al momento)
-  if(!friends.length){
-    exploreResultsBy.amigos = [];
-    boxA.innerHTML = '<div class="empty-hint">Todavía no tienes amigos. Desliza a "Público".</div>';
-  } else {
-    const byId = Object.fromEntries(friends.map(f=> [f.id, f]));
-    exploreResultsBy.amigos = (exploreFriendDishes||[])
-      .filter(hasTags)
-      .map(d=> ({ dish:d, matched: dishMatchCount(d, regs), from: byId[d.user_id] }))
-      .filter(r=> r.matched>0 || !regs.length)
-      .sort((a,b)=> b.matched-a.matched);
-    renderExploreList('amigos', boxA, total);
-  }
-  // Público (base de datos)
-  boxP.innerHTML = '<div class="empty-hint">Buscando…</div>';
+  // Tus amigos: al momento (ya están en el móvil)
+  const byId = Object.fromEntries(friends.map(f=> [f.id, f]));
+  const friendRes = (exploreFriendDishes||[])
+    .filter(hasTags)
+    .map(d=> ({ dish:d, matched: dishMatchCount(d, regs), from: byId[d.user_id] }))
+    .filter(r=> r.matched>0 || !regs.length)
+    .sort((a,b)=> b.matched - a.matched || (isCopyDish(a.dish) - isCopyDish(b.dish)));
+  exploreList = exploreMerge(friendRes, null);
+  renderExploreList(box, total, true);
+  // La comunidad (base de datos)
   let { data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms, p_tags: tagList });
-  if(error && tagList.length >= 0 && /p_tags|function/.test(error.message||'')){
-    // Aún no está el SQL de las etiquetas: se busca como antes y se filtra aquí.
+  if(error && /p_tags|function/.test(error.message||'')){
     ({ data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms }));
   }
   if(seq!==exploreSeq) return; // llegó otra búsqueda más nueva mientras tanto
-  if(error){ boxP.innerHTML = '<div class="empty-hint">No se pudo buscar ahora mismo.</div>'; console.error(error); return; }
-  exploreResultsBy.publico = (data||[]).filter(hasTags).map(d=> ({ dish:d, matched: d.matched, from: null }));
-  renderExploreList('publico', boxP, total);
+  if(error){ console.error(error); renderExploreList(box, total, false, true); return; }
+  const publicRes = (data||[]).filter(hasTags).map(d=> ({ dish:d, matched: d.matched, from: null }));
+  exploreList = exploreMerge(friendRes, publicRes);
+  renderExploreList(box, total, false);
 }
-function renderExploreList(mode, box, total){
-  const list = exploreResultsBy[mode] || [];
-  if(!list.length){
-    box.innerHTML = '<div class="empty-hint">No hay platos con esos ingredientes todavía.</div>';
-    return;
-  }
-  box.innerHTML = list.map((r, i)=>{
-    const d = r.dish;
+function renderExploreList(box, total, loadingPublic, publicError){
+  const list = exploreList;
+  const friendsPart = list.filter(r=> r.src==='amigos'), pubPart = list.filter(r=> r.src==='publico');
+  const row = (r)=>{
+    const d = r.dish, i = list.indexOf(r);
     const who = r.from ? `<span class="profile-link"${profileAttr(r.from.id)}>@${escapeHtml(r.from.username)}</span>` : 'Comunidad';
     const match = total>1 && r.matched ? ` · <span class="explore-match">${r.matched} de ${total}</span>` : '';
-    return `<div class="shared-dish-row" data-explore-open="${mode}:${i}">
+    const mark = r.have ? ' · <span class="explore-have">Ya la tienes</span>' : (!r.orig ? ' · copia' : '');
+    return `<div class="shared-dish-row" data-explore-open="${i}">
       ${d.image_url ? `<img class="shared-dish-thumb" ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
       <div class="shared-dish-info">
         <span class="name">${escapeHtml(d.name||'Receta')}</span>
-        <span class="from">${who}${d.calories ? ' · '+d.calories+' kcal' : ''}${match}</span>
+        <span class="from">${who}${d.calories ? ' · '+d.calories+' kcal' : ''}${match}${mark}</span>
       </div>
     </div>`;
-  }).join('');
-  box.querySelectorAll('[data-explore-open]').forEach(row=> row.onclick = (e)=>{
+  };
+  let html = '';
+  if(friendsPart.length) html += `<div class="explore-sep">De tus amigos</div>` + friendsPart.map(row).join('');
+  if(pubPart.length) html += `<div class="explore-sep">De la comunidad</div>` + pubPart.map(row).join('');
+  if(loadingPublic) html += '<div class="empty-hint">Buscando en la comunidad…</div>';
+  else if(publicError) html += '<div class="empty-hint">No se ha podido buscar en la comunidad ahora mismo.</div>';
+  if(!list.length && !loadingPublic) html = '<div class="empty-hint">No hay recetas con eso todavía.</div>' + html;
+  box.innerHTML = html;
+  box.querySelectorAll('[data-explore-open]').forEach(el=> el.onclick = (e)=>{
     if(e.target.closest('.profile-link')) return;
-    const [m, i] = row.dataset.exploreOpen.split(':');
-    openExploreDishPreview(exploreResultsBy[m][Number(i)]);
+    openExploreDishPreview(exploreList[Number(el.dataset.exploreOpen)]);
   });
 }
 let previewingExplore = null;
 function openExploreDishPreview(r){
   if(!r) return;
-  const from = r.from ? r.from.username : null;
-  openDishPreview(r.dish, { fromUsername: from, onAdd: ()=> addFriendDishToRepo(r.dish, from) });
+  const from = r.from ? r.from.username : (r.dish.shared_from_username || null);
+  openDishPreview(r.dish, { fromUsername: r.from ? r.from.username : null, onAdd: r.have ? null : ()=> addFriendDishToRepo(r.dish, from) });
 }
 $('#explore-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addExploreTerm($('#explore-input').value); } });
 wireIngredientAutocomplete($('#explore-input'), $('#explore-suggest'), (name)=> addExploreTerm(name));
@@ -9328,7 +9365,7 @@ function setPagerPage(key, i, smooth){
   const p = $(P.pager); if(!p) return;
   setPagerPos(key, -i * (p.clientWidth || window.innerWidth), smooth!==false);
   if(P.tabs) $all(P.tabs).forEach(t=> t.classList.toggle('active', Number(t.dataset.np)===i));
-  if(key==='explorar') document.body.classList.toggle('ex-people', i===2);
+  if(key==='explorar') document.body.classList.toggle('ex-people', i===1);
   if(changed && P.onChange) P.onChange(i);
 }
 function despensaPage(){ return PAGERS.despensa.idx; }
