@@ -1091,8 +1091,13 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
   font-size:13px; font-weight:700; padding:4px;
 }
 .wall-action-btn svg{flex-shrink:0;}
-.wall-action-btn.liked{color:var(--bad);}
-.wall-action-btn.liked svg{fill:var(--bad); stroke:var(--bad);}
+.wall-action-btn.liked{color:var(--accent);}
+.wall-action-btn.liked svg .hat-body{fill:currentColor;}
+.wall-action-btn.liked svg .hat-line{stroke:var(--bg);}
+.wall-action-btn.cooked{color:var(--cook);}
+.wall-action-btn.cooked svg .pot-body{fill:currentColor;}
+.wall-action-btn.pop svg{animation:nf-pop .38s cubic-bezier(.3,1.6,.5,1);}
+@keyframes nf-pop{ 0%{ transform:scale(1); } 40%{ transform:scale(1.35); } 100%{ transform:scale(1); } }
 .wall-action-btn.wall-danger{color:var(--bad);}
 
 .wall-comment-row{display:flex; gap:9px; padding:8px 0; border-bottom:1px solid var(--border);}
@@ -1100,8 +1105,9 @@ span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; bo
 .wall-comment-body{flex:1; min-width:0; font-size:13px; line-height:1.4;}
 .wc-like-btn{flex-shrink:0; align-self:flex-start; margin-top:2px; background:none; padding:4px; color:var(--muted);}
 .wc-like-btn svg{width:14px; height:14px;}
-.wc-like-btn.liked{color:var(--bad);}
-.wc-like-btn.liked svg{fill:var(--bad); stroke:var(--bad);}
+.wc-like-btn.liked{color:var(--accent);}
+.wc-like-btn.liked svg .hat-body{fill:currentColor;}
+.wc-like-btn.liked svg .hat-line{stroke:var(--bg2);}
 .wc-likes{font-weight:700;}
 .wall-comment-user{font-weight:700; margin-right:6px;}
 .wall-comment-text{color:var(--text);}
@@ -1465,6 +1471,69 @@ body.sec-platos .ab-settings{display:flex; margin-left:8px;}
   main{padding-bottom:40px;}
   body.typing .tabbar{display:flex;}
 }
+
+/* ===================== COCINADOS Y RACHAS (estilo Strava) ===================== */
+:root{--cook:#f2701d;}
+body.no-cooks [data-wall-cook], body.no-cooks #ab-streak, body.no-cooks #create-cooked, body.no-cooks #dish-cooked-btn{display:none !important;}
+.wall-cooks-line{display:flex; align-items:center; gap:6px; background:none; padding:2px 14px 0; font-size:14px; color:var(--text); text-align:left;}
+.wall-cooks-line svg{width:16px; height:16px; color:var(--cook); flex-shrink:0;}
+.wall-cooks-line svg .pot-body{fill:currentColor;}
+.wall-cooks-line b{font-weight:700;}
+body.sec-muro .ab-streak{display:flex;}
+.ab-streak{width:auto; padding:0 6px; gap:2px; color:var(--muted); margin-left:4px;}
+.ab-streak svg{width:23px; height:23px;}
+.ab-streak b{font-size:16px; font-weight:800;}
+.ab-streak.on{color:var(--cook);}
+.ab-streak.on svg path{fill:currentColor;}
+.ab-streak.risk{color:var(--cook);}
+body.sec-muro .ab-title{position:absolute; left:50%; transform:translateX(-50%); pointer-events:none;}
+body.sec-muro .ab-chats{margin-left:auto;}
+.create-ic-cook{background:rgba(242,112,29,.13); color:var(--cook);}
+.dish-cooked-btn{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin:4px 0 12px; padding:13px; border-radius:14px;
+  background:rgba(242,112,29,.1); border:1px solid rgba(242,112,29,.35); color:var(--cook); font-size:16px; font-weight:800;}
+.dish-cooked-btn svg{width:22px; height:22px;}
+.dish-cooked-btn small{font-size:12.5px; font-weight:600; opacity:.85;}
+.dish-cooked-btn:active{transform:scale(.98);}
+.cooked-flame{display:flex; align-items:center; justify-content:center; gap:4px; color:var(--cook); margin:4px 0 10px; animation:nf-pop .5s cubic-bezier(.3,1.6,.5,1);}
+.cooked-flame svg{width:52px; height:52px;}
+.cooked-flame svg path{fill:currentColor;}
+.cooked-flame b{font-size:40px; font-weight:900; letter-spacing:-.02em;}
+.cook-done-btn{background:var(--cook) !important; color:#fff !important; margin-top:22px !important;}
+.cook-done-btn + .cook-end-btn{margin-top:12px; background:none; color:#fff; border:1px solid rgba(255,255,255,.4);}
+/* Pantalla "Tu racha" */
+.streak-hero{text-align:center; padding:8px 0 18px;}
+.streak-hero .sh-flame{display:inline-flex; align-items:center; gap:6px; color:var(--muted);}
+.streak-hero .sh-flame.on{color:var(--cook);}
+.streak-hero .sh-flame svg{width:56px; height:56px;}
+.streak-hero .sh-flame.on svg path{fill:currentColor;}
+.streak-hero .sh-n{font-size:54px; font-weight:900; letter-spacing:-.03em; line-height:1;}
+.streak-hero .sh-label{font-size:16px; font-weight:700; margin-top:4px;}
+.streak-hero .sh-sub{font-size:14px; color:var(--muted); margin-top:4px;}
+.stat-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-bottom:14px;}
+.stat-tile{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px 8px; text-align:center;}
+.stat-tile b{display:block; font-size:22px; font-weight:800; line-height:1.1;}
+.stat-tile span{display:block; font-size:11.5px; color:var(--muted); margin-top:3px; line-height:1.25;}
+.heat-wrap{display:flex; gap:6px;}
+.heat-days{display:grid; grid-template-rows:repeat(7, 1fr); gap:3px; font-size:9.5px; color:var(--muted); text-align:right;}
+.heat-days span{line-height:1; display:flex; align-items:center; justify-content:flex-end;}
+.heat{flex:1; display:grid; grid-auto-flow:column; grid-template-rows:repeat(7, 1fr); gap:3px;}
+.heat i{display:block; aspect-ratio:1/1; border-radius:3px; background:var(--card2); border:1px solid var(--border);}
+.heat i.l1{background:rgba(242,112,29,.35); border-color:transparent;}
+.heat i.l2{background:rgba(242,112,29,.65); border-color:transparent;}
+.heat i.l3{background:var(--cook); border-color:transparent;}
+.heat i.today{outline:2px solid var(--text); outline-offset:-1px;}
+.heat i.future{visibility:hidden;}
+.heat-legend{display:flex; align-items:center; justify-content:flex-end; gap:4px; font-size:11px; color:var(--muted); margin-top:8px;}
+.heat-legend i{width:11px; height:11px; border-radius:3px; display:inline-block; background:var(--card2); border:1px solid var(--border);}
+.heat-legend i.l1{background:rgba(242,112,29,.35); border-color:transparent;} .heat-legend i.l2{background:rgba(242,112,29,.65); border-color:transparent;} .heat-legend i.l3{background:var(--cook); border-color:transparent;}
+.cook-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border);}
+.cook-row:last-child{border-bottom:none;}
+.cook-row-ic{width:36px; height:36px; border-radius:10px; background:rgba(242,112,29,.12); color:var(--cook); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;}
+.cook-row-ic img{width:100%; height:100%; object-fit:cover;}
+.cook-row-ic svg{width:19px; height:19px;}
+.cook-row-txt{flex:1; min-width:0; font-size:14px; font-weight:700;}
+.cook-row-txt span{display:block; font-size:12px; color:var(--muted); font-weight:500;}
+.cook-row-date{font-size:12px; color:var(--muted); flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -1531,6 +1600,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
          (dcha., como en Instagram); en una pantalla "hija", flecha para volver y su título. -->
     <button type="button" id="ab-back" class="ab-btn ab-back" aria-label="Volver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg></button>
     <button type="button" id="ab-bell" class="ab-btn ab-bell" aria-label="Actividad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span id="ab-bell-badge" class="notif-badge hidden">0</span></button>
+    <button type="button" id="ab-streak" class="ab-btn ab-streak" aria-label="Tu racha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5c3.9 0 6.8-2.7 6.8-6.6 0-3.3-2.1-5.4-3.6-7.3-.4 1.7-1.4 2.7-2.6 3.1.3-3.4-1.2-6.3-3.9-8.2.1 3.2-1.3 5.2-2.8 7C4.7 11.1 5.2 13 5.2 14.9c0 3.9 2.9 6.6 6.8 6.6z"/></svg><b id="ab-streak-n">0</b></button>
     <div class="ab-title" id="ab-title">NutriFit</div>
     <span id="menu-notif-badge" class="notif-badge hidden" style="display:none">0</span>
     <div class="pf-bar" id="pf-bar">
@@ -1877,6 +1947,11 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div class="wall-more hidden" id="wall-more">Cargando más…</div>
     </section>
 
+    <!-- TU RACHA (la llama de Inicio): rachas, estadísticas y calendario -->
+    <section id="section-racha" class="app-section">
+      <div id="racha-body"></div>
+    </section>
+
     <!-- ACTIVIDAD (la campana): solicitudes, recetas recibidas y lo que ha pasado -->
     <section id="section-actividad" class="app-section">
       <div class="card">
@@ -2162,6 +2237,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button type="button" id="add-ingredient-btn" class="add-ingredient-btn">+ Añadir ingrediente</button>
     </div>
 
+  <button type="button" class="dish-cooked-btn hidden" id="dish-cooked-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path class="pot-body" d="M4.5 11h15v5.5a3.5 3.5 0 0 1-3.5 3.5H8a3.5 3.5 0 0 1-3.5-3.5z"/><path d="M2.5 11h19"/><path d="M9 7.5c0-1.2 1-1.4 1-2.6M14 7.5c0-1.2 1-1.4 1-2.6"/></svg><span>Lo he cocinado</span><small id="dish-cooked-count"></small></button>
   <div class="modal-actions">
       <button class="btn-secondary" id="dish-cancel-btn" style="flex:1; justify-content:center;">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -2473,6 +2549,10 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   <div class="modal-sheet create-sheet">
     <div class="sheet-grabber"></div>
     <div class="create-title">Crear</div>
+    <button type="button" class="create-opt" id="create-cooked">
+      <span class="create-ic create-ic-cook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path class="pot-body" d="M4.5 11h15v5.5a3.5 3.5 0 0 1-3.5 3.5H8a3.5 3.5 0 0 1-3.5-3.5z"/><path d="M2.5 11h19"/><path d="M9 7.5c0-1.2 1-1.4 1-2.6M14 7.5c0-1.2 1-1.4 1-2.6"/></svg></span>
+      <span class="create-txt"><b>Lo he cocinado</b><span>Apunta uno de tus platos y suma a tu racha</span></span>
+    </button>
     <button type="button" class="create-opt" id="create-dish">
       <span class="create-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14.5"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20"/><path d="M12 7v6M9 10h6"/></svg></span>
       <span class="create-txt"><b>Nueva receta</b><span>Añade un plato a tu perfil</span></span>
@@ -2485,11 +2565,22 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   </div>
 </div>
 
+<!-- ================= ¡APUNTADO! (después de "Lo he cocinado") ================= -->
+<div id="cooked-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card push-prompt-card">
+    <div class="cooked-flame"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5c3.9 0 6.8-2.7 6.8-6.6 0-3.3-2.1-5.4-3.6-7.3-.4 1.7-1.4 2.7-2.6 3.1.3-3.4-1.2-6.3-3.9-8.2.1 3.2-1.3 5.2-2.8 7C4.7 11.1 5.2 13 5.2 14.9c0 3.9 2.9 6.6 6.8 6.6z"/></svg><b id="cooked-n">1</b></div>
+    <div class="push-prompt-title" id="cooked-title">¡Apuntado!</div>
+    <div class="push-prompt-text" id="cooked-text"></div>
+    <button type="button" class="btn-primary" id="cooked-publish" style="width:100%; justify-content:center;">Publicarlo en el Muro</button>
+    <button type="button" class="push-prompt-no" id="cooked-ok">Listo</button>
+  </div>
+</div>
+
 <!-- ================= ELEGIR PLATO PARA PUBLICAR ================= -->
 <div id="pick-dish-modal" class="modal hidden">
   <div class="modal-sheet sheet-with-close pick-sheet">
     <button type="button" class="sheet-close-btn" id="pick-dish-close" aria-label="Cerrar"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
-    <div class="section-title">¿Qué plato publicas?</div>
+    <div class="section-title" id="pick-dish-title">¿Qué plato publicas?</div>
     <div style="margin-bottom:4px;"><input type="search" class="ep-input" id="pick-dish-search" placeholder="Busca un plato" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search"></div>
     <div id="pick-dish-list"></div>
   </div>
@@ -2513,7 +2604,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     <button type="button" class="sheet-close-btn" id="likers-close" aria-label="Cerrar">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
-    <div style="font-weight:700; margin-bottom:14px;">Me gusta</div>
+    <div style="font-weight:700; margin-bottom:14px;" id="likers-title">Me gusta</div>
     <div id="likers-list"></div>
   </div>
 </div>
@@ -2548,7 +2639,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.24-2';
+const APP_VERSION = '2026.10.25-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2641,7 +2732,11 @@ function hideModal(el){
 }
 function modalHidden(el){ return el.classList.contains('hidden') || el.classList.contains('closing'); }
 const ICON_PLATE = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>';
-const ICON_HEART = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+// Los "me gusta" son gorros de chef (estilo kudos de Strava).
+const ICON_HAT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path class="hat-body" d="M6.5 20v-5.5A4.2 4.2 0 0 1 5.6 6.3 5 5 0 0 1 12 3.2a5 5 0 0 1 6.4 3.1 4.2 4.2 0 0 1-.9 8.2V20z"/><path class="hat-line" d="M6.5 16.6h11"/></svg>';
+const ICON_HEART = ICON_HAT;
+const ICON_POT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path class="pot-body" d="M4.5 11h15v5.5a3.5 3.5 0 0 1-3.5 3.5H8a3.5 3.5 0 0 1-3.5-3.5z"/><path d="M2.5 11h19"/><path d="M9 7.5c0-1.2 1-1.4 1-2.6M14 7.5c0-1.2 1-1.4 1-2.6"/></svg>';
+const ICON_FLAME = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5c3.9 0 6.8-2.7 6.8-6.6 0-3.3-2.1-5.4-3.6-7.3-.4 1.7-1.4 2.7-2.6 3.1.3-3.4-1.2-6.3-3.9-8.2.1 3.2-1.3 5.2-2.8 7C4.7 11.1 5.2 13 5.2 14.9c0 3.9 2.9 6.6 6.8 6.6z"/></svg>';
 const ICON_SEND = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 3.5 10.5 13.5"/><path d="M21.5 3.5 14.5 21l-4-7.5-7.5-4z"/></svg>';
 const ICON_COMMENT = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>';
 const ICON_PLUS_CIRCLE = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>';
@@ -2942,7 +3037,7 @@ async function enterApp(profile, cache){
   currentSection = null;
   setSection('muro'); // se abre en Inicio (el Muro), como Strava
   if(cache) renderGallery();
-  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems(), loadCart(), loadChats(), loadMenuRemote(), loadActivity()]);
+  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems(), loadCart(), loadChats(), loadMenuRemote(), loadActivity(), loadMyCooks()]);
   if(currentSection==='muro') markWallSeen();
   await migrateLegacyIngredientsIfNeeded();
   backfillDishNutrition();
@@ -3003,6 +3098,7 @@ function refreshAllSocial(){
   lastResumeRefresh = Date.now();
   loadFriendshipsState(); loadSharedDishes(); loadChats(); loadWallFeed();
   loadCart(); loadMenuRemote(); // por si lo cambiaste en otro dispositivo
+  loadMyCooks(); // (y la racha cambia de día)
   if(openChatId && !modalHidden($('#chat-modal'))) loadChatMessages(openChatId);
 }
 document.addEventListener('visibilitychange', ()=>{
@@ -3063,6 +3159,7 @@ function subscribeLiveUpdates(){
       .on('postgres_changes', { event:'*', schema:'public', table:'wall_comment_likes' }, ()=> liveRefresh('wall', loadWallFeed, 400))
       .on('postgres_changes', { event:'DELETE', schema:'public', table:'wall_posts' }, ()=> liveRefresh('wall', loadWallFeed, 400))
       .on('postgres_changes', { event:'*', schema:'public', table:'shared_dishes' }, ()=> liveRefresh('shared', loadSharedDishes))
+      .on('postgres_changes', { event:'*', schema:'public', table:'cooks' }, ()=>{ liveRefresh('wall', loadWallFeed, 400); liveRefresh('cooks', loadMyCooks, 600); })
       // Carrito y platos marcados: cambios hechos desde tus otros dispositivos.
       .on('postgres_changes', { event:'*', schema:'public', table:'cart_menu', filter:`user_id=eq.${me}` }, payload=>{
         const n = payload && payload.new;
@@ -3340,6 +3437,7 @@ const NAV = {
   platos:    { tab:'perfil' },
   social:    { tab:'inicio', parent:'muro',   title:'Mensajes' },
   actividad: { tab:'inicio', parent:'muro',   title:'Actividad' },
+  racha:     { tab:'inicio', parent:'muro',   title:'Tu racha' },
   settings:  { tab:'perfil', parent:'platos', title:'Configuración' },
   fitness:   { tab:'perfil', parent:'platos', title:'Fitness' },
 };
@@ -3395,6 +3493,7 @@ function navigate(section, opts){
   if(section==='social') loadChats();
   if(section==='explorar') openExploreSection();
   if(section==='actividad') openActivity();
+  if(section==='racha') renderRacha();
 }
 function goBack(){
   if(currentSection==='settings' && PAGERS.settings.idx > 0){ setPagerPage('settings', 0, true); return; }
@@ -3418,6 +3517,7 @@ $all('.tab[data-tab]').forEach(t=> t.onclick = ()=>{
 $('#ab-back').onclick = goBack;
 $('#ab-chats').onclick = ()=> navigate('social', { anim:'fwd' });
 $('#ab-bell').onclick = ()=> navigate('actividad', { anim:'fwd' });
+$('#ab-streak').onclick = ()=> navigate('racha', { anim:'fwd' });
 $('#ab-settings').onclick = ()=> navigate('settings', { anim:'fwd' });
 $('#ab-new-chat').onclick = ()=> openNewChat();
 $('#pf-fitness-link').onclick = ()=> navigate('fitness', { anim:'fwd' });
@@ -4243,6 +4343,7 @@ function openDishModal(dish, preview){
 // plato existente en modo vista -> Atrás + Compartir + Editar; plato
 // existente en modo edición -> Atrás + Guardar + Eliminar.
 function applyDishModalButtons(){
+  updateDishCookedBtn();
   if(dishPreview){
     ['#dish-cancel-btn','#dish-save-btn','#dish-share-btn','#dish-edit-btn','#dish-edit-save-btn','#dish-delete-btn'].forEach(sel=> $(sel).classList.add('hidden'));
     $('#dish-add-btn').classList.toggle('hidden', !dishPreview.onAdd);
@@ -4814,6 +4915,7 @@ function openCookMode(){
   renderCook();
   cookKeepAwake();
 }
+function cookCanLog(){ return cooksAvailable && !dishPreview && dishExistsRemote && dishes.some(x=> x.id===editingDishId); }
 function closeCookMode(){
   if(!cookOpen) return;
   cookOpen = false;
@@ -4842,8 +4944,9 @@ function renderCook(){
       : `<div class="cook-plain"><div><span class="cook-num">Paso ${sl.n}</span></div>${txt}</div>`;
   } else {
     $('#cook-label').textContent = '¡Terminado!';
-    stage.innerHTML = `<div class="cook-plain cook-end"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg><div class="cook-h">¡A comer!</div><div style="opacity:.75; font-size:15px;">Que aproveche.</div><button type="button" class="cook-end-btn" id="cook-end-btn">Terminar</button></div>`;
+    stage.innerHTML = `<div class="cook-plain cook-end"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg><div class="cook-h">¡A comer!</div><div style="opacity:.75; font-size:15px;">Que aproveche.</div>${cookCanLog() ? '<button type="button" class="cook-end-btn cook-done-btn" id="cook-done-btn">¡Lo he cocinado!</button>' : ''}<button type="button" class="cook-end-btn" id="cook-end-btn">Terminar</button></div>`;
     $('#cook-end-btn').onclick = (e)=>{ e.stopPropagation(); closeCookMode(); };
+    if($('#cook-done-btn')) $('#cook-done-btn').onclick = (e)=>{ e.stopPropagation(); const d = dishes.find(x=> x.id===editingDishId); closeCookMode(); if(d) setTimeout(()=> logDishCooked(d), 200); };
   }
   $('#cook-hint').classList.toggle('hidden', cookIdx > 0);
 }
@@ -7237,16 +7340,235 @@ function renderActivity(){
   });
 }
 
+/* ===================== LO HE COCINADO + RACHAS (estilo Strava) =====================
+   Cada vez que cocinas algo se apunta (tabla "cooks"): desde la olla de una
+   publicación del Muro, desde la ficha de uno de tus platos, al terminar el
+   modo cocina o desde el "+". De ahí salen la racha (días seguidos
+   cocinando, la llama de arriba en Inicio), las estadísticas y el
+   "Cocinado por @ana y 2 más" de cada publicación. Si aún no se ha
+   ejecutado el SQL, todo esto se esconde solo. */
+let myCooks = [], wallCooks = [], cooksAvailable = true;
+function dayKey(d){ const x = d instanceof Date ? d : new Date(d); return x.getFullYear() + '-' + String(x.getMonth()+1).padStart(2,'0') + '-' + String(x.getDate()).padStart(2,'0'); }
+function addDays(key, n){ const [y, m, d] = key.split('-').map(Number); return dayKey(new Date(y, m-1, d+n)); }
+function weekKey(key){ const [y, m, d] = key.split('-').map(Number); const dt = new Date(y, m-1, d); dt.setDate(dt.getDate() - ((dt.getDay()+6) % 7)); return dayKey(dt); }
+function cookDayOf(c){ return c.cooked_on || dayKey(c.created_at); }
+function cookDays(){ return new Set(myCooks.map(cookDayOf)); }
+function currentStreak(){
+  const s = cookDays(); let k = dayKey(new Date());
+  if(!s.has(k)){ k = addDays(k, -1); if(!s.has(k)) return 0; } // ayer cuenta: aún puedes cocinar hoy
+  let n = 0; while(s.has(k)){ n++; k = addDays(k, -1); }
+  return n;
+}
+function bestStreak(){
+  let best = 0, run = 0, prev = null;
+  for(const k of [...cookDays()].sort()){ run = (prev && addDays(prev, 1)===k) ? run + 1 : 1; best = Math.max(best, run); prev = k; }
+  return best;
+}
+function weekStreak(){
+  const ws = new Set([...cookDays()].map(weekKey)); let w = weekKey(dayKey(new Date()));
+  if(!ws.has(w)){ w = addDays(w, -7); if(!ws.has(w)) return 0; }
+  let n = 0; while(ws.has(w)){ n++; w = addDays(w, -7); }
+  return n;
+}
+function cookedToday(){ return cookDays().has(dayKey(new Date())); }
+function streakPhrase(n){ return n<=0 ? '' : n===1 ? '¡Empiezas racha! 1 día cocinando' : `Llevas ${n} días seguidos cocinando`; }
+function setCooksAvailable(v){ cooksAvailable = v; document.body.classList.toggle('no-cooks', !v); }
+async function loadMyCooks(){
+  if(!currentUser) return;
+  const { data, error } = await sb.from('cooks').select('id,dish_id,post_id,author_id,dish_name,dish_snapshot,cooked_on,created_at')
+    .eq('user_id', currentUser.id).order('created_at', { ascending:false }).limit(2000);
+  if(error){ console.warn('cooks', error.message); setCooksAvailable(false); return; }
+  setCooksAvailable(true);
+  const pending = myCooks.filter(c=> String(c.id).startsWith('tmp-'));
+  myCooks = pending.concat(data||[]);
+  updateStreakUI();
+}
+function updateStreakUI(){
+  const n = currentStreak(), today = cookedToday();
+  $('#ab-streak-n').textContent = String(n);
+  const b = $('#ab-streak');
+  b.classList.toggle('on', today);
+  b.classList.toggle('risk', !today && n > 0);
+  b.setAttribute('aria-label', n ? `Racha: ${n} ${n===1?'día':'días'}` : 'Tu racha');
+  if(currentSection==='racha') renderRacha();
+  if(!modalHidden($('#dish-modal'))) updateDishCookedBtn();
+}
+// "Cocinado por @ana y 2 más" (primero tus amigos).
+function wallCooksLine(postId){
+  const cs = wallCooks.filter(c=> c.post_id===postId);
+  if(!cs.length) return '';
+  const pick = cs.find(c=> c.user_id!==currentUser.id && friends.some(f=> f.id===c.user_id)) || cs.find(c=> c.user_id!==currentUser.id) || cs[0];
+  const name = pick.user_id===currentUser.id ? 'ti' : '@'+((pick.cook && pick.cook.username) || '?');
+  const rest = cs.length - 1;
+  return `Cocinado por <b>${escapeHtml(name)}</b>${rest ? ` y <b>${rest} ${rest===1?'persona':'personas'} más</b>` : ''}`;
+}
+function openWallCookers(postId){
+  $('#likers-title').textContent = 'Lo han cocinado';
+  const cs = wallCooks.filter(c=> c.post_id===postId);
+  $('#likers-list').innerHTML = cs.map(c=>{
+    const u = c.cook || (c.user_id===currentUser.id ? currentUser : { id:c.user_id, username:'?' });
+    return `<div class="user-row user-row-clickable" data-profile-id="${escapeHtml(c.user_id)}">${avatarHtml(u)}<span class="user-row-name">@${escapeHtml(u.username||'?')}${c.user_id===currentUser.id ? ' (tú)' : ''}</span><span class="user-row-sub">${timeAgo(c.created_at)}</span></div>`;
+  }).join('') || '<div class="empty-hint">Nadie lo ha cocinado todavía.</div>';
+  lockBodyScroll();
+  showModal($('#likers-modal'));
+}
+function popWallBtn(sel){
+  requestAnimationFrame(()=>{ const b = document.querySelector(sel); if(b){ b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); } });
+}
+// La olla de una publicación: marcar / desmarcar que lo has cocinado.
+const wallCookBusy = new Set();
+async function toggleWallCook(postId){
+  if(!cooksAvailable || wallCookBusy.has(postId)) return;
+  const p = wallPosts.find(x=> x.id===postId); if(!p) return;
+  const mine = wallCooks.find(c=> c.post_id===postId && c.user_id===currentUser.id);
+  wallCookBusy.add(postId);
+  try{
+    if(mine){
+      wallCooks = wallCooks.filter(c=> c!==mine);
+      const mc = myCooks.find(c=> c.post_id===postId);
+      myCooks = myCooks.filter(c=> c!==mc);
+      renderWallFeed(); updateStreakUI();
+      showToast('Quitado de tus cocinados');
+      if(mine.id && !String(mine.id).startsWith('tmp-')){
+        const { error } = await sb.from('cooks').delete().eq('id', mine.id);
+        if(error){ console.error(error); await Promise.all([loadMyCooks(), loadWallFeed()]); }
+      }
+      return;
+    }
+    const d = p.dish_snapshot || {};
+    const row = { user_id: currentUser.id, post_id: postId, dish_id: p.user_id===currentUser.id ? (p.dish_id || null) : null,
+      dish_name: d.name || 'Receta', dish_snapshot: d, cooked_on: dayKey(new Date()) };
+    const tmpId = 'tmp-' + uuid(), now = new Date().toISOString();
+    const wc = { id: tmpId, post_id: postId, user_id: currentUser.id, created_at: now, cook: { id: currentUser.id, username: currentUser.username, avatar_url: currentUser.avatar_url } };
+    const mc = { ...row, id: tmpId, author_id: p.user_id, created_at: now };
+    wallCooks.push(wc); myCooks.unshift(mc);
+    renderWallFeed(); updateStreakUI();
+    popWallBtn(`[data-wall-cook="${postId}"]`);
+    showToast('¡Apuntado! ' + streakPhrase(currentStreak()));
+    const { data, error } = await sb.from('cooks').insert(row).select('id,cooked_on,created_at').single();
+    if(error){
+      wallCooks = wallCooks.filter(c=> c!==wc); myCooks = myCooks.filter(c=> c!==mc);
+      renderWallFeed(); updateStreakUI();
+      if(/cooks_user_post_uq|duplicate/i.test(error.message||'')) await loadWallFeed();
+      else showToast('No se ha podido apuntar, inténtalo otra vez');
+      return;
+    }
+    wc.id = data.id; Object.assign(mc, data);
+  } finally { wallCookBusy.delete(postId); }
+}
+// Uno de tus platos (ficha, modo cocina o "+"): siempre suma uno más.
+async function logDishCooked(dish){
+  if(!cooksAvailable || !dish) return;
+  const snap = dishSnapshotOf(dish);
+  const row = { user_id: currentUser.id, dish_id: dish.id, dish_name: dish.name || 'Receta', dish_snapshot: snap, cooked_on: dayKey(new Date()) };
+  const mc = { ...row, id: 'tmp-' + uuid(), created_at: new Date().toISOString() };
+  myCooks.unshift(mc);
+  updateStreakUI();
+  showCookedModal(dish);
+  const { data, error } = await sb.from('cooks').insert(row).select('id,cooked_on,created_at').single();
+  if(error){ myCooks = myCooks.filter(c=> c!==mc); updateStreakUI(); hideModal($('#cooked-modal')); showToast('No se ha podido apuntar, inténtalo otra vez'); return; }
+  Object.assign(mc, data);
+}
+let cookedModalDish = null;
+function showCookedModal(dish){
+  cookedModalDish = dish;
+  const n = currentStreak();
+  const times = myCooks.filter(c=> c.dish_id===dish.id).length;
+  $('#cooked-n').textContent = String(n);
+  $('#cooked-title').textContent = n===1 ? '¡Empiezas racha!' : `¡${n} días seguidos!`;
+  $('#cooked-text').textContent = `«${dish.name || 'Receta'}» apuntado` + (times > 1 ? ` (lo has cocinado ${times} veces).` : '.') + ' ¿Lo compartes con tus amigos?';
+  showModal($('#cooked-modal'));
+}
+$('#cooked-ok').onclick = ()=> hideModal($('#cooked-modal'));
+$('#cooked-modal').addEventListener('click', e=>{ if(e.target.id==='cooked-modal') hideModal($('#cooked-modal')); });
+$('#cooked-publish').onclick = ()=>{
+  const d = cookedModalDish; hideModal($('#cooked-modal'));
+  if(d) setTimeout(()=> openPublishSheet(dishSnapshotOf(d), [], d.id), 150);
+};
+// Botón de la ficha de tus platos.
+function updateDishCookedBtn(){
+  const b = $('#dish-cooked-btn');
+  const show = cooksAvailable && !dishPreview && dishExistsRemote && dishViewMode;
+  b.classList.toggle('hidden', !show);
+  if(!show) return;
+  const n = myCooks.filter(c=> c.dish_id===editingDishId).length;
+  $('#dish-cooked-count').textContent = n ? `· ${n} ${n===1 ? 'vez' : 'veces'}` : '';
+}
+$('#dish-cooked-btn').onclick = ()=>{
+  const d = dishes.find(x=> x.id===editingDishId); if(!d) return;
+  logDishCooked(d).then(updateDishCookedBtn);
+  updateDishCookedBtn();
+};
+// Pantalla "Tu racha".
+const DOW = ['L','M','X','J','V','S','D'];
+function renderRacha(){
+  const box = $('#racha-body'); if(!box) return;
+  const n = currentStreak(), today = cookedToday(), best = bestStreak(), weeks = weekStreak();
+  const todayK = dayKey(new Date()), wk = weekKey(todayK), monthK = todayK.slice(0, 7);
+  const thisWeek = myCooks.filter(c=> weekKey(cookDayOf(c))===wk).length;
+  const thisMonth = myCooks.filter(c=> cookDayOf(c).slice(0, 7)===monthK).length;
+  const keyOf = (c)=> c.dish_id || normName(c.dish_name || '');
+  const distinct = new Set(myCooks.map(keyOf)).size;
+  const counts = {}; myCooks.forEach(c=>{ const k = keyOf(c); counts[k] = counts[k] || { n:0, c }; counts[k].n++; });
+  const star = Object.values(counts).sort((a,b)=> b.n - a.n)[0];
+  const sub = !myCooks.length ? 'Toca la olla de una publicación o "Lo he cocinado" en uno de tus platos cuando lo cocines.'
+    : today ? 'Hoy ya has cocinado. ¡Bien!'
+    : n ? '¡Cocina hoy para no perderla!'
+    : 'Cocina hoy para empezar una racha nueva.';
+  // calendario: 16 semanas (columnas), lunes arriba
+  const per = {}; myCooks.forEach(c=>{ const k = cookDayOf(c); per[k] = (per[k]||0) + 1; });
+  let start = addDays(wk, -7 * 15), cells = '';
+  for(let i = 0; i < 16 * 7; i++){
+    const k = addDays(start, i), v = per[k] || 0;
+    const lv = v >= 3 ? 'l3' : v===2 ? 'l2' : v===1 ? 'l1' : '';
+    cells += `<i class="${lv} ${k===todayK ? 'today' : ''} ${k > todayK ? 'future' : ''}" title="${k}${v ? ' · ' + v : ''}"></i>`;
+  }
+  const dishImg = (c)=>{ const sn = c.dish_snapshot || {}; const u = sn.image_url || (Array.isArray(sn.image_urls) && sn.image_urls[0]); return u ? `<img ${pimg(u, 't')} alt="" loading="lazy" decoding="async">` : ICON_POT; };
+  const fmtDay = (k)=>{ if(k===todayK) return 'Hoy'; if(k===addDays(todayK, -1)) return 'Ayer'; const [y, m, d] = k.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString('es-ES', { day:'numeric', month:'short' }); };
+  const recent = myCooks.slice(0, 15).map(c=>{
+    const from = c.author_id && c.author_id!==currentUser.id ? (profileCache[c.author_id] || friends.find(f=> f.id===c.author_id)) : null;
+    return `<div class="cook-row"><span class="cook-row-ic">${dishImg(c)}</span><span class="cook-row-txt">${escapeHtml(c.dish_name || 'Receta')}${from ? `<span>receta de @${escapeHtml(from.username)}</span>` : ''}</span><span class="cook-row-date">${fmtDay(cookDayOf(c))}</span></div>`;
+  }).join('');
+  box.innerHTML = `
+    <div class="streak-hero">
+      <div class="sh-flame ${today ? 'on' : ''}">${ICON_FLAME}<span class="sh-n">${n}</span></div>
+      <div class="sh-label">${n===1 ? 'día seguido cocinando' : 'días seguidos cocinando'}</div>
+      <div class="sh-sub">${sub}</div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-tile"><b>${thisWeek}</b><span>esta semana</span></div>
+      <div class="stat-tile"><b>${thisMonth}</b><span>este mes</span></div>
+      <div class="stat-tile"><b>${myCooks.length}</b><span>en total</span></div>
+      <div class="stat-tile"><b>${best}</b><span>mejor racha (días)</span></div>
+      <div class="stat-tile"><b>${weeks}</b><span>${weeks===1 ? 'semana seguida' : 'semanas seguidas'}</span></div>
+      <div class="stat-tile"><b>${distinct}</b><span>platos distintos</span></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:10px;">Últimas 16 semanas</div>
+      <div class="heat-wrap"><div class="heat-days">${DOW.map((d, i)=> `<span>${i%2===0 ? d : ''}</span>`).join('')}</div><div class="heat">${cells}</div></div>
+      <div class="heat-legend">Menos <i></i><i class="l1"></i><i class="l2"></i><i class="l3"></i> Más</div>
+    </div>
+    ${star && star.n > 1 ? `<div class="card"><div style="font-weight:700; margin-bottom:6px;">Tu plato estrella</div><div class="cook-row"><span class="cook-row-ic">${dishImg(star.c)}</span><span class="cook-row-txt">${escapeHtml(star.c.dish_name || 'Receta')}<span>lo has cocinado ${star.n} veces</span></span></div></div>` : ''}
+    <div class="card">
+      <div style="font-weight:700; margin-bottom:4px;">Últimos cocinados</div>
+      ${recent || '<div class="empty-hint">Aún no has apuntado nada.</div>'}
+    </div>`;
+}
+
 /* ===================== CREAR (el + de abajo) ===================== */
 function openCreateSheet(){ showModal($('#create-modal')); }
 $('#tab-plus').onclick = openCreateSheet;
 $('#create-cancel').onclick = ()=> hideModal($('#create-modal'));
 $('#create-modal').addEventListener('click', e=>{ if(e.target.id==='create-modal') hideModal($('#create-modal')); });
 $('#create-dish').onclick = ()=>{ hideModal($('#create-modal')); setTimeout(()=> openDishModal(null), 120); };
-$('#create-post').onclick = ()=>{ hideModal($('#create-modal')); setTimeout(openPickDish, 120); };
+$('#create-post').onclick = ()=>{ hideModal($('#create-modal')); setTimeout(()=> openPickDish('post'), 120); };
+$('#create-cooked').onclick = ()=>{ hideModal($('#create-modal')); setTimeout(()=> openPickDish('cook'), 120); };
 attachSwipeToCloseSheet(document.querySelector('#create-modal .modal-sheet'), ()=> hideModal($('#create-modal')));
 // Elegir cuál de tus platos publicas en el Muro.
-function openPickDish(){
+let pickDishMode = 'post';
+function openPickDish(mode){
+  pickDishMode = mode==='cook' ? 'cook' : 'post';
+  $('#pick-dish-title').textContent = pickDishMode==='cook' ? '¿Qué has cocinado?' : '¿Qué plato publicas?';
   $('#pick-dish-search').value = '';
   renderPickDish();
   showModal($('#pick-dish-modal'));
@@ -7255,7 +7577,7 @@ function renderPickDish(){
   const q = pfNorm($('#pick-dish-search').value);
   const list = dishes.filter(d=> !q || pfNorm(d.name).includes(q));
   const box = $('#pick-dish-list');
-  if(!dishes.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes platos. Crea uno primero con "Nueva receta".</div>'; return; }
+  if(!dishes.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes platos. Crea uno primero con "Nueva receta"' + (pickDishMode==='cook' ? ', o toca la olla de una publicación del Muro.' : '.') + '</div>'; return; }
   if(!list.length){ box.innerHTML = '<div class="empty-hint">Ningún plato se llama así.</div>'; return; }
   box.innerHTML = list.map(d=> `<button type="button" class="pick-row" data-pick-dish="${d.id}">
     <span class="pick-thumb">${d.image_url ? `<img ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : ICON_PLATE}</span>
@@ -7264,7 +7586,8 @@ function renderPickDish(){
   box.querySelectorAll('[data-pick-dish]').forEach(b=> b.onclick = ()=>{
     const d = dishes.find(x=> x.id===b.dataset.pickDish); if(!d) return;
     hideModal($('#pick-dish-modal'));
-    setTimeout(()=> openPublishSheet(dishSnapshotOf(d), [], d.id), 120);
+    if(pickDishMode==='cook') setTimeout(()=> logDishCooked(d), 120);
+    else setTimeout(()=> openPublishSheet(dishSnapshotOf(d), [], d.id), 120);
   });
 }
 $('#pick-dish-search').addEventListener('input', renderPickDish);
@@ -8185,10 +8508,16 @@ async function loadWallFeed(){
   wallPosts = posts||[];
   const ids = wallPosts.map(p=>p.id);
   if(ids.length){
-    const [{data: likes, error: likesErr}, {data: comments, error: commentsErr}] = await Promise.all([
+    const [{data: likes, error: likesErr}, {data: comments, error: commentsErr}, cooksRes] = await Promise.all([
       sb.from('wall_likes').select('*, liker:user_id(id,username,avatar_url)').in('post_id', ids),
-      sb.from('wall_comments').select('*, author:user_id(username,avatar_url)').in('post_id', ids).order('created_at', {ascending:true})
+      sb.from('wall_comments').select('*, author:user_id(username,avatar_url)').in('post_id', ids).order('created_at', {ascending:true}),
+      cooksAvailable ? sb.from('cooks').select('id,post_id,user_id,created_at,cook:user_id(id,username,avatar_url)').in('post_id', ids) : Promise.resolve({ data: [] })
     ]);
+    if(cooksRes && !cooksRes.error){
+      // Lo que acabas de marcar y aún se está guardando no se pierde al recargar.
+      const pending = wallCooks.filter(c=> String(c.id).startsWith('tmp-'));
+      wallCooks = (cooksRes.data||[]).concat(pending.filter(t=> !(cooksRes.data||[]).some(c=> c.post_id===t.post_id && c.user_id===t.user_id)));
+    }
     if(likesErr) console.error(likesErr);
     if(commentsErr) console.error(commentsErr);
     wallLikes = likes||[];
@@ -8200,7 +8529,7 @@ async function loadWallFeed(){
       if(!clErr) wallCommentLikes = cl||[]; // si aún no se ha ejecutado el SQL, simplemente no hay likes de comentarios
     }
   } else {
-    wallLikes = []; wallComments = []; wallCommentLikes = [];
+    wallLikes = []; wallComments = []; wallCommentLikes = []; wallCooks = [];
   }
   renderWallFeed();
   updateWallUnreadCount();
@@ -8265,6 +8594,8 @@ function renderWallFeed(){
         return `<div class="wall-post-photo" data-wall-open="${p.id}" ${ratioBoxAttrs(ph[0], 0.8, 1.91, 4/3)}><div class="photo-track">${ph.map((u, k)=> `<div class="photo-slide" data-r="${photoRatio(u) ? photoRatio(u).toFixed(4) : ''}"><img ${pimg(u, 'm')} alt="" ${k || idx>1 ? 'loading="lazy" ' : 'fetchpriority="high" '}decoding="async" draggable="false" onload="nfImgLoaded(this)"></div>`).join('')}</div><div class="photo-dots">${photoDotsHtml(ph.length, 0)}</div></div>`; })();
     const liked = wallLikes.some(l=> l.post_id===p.id && l.user_id===currentUser.id);
     const likeCount = wallLikes.filter(l=> l.post_id===p.id).length;
+    const cooked = wallCooks.some(c=> c.post_id===p.id && c.user_id===currentUser.id);
+    const cookCount = wallCooks.filter(c=> c.post_id===p.id).length;
     const commentCount = wallComments.filter(c=> c.post_id===p.id).length;
     const isOwn = p.user_id === currentUser.id;
     const rightBtn = isOwn
@@ -8281,12 +8612,14 @@ function renderWallFeed(){
       <div class="wall-post-actions">
         <div class="wall-action-left">
           <button type="button" class="wall-action-btn ${liked?'liked':''}" data-wall-like="${p.id}" aria-label="Me gusta">${ICON_HEART}</button>
+          <button type="button" class="wall-action-btn ${cooked?'cooked':''}" data-wall-cook="${p.id}" aria-label="${cooked ? 'Lo has cocinado' : 'Lo he cocinado'}">${ICON_POT}</button>
           <button type="button" class="wall-action-btn" data-wall-comment="${p.id}" aria-label="Comentarios">${ICON_COMMENT}</button>
           <button type="button" class="wall-action-btn" data-wall-send="${p.id}" aria-label="Enviar por chat">${ICON_SEND}</button>
         </div>
         <div class="wall-action-right">${rightBtn}</div>
       </div>
       ${likeCount ? `<button type="button" class="wall-likes-line" data-wall-likers="${p.id}">${wallLikesLine(p.id)}</button>` : ''}
+      ${cookCount ? `<button type="button" class="wall-cooks-line" data-wall-cookers="${p.id}">${ICON_POT}<span>${wallCooksLine(p.id)}</span></button>` : ''}
       ${(p.with_ids||[]).includes(currentUser.id) && !isOwn ? `<div class="wall-tagged">@${escapeHtml((p.author&&p.author.username)||'?')} te ha etiquetado: habéis cocinado juntos.
         <div class="wall-tagged-actions"><button type="button" class="fp-following" data-tag-save="${p.id}">Guardar en mi perfil</button><button type="button" class="fp-follow" data-tag-publish="${p.id}">Publicar yo también</button></div></div>` : ''}
       <div class="wall-post-body" data-wall-open="${p.id}">
@@ -8311,6 +8644,8 @@ function renderWallFeed(){
   $all('[data-wall-add]').forEach(b=> b.onclick = ()=> addWallDishToRepo(b.dataset.wallAdd));
   $all('[data-wall-delete]').forEach(b=> b.onclick = ()=> deleteWallPost(b.dataset.wallDelete));
   $all('[data-wall-likers]').forEach(b=> b.onclick = ()=> openWallLikers(b.dataset.wallLikers));
+  $all('[data-wall-cook]').forEach(b=> b.onclick = ()=> toggleWallCook(b.dataset.wallCook));
+  $all('[data-wall-cookers]').forEach(b=> b.onclick = ()=> openWallCookers(b.dataset.wallCookers));
   $all('[data-tag-save]').forEach(b=> b.onclick = ()=> addWallDishToRepo(b.dataset.tagSave));
   $all('[data-tag-publish]').forEach(b=> b.onclick = ()=>{
     const p = wallPosts.find(x=> x.id===b.dataset.tagPublish); if(!p) return;
@@ -8361,6 +8696,7 @@ function wallLikesLine(postId){
 }
 // Lista de quién ha dado me gusta a una publicación.
 function openWallLikers(postId){
+  $('#likers-title').textContent = 'Me gusta';
   const ls = wallLikes.filter(l=> l.post_id===postId);
   $('#likers-list').innerHTML = ls.length ? ls.map(l=>{
     const u = l.liker || (l.user_id===currentUser.id ? currentUser : { id:l.user_id, username:'?' });
