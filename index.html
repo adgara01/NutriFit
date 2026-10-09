@@ -2643,11 +2643,19 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.29-1';
+const APP_VERSION = '2026.10.30-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Sin navigator.locks: en el iPhone (app instalada) a veces el bloqueo se queda
+// "pillado" y getSession()/signIn nunca contestan. Aquí basta con ir de uno en uno.
+let authLockQueue = Promise.resolve();
+function authLock(name, timeout, fn){
+  const run = authLockQueue.then(()=> fn(), ()=> fn());
+  authLockQueue = run.catch(()=>{});
+  return run;
+}
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { lock: authLock } });
 
 /* ===================== STATE ===================== */
 let currentUser = null;       // { id, username }
@@ -2771,13 +2779,19 @@ function passwordErrorText(err){
   return 'No se ha podido cambiar la contraseña. Inténtalo de nuevo.';
 }
 function isSamePasswordError(err){ return !!err && (err.code==='same_password' || /different from the old/i.test(err.message||'')); }
+function isNetworkError(err){
+  const msg = (err && err.message) || String(err || '');
+  return /load failed|failed to fetch|network|fetch|timeout|timed out|offline|AuthRetryableFetchError/i.test(msg + ' ' + ((err && err.name) || ''));
+}
 function translateAuthError(err){
   const msg = (err && err.message) || '';
+  if(isNetworkError(err)) return 'No hay conexión con el servidor ahora mismo. Comprueba internet (o prueba con wifi/datos) y vuelve a intentarlo.';
   if(/email.*(not confirmed)/i.test(msg)) return 'Tienes que confirmar el correo antes de entrar.';
   if(/already registered|already exists|duplicate/i.test(msg)) return 'Ese usuario ya está registrado.';
   if(/invalid login credentials/i.test(msg)) return 'Usuario o contraseña incorrectos.';
   if(/password.*(least|short|characters)/i.test(msg)) return 'La contraseña debe tener al menos 6 caracteres.';
-  if(/rate limit/i.test(msg)) return 'Demasiados intentos, espera un momento e inténtalo de nuevo.';
+  if(/rate limit|too many|over_request/i.test(msg)) return 'Demasiados intentos, espera un minuto e inténtalo de nuevo.';
+  if(/^[\x20-\x7E]+$/.test(msg) && /[a-z]{3,} [a-z]{3,}/i.test(msg)) return 'No se ha podido entrar (' + msg.slice(0, 80) + '). Inténtalo de nuevo.';
   return msg || 'Ha ocurrido un error, inténtalo de nuevo.';
 }
 
@@ -2867,7 +2881,20 @@ async function profileForAuth(authId){
   return profile;
 }
 // Entrar con @usuario o con el correo.
+function cleanLoginId(v){
+  return String(v || '').normalize('NFKC').replace(/[\s\u200B-\u200D\uFEFF\u00A0]+/g, '').toLowerCase();
+}
 async function handleLogin(id, password){
+  let res = await tryLogin(id, password);
+  // El teclado del móvil a veces deja un espacio al final de la contraseña (autocompletar): se prueba también sin él.
+  const trimmed = password.replace(/^[\s\u200B-\u200D\uFEFF\u00A0]+|[\s\u200B-\u200D\uFEFF\u00A0]+$/g, '');
+  if(res.error && /invalid login credentials/i.test(res.error.message || '') && trimmed && trimmed !== password) res = await tryLogin(id, trimmed);
+  if(res.error) throw res.error;
+  const user = (res.data && (res.data.user || (res.data.session && res.data.session.user))) || null;
+  if(!user) throw new Error('No se pudo entrar.');
+  return profileForAuth(user.id);
+}
+async function tryLogin(id, password){
   let res;
   if(id.includes('@')){
     res = await sb.auth.signInWithPassword({ email: id, password });
@@ -2880,16 +2907,13 @@ async function handleLogin(id, password){
       else if(r.error === 'rate_limit') throw new Error('rate limit');
     }
   }
-  if(res.error) throw res.error;
-  const user = (res.data && (res.data.user || (res.data.session && res.data.session.user))) || null;
-  if(!user) throw new Error('No se pudo entrar.');
-  return profileForAuth(user.id);
+  return res;
 }
 
 $('#auth-form').addEventListener('submit', async (e)=>{
   e.preventDefault();
   hideAuthError();
-  const username = $('#auth-username').value.trim().toLowerCase().replace(/^@(?=[a-z0-9_]+$)/, '');
+  const username = cleanLoginId($('#auth-username').value).replace(/^@(?=[a-z0-9_]+$)/, '');
   const password = $('#auth-password').value;
   if(!username || !password){ showAuthError('Rellena usuario y contraseña.'); return; }
   const byEmail = authMode==='login' && username.includes('@');
@@ -3054,7 +3078,8 @@ async function enterApp(profile, cache){
   currentSection = null;
   setSection('muro'); // se abre en Inicio (el Muro), como Strava
   if(cache) renderGallery();
-  await Promise.all([loadDishes(), loadFolders(), loadFitnessProfile(), loadFriendshipsState(), loadSharedDishes(), loadWallFeed(), loadIngredientCatalog(), loadFridgeItems(), loadCart(), loadChats(), loadMenuRemote(), loadActivity(), loadMyCooks()]);
+  await Promise.all([loadDishes, loadFolders, loadFitnessProfile, loadFriendshipsState, loadSharedDishes, loadWallFeed, loadIngredientCatalog, loadFridgeItems, loadCart, loadChats, loadMenuRemote, loadActivity, loadMyCooks]
+    .map(fn=> Promise.resolve().then(fn).catch(e=> console.error(fn.name, e))));
   if(currentSection==='muro') markWallSeen();
   await migrateLegacyIngredientsIfNeeded();
   backfillDishNutrition();
@@ -3394,9 +3419,24 @@ new MutationObserver(muts=>{
   });
 }).observe(document.body, { childList:true, subtree:true });
 
+function showLoginScreen(msg){
+  document.documentElement.classList.remove('nf-boot');
+  $('#app-view').classList.add('hidden');
+  $('#login-view').classList.remove('hidden');
+  if(msg) showAuthError(msg);
+}
+// Si no se puede leer la sesión en 8 s (pasa en el iPhone) se enseña el login en vez de dejarte en la carga.
+function withTimeout(p, ms){ return Promise.race([p, new Promise((_, rej)=> setTimeout(()=> rej(new Error('timeout')), ms))]); }
 async function init(){
+  try{ await initInner(); }
+  catch(e){
+    console.error(e);
+    if(!currentUser) showLoginScreen(isNetworkError(e) ? 'No hay conexión con el servidor ahora mismo. Entra cuando vuelva.' : '');
+  }
+}
+async function initInner(){
   let session = null;
-  try{ const { data } = await sb.auth.getSession(); session = data && data.session; }catch(e){ console.error(e); }
+  try{ const { data } = await withTimeout(sb.auth.getSession(), 8000); session = data && data.session; }catch(e){ console.error(e); }
   if(session){
     const cache = readBootCache(session.user.id);
     if(cache && cache.profile && cache.profile.auth_user_id===session.user.id){
@@ -3407,11 +3447,19 @@ async function init(){
       await enterApp(cache.profile, cache);
       return;
     }
-    const { data: profile } = await sb.from('profiles').select('*').eq('auth_user_id', session.user.id).maybeSingle();
+    const { data: profile, error: pErr } = await sb.from('profiles').select('*').eq('auth_user_id', session.user.id).maybeSingle();
     if(profile){ await enterApp(profile); saveBootCache(); return; }
+    // Sesión guardada que ya no vale (p. ej. cambiaste la contraseña en otro dispositivo): se limpia y se pide entrar.
+    if(pErr && !isNetworkError(pErr)){ try{ await sb.auth.signOut(); }catch(e){} }
+    showLoginScreen(pErr && isNetworkError(pErr) ? 'No hay conexión con el servidor ahora mismo.' : (pErr ? 'Tu sesión ha caducado. Vuelve a entrar.' : ''));
+    return;
   }
   document.documentElement.classList.remove('nf-boot');
 }
+// Si la sesión se pierde con la app abierta (contraseña cambiada en otro sitio...), vuelve al login en vez de quedarse vacía.
+sb.auth.onAuthStateChange((ev)=>{
+  if(ev==='SIGNED_OUT') setTimeout(()=>{ if(currentUser){ currentUser = null; try{ clearBootCache(); }catch(e){} showLoginScreen('Tu sesión ha caducado. Vuelve a entrar.'); } }, 0);
+});
 
 $('#settings-logout-btn').onclick = async ()=>{
   await unsubscribeThisDeviceFromPush();
