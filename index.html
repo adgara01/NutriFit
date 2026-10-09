@@ -197,6 +197,11 @@ main{padding:16px; max-width:900px; margin:0 auto; padding-bottom:calc(var(--tab
 .appbar .np-tabs{display:none; flex:1; margin:0;}
 body.sec-despensa .appbar #np-tabs, body.sec-explorar .appbar #ex-tabs{display:flex;}
 body.sec-pager main{padding-bottom:0;}
+/* En Nevera/Carrito y Explorar la página NO se desplaza (cada pantalla tiene su propio scroll):
+   la barra de arriba va fija y no hay "rebote" de la página entera, que era lo que movía los
+   títulos de arriba mientras el contenido se quedaba quieto y se superponían. */
+html.sec-pager, html.sec-pager body{overflow:hidden; height:100%; overscroll-behavior:none;}
+html.sec-pager .appbar{position:fixed; top:0; left:0; right:0; z-index:6;}
 /* Secciones de "pantallas deslizables" (Nevera/Carrito, Explorar, Ajustes):
    fijas bajo la barra de arriba; cada pantalla con su propio scroll. */
 .pager-section.active.active{position:fixed; left:0; right:0; top:var(--appbar-h, 64px); bottom:var(--tabbar-h); z-index:1; overflow:hidden;
@@ -2734,7 +2739,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.31-1';
+const APP_VERSION = '2026.10.31-3';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -2955,7 +2960,7 @@ async function signupSend(resend){
     // Si el usuario ya está cogido se avisa antes de gastar el código (si no se puede mirar, se comprueba al final).
     try{
       const { data: taken } = await sb.from('profiles').select('id,auth_user_id').eq('username', username).maybeSingle();
-      if(taken && taken.auth_user_id){ showSignupError('Ese usuario ya está registrado.'); return; }
+      if(taken){ showSignupError('Ese usuario ya está registrado.'); return; }
     }catch(e){}
     const { error } = await sb.auth.signInWithOtp({ email, options:{ shouldCreateUser:true } });
     if(error){ showSignupError(isNetworkError(error) ? translateAuthError(error) : emailErrorText(error)); return; }
@@ -2984,11 +2989,11 @@ async function signupVerify(){
       showSignupError(`Ese correo ya tiene cuenta (@${already.username}). Entra con tu usuario o con el correo.`);
       return;
     }
-    try{ signupState.profile = await ensureProfile(signupState.username, user.id); }
+    try{ signupState.profile = await ensureProfile(signupState.username, user.id, false); }
     catch(e){
       try{ await sb.auth.signOut(); }catch(_){}
       signupStep(1);
-      showSignupError(/ya est/i.test(e.message || '') ? 'Ese usuario ya está registrado. Elige otro.' : translateAuthError(e));
+      showSignupError(/ya est|duplicate|unique/i.test(e.message || '') ? 'Ese usuario ya está registrado. Elige otro.' : translateAuthError(e));
       return;
     }
     signupStep(3);
@@ -3047,9 +3052,10 @@ async function legacySignup(username, password){
   if(!authUser) throw new Error('No se pudo crear la cuenta.');
   return ensureProfile(username, authUser.id);
 }
-async function ensureProfile(username, authId){
+async function ensureProfile(username, authId, allowClaim = true){
   const { data: existing } = await sb.from('profiles').select('id,auth_user_id').eq('username', username).maybeSingle();
   if(existing && !existing.auth_user_id){
+    if(!allowClaim) throw new Error('Ese usuario ya está registrado.');
     // Perfil antiguo (sin contraseña) con este nombre: lo reclamamos para conservar sus datos.
     const { data: claimed, error: claimErr } = await sb.from('profiles')
       .update({ auth_user_id: authId }).eq('id', existing.id).select().single();
@@ -3274,13 +3280,24 @@ function applyFreshProfile(profile){
   saveBootCache();
 }
 
+/* Cada cuenta se abre con la memoria de la app VACÍA: si se entra con otra cuenta distinta
+   de la que estaba cargada (o al cerrar sesión), la app se recarga limpia. Así no se puede
+   mezclar nada (platos, nevera, muro, amigos...) de una cuenta con otra. */
+let loadedUserId = null;
+function freshStart(){
+  if(window.NF_NO_RELOAD){ window.__freshStarts = (window.__freshStarts || 0) + 1; return false; }
+  try{ location.reload(); }catch(e){}
+  return true;
+}
 async function enterApp(profile, cache){
+  if(loadedUserId && loadedUserId !== profile.id){ if(freshStart()) return; }
+  loadedUserId = profile.id;
   currentUser = profileToCurrentUser(profile);
   document.documentElement.classList.remove('nf-boot');
   if(cache){
     // Se pinta ya con lo guardado en el móvil; lo de Supabase llega enseguida.
-    dishes = Array.isArray(cache.dishes) ? cache.dishes : [];
-    folders = Array.isArray(cache.folders) ? cache.folders : [];
+    dishes = Array.isArray(cache.dishes) ? cache.dishes.filter(d=> d && d.user_id === profile.id) : [];
+    folders = Array.isArray(cache.folders) ? cache.folders.filter(f=> f && f.user_id === profile.id) : [];
   }
   $('#drawer-username').textContent = '@'+profile.username;
   $('#login-view').classList.add('hidden');
@@ -3358,7 +3375,7 @@ function refreshAllSocial(){
 }
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState!=='visible' || !currentUser) return;
-  if(Date.now() - lastResumeRefresh < 3000) return;
+  if(Date.now() - lastResumeRefresh < 10000) return; // al cambiar de app y volver enseguida no se recarga todo otra vez
   refreshAllSocial();
 });
 window.addEventListener('online', ()=> refreshAllSocial());
@@ -3690,6 +3707,8 @@ $('#settings-logout-btn').onclick = async ()=>{
   $('#auth-username').value=''; $('#auth-password').value=''; $('#auth-confirm').value='';
   hideAuthError(); openRecover(false); resetSignup(); setAuthTab('login');
   emailPromptDismissed = false; hideModal($('#email-prompt-modal'));
+  loadedUserId = null;
+  freshStart(); // recarga limpia: la memoria de esta cuenta no se queda en el dispositivo
 };
 
 /* ===================== NAVEGACIÓN: DRAWER + SECCIONES ===================== */
@@ -3738,6 +3757,7 @@ function setSection(section, opts){
   const PG = PAGERS || {};
   Object.keys(NAV).forEach(k=> document.body.classList.toggle('sec-'+k, section===k));
   document.body.classList.toggle('sec-pager', !!PG[section]);
+  document.documentElement.classList.toggle('sec-pager', !!PG[section]);
   document.body.classList.toggle('nav-child', !!nav.parent);
   $('#ab-title').textContent = nav.parent ? nav.title : 'NutriFit';
   $all('.tab[data-tab]').forEach(t=> t.classList.toggle('active', t.dataset.tab===nav.tab));
@@ -3881,16 +3901,23 @@ $all('.subtabs .subtab').forEach(btn=>{
 async function loadDishes(){
   const { data, error } = await sb.from('dishes').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:false});
   if(error){ console.error(error); return; }
-  dishes = data||[];
-  renderGallery();
-  if(!modalHidden($('#folder-modal'))) renderFolderGallery();
+  const fresh = (data||[]).filter(d=> d.user_id === currentUser.id); // nunca platos de otra cuenta
+  // Si lo que llega es idéntico a lo que ya se ve (p. ej. la copia local), no se repinta: sin parpadeos.
+  const same = galleryPainted && JSON.stringify(fresh) === JSON.stringify(dishes);
+  dishes = fresh;
+  if(!same){
+    renderGallery();
+    if(!modalHidden($('#folder-modal'))) renderFolderGallery();
+  }
   saveBootCache();
 }
 async function loadFolders(){
   const { data, error } = await sb.from('dish_folders').select('*').eq('user_id', currentUser.id).order('created_at', {ascending:true});
   if(error){ console.error(error); return; }
-  folders = data||[];
-  renderGallery();
+  const fresh = (data||[]).filter(f=> f.user_id === currentUser.id);
+  const same = galleryPainted && JSON.stringify(fresh) === JSON.stringify(folders);
+  folders = fresh;
+  if(!same) renderGallery();
   saveBootCache();
 }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
@@ -4003,7 +4030,9 @@ function distributeMasonry(container){
   cols.forEach((c, k)=>{ if(k===0) return; const f = document.createDocumentFragment(); buckets[k].forEach(n=> f.appendChild(n)); c.appendChild(f); });
   container._mhidden = !container.offsetParent; // medido oculto: se recoloca al verse
 }
+let galleryPainted = false;
 function renderGallery(){
+  galleryPainted = true;
   renderMyProfileHeader();
   if(typeof renderMenuCard==='function' && $('#menu-dishes')) renderMenuCard();
   updateFitnessSettingsExtras(); // la elegibilidad de "Sugerir platos" depende del nº de platos con calorías
