@@ -1601,8 +1601,8 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div class="recover-title">Recuperar contraseña</div>
       <div id="recover-step1">
         <div class="recover-sub">Te mandamos un código a tu correo.</div>
-        <div class="field"><label for="recover-id">Tu usuario o tu correo</label>
-          <input id="recover-id" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send"></div>
+        <div class="field"><label for="recover-id">Tu correo</label>
+          <input id="recover-id" type="email" inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send"></div>
         <button type="button" id="recover-send-btn" class="btn-primary" style="width:100%;">Enviarme un código</button>
       </div>
       <div id="recover-step2" class="hidden">
@@ -2645,7 +2645,9 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.30-2';
+const APP_VERSION = '2026.10.30-5';
+// Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
+const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2829,7 +2831,7 @@ function isRealEmail(e){ return !!e && !/@nutrifit\.local$/i.test(e); }
 async function getAuthEmail(){ try{ const { data } = await sb.auth.getSession(); return (data && data.session && data.session.user && data.session.user.email) || null; }catch(e){ return null; } }
 async function nfAuth(action, payload){
   try{
-    const { data, error } = await sb.functions.invoke('nf-auth', { body: { action, ...payload } });
+    const { data, error } = await sb.functions.invoke(NF_AUTH_FN, { body: { action, ...payload } });
     if(error) return { error: 'unavailable', detail: (error.context && error.context.status) || error.name || error.message || '?' };
     if(typeof data === 'string'){ try{ return JSON.parse(data); }catch(e){ return { error: 'unavailable', detail: 'respuesta rara' }; } }
     return data || { error: 'unavailable', detail: 'vacía' };
@@ -2905,8 +2907,17 @@ async function handleLogin(id, password){
   }
   const user = (res.data && (res.data.user || (res.data.session && res.data.session.user))) || null;
   if(!user) throw new Error('No se pudo entrar.');
-  return profileForAuth(user.id);
+  const prof = await profileForAuth(user.id);
+  rememberLoginEmail(prof.username, user.email);
+  return prof;
 }
+// El correo con el que entraste en ESTE dispositivo se recuerda aquí (solo en el móvil/ordenador, nunca en el servidor):
+// así, si la función nf-auth no está disponible, el @usuario sigue valiendo.
+const emailMemKey = (u)=> 'nf_email_' + String(u||'').toLowerCase();
+function rememberLoginEmail(username, email){
+  try{ if(username && email && !/@nutrifit\.local$/i.test(email)) localStorage.setItem(emailMemKey(username), email); }catch(e){}
+}
+function rememberedLoginEmail(username){ try{ return localStorage.getItem(emailMemKey(username)) || ''; }catch(e){ return ''; } }
 const authCode = (err)=> err ? (err.code || err.error_code || (err.status ? 'http'+err.status : '') || err.name || String(err.message||'').slice(0, 40)) : 'ok';
 async function tryLogin(id, password){
   let res;
@@ -2925,7 +2936,16 @@ async function tryLogin(id, password){
         loginTrace += ' · sesión=' + authCode(res.error);
       }
       else if(r.error === 'rate_limit') throw new Error('rate limit');
-      else if(r.error === 'unavailable') res.nfDown = true;
+      else {
+        if(r.error === 'unavailable') res.nfDown = true;
+        // Plan B: el correo con el que ya entraste en este dispositivo.
+        const mem = rememberedLoginEmail(id);
+        if(mem){
+          const res2 = await sb.auth.signInWithPassword({ email: mem, password });
+          loginTrace += ' · guardado=' + authCode(res2.error);
+          if(!res2.error){ res = res2; res.nfDown = false; }
+        }
+      }
     }
   }
   return res;
@@ -2969,7 +2989,8 @@ function openRecover(open){
   showRecoverError('');
   if(open){
     $('#recover-step1').classList.remove('hidden'); $('#recover-step2').classList.add('hidden');
-    $('#recover-id').value = $('#auth-username').value.trim();
+    const typed = $('#auth-username').value.trim();
+    $('#recover-id').value = typed.includes('@') && !/^@[a-z0-9_]+$/i.test(typed) ? typed : '';
     $('#recover-code').value = ''; $('#recover-pass').value = ''; $('#recover-pass2').value = '';
     setTimeout(()=> $('#recover-id').focus(), 50);
   }
@@ -2979,25 +3000,14 @@ $('#recover-back').onclick = ()=> openRecover(false);
 async function recoverSend(){
   const raw = $('#recover-id').value.trim().toLowerCase();
   showRecoverError('');
-  if(!raw){ showRecoverError('Escribe tu usuario o tu correo.'); return; }
+  if(!raw){ showRecoverError('Escribe el correo de tu cuenta.'); return; }
   const btn = $('#recover-send-btn'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Enviando…';
   try{
-    if(raw.includes('@')){
-      if(!isRealEmail(raw) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)){ showRecoverError('Ese correo no parece válido.'); return; }
-      const { error } = await sb.auth.resetPasswordForEmail(raw);
-      if(error){ showRecoverError(emailErrorText(error)); return; }
-      recoverTarget = { kind:'email', value: raw };
-      $('#recover-sent-msg').textContent = `Si ${raw} es el correo de una cuenta, te hemos enviado un código. Si no lo ves, mira en correo no deseado.`;
-    } else {
-      const u = raw.replace(/^@/, '');
-      const r = await nfAuth('recover_send', { username: u });
-      if(r.error === 'no_email'){ showRecoverError('Esa cuenta no tiene correo añadido (o el usuario no existe), así que no se puede recuperar por aquí.'); return; }
-      if(r.error === 'rate_limit'){ showRecoverError('Has pedido varios códigos seguidos. Espera un minuto y vuelve a probar.'); return; }
-      if(r.error === 'unavailable'){ showRecoverError('Ahora mismo no se puede. Prueba escribiendo tu correo en vez del usuario.'); return; }
-      if(r.error){ showRecoverError('No se ha podido enviar el correo ahora mismo. Inténtalo en un rato.'); return; }
-      recoverTarget = { kind:'user', value: u };
-      $('#recover-sent-msg').textContent = `Te hemos enviado un código a ${r.hint}. Si no lo ves, mira en correo no deseado.`;
-    }
+    if(!raw.includes('@') || !isRealEmail(raw) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)){ showRecoverError('Escribe el correo de tu cuenta (no el usuario).'); return; }
+    const { error } = await sb.auth.resetPasswordForEmail(raw);
+    if(error){ showRecoverError(emailErrorText(error)); return; }
+    recoverTarget = { kind:'email', value: raw };
+    $('#recover-sent-msg').textContent = `Si ${raw} es el correo de una cuenta, te hemos enviado un código. Si no lo ves, mira en correo no deseado.`;
     $('#recover-step1').classList.add('hidden'); $('#recover-step2').classList.remove('hidden');
     setTimeout(()=> $('#recover-code').focus(), 50);
   } finally { btn.disabled = false; btn.textContent = label; }
@@ -3462,6 +3472,7 @@ async function initInner(){
   try{ const { data } = await withTimeout(sb.auth.getSession(), 8000); session = data && data.session; }catch(e){ console.error(e); }
   if(session){
     const cache = readBootCache(session.user.id);
+    if(cache && cache.profile) rememberLoginEmail(cache.profile.username, session.user.email);
     if(cache && cache.profile && cache.profile.auth_user_id===session.user.id){
       // Entrada instantánea con la copia local; el perfil se refresca por detrás.
       sb.from('profiles').select('*').eq('auth_user_id', session.user.id).maybeSingle()
@@ -6380,10 +6391,16 @@ $('#change-password-btn').onclick = async ()=>{
   const btn = $('#change-password-btn'); const label = btn.textContent;
   changingPassword = true; btn.disabled = true; btn.textContent = 'Un momento…';
   try{
-    const email = await getAuthEmail();
-    if(!email){ fail('Se ha cerrado la sesión. Vuelve a entrar y repite el cambio.'); return; }
-    const { error: inErr } = await sb.auth.signInWithPassword({ email, password: cur });
-    if(inErr){ fail(/invalid login credentials/i.test(inErr.message||'') ? 'La contraseña actual no es correcta.' : passwordErrorText(inErr)); return; }
+    // Se comprueba la actual igual que al entrar (con tu @usuario): así vale aunque este
+    // dispositivo recuerde un correo viejo de tu cuenta (p. ej. si lo cambiaste en otro).
+    let chk;
+    try{ chk = await tryLogin(currentUser.username, cur); }catch(e){ chk = { error: e }; }
+    if(chk.error){
+      const m = (chk.error && chk.error.message) || '';
+      if(/invalid login credentials/i.test(m)) fail(chk.nfDown ? 'No se ha podido comprobar la contraseña actual ahora mismo (servidor). Inténtalo en un rato.' : 'La contraseña actual no es correcta.');
+      else fail(passwordErrorText(chk.error));
+      return;
+    }
     const { error } = await sb.auth.updateUser({ password: p1 });
     if(error){ fail(passwordErrorText(error)); return; }
     $('#current-password').value=''; $('#new-password').value=''; $('#new-password-confirm').value='';
