@@ -2101,6 +2101,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         </div>
         <div class="section-title">Cambiar contraseña</div>
         <div class="card">
+          <div class="field"><label>Contraseña actual</label><input type="password" id="current-password" autocomplete="current-password"></div>
           <div class="field"><label>Nueva contraseña</label><input type="password" id="new-password" autocomplete="new-password"></div>
           <div class="field"><label>Repite la nueva contraseña</label><input type="password" id="new-password-confirm" autocomplete="new-password"></div>
           <div id="password-msg" class="auth-error hidden"></div>
@@ -2642,7 +2643,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.27-1';
+const APP_VERSION = '2026.10.28-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -2758,6 +2759,18 @@ let authMode = 'login';
 function fakeEmail(username){ return `${username}@nutrifit.local`; }
 function showAuthError(msg){ $('#auth-error').textContent = msg; $('#auth-error').classList.remove('hidden'); }
 function hideAuthError(){ $('#auth-error').classList.add('hidden'); }
+// Errores al poner contraseña nueva (en castellano, sin mensajes de Supabase en inglés).
+function passwordErrorText(err){
+  const code = (err && err.code) || '', msg = (err && err.message) || String(err || '');
+  if(code==='same_password' || /different from the old/i.test(msg)) return 'Esa ya es tu contraseña actual.';
+  if(code==='weak_password' || /password.*(least|short|characters|weak)/i.test(msg)) return 'La contraseña debe tener al menos 6 caracteres.';
+  if(code==='reauthentication_needed' || /reauthenticat/i.test(msg)) return 'Por seguridad, vuelve a entrar en la app y repite el cambio.';
+  if(/session.*(missing|expired|not found)|jwt|not authenticated/i.test(msg)) return 'Se ha cerrado la sesión. Vuelve a entrar y repite el cambio.';
+  if(/rate|too many|seconds/i.test(msg)) return 'Demasiados intentos, espera un minuto.';
+  if(/fetch|network|failed to/i.test(msg)) return 'Sin conexión. Inténtalo de nuevo.';
+  return 'No se ha podido cambiar la contraseña. Inténtalo de nuevo.';
+}
+function isSamePasswordError(err){ return !!err && (err.code==='same_password' || /different from the old/i.test(err.message||'')); }
 function translateAuthError(err){
   const msg = (err && err.message) || '';
   if(/email.*(not confirmed)/i.test(msg)) return 'Tienes que confirmar el correo antes de entrar.';
@@ -2964,7 +2977,8 @@ $('#recover-save-btn').onclick = async ()=>{
       if(error){ showRecoverError('No se ha podido entrar, inténtalo de nuevo.'); return; }
     }
     const { error: upErr } = await sb.auth.updateUser({ password: p1 });
-    if(upErr){ showRecoverError('Error: ' + upErr.message); return; }
+    // Si es la misma que ya tenía no pasa nada: el código era bueno, entra igual.
+    if(upErr && !isSamePasswordError(upErr)){ showRecoverError(passwordErrorText(upErr)); return; }
     const { data } = await sb.auth.getSession();
     const profile = await profileForAuth(data.session.user.id);
     openRecover(false);
@@ -6256,17 +6270,34 @@ $('#delete-account-btn').onclick = async ()=>{
   showToast('Tu cuenta se ha eliminado.');
 };
 
+/* Cambiar la contraseña: primero se comprueba la actual volviendo a entrar
+   (así la sesión es "reciente" y Supabase no pide reautenticarse) y luego
+   se pone la nueva. */
+let changingPassword = false;
 $('#change-password-btn').onclick = async ()=>{
-  const p1 = $('#new-password').value, p2 = $('#new-password-confirm').value;
+  if(changingPassword) return;
+  const cur = $('#current-password').value, p1 = $('#new-password').value, p2 = $('#new-password-confirm').value;
   const msg = $('#password-msg');
+  const fail = (t)=>{ msg.textContent = t; msg.classList.remove('hidden'); };
   msg.classList.add('hidden');
-  if(p1.length<6){ msg.textContent='La contraseña debe tener al menos 6 caracteres.'; msg.classList.remove('hidden'); return; }
-  if(p1!==p2){ msg.textContent='Las contraseñas no coinciden.'; msg.classList.remove('hidden'); return; }
-  const { error } = await sb.auth.updateUser({ password: p1 });
-  if(error){ msg.textContent = 'Error: '+error.message; msg.classList.remove('hidden'); return; }
-  $('#new-password').value=''; $('#new-password-confirm').value='';
-  alert('Contraseña actualizada.');
-  setPagerPage('settings', 0, true);
+  if(!cur){ fail('Escribe tu contraseña actual.'); return; }
+  if(p1.length<6){ fail('La contraseña debe tener al menos 6 caracteres.'); return; }
+  if(p1!==p2){ fail('Las contraseñas no coinciden.'); return; }
+  if(p1===cur){ fail('La nueva tiene que ser distinta de la actual.'); return; }
+  const btn = $('#change-password-btn'); const label = btn.textContent;
+  changingPassword = true; btn.disabled = true; btn.textContent = 'Un momento…';
+  try{
+    const email = await getAuthEmail();
+    if(!email){ fail('Se ha cerrado la sesión. Vuelve a entrar y repite el cambio.'); return; }
+    const { error: inErr } = await sb.auth.signInWithPassword({ email, password: cur });
+    if(inErr){ fail(/invalid login credentials/i.test(inErr.message||'') ? 'La contraseña actual no es correcta.' : passwordErrorText(inErr)); return; }
+    const { error } = await sb.auth.updateUser({ password: p1 });
+    if(error){ fail(passwordErrorText(error)); return; }
+    $('#current-password').value=''; $('#new-password').value=''; $('#new-password-confirm').value='';
+    showToast('Contraseña cambiada');
+    setPagerPage('settings', 0, true);
+  }catch(e){ fail(passwordErrorText(e)); }
+  finally{ changingPassword = false; btn.disabled = false; btn.textContent = label; }
 };
 
 // ---------- Correo electrónico (Configuración) ----------
