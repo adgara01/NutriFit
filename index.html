@@ -48,7 +48,7 @@ html[data-theme="dark"]{
 html[data-theme="dark"] .modal{background:rgba(0,0,0,.6);}
 html[data-theme="dark"] .drawer-overlay{background:rgba(0,0,0,.5);}
 html[data-theme="dark"] .day-col .day-badge{color:#7fe0b4;}
-html[data-theme="dark"] .ingredient-check.checked{background:#1f5a43; border-color:#2f7a5c;}
+html[data-theme="dark"] .ingredient-check.checked{background:#1f8a5f; box-shadow:0 0 0 3px rgba(47,180,120,.18), 0 0 10px rgba(47,180,120,.5);}
 html[data-theme="dark"] .update-banner{background:#2a3431;}
 html[data-theme="dark"] .np-ink{box-shadow:0 1px 4px rgba(0,0,0,.5);}
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
@@ -489,9 +489,10 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
    vino, en cursiva, esquina inferior derecha de la foto. Solo se pinta si
    el plato tiene shared_from_username (nunca en los propios). */
 .shared-watermark{
-  position:absolute; right:8px; bottom:8px; z-index:2; font-style:italic; font-size:11px;
-  font-weight:500; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.65); pointer-events:none;
-  letter-spacing:.2px;
+  position:absolute; right:8px; bottom:8px; z-index:2; font-size:11.5px;
+  font-weight:700; color:#fff; pointer-events:none; letter-spacing:.1px; line-height:1.2;
+  background:rgba(70,74,72,.72); padding:3px 9px; border-radius:999px;
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
 }
 .dish-thumb-wrap{position:relative;}
 .dish-title-row{display:flex; align-items:center; gap:8px; margin-bottom:16px;}
@@ -564,7 +565,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .meta-servings-cell .servings-row{display:flex; align-items:center; justify-content:center; gap:6px;}
 .desc-label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px;}
 /* "Cómo se hace": tarjeta que invita a entrar y ver la receta paso a paso */
-.steps-card{grid-column:1; grid-row:1; display:flex; align-items:center; gap:9px; padding:8px 8px 8px 10px; border-radius:14px; text-align:left; min-width:0; overflow:hidden;
+.steps-card{grid-column:1 / -1; grid-row:1; display:flex; align-items:center; gap:9px; padding:8px 8px 8px 10px; border-radius:14px; text-align:left; min-width:0; overflow:hidden;
   background:linear-gradient(135deg, rgba(18,135,94,.13), rgba(18,135,94,.04)); border:1px solid rgba(18,135,94,.28); color:var(--text);}
 .steps-card-icon{width:32px; height:32px; border-radius:10px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
 .steps-card-icon svg{width:17px; height:17px;}
@@ -628,9 +629,6 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .dish-view-locked .meta-section-title{display:none;}
 .dish-view-locked .meta-chip.meta-desc-big{border-color:var(--border); position:relative; padding-top:19px; padding-bottom:4px;}
 .dish-view-locked .dish-meta-grid{grid-template-columns:1fr 112px;}
-.dish-view-locked #quality-group .pill-btn:not(.active){display:none;}
-.dish-view-locked #quality-group:not(:has(.pill-btn.active)){visibility:hidden;}
-.dish-view-locked #quality-group .pill-btn.active{flex:0 1 auto; width:100%; font-size:12px; border-radius:999px; height:34px; align-self:center;}
 .dish-view-locked .meta-desc-label{
   display:block; position:absolute; top:6px; left:10px; font-size:9px; color:var(--muted);
   font-style:italic; text-align:left;
@@ -642,7 +640,6 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .dish-view-locked #dish-calories,
 .dish-view-locked #dish-duration,
 .dish-view-locked #dish-servings-base,
-.dish-view-locked #quality-group .pill-btn,
 .dish-view-locked #ingredients-list .ingredient-input,
 .dish-view-locked #ingredients-list .ingredient-qty{
   pointer-events:none;
@@ -670,13 +667,15 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
   position:relative; display:flex; align-items:center; gap:6px;
   background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:0 6px 0 8px;
 }
+/* Mini nevera a la izquierda de cada ingrediente: apagada si no lo tienes,
+   encendida (verde, con brillo) si está en tu Nevera. */
 .ingredient-check{
-  width:22px; height:22px; border-radius:50%; flex-shrink:0; background:var(--card);
-  border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center;
+  width:24px; height:24px; border-radius:7px; flex-shrink:0; background:none; border:none; padding:0;
+  display:flex; align-items:center; justify-content:center; color:var(--muted); opacity:.42;
+  transition:color .2s, opacity .2s, background .2s, box-shadow .2s;
 }
-.ingredient-check svg{opacity:0; width:13px; height:13px; color:#fff;}
-.ingredient-check.checked{background:#a9dcc0; border-color:#8fceac;}
-.ingredient-check.checked svg{opacity:1;}
+.ingredient-check svg{width:17px; height:17px;}
+.ingredient-check.checked{opacity:1; color:#fff; background:var(--accent); box-shadow:0 0 0 3px rgba(18,135,94,.16), 0 0 10px rgba(18,135,94,.45);}
 .ingredient-name-wrap{position:relative; flex:1 1 0%; min-width:0;}
 /* Los !important de aquí en adelante son necesarios: #ingredients-list vive
    dentro de un .field, y ".field input[type=...]/select" (más arriba en
@@ -1067,7 +1066,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .profile-link{cursor:pointer; -webkit-tap-highlight-color:transparent;}
 span.profile-link:has(> .user-row-avatar){display:inline-flex; flex-shrink:0; border-radius:50%;}
 .profile-link:active{opacity:.6;}
-#dish-photo-watermark{pointer-events:auto; cursor:pointer; padding:6px 8px; margin:-6px -8px;}
+#dish-photo-watermark{pointer-events:auto; cursor:pointer; right:10px; bottom:10px; font-size:12.5px; padding:4px 11px;}
 .fp-back-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
 .fp-back-btn{display:flex; align-items:center; gap:4px; background:none; color:var(--text); font-weight:600; font-size:13px; padding:4px 0;}
 .fp-back-btn svg{width:15px; height:15px;}
@@ -1307,7 +1306,13 @@ body.sec-platos .appbar #pf-bar{display:flex;}
 .dish-tags-toggle{background:none; padding:2px 0; color:var(--accent); font-weight:700; font-size:13px;}
 .dish-tags-list, .dish-tags-picker, .explore-tags{display:flex; flex-wrap:wrap; gap:6px;}
 .dish-tags-list:empty{display:none;}
-.dish-tags-picker{margin-top:8px; padding:10px; border-radius:12px; background:var(--card2); border:1px solid var(--border);}
+.dish-tags-picker{margin-top:8px; padding:4px 12px 12px; border-radius:14px; background:var(--card2); border:1px solid var(--border); display:block;}
+.tag-group{display:flex; flex-wrap:wrap; gap:6px;}
+.tag-group-title{font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin:10px 0 6px;}
+.tag-chip.q-chip{font-weight:700;}
+.tag-chip.q-bueno.on, .tag-chip.q-bueno.tag-static{background:rgba(31,157,99,.14); border-color:var(--good); color:var(--good);}
+.tag-chip.q-normal.on, .tag-chip.q-normal.tag-static{background:rgba(192,122,31,.14); border-color:var(--normal); color:var(--normal);}
+.tag-chip.q-malo.on, .tag-chip.q-malo.tag-static{background:rgba(201,86,74,.14); border-color:var(--bad); color:var(--bad);}
 .tag-chip{padding:5px 11px; border-radius:999px; border:1px solid var(--border-strong); background:var(--card); color:var(--text); font-size:12.5px; font-weight:600; flex-shrink:0;}
 .tag-chip.on{background:var(--accent); border-color:var(--accent); color:#fff;}
 .tag-chip.tag-static{background:rgba(18,135,94,.10); border-color:transparent; color:var(--accent);}
@@ -2203,11 +2208,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <span class="steps-card-thumb hidden" id="steps-card-thumb"></span>
         <span class="steps-card-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
       </button>
-      <div class="pill-group meta-quality-cell" id="quality-group">
-        <button type="button" class="pill-btn" data-q="bueno">Healthy</button>
-        <button type="button" class="pill-btn" data-q="normal">Normal</button>
-        <button type="button" class="pill-btn" data-q="malo">Cheat meal</button>
-      </div>
       <div class="meta-num-row">
         <div class="meta-chip meta-kcal">
           <input type="number" id="dish-calories" class="meta-value" autocomplete="off">
@@ -2643,7 +2643,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.28-1';
+const APP_VERSION = '2026.10.29-1';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeGNjcW1mbWJkdXp6bm9zeWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NTg3OTQsImV4cCI6MjEwMzQzNDc5NH0.uwQ6shxtXpA3h8vEwt9_BWDwDHhm9MVHn9-TbBwqQ1A';
 
@@ -4352,7 +4352,6 @@ function openDishModal(dish, preview){
   captureIngredientBaselines();
   syncServingsBaseline();
   updateIngredientTicks();
-  $all('#quality-group .pill-btn').forEach(b=> b.classList.toggle('active', b.dataset.q===selectedQuality));
   // Un plato nuevo (aún sin fila en la BD) se crea con un botón explícito
   // "Crear plato", no en automático; en cuanto existe, todo pasa a
   // autoguardarse solo y este botón desaparece para siempre en esta ficha.
@@ -4383,10 +4382,12 @@ function applyDishModalButtons(){
   $('#dish-send-btn').classList.add('hidden');
   const editing = dishExistsRemote && !dishViewMode;
   const viewing = dishExistsRemote && dishViewMode;
+  const copy = openDishIsCopy();
   $('#dish-share-btn').classList.toggle('hidden', !viewing);
-  $('#dish-edit-btn').classList.toggle('hidden', !viewing);
+  $('#dish-edit-btn').classList.toggle('hidden', !viewing || copy);
   $('#dish-edit-save-btn').classList.toggle('hidden', !editing);
-  $('#dish-delete-btn').classList.toggle('hidden', !editing);
+  // Una receta copiada no se edita: en su lugar se puede eliminar.
+  $('#dish-delete-btn').classList.toggle('hidden', !(editing || (viewing && copy)));
   $('#dish-macros-btn').classList.toggle('hidden', !(currentUser.show_macros && dishExistsRemote));
   // El +/- de raciones (junto al propio campo) solo tiene sentido viendo un
   // plato ya hecho: ni creando uno nuevo (aún sin ingredientes reales) ni
@@ -4607,7 +4608,7 @@ function addIngredientRow(item={}, afterRow=null){
   row.innerHTML = `
     <div class="ingredient-delete-bg">Eliminar</div>
     <div class="ingredient-row-inner">
-      <button type="button" class="ingredient-check" aria-label="Marcar ingrediente">${ICON_CHECK}</button>
+      <button type="button" class="ingredient-check" aria-label="En la nevera">${ICON_FRIDGE_MINI}</button>
       <div class="ingredient-name-wrap">
         <input type="text" class="ingredient-input" value="${escapeHtml(it.name)}" enterkeyhint="next" placeholder="Escribe un ingrediente…"
           autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
@@ -4780,6 +4781,7 @@ $('#dish-servings-base').addEventListener('input', ()=>{ scheduleDishAutosave(fa
    en la nevera... si pongo más raciones y no hay tanta cantidad, el tick se
    quita solo"). Un plato con cobertura 100% en "Sugerencias de la Nevera" se
    verá ya con todos los ticks puestos al abrirlo. */
+const ICON_FRIDGE_MINI = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="2.5" width="13" height="19" rx="2.6"/><path d="M5.5 9.5h13"/><path d="M8.6 5.4v1.6M8.6 12.4v3.2"/></svg>';
 function updateIngredientTicks(){
   $all('#ingredients-list .ingredient-row').forEach(row=>{
     const name = row.querySelector('.ingredient-input').value.trim();
@@ -5072,13 +5074,6 @@ $('#macro-carbs').addEventListener('input', ()=> scheduleDishAutosave(false));
 $('#macro-fat').addEventListener('input', ()=> scheduleDishAutosave(false));
 $('#macro-fiber').addEventListener('input', ()=> scheduleDishAutosave(false));
 
-$all('#quality-group .pill-btn').forEach(b=>{
-  b.onclick = ()=>{
-    selectedQuality = (selectedQuality===b.dataset.q) ? null : b.dataset.q;
-    $all('#quality-group .pill-btn').forEach(x=> x.classList.toggle('active', x.dataset.q===selectedQuality));
-    scheduleDishAutosave(true);
-  };
-});
 /* La foto del plato se "normaliza" siempre a JPEG antes de subirla: algunas
    fotos de iPhone llegan en HEIC o con orientación EXIF que un <canvas>
    ignora si no se decodifican bien — si eso ocurre, la subida "funciona"
@@ -5841,7 +5836,17 @@ async function backfillAvatar(){
 }
 
 /* ===================== ETIQUETAS ===================== */
-const DISH_TAGS = ['Desayuno','Comida','Cena','Snack','Postre','Carne','Pescado','Vegano','Vegetariano','Sin gluten','Sin lactosa','Alto en proteína','Ligero','Tupper','Rápido','Picante','Mediterráneo','Italiano','Asiático','Chino','Japonés','Indio','Mexicano','Árabe','Americano'];
+/* Etiquetas: una sola sección, por grupos. La primera fila es el tipo
+   (Healthy / Normal / Cheat meal, solo uno: se guarda en dishes.quality
+   porque Fitness lo usa); el resto se guardan en dishes.tags. */
+const TAG_GROUPS = [
+  { title:'Momento', tags:['Desayuno','Comida','Cena','Snack','Postre'] },
+  { title:'Principal', tags:['Carne','Pescado','Vegano','Vegetariano'] },
+  { title:'Dieta', tags:['Sin gluten','Sin lactosa','Alto en proteína','Ligero'] },
+  { title:'Estilo', tags:['Tupper','Rápido','Picante'] },
+  { title:'Cocina', tags:['Mediterráneo','Italiano','Asiático','Chino','Japonés','Indio','Mexicano','Árabe','Americano'] },
+];
+const DISH_TAGS = TAG_GROUPS.flatMap(g=> g.tags);
 let dishTags = [], dishTagsOpen = false;
 function allKnownTags(extra){
   const set = new Set(DISH_TAGS);
@@ -5850,18 +5855,28 @@ function allKnownTags(extra){
   return [...set];
 }
 function tagChipsHtml(tags, cls){ return tags.map(t=> `<span class="tag-chip ${cls||''}">${escapeHtml(t)}</span>`).join(''); }
+function qualityChipHtml(q){ return q ? `<span class="tag-chip q-chip q-${q} tag-static">${QUALITY_LABELS[q]||q}</span>` : ''; }
 function renderDishTags(){
   const editable = !dishPreview && !dishFieldsLocked();
   const box = $('#dish-tags');
-  box.classList.toggle('hidden', !editable && !dishTags.length);
+  const any = dishTags.length || selectedQuality;
+  box.classList.toggle('hidden', !editable && !any);
   $('#dish-tags-toggle').classList.toggle('hidden', !editable);
-  $('#dish-tags-toggle').textContent = dishTagsOpen ? 'Listo' : (dishTags.length ? 'Cambiar' : '+ Añadir');
-  $('#dish-tags-list').innerHTML = (editable && dishTagsOpen) ? '' : tagChipsHtml(dishTags, 'tag-static');
+  $('#dish-tags-toggle').textContent = dishTagsOpen ? 'Listo' : (any ? 'Cambiar' : '+ Añadir');
+  $('#dish-tags-list').innerHTML = (editable && dishTagsOpen) ? '' : qualityChipHtml(selectedQuality) + tagChipsHtml(dishTags, 'tag-static');
   const picker = $('#dish-tags-picker');
   picker.classList.toggle('hidden', !(editable && dishTagsOpen));
   if(editable && dishTagsOpen){
-    picker.innerHTML = allKnownTags(dishTags).map(t=> `<button type="button" class="tag-chip ${dishTags.includes(t) ? 'on' : ''}" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join('')
-      + '<button type="button" class="tag-chip tag-add" id="dish-tag-new">+ Otra</button>';
+    const chip = (t)=> `<button type="button" class="tag-chip ${dishTags.includes(t) ? 'on' : ''}" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`;
+    const own = allKnownTags(dishTags).filter(t=> !DISH_TAGS.includes(t));
+    picker.innerHTML =
+      `<div class="tag-group-title">Tipo</div><div class="tag-group">${Object.keys(QUALITY_LABELS).map(q=> `<button type="button" class="tag-chip q-chip q-${q} ${selectedQuality===q ? 'on' : ''}" data-qual="${q}">${QUALITY_LABELS[q]}</button>`).join('')}</div>`
+      + TAG_GROUPS.map(g=> `<div class="tag-group-title">${g.title}</div><div class="tag-group">${g.tags.map(chip).join('')}</div>`).join('')
+      + `<div class="tag-group-title">Otras</div><div class="tag-group">${own.map(chip).join('')}<button type="button" class="tag-chip tag-add" id="dish-tag-new">+ Otra</button></div>`;
+    picker.querySelectorAll('[data-qual]').forEach(b=> b.onclick = ()=>{
+      selectedQuality = selectedQuality===b.dataset.qual ? null : b.dataset.qual;
+      renderDishTags(); scheduleDishAutosave(true);
+    });
     picker.querySelectorAll('[data-tag]').forEach(b=> b.onclick = ()=>{
       const t = b.dataset.tag;
       dishTags = dishTags.includes(t) ? dishTags.filter(x=> x!==t) : [...dishTags, t];
@@ -6053,7 +6068,14 @@ $('#dish-save-btn').onclick = async ()=>{
   }
 };
 
+// ¿El plato abierto es una copia de la receta de otra persona? (no se edita)
+function openDishIsCopy(){
+  if(dishPreview || !dishExistsRemote) return false;
+  const d = dishes.find(x=> x.id===editingDishId);
+  return !!d && isCopyDish(d);
+}
 $('#dish-edit-btn').onclick = ()=>{
+  if(openDishIsCopy()) return;
   // Si se había escalado la vista (p.ej. "para 4 personas"), se deshace antes
   // de dejar editar — lo que se edita son las cantidades base reales, nunca
   // un escalado de pantalla.
@@ -7187,6 +7209,8 @@ function renderFriendProfileBody(){
 // y el estado de las calorías; si aún no está el SQL de esta versión, sin eso.
 async function insertDishSafe(row, src){
   src = src || {};
+  // Si lo que copias ya era una copia, el nombre que se queda es el del creador original.
+  if(src.shared_from_username) row.shared_from_username = src.shared_from_username;
   if(row.origin_dish_id===undefined) delete row.origin_dish_id;
   const full = { ...row, tags: Array.isArray(src.tags) ? src.tags : [],
     kcal_manual: src.kcal_manual!==undefined ? !!src.kcal_manual : src.calories!=null,
@@ -7288,16 +7312,25 @@ async function shareDishWith(target){
 /* --- Publicar en el Muro (desde el mismo pop-up de Compartir) --- */
 // Publicar: tu plato abierto, o (publishSnapshot) el de una publicación en
 // la que te han etiquetado ("Publicar yo también").
-let publishSnapshot = null, publishWith = new Set(), publishDishId = null;
+let publishSnapshot = null, publishWith = new Set(), publishDishId = null, publishFromPost = null;
+/* Una vez publicas "yo también", el recuadro de "te ha etiquetado" desaparece
+   (en todos tus dispositivos: tu publicación lleva from_post = la original). */
+function taggedDoneKey(){ return 'nf_tag_done_' + (currentUser && currentUser.id); }
+function taggedDoneSet(){ try{ return new Set(JSON.parse(localStorage.getItem(taggedDoneKey()) || '[]')); }catch(e){ return new Set(); } }
+function markTaggedDone(postId){ try{ const st = taggedDoneSet(); st.add(postId); localStorage.setItem(taggedDoneKey(), JSON.stringify([...st].slice(-200))); }catch(e){} }
+function taggedDone(postId){
+  return taggedDoneSet().has(postId) || wallPosts.some(x=> x.user_id===currentUser.id && x.dish_snapshot && x.dish_snapshot.from_post===postId);
+}
 function renderPublishWith(){
   const box = $('#publish-with');
   box.classList.toggle('hidden', !friends.length);
   $('#publish-with-chips').innerHTML = friends.map(f=> `<button type="button" class="tag-chip ${publishWith.has(f.id) ? 'on' : ''}" data-with="${f.id}">@${escapeHtml(f.username)}</button>`).join('');
   $all('[data-with]').forEach(b=> b.onclick = ()=>{ const id = b.dataset.with; if(publishWith.has(id)) publishWith.delete(id); else publishWith.add(id); renderPublishWith(); });
 }
-function openPublishSheet(snapshot, withIds, dishId){
+function openPublishSheet(snapshot, withIds, dishId, fromPost){
   publishSnapshot = snapshot || null;
   publishDishId = dishId || null;
+  publishFromPost = fromPost || null;
   publishWith = new Set((withIds||[]).filter(id=> friends.some(f=> f.id===id)));
   $('#wall-publish-caption').value = '';
   renderPublishWith();
@@ -7319,12 +7352,16 @@ $('#wall-publish-confirm').onclick = async ()=>{
   const caption = $('#wall-publish-caption').value.trim();
   const withIds = [...publishWith];
   hideModal($('#wall-publish-modal'));
+  const fromPost = publishSnapshot ? publishFromPost : null;
+  if(fromPost) snapshot = { ...snapshot, from_post: fromPost };
+  else if(snapshot && snapshot.from_post){ snapshot = { ...snapshot }; delete snapshot.from_post; }
   const row = { user_id: currentUser.id, dish_id: dishId, dish_snapshot: snapshot, caption: caption || null };
   if(withIds.length) row.with_ids = withIds;
   let { error } = await sb.from('wall_posts').insert(row);
   if(error && /with_ids/.test(error.message||'')){ delete row.with_ids; ({ error } = await sb.from('wall_posts').insert(row)); }
   if(error){ alert('Error al publicar: '+error.message); return; }
-  publishSnapshot = null; publishDishId = null;
+  publishSnapshot = null; publishDishId = null; publishFromPost = null;
+  if(fromPost){ markTaggedDone(fromPost); renderWallFeed(); }
   alert('Publicado en el Muro.');
   loadWallFeed();
 };
@@ -8659,7 +8696,7 @@ function renderWallFeed(){
       </div>
       ${likeCount ? `<button type="button" class="wall-likes-line" data-wall-likers="${p.id}">${wallLikesLine(p.id)}</button>` : ''}
       ${cookCount ? `<button type="button" class="wall-cooks-line" data-wall-cookers="${p.id}">${ICON_POT}<span>${wallCooksLine(p.id)}</span></button>` : ''}
-      ${(p.with_ids||[]).includes(currentUser.id) && !isOwn ? `<div class="wall-tagged">@${escapeHtml((p.author&&p.author.username)||'?')} te ha etiquetado: habéis cocinado juntos.
+      ${(p.with_ids||[]).includes(currentUser.id) && !isOwn && !taggedDone(p.id) ? `<div class="wall-tagged">@${escapeHtml((p.author&&p.author.username)||'?')} te ha etiquetado: habéis cocinado juntos.
         <div class="wall-tagged-actions"><button type="button" class="fp-following" data-tag-save="${p.id}">Guardar en mi perfil</button><button type="button" class="fp-follow" data-tag-publish="${p.id}">Publicar yo también</button></div></div>` : ''}
       <div class="wall-post-body" data-wall-open="${p.id}">
         <div class="wall-post-dish">${escapeHtml(d.name||'Receta')}${d.calories?` · ${d.calories} kcal`:''}</div>
@@ -8689,7 +8726,7 @@ function renderWallFeed(){
   $all('[data-tag-publish]').forEach(b=> b.onclick = ()=>{
     const p = wallPosts.find(x=> x.id===b.dataset.tagPublish); if(!p) return;
     // Se etiqueta al autor y al resto de la gente que cocinó (si son tus amigos).
-    openPublishSheet(p.dish_snapshot || {}, [p.user_id, ...(p.with_ids||[])].filter(id=> id!==currentUser.id));
+    openPublishSheet(p.dish_snapshot || {}, [p.user_id, ...(p.with_ids||[])].filter(id=> id!==currentUser.id), null, p.id);
   });
   $all('[data-wall-send]').forEach(b=> b.onclick = ()=>{
     const p = wallPosts.find(x=> x.id===b.dataset.wallSend);
@@ -9272,6 +9309,7 @@ async function openExploreSection(){
   if(exploreFriendDishes===null) await loadExploreFriendDishes();
   runExploreSearch();
 }
+let exploreCreatorIds = {}; // @usuario → id (para enlazar al creador original de las copias)
 async function loadExploreFriendDishes(){
   const ids = friends.map(f=> f.id);
   if(!ids.length){ exploreFriendDishes = []; return; }
@@ -9280,6 +9318,18 @@ async function loadExploreFriendDishes(){
     .in('user_id', ids).order('created_at', {ascending:false}).limit(1000);
   if(error){ console.error(error); exploreFriendDishes = []; return; }
   exploreFriendDishes = data||[];
+  const names = [...new Set(exploreFriendDishes.map(d=> d.shared_from_username).filter(Boolean))];
+  if(names.length){
+    const { data: ps } = await sb.from('profiles').select('id,username').in('username', names);
+    (ps||[]).forEach(p=> exploreCreatorIds[p.username] = p.id);
+  }
+}
+// Quién creó de verdad la receta: el dueño si es suya, o el original si es una copia.
+function exploreCreator(r){
+  const d = r.dish;
+  if(d.creator_username) return { id: d.creator_id || exploreCreatorIds[d.creator_username] || null, username: d.creator_username };
+  if(d.shared_from_username) return { id: exploreCreatorIds[d.shared_from_username] || null, username: d.shared_from_username };
+  return r.from || null;
 }
 function renderExploreChips(){
   const cat = exploreCatDef();
@@ -9359,7 +9409,8 @@ function renderExploreList(box, total, loadingPublic, publicError){
   const friendsPart = list.filter(r=> r.src==='amigos'), pubPart = list.filter(r=> r.src==='publico');
   const row = (r)=>{
     const d = r.dish, i = list.indexOf(r);
-    const who = r.from ? `<span class="profile-link"${profileAttr(r.from.id)}>@${escapeHtml(r.from.username)}</span>` : 'Comunidad';
+    const c = exploreCreator(r);
+    const who = c ? (c.id ? `<span class="profile-link"${profileAttr(c.id)}>@${escapeHtml(c.username)}</span>` : `@${escapeHtml(c.username)}`) : 'Comunidad';
     const match = total>1 && r.matched ? ` · <span class="explore-match">${r.matched} de ${total}</span>` : '';
     const mark = r.have ? ' · <span class="explore-have">Ya la tienes</span>' : (!r.orig ? ' · copia' : '');
     return `<div class="shared-dish-row" data-explore-open="${i}">
@@ -9385,8 +9436,9 @@ function renderExploreList(box, total, loadingPublic, publicError){
 let previewingExplore = null;
 function openExploreDishPreview(r){
   if(!r) return;
-  const from = r.from ? r.from.username : (r.dish.shared_from_username || null);
-  openDishPreview(r.dish, { fromUsername: r.from ? r.from.username : null, onAdd: r.have ? null : ()=> addFriendDishToRepo(r.dish, from) });
+  const c = exploreCreator(r);
+  const from = c ? c.username : null;
+  openDishPreview(r.dish, { fromUsername: from, onAdd: r.have ? null : ()=> addFriendDishToRepo(r.dish, from) });
 }
 $('#explore-input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addExploreTerm($('#explore-input').value); } });
 wireIngredientAutocomplete($('#explore-input'), $('#explore-suggest'), (name)=> addExploreTerm(name));
