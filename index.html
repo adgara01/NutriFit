@@ -388,7 +388,7 @@ body.ex-people #section-explorar .pager-top{max-height:0; opacity:0; padding-top
 .field label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px;}
 input[type=search]{-webkit-appearance:none; appearance:none;}
 input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-search-decoration{-webkit-appearance:none; display:none;}
-.field input[type=text], .field input[type=search], .field input[type=number], .field textarea, .field select{
+.field input[type=text], .field input[type=email], .field input[type=search], .field input[type=number], .field textarea, .field select{
   width:100%; padding:11px; border-radius:10px; border:1px solid var(--border); background:var(--card); font-size:15px;
 }
 .field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--accent);}
@@ -467,6 +467,46 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .pv-slide{flex:0 0 100%; height:100%; scroll-snap-align:center; scroll-snap-stop:always; display:flex; align-items:center; justify-content:center;}
 .pv-slide img{max-width:100%; max-height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none;}
 .photo-viewer .photo-dots{bottom:calc(18px + env(safe-area-inset-bottom));}
+/* Editor de fotos (cortar y girar) */
+.photo-editor{position:fixed; inset:0; z-index:420; background:#000; color:#fff; display:flex; flex-direction:column; touch-action:none; user-select:none; -webkit-user-select:none;}
+.pe-top{display:flex; align-items:center; justify-content:space-between; padding:calc(10px + env(safe-area-inset-top)) 14px 10px; font-size:14px; font-weight:600;}
+.pe-top button{color:#fff; font-size:15px; font-weight:600; padding:8px 6px; background:none;}
+.pe-top .pe-done{background:var(--accent); border-radius:999px; padding:8px 20px;}
+.pe-stage{flex:1; position:relative; min-height:0; display:flex; align-items:center; justify-content:center; padding:10px 18px; overflow:hidden;}
+.pe-box{position:relative; line-height:0; flex:none;}
+.pe-box canvas{display:block; width:100%; height:100%;}
+.pe-crop{position:absolute; border:1.5px solid #fff; box-shadow:0 0 0 9999px rgba(0,0,0,.62); cursor:move; touch-action:none;
+  background:
+    linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.35)) 33.333% 0/1px 100% no-repeat,
+    linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.35)) 66.666% 0/1px 100% no-repeat,
+    linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.35)) 0 33.333%/100% 1px no-repeat,
+    linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.35)) 0 66.666%/100% 1px no-repeat;}
+.pe-h{position:absolute; width:34px; height:34px; touch-action:none;}
+.pe-h::after{content:''; position:absolute;}
+.pe-h[data-h=nw]{left:-17px; top:-17px;} .pe-h[data-h=nw]::after{left:15px; top:15px; width:18px; height:18px; border-top:3.5px solid #fff; border-left:3.5px solid #fff;}
+.pe-h[data-h=ne]{right:-17px; top:-17px;} .pe-h[data-h=ne]::after{right:15px; top:15px; width:18px; height:18px; border-top:3.5px solid #fff; border-right:3.5px solid #fff;}
+.pe-h[data-h=sw]{left:-17px; bottom:-17px;} .pe-h[data-h=sw]::after{left:15px; bottom:15px; width:18px; height:18px; border-bottom:3.5px solid #fff; border-left:3.5px solid #fff;}
+.pe-h[data-h=se]{right:-17px; bottom:-17px;} .pe-h[data-h=se]::after{right:15px; bottom:15px; width:18px; height:18px; border-bottom:3.5px solid #fff; border-right:3.5px solid #fff;}
+.pe-h[data-h=n],.pe-h[data-h=s]{left:30%; width:40%; height:34px;}
+.pe-h[data-h=n]{top:-17px;} .pe-h[data-h=s]{bottom:-17px;}
+.pe-h[data-h=n]::after,.pe-h[data-h=s]::after{left:50%; margin-left:-14px; width:28px; height:4px; border-radius:2px; background:#fff;}
+.pe-h[data-h=n]::after{top:15px;} .pe-h[data-h=s]::after{bottom:15px;}
+.pe-h[data-h=w],.pe-h[data-h=e]{top:30%; height:40%; width:34px;}
+.pe-h[data-h=w]{left:-17px;} .pe-h[data-h=e]{right:-17px;}
+.pe-h[data-h=w]::after,.pe-h[data-h=e]::after{top:50%; margin-top:-14px; width:4px; height:28px; border-radius:2px; background:#fff;}
+.pe-h[data-h=w]::after{left:15px;} .pe-h[data-h=e]::after{right:15px;}
+.photo-editor.locked .pe-h[data-h=n],.photo-editor.locked .pe-h[data-h=s],.photo-editor.locked .pe-h[data-h=w],.photo-editor.locked .pe-h[data-h=e]{display:none;}
+.pe-tools{padding:6px 0 calc(12px + env(safe-area-inset-bottom));}
+.pe-row{display:flex; align-items:center; justify-content:center; gap:6px; padding:4px 12px;}
+.pe-tool{display:flex; flex-direction:column; align-items:center; gap:3px; color:#fff; background:none; font-size:11.5px; font-weight:600; padding:6px 14px; border-radius:12px;}
+.pe-tool:active{background:rgba(255,255,255,.14);}
+.pe-tool svg{width:24px; height:24px;}
+.pe-pills{display:flex; gap:8px; overflow-x:auto; padding:8px 14px 4px; scrollbar-width:none; touch-action:pan-x; -webkit-overflow-scrolling:touch;}
+.pe-pills::-webkit-scrollbar{display:none;}
+.pe-pill{flex:none; padding:7px 14px; border-radius:999px; background:rgba(255,255,255,.14); color:#fff; font-size:13px; font-weight:600;}
+.pe-pill.on{background:#fff; color:#000;}
+.pe-skip{display:block; margin:4px auto 0; background:none; color:rgba(255,255,255,.7); font-size:12.5px; font-weight:500; padding:6px 10px; text-decoration:underline;}
+.su-note{color:var(--muted); font-size:12.5px; line-height:1.4; margin:-4px 0 14px;}
 @keyframes nf-fade-out{ to{ opacity:0; } }
 .dish-photo-placeholder{
   position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -1596,6 +1636,32 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button type="submit" id="auth-submit-btn" class="btn-primary" style="width:100%;">Entrar</button>
       <button type="button" class="auth-link muted" id="forgot-btn">¿Has olvidado tu contraseña?</button>
     </form>
+    <!-- Crear cuenta: usuario + correo -> código del correo -> contraseña -->
+    <div id="signup-view" class="hidden" style="text-align:left;">
+      <div id="signup-step1">
+        <div class="field"><label for="su-username">Usuario</label>
+          <input id="su-username" type="text" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="20"></div>
+        <div class="field"><label for="su-email">Correo</label>
+          <input id="su-email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send"></div>
+        <div class="su-note">Te mandamos un código para confirmar que el correo es tuyo.</div>
+        <button type="button" id="su-send-btn" class="btn-primary" style="width:100%;">Enviarme un código</button>
+      </div>
+      <div id="signup-step2" class="hidden">
+        <div class="recover-sub" id="su-sent-msg"></div>
+        <div class="field"><label for="su-code">Código</label>
+          <input id="su-code" class="code-input" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Código del correo"></div>
+        <button type="button" id="su-verify-btn" class="btn-primary" style="width:100%;">Confirmar código</button>
+        <button type="button" class="auth-link" id="su-resend">Reenviar el código</button>
+        <button type="button" class="auth-link muted" id="su-change">Cambiar el correo</button>
+      </div>
+      <div id="signup-step3" class="hidden">
+        <div class="recover-sub">Correo confirmado. Ahora elige tu contraseña.</div>
+        <div class="field"><label for="su-pass">Contraseña</label><input id="su-pass" type="password" autocomplete="new-password"></div>
+        <div class="field"><label for="su-pass2">Repite la contraseña</label><input id="su-pass2" type="password" autocomplete="new-password"></div>
+        <button type="button" id="su-create-btn" class="btn-primary" style="width:100%;">Crear cuenta</button>
+      </div>
+      <div id="signup-error" class="auth-error hidden" style="margin-top:12px;"></div>
+    </div>
     <!-- Recuperar la contraseña con un código que llega al correo -->
     <div id="recover-view" class="hidden" style="text-align:left;">
       <div class="recover-title">Recuperar contraseña</div>
@@ -2639,13 +2705,36 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   <div class="photo-dots" id="pv-dots"></div>
 </div>
 
+<!-- ================= EDITOR DE FOTOS (cortar y girar) ================= -->
+<div id="photo-editor" class="photo-editor hidden" role="dialog" aria-label="Editar foto">
+  <div class="pe-top">
+    <button type="button" id="pe-cancel">Descartar</button>
+    <span id="pe-title">Editar foto</span>
+    <button type="button" id="pe-done" class="pe-done">Listo</button>
+  </div>
+  <div class="pe-stage" id="pe-stage"><div class="pe-box" id="pe-box"><canvas id="pe-canvas"></canvas>
+    <div class="pe-crop" id="pe-crop">
+      <i class="pe-h" data-h="n"></i><i class="pe-h" data-h="s"></i><i class="pe-h" data-h="w"></i><i class="pe-h" data-h="e"></i>
+      <i class="pe-h" data-h="nw"></i><i class="pe-h" data-h="ne"></i><i class="pe-h" data-h="sw"></i><i class="pe-h" data-h="se"></i>
+    </div></div></div>
+  <div class="pe-tools">
+    <div class="pe-row">
+      <button type="button" class="pe-tool" id="pe-rot-l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Girar</button>
+      <button type="button" class="pe-tool" id="pe-rot-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>Girar</button>
+      <button type="button" class="pe-tool" id="pe-reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6"/><path d="M4.5 14a8 8 0 1 0 1.6-8.3L4 10"/></svg>Restablecer</button>
+    </div>
+    <div class="pe-pills" id="pe-pills"></div>
+    <button type="button" class="pe-skip hidden" id="pe-skip">Usar las demás fotos sin editar</button>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ===================== CONFIG ===================== */
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.10.30-5';
+const APP_VERSION = '2026.10.31-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -2807,19 +2896,15 @@ function translateAuthError(err){
   return msg || 'Ha ocurrido un error, inténtalo de nuevo.';
 }
 
-$all('.auth-tab').forEach(btn=>{
-  btn.onclick = ()=>{
-    $all('.auth-tab').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    authMode = btn.dataset.tab;
-    $('#auth-confirm-wrap').classList.toggle('hidden', authMode!=='signup');
-    $('#auth-password').setAttribute('autocomplete', authMode==='signup' ? 'new-password' : 'current-password');
-    $('#auth-submit-btn').textContent = authMode==='signup' ? 'Crear cuenta' : 'Entrar';
-    $('#auth-username-label').textContent = authMode==='signup' ? 'Usuario' : 'Usuario o correo';
-    $('#forgot-btn').classList.toggle('hidden', authMode==='signup');
-    hideAuthError();
-  };
-});
+function setAuthTab(mode){
+  authMode = mode;
+  $all('.auth-tab').forEach(b=> b.classList.toggle('active', b.dataset.tab===mode));
+  $('#auth-form').classList.toggle('hidden', mode==='signup');
+  $('#signup-view').classList.toggle('hidden', mode!=='signup');
+  hideAuthError();
+  if(mode==='signup') resetSignup(); else showSignupError('');
+}
+$all('.auth-tab').forEach(btn=>{ btn.onclick = ()=> setAuthTab(btn.dataset.tab); });
 
 /* ---------- Correo real ----------
    La cuenta se crea con un correo interno (usuario@nutrifit.local). Si
@@ -2845,6 +2930,99 @@ function emailErrorText(err){
   if(/sending|smtp|mail/i.test(msg)) return 'No se ha podido enviar el correo ahora mismo. Inténtalo en un rato.';
   return msg || 'Ha ocurrido un error, inténtalo de nuevo.';
 }
+
+/* ---------- Crear cuenta: usuario + correo -> código del correo -> contraseña ----------
+   El correo se confirma con un código de 6 cifras (signInWithOtp). Al confirmarlo
+   ya existe la cuenta y su perfil; el último paso solo le pone contraseña.
+   Si se cierra la app antes, la cuenta queda con su correo y se entra con
+   "¿Has olvidado tu contraseña?". */
+let signupState = { username:'', email:'', profile:null };
+function showSignupError(msg){ const b = $('#signup-error'); b.textContent = msg || ''; b.classList.toggle('hidden', !msg); }
+function signupStep(n){ [1,2,3].forEach(i=> $('#signup-step'+i).classList.toggle('hidden', i!==n)); showSignupError(''); }
+function resetSignup(){
+  signupState = { username:'', email:'', profile:null };
+  ['#su-username','#su-email','#su-code','#su-pass','#su-pass2'].forEach(id=> $(id).value = '');
+  signupStep(1);
+}
+async function signupSend(resend){
+  const username = resend ? signupState.username : cleanLoginId($('#su-username').value).replace(/^@/, '');
+  const email = resend ? signupState.email : $('#su-email').value.trim().toLowerCase();
+  showSignupError('');
+  if(!/^[a-z0-9_]{3,20}$/.test(username)){ showSignupError('El usuario solo puede tener letras, números y guion bajo (3-20 caracteres).'); return; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !isRealEmail(email)){ showSignupError('Escribe un correo válido.'); return; }
+  const btn = resend ? $('#su-resend') : $('#su-send-btn'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Enviando…';
+  try{
+    // Si el usuario ya está cogido se avisa antes de gastar el código (si no se puede mirar, se comprueba al final).
+    try{
+      const { data: taken } = await sb.from('profiles').select('id,auth_user_id').eq('username', username).maybeSingle();
+      if(taken && taken.auth_user_id){ showSignupError('Ese usuario ya está registrado.'); return; }
+    }catch(e){}
+    const { error } = await sb.auth.signInWithOtp({ email, options:{ shouldCreateUser:true } });
+    if(error){ showSignupError(isNetworkError(error) ? translateAuthError(error) : emailErrorText(error)); return; }
+    signupState.username = username; signupState.email = email;
+    $('#su-sent-msg').textContent = `Te hemos enviado un código a ${email}. Si no lo ves, mira en correo no deseado.`;
+    $('#su-code').value = '';
+    signupStep(2);
+    setTimeout(()=> $('#su-code').focus(), 50);
+  }catch(err){ showSignupError(translateAuthError(err)); }
+  finally{ btn.disabled = false; btn.textContent = label; }
+}
+async function signupVerify(){
+  const code = $('#su-code').value.replace(/\s+/g, '');
+  showSignupError('');
+  if(!/^\d{6,10}$/.test(code)){ showSignupError('Escribe el código que te ha llegado (solo números).'); return; }
+  const btn = $('#su-verify-btn'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Comprobando…';
+  try{
+    const { data, error } = await sb.auth.verifyOtp({ email: signupState.email, token: code, type:'email' });
+    if(error){ showSignupError(isNetworkError(error) ? translateAuthError(error) : 'El código no es correcto o ha caducado.'); return; }
+    const user = (data && (data.user || (data.session && data.session.user))) || null;
+    if(!user){ showSignupError('No se ha podido confirmar el correo, inténtalo de nuevo.'); return; }
+    // ¿Ese correo ya tenía cuenta? Entonces no se crea otra: se avisa.
+    const { data: already } = await sb.from('profiles').select('username').eq('auth_user_id', user.id).maybeSingle();
+    if(already){
+      try{ await sb.auth.signOut(); }catch(e){}
+      showSignupError(`Ese correo ya tiene cuenta (@${already.username}). Entra con tu usuario o con el correo.`);
+      return;
+    }
+    try{ signupState.profile = await ensureProfile(signupState.username, user.id); }
+    catch(e){
+      try{ await sb.auth.signOut(); }catch(_){}
+      signupStep(1);
+      showSignupError(/ya est/i.test(e.message || '') ? 'Ese usuario ya está registrado. Elige otro.' : translateAuthError(e));
+      return;
+    }
+    signupStep(3);
+    setTimeout(()=> $('#su-pass').focus(), 50);
+  }catch(err){ showSignupError(translateAuthError(err)); }
+  finally{ btn.disabled = false; btn.textContent = label; }
+}
+async function signupCreate(){
+  const p1 = $('#su-pass').value, p2 = $('#su-pass2').value;
+  showSignupError('');
+  if(p1.length < 6){ showSignupError('La contraseña debe tener al menos 6 caracteres.'); return; }
+  if(p1 !== p2){ showSignupError('Las contraseñas no coinciden.'); return; }
+  if(!signupState.profile) return;
+  const btn = $('#su-create-btn'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Creando…';
+  try{
+    const { error } = await sb.auth.updateUser({ password: p1 });
+    if(error && !isSamePasswordError(error)){ showSignupError(passwordErrorText(error)); return; }
+    const profile = signupState.profile;
+    rememberLoginEmail(profile.username, signupState.email);
+    resetSignup(); setAuthTab('login');
+    await enterApp(profile);
+    saveBootCache();
+  }catch(err){ showSignupError(translateAuthError(err)); }
+  finally{ btn.disabled = false; btn.textContent = label; }
+}
+$('#su-send-btn').onclick = ()=> signupSend(false);
+$('#su-resend').onclick = ()=> signupSend(true);
+$('#su-change').onclick = ()=>{ signupStep(1); setTimeout(()=> $('#su-email').focus(), 50); };
+$('#su-verify-btn').onclick = signupVerify;
+$('#su-create-btn').onclick = signupCreate;
+$('#su-email').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); signupSend(false); } });
+$('#su-username').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#su-email').focus(); } });
+$('#su-code').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); signupVerify(); } });
+$('#su-pass2').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); signupCreate(); } });
 
 // Crear cuenta: la crea la función nf-auth (ya confirmada, sin correo de por
 // medio). Si la función aún no está subida, se hace como siempre.
@@ -2972,7 +3150,9 @@ $('#auth-form').addEventListener('submit', async (e)=>{
   }catch(err){
     let msg = translateAuthError(err);
     if(err && err.nfDown && /incorrectos/.test(msg)) msg += ' Si tu cuenta tiene correo, prueba a entrar escribiendo el correo en vez del @usuario.';
-    showAuthError(msg, authMode==='login' ? ((err && err.loginTrace) || loginTrace) + ' · v' + APP_VERSION : '');
+    // La línea técnica solo sale si el fallo NO es simplemente una contraseña mal escrita.
+    const plainWrong = /invalid login credentials/i.test((err && err.message) || '') && !(err && err.nfDown);
+    showAuthError(msg, authMode==='login' && !plainWrong ? ((err && err.loginTrace) || loginTrace) + ' · v' + APP_VERSION : '');
   }finally{
     btn.disabled = false;
     btn.textContent = authMode==='signup' ? 'Crear cuenta' : 'Entrar';
@@ -2983,7 +3163,7 @@ $('#auth-form').addEventListener('submit', async (e)=>{
 let recoverTarget = null; // { kind:'email'|'user', value }
 function showRecoverError(msg){ const b = $('#recover-error'); b.textContent = msg; b.classList.toggle('hidden', !msg); }
 function openRecover(open){
-  $('#auth-form').classList.toggle('hidden', open);
+  $('#auth-form').classList.toggle('hidden', open || authMode==='signup');
   $('.auth-tabs').classList.toggle('hidden', open);
   $('#recover-view').classList.toggle('hidden', !open);
   showRecoverError('');
@@ -3508,7 +3688,7 @@ $('#settings-logout-btn').onclick = async ()=>{
   $('#app-view').classList.add('hidden');
   $('#login-view').classList.remove('hidden');
   $('#auth-username').value=''; $('#auth-password').value=''; $('#auth-confirm').value='';
-  hideAuthError(); openRecover(false);
+  hideAuthError(); openRecover(false); resetSignup(); setAuthTab('login');
   emailPromptDismissed = false; hideModal($('#email-prompt-modal'));
 };
 
@@ -5175,6 +5355,155 @@ function decodeImageFile(file){
     img.src = url;
   });
 }
+/* ---------- Editor de fotos: cortar y girar ----------
+   Se abre al elegir fotos para un plato. Gira de 90 en 90 y corta arrastrando
+   el marco (libre o con proporción fija). Devuelve: null (descartada), la
+   misma foto (sin cambios; luego se procesa como siempre) o una foto ya
+   editada (nfEdited). Se trabaja sobre la foto original para no perder calidad. */
+let peSkipAll = false;
+const PE_PRESETS = [ ['free','Libre',null], ['orig','Original',0], ['1:1','1:1',1], ['4:5','4:5',0.8], ['5:4','5:4',1.25], ['3:4','3:4',0.75], ['4:3','4:3',4/3], ['16:9','16:9',16/9] ];
+function drawRotated(ctx, img, rot, IW, IH){
+  const RW = rot % 180 ? IH : IW, RH = rot % 180 ? IW : IH;
+  if(rot === 90){ ctx.translate(RW, 0); ctx.rotate(Math.PI/2); }
+  else if(rot === 180){ ctx.translate(RW, RH); ctx.rotate(Math.PI); }
+  else if(rot === 270){ ctx.translate(0, RH); ctx.rotate(-Math.PI/2); }
+  ctx.drawImage(img, 0, 0, IW, IH);
+}
+async function editPhoto(file, idx, total){
+  if(window.NF_SKIP_PHOTO_EDITOR || peSkipAll) return file;
+  let dec;
+  try{ dec = await decodeImageFile(file); }catch(e){ return file; }
+  const img = dec.source, IW = dec.width, IH = dec.height;
+  const root = $('#photo-editor'), stage = $('#pe-stage'), box = $('#pe-box'), cv = $('#pe-canvas'), crop = $('#pe-crop');
+  const clamp = (v, a, b)=> Math.min(Math.max(v, a), b);
+  let rot = 0, aspect = null, f = { x:0, y:0, w:1, h:1 }, W = 100, H = 100, drag = null;
+  const dims = ()=> rot % 180 ? [IH, IW] : [IW, IH];
+  const origAspect = ()=>{ const [a, b] = dims(); return a / b; };
+  function presetAspect(pr){ return pr[0]==='free' ? null : pr[0]==='orig' ? origAspect() : pr[2]; }
+  function activePreset(){
+    if(aspect === null) return 'free';
+    const hit = PE_PRESETS.find(pr=> pr[0]!=='free' && Math.abs(presetAspect(pr) - aspect) < 0.01);
+    return hit ? hit[0] : '';
+  }
+  function paint(){
+    crop.style.left = (f.x*W)+'px'; crop.style.top = (f.y*H)+'px'; crop.style.width = (f.w*W)+'px'; crop.style.height = (f.h*H)+'px';
+    root.classList.toggle('locked', aspect !== null);
+    const act = activePreset();
+    $all('#pe-pills .pe-pill').forEach(b=> b.classList.toggle('on', b.dataset.pe === act));
+  }
+  function layout(){
+    const [RW, RH] = dims();
+    const sw = Math.max(60, stage.clientWidth - 36), sh = Math.max(60, stage.clientHeight - 20);
+    const sc = Math.min(sw / RW, sh / RH);
+    W = Math.max(40, Math.floor(RW * sc)); H = Math.max(40, Math.floor(RH * sc));
+    box.style.width = W+'px'; box.style.height = H+'px';
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    const c = cv.getContext('2d');
+    c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cv.width, cv.height);
+    c.scale(cv.width / RW, cv.height / RH);
+    drawRotated(c, img, rot, IW, IH);
+    paint();
+  }
+  function setAspect(a){
+    aspect = a;
+    if(a){
+      const cx = (f.x + f.w/2) * W, cy = (f.y + f.h/2) * H;
+      let w = Math.min(W, H * a), h = w / a;
+      const x = clamp(cx - w/2, 0, W - w), y = clamp(cy - h/2, 0, H - h);
+      f = { x: x/W, y: y/H, w: w/W, h: h/H };
+    }
+    paint();
+  }
+  function rotate(dir){
+    const g = f;
+    f = dir > 0 ? { x: 1 - g.y - g.h, y: g.x, w: g.h, h: g.w } : { x: g.y, y: 1 - g.x - g.w, w: g.h, h: g.w };
+    rot = (rot + (dir > 0 ? 90 : 270)) % 360;
+    if(aspect) aspect = 1 / aspect;
+    layout();
+  }
+  function reset(){ rot = 0; aspect = null; f = { x:0, y:0, w:1, h:1 }; layout(); }
+  // Arrastrar: mover el marco o tirar de un borde / esquina.
+  crop.onpointerdown = (e)=>{
+    const h = e.target.closest('.pe-h');
+    drag = { mode: h ? h.dataset.h : 'move', id: e.pointerId, x0: e.clientX, y0: e.clientY, r: { x: f.x*W, y: f.y*H, w: f.w*W, h: f.h*H } };
+    try{ crop.setPointerCapture(e.pointerId); }catch(_){}
+    e.preventDefault();
+  };
+  crop.onpointermove = (e)=>{
+    if(!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0, r = drag.r, m = drag.mode, MIN = 44;
+    let x = r.x, y = r.y, w = r.w, h = r.h;
+    if(m === 'move'){ x = clamp(r.x + dx, 0, W - w); y = clamp(r.y + dy, 0, H - h); }
+    else if(m.length === 1){
+      if(m === 'w'){ const nx = clamp(r.x + dx, 0, r.x + r.w - MIN); w = r.x + r.w - nx; x = nx; }
+      if(m === 'e'){ w = clamp(r.w + dx, MIN, W - r.x); }
+      if(m === 'n'){ const ny = clamp(r.y + dy, 0, r.y + r.h - MIN); h = r.y + r.h - ny; y = ny; }
+      if(m === 's'){ h = clamp(r.h + dy, MIN, H - r.y); }
+    } else {
+      const sx = m.includes('e') ? 1 : -1, sy = m.includes('s') ? 1 : -1;
+      const ax = sx > 0 ? r.x : r.x + r.w, ay = sy > 0 ? r.y : r.y + r.h;
+      const availX = sx > 0 ? W - ax : ax, availY = sy > 0 ? H - ay : ay;
+      if(aspect){
+        const w1 = r.w + sx*dx, w2 = (r.h + sy*dy) * aspect;
+        let nw = Math.abs(w1 - r.w) >= Math.abs(w2 - r.w) ? w1 : w2;
+        const minW = Math.max(MIN, MIN * aspect), maxW = Math.max(minW, Math.min(availX, availY * aspect));
+        nw = clamp(nw, minW, maxW); w = nw; h = nw / aspect;
+      } else {
+        w = clamp(r.w + sx*dx, MIN, Math.max(MIN, availX)); h = clamp(r.h + sy*dy, MIN, Math.max(MIN, availY));
+      }
+      x = sx > 0 ? ax : ax - w; y = sy > 0 ? ay : ay - h;
+    }
+    f = { x: x/W, y: y/H, w: w/W, h: h/H };
+    paint();
+  };
+  const endDrag = (e)=>{ if(drag && e.pointerId === drag.id) drag = null; };
+  crop.onpointerup = endDrag; crop.onpointercancel = endDrag;
+
+  $('#pe-pills').innerHTML = PE_PRESETS.map(pr=> `<button type="button" class="pe-pill" data-pe="${pr[0]}">${pr[1]}</button>`).join('');
+  $all('#pe-pills .pe-pill').forEach(b=> b.onclick = ()=>{ const pr = PE_PRESETS.find(x=> x[0]===b.dataset.pe); setAspect(presetAspect(pr)); });
+  $('#pe-title').textContent = total > 1 ? `Foto ${idx+1} de ${total}` : 'Editar foto';
+  $('#pe-skip').classList.toggle('hidden', !(total > 1 && idx < total - 1));
+
+  return new Promise(resolve=>{
+    const onResize = ()=> layout();
+    function close(){
+      window.removeEventListener('resize', onResize);
+      root.classList.add('hidden');
+      crop.onpointerdown = crop.onpointermove = crop.onpointerup = crop.onpointercancel = null;
+      try{ dec.done && dec.done(); }catch(_){}
+    }
+    function finish(){
+      const [RW, RH] = dims();
+      const changed = rot !== 0 || f.x > 0.002 || f.y > 0.002 || f.w < 0.996 || f.h < 0.996;
+      if(!changed){ close(); resolve(file); return; }
+      const cx = f.x * RW, cy = f.y * RH, cw = Math.max(1, f.w * RW), ch = Math.max(1, f.h * RH);
+      const sc = Math.min(1, 1440 / Math.max(cw, ch));
+      const ow = Math.max(1, Math.round(cw * sc)), oh = Math.max(1, Math.round(ch * sc));
+      const c = document.createElement('canvas'); c.width = ow; c.height = oh;
+      const ctx = c.getContext('2d');
+      ctx.scale(ow / cw, oh / ch); ctx.translate(-cx, -cy);
+      drawRotated(ctx, img, rot, IW, IH);
+      c.toBlob(b=>{
+        close();
+        if(!b){ resolve(file); return; }
+        const out = new File([b], 'foto.jpg', { type:'image/jpeg' });
+        out.nfRatio = ow / oh; out.nfEdited = true;
+        resolve(out);
+      }, 'image/jpeg', 0.85);
+    }
+    $('#pe-cancel').onclick = ()=>{ close(); resolve(null); };
+    $('#pe-done').onclick = finish;
+    $('#pe-skip').onclick = ()=>{ peSkipAll = true; finish(); };
+    $('#pe-rot-l').onclick = ()=> rotate(-1);
+    $('#pe-rot-r').onclick = ()=> rotate(1);
+    $('#pe-reset').onclick = reset;
+    window.addEventListener('resize', onResize);
+    root.classList.remove('hidden');
+    layout();
+    requestAnimationFrame(layout);
+  });
+}
 async function normalizeImageFile(file){
   let bitmap;
   try{
@@ -5434,10 +5763,14 @@ $('#dish-photo-input').addEventListener('change', async e=>{
   // El spinner se queda hasta que las miniaturas están listas para pintarse.
   wrap.classList.add('photo-busy');
   const firstNew = dishPhotos.length;
+  const list = files.slice(0, room);
+  peSkipAll = false;
   try{
-    for(const file of files.slice(0, room)){
+    for(let fi = 0; fi < list.length; fi++){
       try{
-        const normalized = await normalizeImageFile(file);
+        const edited = await editPhoto(list[fi], fi, list.length); // cortar y girar (null = descartada)
+        if(edited === null) continue;
+        const normalized = edited.nfEdited ? edited : await normalizeImageFile(edited);
         const preview = await readAsDataUrl(normalized);
         if(forDish!==editingDishId) return; // se cerró la ficha mientras tanto
         dishPhotos.push({ key: uuid(), file: normalized, preview, ratio: normalized.nfRatio || null });
