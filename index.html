@@ -1087,8 +1087,7 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .it-row.planned .it-nm{font-style:italic; opacity:.85;}
 .it-row.skipped .it-nm{text-decoration:line-through; opacity:.5;}
 .it-por{background:var(--card2); border:1px solid var(--border); border-radius:8px; font-size:11.5px; padding:3px 6px; color:var(--text); flex-shrink:0;}
-.drink-quick{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;}
-.drink-quick button{background:var(--card2); border:1px solid var(--border); border-radius:999px; padding:7px 11px; font-size:12.5px; color:var(--text);}
+#fm-list .fm-glyph{font-size:36px;}
 #fm-list .pick-row .kc{margin-left:auto; font-size:12px; color:var(--muted); flex-shrink:0;}
 .por-step{display:flex; align-items:center; gap:10px; margin:2px 0 10px; font-size:13px; color:var(--muted);}
 .por-step button{width:30px; height:30px; border-radius:50%; background:var(--card2); border:1px solid var(--border); font-size:17px; color:var(--text);}
@@ -2891,12 +2890,12 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button type="button" class="seg-b" data-ftab="free">Libre</button>
     </div>
     <div id="fm-dish">
-      <div class="por-step"><span>Raciones</span><button type="button" id="fm-por-minus" aria-label="Menos">−</button><b id="fm-por-val">1</b><button type="button" id="fm-por-plus" aria-label="Más">+</button></div>
+      <div class="por-step"><span id="fm-por-lbl">Raciones</span><button type="button" id="fm-por-minus" aria-label="Menos">−</button><b id="fm-por-val">1</b><button type="button" id="fm-por-plus" aria-label="Más">+</button></div>
       <input type="search" class="ep-input" id="fm-search" placeholder="Busca un plato" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
       <div id="fm-list" class="fm-grid"></div>
     </div>
     <div id="fm-free" class="hidden">
-      <div class="field"><label>¿Qué es? (opcional)</label><input type="text" id="fm-name" autocomplete="off" placeholder="Ej: Bocadillo, cerveza…"></div>
+      <div class="field"><label>¿Qué es? (opcional)</label><input type="text" id="fm-name" autocomplete="off" placeholder="Ej: Bocadillo, tostada…"></div>
       <div class="row2">
         <div class="field"><label>Kcal</label><input type="number" id="fm-kcal" autocomplete="off" inputmode="numeric"></div>
         <div class="field"><label>Proteína (g)</label><input type="number" id="fm-p" autocomplete="off" inputmode="decimal"></div>
@@ -2904,11 +2903,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <div class="row2">
         <div class="field"><label>Hidratos (g)</label><input type="number" id="fm-c" autocomplete="off" inputmode="decimal"></div>
         <div class="field"><label>Grasa (g)</label><input type="number" id="fm-f" autocomplete="off" inputmode="decimal"></div>
-      </div>
-      <div class="drink-quick" id="fm-drinks">
-        <button type="button" data-dk="Cerveza|110">🍺 Cerveza 110</button>
-        <button type="button" data-dk="Copa de vino|120">🍷 Vino 120</button>
-        <button type="button" data-dk="Cubata|250">🥃 Cubata 250</button>
       </div>
       <button type="button" class="btn-primary" id="fm-free-add" style="width:100%;">Añadir</button>
     </div>
@@ -3021,7 +3015,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.04-1';
+const APP_VERSION = '2026.11.05-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -10874,7 +10868,7 @@ function renderCartList(){
    macros) · Peso. Las fechas son SIEMPRE locales ("YYYY-MM-DD" del móvil): antes
    se calculaban en UTC y en España salían corridas un día. */
 const SLOTS = ['desayuno','comida','merienda','cena','extras'];
-const SLOT_LABELS = {desayuno:'Desayuno', comida:'Comida', merienda:'Merienda', cena:'Cena', extras:'Extras y bebidas'};
+const SLOT_LABELS = {desayuno:'Desayuno', comida:'Comida', merienda:'Merienda', cena:'Cena', extras:'Bebidas'};
 const MONTHS_S = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const PROT_GKG = { perder_rapido:2.2, perder:2.0, mantener:1.6, recomposicion:2.2, ganar:1.8, ganar_rapido:1.8 };
 const WO_KINDS = {
@@ -11022,10 +11016,23 @@ function entryMeta(e){
 }
 const ICON_SWAP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg>';
 const ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+/* Bebidas: kcal y macros por unidad (valores aproximados). La fila "Bebidas" solo admite esto o "Otra bebida", no comida. */
+const DRINKS = [
+  { n:'Agua', g:'💧', k:0 }, { n:'Café solo', g:'☕', k:2 }, { n:'Café con leche', g:'☕', k:70, p:3.5, c:6, f:3 }, { n:'Té o infusión', g:'🍵', k:0 },
+  { n:'Leche (vaso)', g:'🥛', k:94, p:6.8, c:9.6, f:3.2 }, { n:'Zumo de naranja', g:'🧃', k:90, p:1.4, c:20, f:0.4 },
+  { n:'Refresco', g:'🥤', k:139, c:35 }, { n:'Refresco zero', g:'🥤', k:1 }, { n:'Bebida isotónica', g:'🥤', k:120, c:30 },
+  { n:'Batido de proteínas', g:'🥤', k:120, p:24, c:3, f:1.5 },
+  { n:'Caña de cerveza', g:'🍺', k:85, p:0.6, c:6.5 }, { n:'Cerveza (botellín)', g:'🍺', k:140, p:1, c:11 }, { n:'Cerveza sin alcohol', g:'🍺', k:70, c:15 },
+  { n:'Copa de vino', g:'🍷', k:125, c:4 }, { n:'Copa de cava', g:'🥂', k:90, c:2 }, { n:'Vermut', g:'🍸', k:130, c:10 },
+  { n:'Cubata', g:'🥃', k:250, c:20 }, { n:'Gin tonic', g:'🍸', k:180, c:12 }, { n:'Copa de licor', g:'🥃', k:90 }, { n:'Chupito', g:'🥃', k:100 },
+];
+let fmDrinkMode = false;
 function dishOfEntry(e){ return e.dish_id ? dishes.find(d=> d.id===e.dish_id) : null; }
 function drinkGlyph(name){
   const n = stripAccents(String(name||'').toLowerCase());
-  if(/cerve/.test(n)) return '🍺';
+  if(/cerve|cana de/.test(n)) return '🍺';
+  if(/leche/.test(n)) return '🥛';
+  if(/infusion|^te\b/.test(n)) return '🍵';
   if(/vino|copa|cava|champ/.test(n)) return '🍷';
   if(/cubata|ron|gin|whisk|licor|vodka/.test(n)) return '🥃';
   if(/cafe|cortado/.test(n)) return '☕';
@@ -11033,7 +11040,7 @@ function drinkGlyph(name){
   if(/agua/.test(n)) return '💧';
   return null;
 }
-function entryGlyph(e){ return drinkGlyph(e.name) || (String(e.name||'?').trim().slice(0,2).toUpperCase() || '?'); }
+function entryGlyph(e){ const dk = DRINKS.find(d=> d.n===e.name); return (dk && dk.g) || drinkGlyph(e.name) || (String(e.name||'?').trim().slice(0,2).toUpperCase() || '?'); }
 function entryThumbHtml(e){
   const d = dishOfEntry(e);
   if(d && d.image_url) return `<img ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async" draggable="false">`;
@@ -11104,7 +11111,7 @@ function dayCardHtml(date){
         <div class="cs-sug-t">✦ ${escapeHtml(sg.name)}<small>Sugerencia · ${fmtN(sg.calories)} kcal</small></div>
         <div class="cs-sug-b"><button type="button" class="pri" data-act="sug-add" data-date="${date}" data-meal="${m}" data-dish="${sg.id}">Usar</button><button type="button" data-act="sug-next" data-date="${date}" data-meal="${m}">Otra</button></div></div>`;
     }
-    h += `<button type="button" class="add-link" data-act="add" data-date="${date}" data-meal="${m}">+ Añadir a ${m==='extras'?'extras':SLOT_LABELS[m].toLowerCase()}</button></div>`;
+    h += `<button type="button" class="add-link" data-act="add" data-date="${date}" data-meal="${m}">+ Añadir ${m==='extras'?'una bebida':'a '+SLOT_LABELS[m].toLowerCase()}</button></div>`;
   });
   return h + `</div>`;
 }
@@ -11488,12 +11495,22 @@ function setFmTab(t){
   $('#fm-dish').classList.toggle('hidden', t!=='dish');
   $('#fm-free').classList.toggle('hidden', t!=='free');
 }
+function setFmUnits(v){ fmPortions = v; $('#fm-por-val').textContent = v; }
 function openFitAdd(date, meal, swapId){
   fmCtx = { date, meal, swapId: swapId||null };
-  fmPortions = 1; $('#fm-por-val').textContent = '1';
-  $('#fm-title').textContent = swapId ? '¿Qué has comido en su lugar?' : `Añadir a ${SLOT_LABELS[meal].toLowerCase()}`;
+  fmDrinkMode = meal==='extras';
+  setFmUnits(1);
+  $('#fm-title').textContent = fmDrinkMode ? (swapId ? '¿Qué has bebido en su lugar?' : 'Añadir una bebida') : (swapId ? '¿Qué has comido en su lugar?' : `Añadir a ${SLOT_LABELS[meal].toLowerCase()}`);
   setFmState(swapId || date<=todayStr() ? 'eaten' : 'planned');
+  $('#fm-state button[data-state="eaten"]').textContent = fmDrinkMode ? 'Ya la he bebido' : 'Ya lo he comido';
   $('#fm-state').classList.toggle('hidden', !!swapId);
+  const tabs = $all('#fm-tabs .seg-b');
+  tabs[0].textContent = fmDrinkMode ? 'Bebidas' : 'Mis platos';
+  tabs[1].textContent = fmDrinkMode ? 'Otra bebida' : 'Libre';
+  $('#fm-por-lbl').textContent = fmDrinkMode ? 'Unidades' : 'Raciones';
+  $('#fm-search').placeholder = fmDrinkMode ? 'Busca una bebida' : 'Busca un plato';
+  $('#fm-name').placeholder = fmDrinkMode ? 'Ej: Sidra, mosto…' : 'Ej: Bocadillo, tostada…';
+  $('#fm-free-add').textContent = 'Añadir';
   setFmTab('dish');
   $('#fm-search').value = ''; ['fm-name','fm-kcal','fm-p','fm-c','fm-f'].forEach(i=> $('#'+i).value = '');
   renderFitPick();
@@ -11501,11 +11518,20 @@ function openFitAdd(date, meal, swapId){
 }
 function renderFitPick(){
   const q = pfNorm($('#fm-search').value);
-  let list = dishes.filter(d=> !q || pfNorm(d.name).includes(q));
   const box = $('#fm-list');
+  if(fmDrinkMode){
+    const list = DRINKS.filter(d=> !q || pfNorm(d.n).includes(q));
+    if(!list.length){ box.innerHTML = '<div class="empty-hint">No está esa bebida. Usa «Otra bebida».</div>'; return; }
+    box.innerHTML = list.map(d=> `<button type="button" class="fm-tile" data-fm-drink="${escapeHtml(d.n)}">
+      <span class="ex-tile-img fm-glyph">${d.g}<span class="ex-tile-kcal">${d.k} kcal</span></span>
+      <span class="ex-tile-name">${escapeHtml(d.n)}</span>
+    </button>`).join('');
+    return;
+  }
+  let list = dishes.filter(d=> !q || pfNorm(d.name).includes(q));
   if(!dishes.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes platos. Usa la pestaña “Libre”.</div>'; return; }
   if(!list.length){ box.innerHTML = '<div class="empty-hint">Ningún plato se llama así.</div>'; return; }
-  if(fmCtx && fmCtx.meal!=='extras' && fitnessProfile && fitnessProfile.target_calories){ // los más cercanos a lo que toca en esa comida, primero
+  if(fmCtx && fitnessProfile && fitnessProfile.target_calories){ // los más cercanos a lo que toca en esa comida, primero
     const t = fitnessProfile.target_calories * MEAL_SPLIT[fmCtx.meal];
     list = list.slice().sort((a,b)=> (a.calories? Math.abs(a.calories-t) : 1e9) - (b.calories? Math.abs(b.calories-t) : 1e9));
   }
@@ -11513,6 +11539,10 @@ function renderFitPick(){
     <span class="ex-tile-img">${d.image_url ? `<img ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async" draggable="false">` : ICON_PLATE}${d.calories ? `<span class="ex-tile-kcal">${d.calories} kcal</span>` : ''}</span>
     <span class="ex-tile-name">${escapeHtml(d.name || 'Plato')}</span>
   </button>`).join('');
+}
+function entryFromDrink(d, units){
+  const sc = (v)=> v==null ? null : r1(v*units);
+  return { name: d.n, dish_id:null, portions: units, kcal: Math.round(d.k*units), protein_g: sc(d.p ?? 0), carbs_g: sc(d.c ?? 0), fat_g: sc(d.f ?? 0), fiber_g: null };
 }
 async function fitAddFromModal(row){
   const ctx = fmCtx; if(!ctx) return;
@@ -11524,21 +11554,22 @@ async function fitAddFromModal(row){
   renderFitWeek();
 }
 $('#fm-list').addEventListener('click', (ev)=>{
+  const bd = ev.target.closest('[data-fm-drink]');
+  if(bd){ const dk = DRINKS.find(x=> x.n===bd.dataset.fmDrink); if(dk) fitAddFromModal(entryFromDrink(dk, fmPortions)); return; }
   const b = ev.target.closest('[data-fm-dish]'); if(!b) return;
   const d = dishes.find(x=> x.id===b.dataset.fmDish); if(!d) return;
   fitAddFromModal(entryFromDish(d, fmPortions));
 });
 $('#fm-search').addEventListener('input', renderFitPick);
-$('#fm-por-minus').onclick = ()=>{ fmPortions = Math.max(0.5, fmPortions-0.5); $('#fm-por-val').textContent = fmPortions; };
-$('#fm-por-plus').onclick = ()=>{ fmPortions = Math.min(10, fmPortions+0.5); $('#fm-por-val').textContent = fmPortions; };
+$('#fm-por-minus').onclick = ()=> setFmUnits(Math.max(fmDrinkMode?1:0.5, fmPortions-(fmDrinkMode?1:0.5)));
+$('#fm-por-plus').onclick = ()=> setFmUnits(Math.min(10, fmPortions+(fmDrinkMode?1:0.5)));
 $all('#fm-state .seg-b').forEach(b=> b.onclick = ()=> setFmState(b.dataset.state));
 $all('#fm-tabs .seg-b').forEach(b=> b.onclick = ()=> setFmTab(b.dataset.ftab));
-$all('#fm-drinks [data-dk]').forEach(b=> b.onclick = ()=>{ const [n,k] = b.dataset.dk.split('|'); $('#fm-name').value = n; $('#fm-kcal').value = k; });
 $('#fm-free-add').onclick = ()=>{
   const kcal = Number($('#fm-kcal').value);
   if(!kcal || kcal<0){ showToast('Pon las kcal'); return; }
   const num = (id)=> $('#'+id).value==='' ? null : r1($('#'+id).value);
-  fitAddFromModal({ name: $('#fm-name').value.trim() || 'Comida libre', dish_id:null, portions:1, kcal: Math.round(kcal), protein_g:num('fm-p'), carbs_g:num('fm-c'), fat_g:num('fm-f'), fiber_g:null });
+  fitAddFromModal({ name: $('#fm-name').value.trim() || (fmDrinkMode ? 'Otra bebida' : 'Comida libre'), dish_id:null, portions:1, kcal: Math.round(kcal), protein_g:num('fm-p'), carbs_g:num('fm-c'), fat_g:num('fm-f'), fiber_g:null });
 };
 $('#fm-close').onclick = ()=> hideModal($('#fm-modal'));
 attachSwipeToCloseSheet(document.querySelector('#fm-modal .modal-sheet'), ()=> hideModal($('#fm-modal')));
