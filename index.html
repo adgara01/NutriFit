@@ -641,6 +641,45 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .step-edit textarea{width:100%; min-height:56px; resize:none; border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:16px; line-height:1.45;
   background:var(--card2); color:var(--text); font-family:inherit; overflow:hidden;}
 .step-edit textarea:focus{outline:none; border-color:var(--accent);}
+.step-edit{position:relative; touch-action:pan-y;}
+.step-side{display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;}
+.step-grip{width:30px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--muted); touch-action:none; cursor:grab; background:none; border:none; padding:0;}
+.step-grip svg{width:18px; height:18px;}
+.step-edit.dragging{z-index:5; background:var(--card); box-shadow:0 10px 30px rgba(0,0,0,.22); border-radius:14px; transition:none; opacity:.97;}
+.step-edit.shifting{transition:transform .16s ease;}
+.step-tool-mv{padding:7px 9px;}
+.step-tool-mv[disabled]{opacity:.3;}
+.drafts-banner{display:flex; align-items:center; gap:10px; width:100%; margin:0 0 12px; padding:11px 14px; border-radius:14px; background:rgba(18,135,94,.10); border:1px solid rgba(18,135,94,.28); color:var(--text); font-size:14px; font-weight:600; text-align:left;}
+.drafts-banner svg{width:18px; height:18px; color:var(--accent); flex-shrink:0;}
+.drafts-banner span{flex:1; min-width:0;}
+.drafts-banner b{color:var(--accent); font-weight:800;}
+.drafts-note{padding:0 18px 8px; font-size:12.5px; color:var(--muted);}
+.draft-row{display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border);}
+.draft-row:last-child{border-bottom:none;}
+.draft-thumb{width:54px; height:54px; border-radius:12px; background:var(--card2); object-fit:cover; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--muted); overflow:hidden;}
+.draft-thumb img{width:100%; height:100%; object-fit:cover;}
+.draft-info{flex:1; min-width:0; text-align:left;}
+.draft-name{font-weight:700; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.draft-meta{font-size:12.5px; color:var(--muted);}
+.draft-del{width:34px; height:34px; border-radius:50%; background:var(--card2); color:var(--bad); font-size:18px; line-height:1; flex-shrink:0;}
+/* ---- Tutorial (walkthrough) ---- */
+#tour-modal{align-items:stretch; background:var(--bg2);}
+#tour-modal > .tour-sheet{width:100%; max-width:520px; margin:0 auto; height:100%; display:flex; flex-direction:column; padding:calc(10px + env(safe-area-inset-top)) 0 calc(14px + env(safe-area-inset-bottom));}
+.tour-top{display:flex; justify-content:flex-end; padding:0 16px; min-height:36px;}
+.tour-skip{font-size:14px; font-weight:700; color:var(--muted); padding:8px 6px;}
+.tour-track{flex:1; min-height:0; display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch;}
+.tour-track::-webkit-scrollbar{display:none;}
+.tour-slide{flex:0 0 100%; scroll-snap-align:center; scroll-snap-stop:always; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 30px; gap:14px;}
+.tour-ic{width:104px; height:104px; border-radius:30px; background:rgba(18,135,94,.12); color:var(--accent); display:flex; align-items:center; justify-content:center; margin-bottom:8px;}
+.tour-ic svg{width:52px; height:52px;}
+.tour-title{font-size:23px; font-weight:800; line-height:1.2;}
+.tour-steps{list-style:none; margin:6px 0 0; padding:0; display:flex; flex-direction:column; gap:10px; text-align:left; width:100%; max-width:340px;}
+.tour-steps li{display:flex; gap:12px; align-items:flex-start; font-size:15.5px; line-height:1.4; color:var(--text);}
+.tour-steps li i{flex-shrink:0; width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fff; font-style:normal; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+.tour-dots{display:flex; justify-content:center; gap:7px; padding:14px 0 12px;}
+.tour-dots span{width:7px; height:7px; border-radius:50%; background:var(--border-strong); transition:all .2s;}
+.tour-dots span.on{width:22px; border-radius:4px; background:var(--accent);}
+.tour-next{flex:0 0 auto !important; margin:0 20px; padding:15px; justify-content:center; font-size:16px;}
 .step-tools{display:flex; gap:8px; align-items:center;}
 .step-tool{display:flex; align-items:center; gap:6px; padding:7px 11px; border-radius:999px; background:var(--card2); border:1px solid var(--border); font-size:13px; font-weight:600; color:var(--text);}
 .step-tool svg{width:15px; height:15px;}
@@ -1364,6 +1403,9 @@ body.sec-platos .appbar #pf-bar{display:flex;}
 .fp-friend-chip{font-size:11px; font-weight:700; color:var(--accent); background:rgba(18,135,94,.12); padding:3px 9px; border-radius:999px;}
 .fp-bio{font-size:14px; line-height:1.45; margin-top:3px; white-space:pre-line; word-break:break-word;}
 .fp-actions{display:flex; gap:8px; margin-top:14px;}
+.fp-icon-btn{flex:0 0 44px; width:44px; padding:0; border-radius:10px; background:var(--card2); border:1px solid var(--border); color:var(--text); display:flex; align-items:center; justify-content:center;}
+.fp-icon-btn svg{width:19px; height:19px;}
+.fp-icon-btn.on{color:#fff; background:var(--accent); border-color:var(--accent);}
 .fp-main-btn{flex:1; padding:10px 12px; border-radius:10px; font-size:14px; font-weight:700; text-align:center;}
 .fp-follow{background:var(--accent); color:#fff;}
 .fp-following{background:var(--card2); color:var(--text); border:1px solid var(--border);}
@@ -1982,6 +2024,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <button id="gallery-duplicate-btn" class="btn-mini hidden" type="button">Duplicar (0)</button>
         <button id="gallery-delete-btn" class="btn-mini btn-mini-danger hidden" type="button">Eliminar (0)</button>
       </div>
+      <button type="button" class="drafts-banner hidden" id="drafts-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span id="drafts-banner-text"></span><b>Ver</b></button>
       <div class="gallery" id="gallery"></div>
       <button class="fab" id="add-dish-btn" aria-label="Nuevo plato">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -2321,6 +2364,12 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <div class="settings-hint" id="push-hint"></div>
         <button type="button" id="push-test-btn" class="btn-secondary hidden" style="width:100%; justify-content:center; margin-top:12px;">Enviar notificación de prueba</button>
         <div class="settings-hint hidden" id="push-test-result"></div>
+        <button type="button" class="settings-link" id="open-muted" style="margin-top:14px;">
+          <span class="settings-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.7 21a2 2 0 0 1-3.4 0"/><path d="M18.6 14.6A6 6 0 0 0 18 8a6 6 0 0 0-9.3-5M6 8c0 7-3 9-3 9h13"/><path d="m2 2 20 20"/></svg></span>
+          <span class="settings-link-label">Perfiles silenciados</span>
+          <span class="settings-link-value" id="muted-count"></span>
+          <svg class="settings-link-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
       </div>
 
       <div class="card">
@@ -2375,6 +2424,13 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         </div>
       </div>
 
+      <div class="card">
+        <button type="button" class="settings-link" id="open-tour">
+          <span class="settings-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.6 2.4c-.7.4-1.1.9-1.1 1.7M12 17h.01"/></svg></span>
+          <span class="settings-link-label">Cómo funciona la app</span>
+          <svg class="settings-link-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+        </button>
+      </div>
       <button id="settings-logout-btn" class="btn-secondary" style="width:100%; justify-content:center;">Cerrar sesión</button>
       <button type="button" class="delete-account-btn" id="delete-account-btn">Eliminar mi cuenta</button>
       </div>
@@ -2617,6 +2673,34 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
   <div class="desc-modal-card tags-card">
     <div class="tags-head"><span>Etiquetas del plato</span><button type="button" class="tags-done" id="tags-done">Listo</button></div>
     <div class="tags-body" id="tags-body"></div>
+  </div>
+</div>
+
+<!-- ================= TUTORIAL ================= -->
+<div id="tour-modal" class="modal hidden">
+  <div class="tour-sheet">
+    <div class="tour-top"><button type="button" class="tour-skip" id="tour-skip">Saltar</button></div>
+    <div class="tour-track" id="tour-track"></div>
+    <div class="tour-dots" id="tour-dots"></div>
+    <button type="button" class="btn-primary tour-next" id="tour-next">Siguiente</button>
+  </div>
+</div>
+
+<!-- ================= PERFILES SILENCIADOS ================= -->
+<div id="muted-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card tags-card">
+    <div class="tags-head"><span>Perfiles silenciados</span><button type="button" class="tags-done" id="muted-done">Cerrar</button></div>
+    <div class="drafts-note">No recibes avisos ni notificaciones de estas personas (mensajes, Muro, me gusta, comentarios). Ellas no se enteran.</div>
+    <div class="tags-body" id="muted-body"></div>
+  </div>
+</div>
+
+<!-- ================= BORRADORES DE PLATOS ================= -->
+<div id="drafts-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card tags-card">
+    <div class="tags-head"><span>Borradores</span><button type="button" class="tags-done" id="drafts-done">Cerrar</button></div>
+    <div class="drafts-note">Platos que dejaste a medias. Se guardan en este móvil.</div>
+    <div class="tags-body" id="drafts-body"></div>
   </div>
 </div>
 
@@ -3015,7 +3099,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.05-1';
+const APP_VERSION = '2026.11.06-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -3518,9 +3602,13 @@ function saveBootCache(){
   if(!currentUser || !currentUser.auth_user_id) return;
   clearTimeout(bootCacheTimer);
   bootCacheTimer = setTimeout(()=>{
-    try{
-      localStorage.setItem(bootCacheKey(currentUser.auth_user_id), JSON.stringify({ profile: currentUser.profileRow, dishes, folders, ts: Date.now() }));
-    }catch(e){ /* sin espacio o modo privado: no pasa nada */ }
+    const write = ()=>{
+      try{
+        localStorage.setItem(bootCacheKey(currentUser.auth_user_id), JSON.stringify({ profile: currentUser.profileRow, dishes, folders, ts: Date.now() }));
+      }catch(e){ /* sin espacio o modo privado: no pasa nada */ }
+    };
+    // en un hueco libre, para no tropezar con un gesto o una animación
+    if(window.requestIdleCallback) requestIdleCallback(write, { timeout: 3000 }); else write();
   }, 400);
 }
 function clearBootCache(){
@@ -3567,6 +3655,7 @@ async function enterApp(profile, cache){
   if(loadedUserId && loadedUserId !== profile.id){ if(freshStart()) return; }
   loadedUserId = profile.id;
   currentUser = profileToCurrentUser(profile);
+  draftsLoad(); // borradores de platos de este móvil (en segundo plano)
   document.documentElement.classList.remove('nf-boot');
   if(cache){
     // Se pinta ya con lo guardado en el móvil; lo de Supabase llega enseguida.
@@ -3582,10 +3671,11 @@ async function enterApp(profile, cache){
   currentSection = null;
   setSection('muro'); // se abre en Inicio (el Muro), como Strava
   if(cache) renderGallery();
-  await Promise.all([loadDishes, loadFolders, loadFitnessProfile, loadFriendshipsState, loadSharedDishes, loadWallFeed, loadIngredientCatalog, loadFridgeItems, loadCart, loadChats, loadMenuRemote, loadActivity, loadMyCooks]
+  await Promise.all([loadDishes, loadFolders, loadFitnessProfile, loadFriendshipsState, loadSharedDishes, loadWallFeed, loadIngredientCatalog, loadFridgeItems, loadCart, loadChats, loadMenuRemote, loadActivity, loadMyCooks, loadMuted]
     .map(fn=> Promise.resolve().then(fn).catch(e=> console.error(fn.name, e))));
   if(currentSection==='muro') markWallSeen();
   await migrateLegacyIngredientsIfNeeded();
+  maybeShowTour();
   backfillDishNutrition();
   // Por detrás y sin molestar al arranque: tamaños ligeros de tus fotos, foto
   // de perfil ligera y "precalentar" las fotos de las otras pantallas.
@@ -4858,7 +4948,8 @@ $('#dish-add-btn').onclick = async ()=>{
   closeDishModal();
   await p.onAdd();
 };
-function openDishModal(dish, preview){
+function openDishModal(dish, preview, draft){
+  const src = dish || draft || null; // draft = borrador de un plato nuevo que se retoma
   flushDishAutosave(); // por si veníamos de otro plato con un cambio aún sin disparar
   dishPreview = preview || null;
   $('#dish-modal').classList.toggle('dish-preview', !!dishPreview);
@@ -4866,11 +4957,11 @@ function openDishModal(dish, preview){
   // El id se reserva desde YA (incluso para un plato nuevo que aún no existe
   // en la base de datos) para que el autoguardado tenga siempre un id fijo
   // al que apuntar desde el primer cambio, sea texto, foto o lo que sea.
-  editingDishId = dish ? dish.id : uuid();
+  editingDishId = dish ? dish.id : (draft ? draft.id : uuid());
   dishExistsRemote = !!dish;
   dishViewMode = true; // un plato ya existente se abre siempre en modo vista, hay que tocar "Editar"
-  dishPhotos = dishPhotoList(dish).map(url=> ({ key: uuid(), url }));
-  selectedQuality = dish ? cleanQuality(dish.quality) : null;
+  dishPhotos = draft && !dish ? draftPhotosOf(draft) : dishPhotoList(dish).map(url=> ({ key: uuid(), url }));
+  selectedQuality = src ? cleanQuality(src.quality) : null;
   setAutosaveStatus('');
   setDishClosingLocked(false);
 
@@ -4883,25 +4974,25 @@ function openDishModal(dish, preview){
   if(dish && dish.shared_from_username){ wm.textContent = '@'+dish.shared_from_username; wm.dataset.profileUser = dish.shared_from_username; wm.classList.remove('hidden'); }
   else { wm.textContent = ''; delete wm.dataset.profileUser; wm.classList.add('hidden'); }
 
-  $('#dish-name').value = dish ? dish.name : '';
-  $('#dish-desc').value = dish ? (dish.description||'') : '';
-  dishSteps = stepsFromDish(dish);
+  $('#dish-name').value = src ? src.name : '';
+  $('#dish-desc').value = src ? (src.description||'') : '';
+  dishSteps = draft && !dish ? draftStepsOf(draft) : stepsFromDish(dish);
   updateDescPreview();
-  $('#dish-calories').value = dish ? (dish.calories||'') : '';
-  $('#dish-duration').value = dish ? (dish.duration_min||'') : '';
-  $('#macro-protein').value = dish ? (dish.protein_g||'') : '';
-  $('#macro-carbs').value = dish ? (dish.carbs_g||'') : '';
-  $('#macro-fat').value = dish ? (dish.fat_g||'') : '';
-  $('#macro-fiber').value = dish ? (dish.fiber_g||'') : '';
+  $('#dish-calories').value = src ? (src.calories||'') : '';
+  $('#dish-duration').value = src ? (src.duration_min||'') : '';
+  $('#macro-protein').value = src ? (src.protein_g||'') : '';
+  $('#macro-carbs').value = src ? (src.carbs_g||'') : '';
+  $('#macro-fat').value = src ? (src.fat_g||'') : '';
+  $('#macro-fiber').value = src ? (src.fiber_g||'') : '';
   // El botón de macros solo aparece con el interruptor de Ajustes activo y en
   // un plato que ya existe de verdad (igual que Compartir/Eliminar).
-  $('#dish-servings-base').value = dish ? (dish.servings_base || 1) : 1;
+  $('#dish-servings-base').value = src ? (src.servings_base || 1) : 1;
   // Calorías / macros: ¿las puso el usuario a mano o se calculan solas?
-  dishKcalManual = dish ? (dish.kcal_manual!==undefined ? !!dish.kcal_manual : dish.calories!=null) : false;
-  dishMacrosManual = dish ? (dish.macros_manual!==undefined ? !!dish.macros_manual : [dish.protein_g, dish.carbs_g, dish.fat_g, dish.fiber_g].some(v=> v!=null)) : false;
-  dishTags = dish && Array.isArray(dish.tags) ? dish.tags.slice() : [];
+  dishKcalManual = src ? (src.kcal_manual!==undefined ? !!src.kcal_manual : src.calories!=null) : false;
+  dishMacrosManual = src ? (src.macros_manual!==undefined ? !!src.macros_manual : [src.protein_g, src.carbs_g, src.fat_g, src.fiber_g].some(v=> v!=null)) : false;
+  dishTags = src && Array.isArray(src.tags) ? src.tags.slice() : [];
   $('#ingredients-list').innerHTML = '';
-  (dish && dish.ingredients && dish.ingredients.length ? dish.ingredients : [{}]).forEach(v=> addIngredientRow(normalizeIngredientItem(v)));
+  (src && src.ingredients && src.ingredients.length ? src.ingredients : [{}]).forEach(v=> addIngredientRow(normalizeIngredientItem(v)));
   captureIngredientBaselines();
   syncServingsBaseline();
   updateIngredientTicks();
@@ -4970,11 +5061,283 @@ function applyDishFieldsLock(){
 function closeDishModal(){
   if(dishSaveInFlight) return; // no se puede salir mientras hay una escritura en curso de verdad
   flushDishAutosave();
+  keepDraftOnClose(); // un plato nuevo a medias se queda en Borradores
   dishPreview = null;
   hideModal($('#dish-modal'));
   hideModal($('#desc-modal'));
   unlockBodyScroll();
 }
+
+
+
+
+/* ===================== TUTORIAL (WALKTHROUGH) =====================
+   Seis pantallas cortas que enseñan cómo se hacen las cosas. Sale solo la
+   primera vez en una cuenta nueva (sin platos) y siempre se puede volver a
+   ver desde Ajustes → "Cómo funciona la app". */
+const TOUR_SLIDES = [
+  { ic:'<path d="M12 5v14M5 12h14"/><rect x="3" y="3" width="18" height="18" rx="5"/>', t:'Crea tu primer plato', s:[
+    'Pulsa el <b>+</b> de abajo y elige <b>Nuevo plato</b>.',
+    'Ponle foto, nombre, ingredientes con su cantidad y los pasos. Los pasos se reordenan con el asa <b>⠿</b> o las flechas.',
+    'Pulsa <b>Crear plato</b>. Si te tienes que ir, se queda en <b>Borradores</b> para seguir luego.' ] },
+  { ic:'<path d="M6 13a6 6 0 0 1 12 0v0H6z"/><path d="M4 13h16v2a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M12 7V5"/>', t:'Cocina paso a paso', s:[
+    'Abre un plato y pulsa <b>Cocinar</b>: te enseña un paso cada vez.',
+    'Al terminar, toca <b>¡Lo he cocinado!</b> y se apunta en tu racha.',
+    'Cambia las raciones con el <b>+ / −</b> y las cantidades se ajustan solas.' ] },
+  { ic:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.5A6.5 6.5 0 0 1 21.5 20"/>', t:'Comparte y sigue a gente', s:[
+    'En un plato, pulsa <b>Compartir</b> → <b>Publicar en el Muro</b> o mándalo por chat.',
+    'Toca el nombre de alguien para ver su perfil y <b>Seguir</b>.',
+    '¿Mucho aviso? En su perfil, la <b>campana</b> silencia sus notificaciones.' ] },
+  { ic:'<rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M5 11h14M9 6v2M9 14v2"/>', t:'Nevera y carrito', s:[
+    'En los ingredientes de un plato, toca el <b>carrito</b> para apuntarlos a la compra.',
+    'En <b>Nevera/Carrito</b> ves lo que tienes y lo que te falta.',
+    'La nevera te sugiere platos con lo que ya tienes.' ] },
+  { ic:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>', t:'Descubre en Explorar', s:[
+    'Elige una categoría y mira las fotos de otros.',
+    'Toca un plato para verlo entero.',
+    'Pulsa <b>Añadir a mi repositorio</b> y es tuyo.' ] },
+  { ic:'<path d="M3 12h4l2 6 4-12 2 6h6"/>', t:'Fitness a tu medida', s:[
+    'Actívalo en <b>Ajustes</b> → Mostrar apartado Fitness.',
+    'Pon tu objetivo y planifica la semana tocando cada casilla de la tabla.',
+    'Con <b>Sugerir platos</b> activado, el <b>mazo aleatorio</b> te propone comidas con foto según tus objetivos.' ] },
+];
+let tourIdx = 0;
+function tourSeenKey(){ return 'nutrifit_tour_seen_' + (currentUser ? currentUser.id : ''); }
+function tourMarkSeen(){ try{ localStorage.setItem(tourSeenKey(), '1'); }catch(_){} }
+function tourWasSeen(){ try{ return !!localStorage.getItem(tourSeenKey()); }catch(_){ return true; } }
+function openTour(){
+  const track = $('#tour-track');
+  track.innerHTML = TOUR_SLIDES.map(sl=> `<div class="tour-slide">
+    <div class="tour-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${sl.ic}</svg></div>
+    <div class="tour-title">${sl.t}</div>
+    <ul class="tour-steps">${sl.s.map((x,i)=> `<li><i>${i+1}</i><span>${x}</span></li>`).join('')}</ul>
+  </div>`).join('');
+  $('#tour-dots').innerHTML = TOUR_SLIDES.map(()=> '<span></span>').join('');
+  tourIdx = 0; track.scrollLeft = 0; tourPaint();
+  showModal($('#tour-modal'));
+  tourMarkSeen();
+}
+function tourPaint(){
+  $all('#tour-dots span').forEach((d,i)=> d.classList.toggle('on', i===tourIdx));
+  const last = tourIdx === TOUR_SLIDES.length-1;
+  $('#tour-next').textContent = last ? '¡Empezar!' : 'Siguiente';
+  $('#tour-skip').style.visibility = last ? 'hidden' : 'visible';
+}
+function tourGo(i){
+  const track = $('#tour-track');
+  tourIdx = Math.max(0, Math.min(TOUR_SLIDES.length-1, i));
+  track.scrollTo({ left: tourIdx * track.clientWidth, behavior:'smooth' });
+  tourPaint();
+}
+function closeTour(){ hideModal($('#tour-modal')); }
+$('#tour-track').addEventListener('scroll', ()=>{
+  const t = $('#tour-track'); if(!t.clientWidth) return;
+  const i = Math.round(t.scrollLeft / t.clientWidth);
+  if(i!==tourIdx){ tourIdx = i; tourPaint(); }
+}, { passive:true });
+$('#tour-next').onclick = ()=>{ if(tourIdx >= TOUR_SLIDES.length-1) closeTour(); else tourGo(tourIdx+1); };
+$('#tour-skip').onclick = closeTour;
+$('#open-tour').onclick = openTour;
+// Cuenta nueva (sin platos) y primera vez en este móvil: sale solo.
+function maybeShowTour(){
+  if(!currentUser || tourWasSeen() || navigator.webdriver || window.NF_NO_TOUR) return;
+  if(dishes.length) { tourMarkSeen(); return; } // cuenta con platos: no se le planta encima
+  setTimeout(()=>{ if(!tourWasSeen()) openTour(); }, 900);
+}
+
+/* ===================== SILENCIAR AVISOS DE UN PERFIL =====================
+   Tabla muted_profiles (quién silencia a quién). El servidor deja de crear
+   avisos y de mandar notificaciones push de esa persona (actualizar_silenciar.sql
+   + Edge Function); aquí además se oculta lo que ya había en Actividad. */
+const ICON_BELL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>';
+const ICON_BELL_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.7 21a2 2 0 0 1-3.4 0"/><path d="M18.6 14.6A6 6 0 0 0 18 8a6 6 0 0 0-9.3-5M6 8c0 7-3 9-3 9h13"/><path d="m2 2 20 20"/></svg>';
+let mutedIds = new Set();
+let mutedNames = {};            // id -> @usuario (para la lista de Ajustes)
+async function loadMuted(){
+  if(!currentUser) return;
+  const { data, error } = await sb.from('muted_profiles').select('muted_id').eq('muter_id', currentUser.id);
+  if(error){ return; } // aún sin el SQL: nada silenciado
+  mutedIds = new Set((data||[]).map(r=> r.muted_id));
+  updateMutedCount();
+  refilterActivity(); updateNotifBadges();
+  const miss = [...mutedIds].filter(id=> !mutedNames[id]);
+  if(miss.length){
+    const { data: ps } = await sb.from('profiles').select('id,username').in('id', miss);
+    (ps||[]).forEach(p=>{ mutedNames[p.id] = p.username; });
+  }
+}
+function updateMutedCount(){
+  const el = $('#muted-count'); if(el) el.textContent = mutedIds.size ? String(mutedIds.size) : '';
+}
+async function toggleMuteProfile(id, username){
+  if(!id || !currentUser || id===currentUser.id) return;
+  const wasMuted = mutedIds.has(id);
+  if(username) mutedNames[id] = username;
+  if(wasMuted) mutedIds.delete(id); else mutedIds.add(id);
+  updateMutedCount();
+  if(friendProfile && friendProfile.id===id) renderProfileHeader();
+  const res = wasMuted
+    ? await sb.from('muted_profiles').delete().eq('muter_id', currentUser.id).eq('muted_id', id)
+    : await sb.from('muted_profiles').insert({ muter_id: currentUser.id, muted_id: id });
+  if(res.error){
+    if(wasMuted) mutedIds.add(id); else mutedIds.delete(id);
+    updateMutedCount();
+    if(friendProfile && friendProfile.id===id) renderProfileHeader();
+    alert(/muted_profiles|relation|schema cache/i.test(res.error.message||'') ? 'Falta ejecutar actualizar_silenciar.sql en Supabase para poder silenciar perfiles.' : 'No se pudo cambiar: '+res.error.message);
+    return;
+  }
+  showToast(wasMuted ? `Avisos de @${username||'esta persona'} reactivados` : `@${username||'Esta persona'} silenciado: no recibirás sus avisos`);
+  refilterActivity(); updateNotifBadges();
+  if(currentSection==='actividad') renderActivity();
+  if(!$('#muted-modal').classList.contains('hidden')) renderMutedModal();
+}
+function renderMutedModal(){
+  const body = $('#muted-body');
+  const ids = [...mutedIds];
+  if(!ids.length){ body.innerHTML = '<div class="steps-empty">No has silenciado a nadie.<br>Puedes hacerlo desde su perfil, con la campana.</div>'; return; }
+  body.innerHTML = ids.map(id=>{
+    const name = mutedNames[id] || 'usuario';
+    return `<div class="draft-row"><button type="button" class="draft-info" data-profile-id="${id}"><div class="draft-name">@${escapeHtml(name)}</div></button><button type="button" class="btn-mini btn-mini-ghost" data-unmute="${id}">Reactivar</button></div>`;
+  }).join('');
+  body.querySelectorAll('[data-unmute]').forEach(b=> b.onclick = ()=> toggleMuteProfile(b.dataset.unmute, mutedNames[b.dataset.unmute]));
+}
+$('#open-muted').onclick = ()=>{ renderMutedModal(); showModal($('#muted-modal')); };
+$('#muted-done').onclick = ()=> hideModal($('#muted-modal'));
+$('#muted-modal').addEventListener('click', e=>{ if(e.target.id==='muted-modal') hideModal($('#muted-modal')); });
+
+/* ===================== BORRADORES DE PLATOS NUEVOS =====================
+   Un plato nuevo no existe en la base de datos hasta pulsar "Crear plato".
+   Mientras lo rellenas se va guardando solo en ESTE móvil (IndexedDB, con las
+   fotos incluidas); si cierras la ficha, cambias de app o se te cierra, queda
+   en "Borradores" para retomarlo. Si IndexedDB no está disponible se guarda
+   el texto en localStorage (sin fotos). */
+let draftsList = [];           // borradores del usuario, el más reciente primero
+let draftsDbP = null;
+let draftSaveTimer = null;
+const DRAFTS_LS = 'nutrifit_drafts_ls';
+function draftsDb(){
+  if(draftsDbP) return draftsDbP;
+  draftsDbP = new Promise((res, rej)=>{
+    try{
+      const r = indexedDB.open('nutrifit_drafts', 1);
+      r.onupgradeneeded = ()=> r.result.createObjectStore('drafts', { keyPath:'id' });
+      r.onsuccess = ()=> res(r.result);
+      r.onerror = ()=> rej(r.error);
+      r.onblocked = ()=> rej(new Error('blocked'));
+    }catch(e){ rej(e); }
+  });
+  draftsDbP.catch(()=>{});
+  return draftsDbP;
+}
+function idbDo(mode, fn){
+  return draftsDb().then(db=> new Promise((res, rej)=>{
+    const tx = db.transaction('drafts', mode);
+    const out = fn(tx.objectStore('drafts'));
+    tx.oncomplete = ()=> res(out && 'result' in out ? out.result : undefined);
+    tx.onerror = ()=> rej(tx.error); tx.onabort = ()=> rej(tx.error);
+  }));
+}
+function lsDrafts(){ try{ return JSON.parse(localStorage.getItem(DRAFTS_LS) || '[]'); }catch(_){ return []; } }
+function lsDraftsSave(list){ try{ localStorage.setItem(DRAFTS_LS, JSON.stringify(list)); }catch(_){} }
+async function draftPut(d){
+  try{ await idbDo('readwrite', st=> st.put(d)); }
+  catch(_){
+    const plain = { ...d, photos: [], steps: (d.steps||[]).map(x=> ({ key:x.key, text:x.text })) };
+    const l = lsDrafts().filter(x=> x.id!==d.id); l.unshift(plain); lsDraftsSave(l.slice(0,20));
+  }
+}
+async function draftsLoad(){
+  if(!currentUser) { draftsList = []; renderDraftsBanner(); return; }
+  let all = [];
+  try{ all = await idbDo('readonly', st=> st.getAll()); }catch(_){ all = []; }
+  all = (all||[]).concat(lsDrafts().filter(l=> !(all||[]).some(a=> a.id===l.id)));
+  draftsList = all.filter(d=> d.userId===currentUser.id).sort((a,b)=> b.savedAt - a.savedAt);
+  renderDraftsBanner();
+}
+function draftHasContent(snap){
+  return !!(snap.name || snap.ingredients.length || snap.steps.length || snap.photos.length || snap.calories || snap.duration_min);
+}
+function scheduleDraftSave(){
+  if(draftSaveTimer) clearTimeout(draftSaveTimer);
+  draftSaveTimer = setTimeout(()=>{ draftSaveTimer = null; saveDraftNow(); }, 700);
+}
+function saveDraftNow(){
+  if(draftSaveTimer){ clearTimeout(draftSaveTimer); draftSaveTimer = null; }
+  if(!currentUser || dishPreview || dishExistsRemote || $('#dish-modal').classList.contains('hidden')) return false;
+  const snap = captureDishSnapshot();
+  if(!draftHasContent(snap)){ draftRemove(snap.id); return false; }
+  const d = { ...snap, userId: currentUser.id, savedAt: Date.now() };
+  delete d.wasExisting;
+  // las fotos de pasos: la foto ya subida (url) o el archivo; nunca el preview
+  d.steps = snap.steps.map(x=> ({ key:x.key, text:x.text, url:x.url||null, file:x.file||null }));
+  d.photos = snap.photos.map(x=> ({ key:x.key, url:x.url||null, file:x.file||null }));
+  const i = draftsList.findIndex(x=> x.id===d.id);
+  if(i>=0) draftsList.splice(i,1);
+  draftsList.unshift(d);
+  draftPut(d);
+  renderDraftsBanner();
+  return true;
+}
+function keepDraftOnClose(){
+  if(dishExistsRemote || dishPreview) return;
+  if(saveDraftNow()) showToast('Guardado en borradores');
+}
+function draftRemove(id){
+  draftsList = draftsList.filter(d=> d.id!==id);
+  idbDo('readwrite', st=> st.delete(id)).catch(()=>{});
+  const l = lsDrafts(); if(l.some(x=> x.id===id)) lsDraftsSave(l.filter(x=> x.id!==id));
+  renderDraftsBanner();
+  if(!$('#drafts-modal').classList.contains('hidden')){ if(draftsList.length) renderDraftsModal(); else hideModal($('#drafts-modal')); }
+}
+function draftPhotosOf(d){
+  return (d.photos||[]).map(p=> p.url ? { key:p.key, url:p.url } : (p.file ? { key:p.key, file:p.file, preview:URL.createObjectURL(p.file) } : null)).filter(Boolean);
+}
+function draftStepsOf(d){
+  return (d.steps||[]).map(st=> ({ key: st.key || uuid(), text: st.text||'', url: st.url||null, file: st.file||undefined, preview: st.file ? URL.createObjectURL(st.file) : undefined }));
+}
+function renderDraftsBanner(){
+  const b = $('#drafts-banner'); if(!b) return;
+  const n = draftsList.length;
+  b.classList.toggle('hidden', !n);
+  if(n) $('#drafts-banner-text').textContent = n===1 ? 'Tienes 1 plato a medias' : `Tienes ${n} platos a medias`;
+}
+function draftAgo(t){
+  const m = Math.round((Date.now()-t)/60000);
+  if(m < 2) return 'ahora mismo';
+  if(m < 60) return `hace ${m} min`;
+  const h = Math.round(m/60); if(h < 24) return `hace ${h} h`;
+  const d = Math.round(h/24); return d===1 ? 'ayer' : `hace ${d} días`;
+}
+function renderDraftsModal(){
+  const body = $('#drafts-body');
+  if(!draftsList.length){ body.innerHTML = '<div class="steps-empty">No tienes borradores.</div>'; return; }
+  body.innerHTML = draftsList.map(d=>{
+    const ph = (d.photos||[])[0];
+    const src = ph ? (ph.url || (ph.file ? URL.createObjectURL(ph.file) : '')) : '';
+    const bits = [];
+    if(d.ingredients && d.ingredients.length) bits.push(`${d.ingredients.length} ingred.`);
+    if(d.steps && d.steps.length) bits.push(`${d.steps.length} paso${d.steps.length===1?'':'s'}`);
+    bits.push(draftAgo(d.savedAt));
+    return `<div class="draft-row" data-draft="${d.id}">
+      <div class="draft-thumb">${src ? `<img src="${src}" alt="">` : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>'}</div>
+      <button type="button" class="draft-info" data-draft-open="${d.id}"><div class="draft-name">${escapeHtml(d.name || 'Plato sin nombre')}</div><div class="draft-meta">${bits.join(' · ')}</div></button>
+      <button type="button" class="draft-del" data-draft-del="${d.id}" aria-label="Eliminar borrador">×</button>
+    </div>`;
+  }).join('');
+  body.querySelectorAll('[data-draft-open]').forEach(b=> b.onclick = ()=> openDraft(b.dataset.draftOpen));
+  body.querySelectorAll('[data-draft-del]').forEach(b=> b.onclick = ()=>{ if(confirm('¿Eliminar este borrador?')) draftRemove(b.dataset.draftDel); });
+}
+function openDraft(id){
+  const d = draftsList.find(x=> x.id===id); if(!d) return;
+  hideModal($('#drafts-modal'));
+  openDishModal(null, null, d);
+}
+$('#drafts-banner').onclick = ()=>{ renderDraftsModal(); showModal($('#drafts-modal')); };
+$('#drafts-done').onclick = ()=> hideModal($('#drafts-modal'));
+$('#drafts-modal').addEventListener('click', e=>{ if(e.target.id==='drafts-modal') hideModal($('#drafts-modal')); });
+// Si la app pasa a segundo plano o se cierra con una ficha nueva abierta, se guarda ya.
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') saveDraftNow(); });
+window.addEventListener('pagehide', ()=>{ saveDraftNow(); });
 
 /* --- Gesto: deslizar TODA la tarjeta del plato hacia abajo para volver al mosaico.
    Solo actúa cuando el contenido está arriba del todo (scrollTop 0); si no,
@@ -5410,12 +5773,13 @@ function renderSteps(focusKey){
   }
   if(!dishSteps.length) dishSteps.push({ key: uuid(), text: '' });
   box.innerHTML = dishSteps.map((st,i)=> `<div class="step step-edit" data-step-key="${st.key}">
-      <div class="step-num">${i+1}.</div>
+      <div class="step-side"><div class="step-num">${i+1}.</div>${dishSteps.length>1 ? `<button type="button" class="step-grip" data-step-grip="${st.key}" aria-label="Arrastra para reordenar"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg></button>` : ''}</div>
       <div class="step-main">
         <textarea rows="2" placeholder="${i===0 ? 'Ej.: Corta la cebolla en dados pequeños…' : 'Describe este paso…'}" data-step-text="${st.key}">${escapeHtml(st.text||'')}</textarea>
         ${st.url || st.preview ? `<div class="step-photo"><img ${st.url ? pimg(st.url, 't') : `src="${st.preview}"`} alt="" decoding="async"><button type="button" class="step-photo-del" data-step-photo-del="${st.key}" aria-label="Quitar foto">×</button></div>` : ''}
         <div class="step-tools">
           ${st.url || st.preview ? '' : `<button type="button" class="step-tool" data-step-photo="${st.key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>Foto</button>`}
+          ${dishSteps.length>1 ? `<button type="button" class="step-tool step-tool-mv" data-step-mv="up:${st.key}" ${i===0?'disabled':''} aria-label="Subir paso">↑</button><button type="button" class="step-tool step-tool-mv" data-step-mv="dn:${st.key}" ${i===dishSteps.length-1?'disabled':''} aria-label="Bajar paso">↓</button>` : ''}
           ${dishSteps.length>1 ? `<button type="button" class="step-tool step-tool-del" data-step-del="${st.key}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/></svg></button>` : ''}
         </div>
       </div>
@@ -5442,6 +5806,12 @@ function renderSteps(focusKey){
     dishSteps = dishSteps.filter(x=> x!==st);
     renderSteps(); updateDescPreview(); scheduleDishAutosave(true);
   });
+  box.querySelectorAll('[data-step-mv]').forEach(b=> b.onclick = ()=>{
+    const [dir,key] = b.dataset.stepMv.split(':');
+    const i = dishSteps.findIndex(x=> x.key===key); if(i<0) return;
+    moveStep(i, dir==='up' ? i-1 : i+1);
+  });
+  box.querySelectorAll('[data-step-grip]').forEach(g=> g.addEventListener('pointerdown', e=> startStepDrag(e, g.dataset.stepGrip)));
   $('#steps-add-btn').onclick = ()=>{
     const st = { key: uuid(), text: '' };
     dishSteps.push(st);
@@ -5451,6 +5821,71 @@ function renderSteps(focusKey){
     const ta = box.querySelector(`textarea[data-step-text="${focusKey}"]`);
     if(ta){ ta.focus(); ta.scrollIntoView({ block:'center', behavior:'smooth' }); }
   }
+}
+function moveStep(from, to){
+  if(to<0 || to>=dishSteps.length || from===to) return false;
+  const [st] = dishSteps.splice(from,1);
+  dishSteps.splice(to,0,st);
+  renderSteps(); updateDescPreview(); scheduleDishAutosave(true);
+  return true;
+}
+function startStepDrag(e, key){
+  if(e.button!==undefined && e.button>0) return;
+  const box = $('#steps-list');
+  const rows = [...box.querySelectorAll('.step-edit')];
+  const from = rows.findIndex(r=> r.dataset.stepKey===key); if(from<0) return;
+  e.preventDefault();
+  const grip = e.currentTarget;
+  try{ grip.setPointerCapture(e.pointerId); }catch(_){}
+  const row = rows[from];
+  const rects = rows.map(r=> r.getBoundingClientRect());
+  const h = rects[from].height;
+  const startY = e.clientY, startScroll = box.scrollTop;
+  let to = from, lastY = startY, raf = 0;
+  row.classList.add('dragging');
+  rows.forEach((r,i)=>{ if(i!==from) r.classList.add('shifting'); });
+  const apply = ()=>{
+    const dy = (lastY - startY) + (box.scrollTop - startScroll);
+    row.style.transform = `translateY(${dy}px)`;
+    const mid = rects[from].top + box.scrollTop - startScroll + dy + h/2;
+    let t = from;
+    rows.forEach((r,i)=>{
+      if(i===from) return;
+      const m = rects[i].top + rects[i].height/2;
+      if(i>from && mid > m) t = Math.max(t,i);
+      if(i<from && mid < m) t = Math.min(t,i);
+    });
+    to = t;
+    rows.forEach((r,i)=>{
+      if(i===from) return;
+      let sh = 0;
+      if(from<to && i>from && i<=to) sh = -h;
+      if(from>to && i<from && i>=to) sh = h;
+      r.style.transform = sh ? `translateY(${sh}px)` : '';
+    });
+  };
+  const edge = ()=>{
+    const br = box.getBoundingClientRect();
+    if(lastY < br.top + 70) box.scrollTop -= 10;
+    else if(lastY > br.bottom - 70) box.scrollTop += 10;
+    apply();
+    raf = requestAnimationFrame(edge);
+  };
+  raf = requestAnimationFrame(edge);
+  const move = ev=>{ lastY = ev.clientY; apply(); };
+  const end = ev=>{
+    cancelAnimationFrame(raf);
+    grip.removeEventListener('pointermove', move);
+    grip.removeEventListener('pointerup', end);
+    grip.removeEventListener('pointercancel', end);
+    try{ grip.releasePointerCapture(e.pointerId); }catch(_){}
+    rows.forEach(r=>{ r.classList.remove('dragging','shifting'); r.style.transform=''; });
+    if(ev.type!=='pointercancel' && to!==from) moveStep(from, to);
+  };
+  grip.addEventListener('pointermove', move);
+  grip.addEventListener('pointerup', end);
+  grip.addEventListener('pointercancel', end);
+  apply();
 }
 let stepPhotoTarget = null;
 $('#step-photo-input').addEventListener('change', async e=>{
@@ -6665,6 +7100,7 @@ function setDishClosingLocked(locked){
 }
 function scheduleDishAutosave(immediate){
   if(dishPreview) return; // un plato ajeno en vista previa nunca se guarda
+  if(!dishExistsRemote) scheduleDraftSave(); // plato nuevo: se guarda como borrador
   if(dishSaveTimer){ clearTimeout(dishSaveTimer); dishSaveTimer=null; }
   if(immediate){ runDishAutosave(captureDishSnapshot()); return; }
   dishSaveTimer = setTimeout(()=>{ dishSaveTimer=null; runDishAutosave(captureDishSnapshot()); }, 500);
@@ -6776,6 +7212,7 @@ $('#dish-save-btn').onclick = async ()=>{
   dishSaveInFlight = null;
   setDishClosingLocked(false);
   if(dishExistsRemote && snap.id===editingDishId){
+    draftRemove(snap.id); // ya es un plato de verdad: el borrador sobra
     btn.classList.add('hidden');
     // Recién creado: seguimos en modo edición (no tiene sentido bloquear los
     // campos justo después de rellenarlos) — "Guardar" lo pasa a modo vista.
@@ -7774,7 +8211,7 @@ function renderProfileHeader(){
     </div>
     <div class="fp-name">@${escapeHtml(u.username||'')}${isFriend(u.id) ? '<span class="fp-friend-chip">Amigos</span>' : (r.followsMe==='accepted' ? '<span class="fp-friend-chip">Te sigue</span>' : '')}</div>
     ${(u.bio||'').trim() ? `<div class="fp-bio">${escapeHtml(u.bio.trim())}</div>` : ''}
-    <div class="fp-actions">${followBtnHtml(u, { big:true })}${isFriend(u.id) ? `<button type="button" class="fp-main-btn fp-following" id="fp-msg-btn">Mensaje</button>` : ''}</div>
+    <div class="fp-actions">${followBtnHtml(u, { big:true })}${isFriend(u.id) ? `<button type="button" class="fp-main-btn fp-following" id="fp-msg-btn">Mensaje</button>` : ''}<button type="button" class="fp-icon-btn${mutedIds.has(u.id)?' on':''}" id="fp-mute-btn" aria-pressed="${mutedIds.has(u.id)}" aria-label="${mutedIds.has(u.id)?'Reactivar avisos de':'Silenciar avisos de'} @${escapeHtml(u.username||'')}">${mutedIds.has(u.id) ? ICON_BELL_OFF : ICON_BELL}</button></div>
     ${r.followsMe==='pending' ? `<div class="fp-request"><span>@${escapeHtml(u.username||'')} quiere seguirte</span><button type="button" class="btn-mini" id="fp-accept-btn">Aceptar</button><button type="button" class="btn-mini btn-mini-ghost" id="fp-reject-btn">Rechazar</button></div>` : ''}`;
   $('#fp-avatar').onclick = ()=>{ if(u.avatar_url) openPhotoViewer([u.avatar_url], 0); };
   $all('#friend-profile-header [data-fp-list]').forEach(b=> b.onclick = ()=>{
@@ -7782,6 +8219,7 @@ function renderProfileHeader(){
     if(u.is_public===false && rr.iFollow!=='accepted') return; // perfil privado: las listas solo las ven sus seguidores
     openFollowList(u, b.dataset.fpList);
   });
+  $('#fp-mute-btn').onclick = ()=> toggleMuteProfile(u.id, u.username);
   if($('#fp-msg-btn')) $('#fp-msg-btn').onclick = ()=>{ const id = u.id; closeFriendProfile(); openDirectChat(id); };
   if($('#fp-accept-btn')) $('#fp-accept-btn').onclick = ()=> respondFriendRequest(u.id, true);
   if($('#fp-reject-btn')) $('#fp-reject-btn').onclick = ()=> respondFriendRequest(u.id, false);
@@ -8097,7 +8535,7 @@ $('#wall-publish-confirm').onclick = async ()=>{
    Lo que ha pasado: quién te sigue, me gusta, comentarios, menciones,
    etiquetas, recetas recibidas... (los mismos avisos que llegan al móvil).
    Arriba, las solicitudes y recetas pendientes. Lo nuevo sale resaltado. */
-let activityItems = [], activitySeenBefore = 0;
+let activityItems = [], activityRaw = [], activitySeenBefore = 0;
 const ACTIVITY_HIDE = ['wall_post']; // "X ha publicado" ya se ve en el propio Muro
 const ACTIVITY_NOCOUNT = ['follow_request', 'dish_shared']; // ya cuentan arriba como pendientes
 function activityKey(){ return 'nutrifit_activity_seen_' + (currentUser ? currentUser.id : ''); }
@@ -8106,13 +8544,18 @@ function activityUnseenCount(){
   const s = activitySeen();
   return activityItems.filter(n=> !ACTIVITY_NOCOUNT.includes(n.kind) && new Date(n.created_at).getTime() > s).length;
 }
+// Lo que se enseña: sin los "X ha publicado" y sin lo de perfiles silenciados.
+function refilterActivity(){
+  activityItems = activityRaw.filter(n=> !ACTIVITY_HIDE.includes(n.kind) && !(n.actor_id && mutedIds.has(n.actor_id)));
+}
 async function loadActivity(){
   if(!currentUser) return;
   const { data, error } = await sb.from('notifications')
     .select('id,kind,title,body,url,created_at,actor_id,actor:actor_id(id,username,avatar_url)')
     .eq('recipient_id', currentUser.id).order('created_at', { ascending:false }).limit(50);
   if(error){ console.warn('actividad', error.message); return; }
-  activityItems = (data||[]).filter(n=> !ACTIVITY_HIDE.includes(n.kind));
+  activityRaw = data||[];
+  refilterActivity();
   if(currentSection==='actividad'){ renderActivity(); try{ localStorage.setItem(activityKey(), String(Date.now())); }catch(e){} }
   updateNotifBadges();
 }
@@ -9388,7 +9831,7 @@ function renderWallFeed(){
   const box = $('#wall-feed');
   // Al repintar (p. ej. tras un me gusta) cada carrusel sigue en la foto que estabas viendo.
   const photoPos = {};
-  $all('#wall-feed .wall-post').forEach(el=>{ const t = el.querySelector('.photo-track'); if(t) photoPos[el.dataset.post] = carouselIndex(t); });
+  $all('#wall-feed .wall-post').forEach(el=>{ const t = el.querySelector('.photo-track'); if(t && t.children.length>1) photoPos[el.dataset.post] = carouselIndex(t); });
   if(!wallPosts.length){ box.innerHTML = '<div class="empty-hint">Todavía no hay nada en el Muro.</div>'; return; }
   const items = wallPosts.map((p, idx)=>{
     const d = p.dish_snapshot || {};
