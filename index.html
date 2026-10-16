@@ -1808,6 +1808,140 @@ body.sec-platos .ab-settings{display:flex; margin-left:8px;}
   body.typing .tabbar{display:flex;}
 }
 
+
+/* ===================== ORDENADOR (≥1024 px) =====================
+   Todo lo de aquí abajo solo se aplica en pantallas grandes: el móvil no cambia.
+   Barra lateral con todos los destinos, contenido más ancho y en columnas,
+   pop-ups centrados, y teclado / ratón con sus estados (hover, foco). */
+.tab-more, .tab-sep, .tab-help, .tab-key, .tab-count{display:none;}
+@media (min-width:1024px){
+  :root{--side-w:236px;}
+  /* --- barra lateral --- */
+  .tabbar{width:var(--side-w); overflow-y:auto; gap:2px; padding:22px 12px 14px; background:var(--bg2); scrollbar-width:none;}
+  .tabbar::-webkit-scrollbar{display:none;}
+  .tabbar::before{order:-3; padding:0 12px 14px;}
+  #app-view{padding-left:var(--side-w);}
+  .pager-section.active.active{left:var(--side-w);}
+  .tab{position:relative; width:100%; text-align:left; cursor:pointer;}
+  .tab-label{flex:1;}
+  .tab-ic{flex-shrink:0;}
+  .tab-ic svg{width:23px; height:23px;}
+  .tab .notif-badge{left:15px; top:-5px;}
+  .tab-key{display:inline-block; font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--muted); background:var(--card2); border:1px solid var(--border);
+    border-radius:6px; padding:3px 6px; opacity:.75;}
+  .tab.active .tab-key{opacity:1; color:var(--accent);}
+  .tab-more{display:flex; order:5;}
+  .tab-sep{display:block; order:4; margin:14px 12px 4px; font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); opacity:.8;}
+  .tab-help{display:flex; order:10; margin-top:auto; font-size:13px; font-weight:600; padding:8px 12px;}
+  .tab-count{display:inline; font-size:12px; font-weight:800; color:var(--cook, #f2701d);}
+  .tab-count:empty{display:none;}
+  /* Crear: botón verde arriba, a mano */
+  .tab-plus{order:-2; margin:0 0 12px; background:var(--accent); border-radius:12px; padding:9px 12px;}
+  .tab-plus .tab-label{color:#fff; font-weight:800;}
+  .tab-plus .tab-key{background:rgba(255,255,255,.2); border-color:transparent; color:#fff; opacity:1;}
+  .tab-plus-btn{background:transparent; box-shadow:none; width:28px; height:28px;}
+  .tab-plus-btn svg{width:20px; height:20px;}
+  .tab-plus:hover{filter:brightness(1.08);}
+  /* una pantalla "hija" solo ilumina su propio destino */
+  body.nav-child .tab[data-tab].active{background:none; color:var(--muted);}
+  body.nav-child .tab[data-tab].active .tab-ic svg{stroke-width:1.9;}
+  body.nav-child .tab[data-tab].active .tab-avatar{border:1.5px solid var(--border);}
+  body.nav-child .tab[data-tab].active .tab-key{color:var(--muted); opacity:.75;}
+  body.no-cooks #tab-go-racha{display:none !important;}
+
+  /* --- barra de arriba: título de la pantalla + acciones propias --- */
+  .appbar{padding:20px 36px 10px; padding-top:20px; min-height:56px; gap:12px;}
+  html.sec-pager .appbar{left:var(--side-w);}
+  .appbar .ab-bell, .appbar .ab-streak, .appbar .ab-chats, .appbar .ab-settings, .appbar .ab-back{display:none !important;}
+  .appbar .ab-title{display:flex !important; justify-content:flex-start !important; margin-left:0 !important; font-size:24px; font-weight:800; text-align:left; flex:0 1 auto;}
+  body.sec-muro .appbar .ab-title{position:static; left:auto; transform:none; pointer-events:auto;}
+  body.sec-platos .appbar .ab-title{display:none !important;}
+  body.sec-despensa .appbar .np-tabs, body.sec-explorar .appbar .np-tabs{display:none !important;}
+  body.sec-social .ab-new-chat{display:flex; width:auto; height:38px; margin:0; padding:0 14px; gap:8px; border:1px solid var(--border); background:var(--card); font-size:14px; font-weight:700;}
+  body.sec-social .ab-new-chat svg{width:18px; height:18px;}
+  body.sec-social .ab-new-chat::after{content:"Nuevo mensaje";}
+  body.sec-platos .appbar #pf-bar{margin:0; max-width:520px; width:100%;}
+  body.sec-platos .appbar{padding-bottom:6px;}
+
+  /* --- contenido más ancho --- */
+  main{max-width:1180px; padding:8px 36px 48px;}
+  #section-muro{max-width:600px; margin-left:auto; margin-right:auto;}
+  #wall-feed{max-width:none;}
+  body.sec-muro .appbar{padding-left:max(36px, calc((100% - 600px) / 2)); padding-right:max(36px, calc((100% - 600px) / 2));}
+  #section-social, #section-actividad, #section-racha{max-width:720px; margin-left:auto; margin-right:auto;}
+  body.sec-social .appbar, body.sec-actividad .appbar, body.sec-racha .appbar{padding-left:max(36px, calc((100% - 720px) / 2)); padding-right:max(36px, calc((100% - 720px) / 2));}
+  #section-fitness, #section-platos{max-width:1100px; margin-left:auto; margin-right:auto;}
+
+  /* Nevera | Carrito, una al lado de la otra (sin pestañas ni deslizar) */
+  .pager{width:100%; max-width:1280px; margin:0 auto; padding:0 36px; box-sizing:border-box;}
+  .pager-page{transform:none !important; transition:none; will-change:auto; padding:6px 0 32px; touch-action:auto;}
+  .pager-page > *{max-width:none;}
+  .pager-top{padding:6px 36px 0; max-width:1280px; width:100%; margin:0 auto; box-sizing:border-box;}
+  .pager-top > *{max-width:none;}
+  #np-pager{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:32px;}
+  #np-pager > .pager-page::before{display:block; font-size:19px; font-weight:800; letter-spacing:-.01em; margin:2px 0 12px;}
+  #section-nevera::before{content:"Nevera";}
+  #np-pager > .pager-page:nth-child(2)::before{content:"Carrito";}
+
+  /* Explorar: platos a la izquierda, gente a la derecha */
+  #section-explorar.active.active{display:grid; grid-template-columns:minmax(0,1fr) 380px; grid-template-rows:auto minmax(0,1fr); column-gap:32px; padding:0 36px; box-sizing:border-box;}
+  #section-explorar .pager-top, body.ex-people #section-explorar .pager-top{grid-column:1; grid-row:1; max-height:none; opacity:1; padding:6px 0 0; overflow:visible;}
+  #section-explorar #ex-pager{display:contents;}
+  #ex-page-platos{grid-column:1; grid-row:2; padding-left:0; padding-right:0;}
+  #ex-page-gente{grid-column:2; grid-row:1 / span 2; padding-right:0; padding-left:0; border-left:1px solid var(--border); padding-left:28px;}
+  #ex-page-gente::before{content:"Gente"; display:block; font-size:19px; font-weight:800; margin:6px 0 12px;}
+
+  /* Ajustes: lista a la izquierda, detalle a la derecha */
+  #set-pager{display:grid; grid-template-columns:minmax(0,440px) minmax(0,1fr); gap:40px; max-width:1180px; margin:0; padding:0 36px;}
+  #set-sub{border-left:1px solid var(--border); padding-left:36px;}
+  #set-sub:not(:has(> div:not(.hidden)))::before{content:"Elige una opción de la lista para cambiarla aquí."; display:block; color:var(--muted); font-size:14px; padding-top:18px;}
+
+  /* Fitness: la cuadrícula de la semana cabe sin tanto scroll */
+  .wk-cell{aspect-ratio:5/2;}
+  .wk-grid.n5 .wk-cell{aspect-ratio:3/1;} .wk-grid.n3 .wk-cell{aspect-ratio:4/1;}
+  .dm-row .wk-cell{aspect-ratio:1/1;}
+  .wk-gridcard{padding:14px 12px 12px;}
+  .wk-grid{gap:8px;}
+
+  /* --- pop-ups: tarjetas centradas, no hojas desde abajo --- */
+  .modal{align-items:center;}
+  .modal > .modal-sheet{border-radius:20px; padding-bottom:18px; max-height:min(88vh,880px); box-shadow:var(--shadow);
+    animation:nf-card-in .24s cubic-bezier(.32,.72,0,1); will-change:auto;}
+  .modal.closing > .modal-sheet{animation:nf-card-out .16s ease-in forwards;}
+  #dish-modal > .modal-sheet{max-width:660px;}
+  #fm-modal > .modal-sheet{max-width:780px; min-height:0; height:min(80vh,760px);}
+  #cs-modal > .modal-sheet, #create-modal > .modal-sheet{max-width:520px;}
+  #chat-modal{align-items:center; background:rgba(20,25,23,.4);}
+  #chat-modal .chat-sheet{height:min(86vh,800px); max-width:680px; border-radius:20px; padding-top:14px; padding-bottom:12px;}
+  #chat-modal .sheet-close-btn{top:12px;}
+  #friend-profile-modal > .modal-sheet.fp-full{padding-left:0; padding-right:0;}
+  .fp-scroll{padding-left:36px; padding-right:36px;}
+  .fp-scroll > *{max-width:760px;}
+  .keys-card{max-width:520px;}
+  .keys-grid{display:grid; grid-template-columns:auto 1fr auto 1fr; gap:10px 12px; align-items:center; margin:6px 0 16px; font-size:14px;}
+  .keys-grid kbd{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--card2); border:1px solid var(--border); border-radius:6px; padding:5px 8px; text-align:center;}
+  .keys-grid > span:nth-of-type(odd){}
+}
+@media (min-width:1024px) and (hover:hover) and (pointer:fine){
+  button, [role=button], .tab, .dish-card, .wk-cell{cursor:pointer;}
+  * {scrollbar-width:thin; scrollbar-color:var(--border-strong) transparent;}
+  .tab:not(.tab-plus):hover{background:var(--card2);}
+  .tab.active:hover{background:rgba(18,135,94,.14);}
+  .btn-primary:hover{filter:brightness(1.07);}
+  .btn-secondary:hover, .btn-mini:hover, .pill-btn:hover, .subtab:hover, .wk-arrow:hover{border-color:var(--accent); color:var(--accent);}
+  .subtab.active:hover{color:#fff;}
+  .chat-row:hover, .pick-row:hover, .user-row-btn:hover, .settings-link:hover{background:var(--card2);}
+  .dish-card{transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;}
+  .dish-card:hover{border-color:var(--accent); box-shadow:var(--shadow); transform:translateY(-2px);}
+  .wk-cell:hover{outline:2px solid var(--accent); outline-offset:-2px;}
+  .ab-btn:hover, .fp-topbar-back:hover, .icon-btn-plain:hover{background:var(--card2);}
+  .wall-action-btn:hover{color:var(--accent);}
+}
+@media (min-width:1024px){
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:8px;}
+  .field input:focus-visible, .field textarea:focus-visible, .field select:focus-visible{outline:none;}
+}
+
 /* ===================== COCINADOS Y RACHAS (estilo Strava) ===================== */
 :root{--cook:#f2701d; --like:#f2385f;} /* gorro de chef marcado: rojo rosado, como un me gusta */
 body.no-cooks [data-wall-cook], body.no-cooks #ab-streak, body.no-cooks #create-cooked, body.no-cooks #dish-cooked-btn{display:none !important;}
@@ -2572,12 +2706,33 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 
   <!-- BARRA DE ABAJO (estilo Strava/Instagram) -->
   <nav class="tabbar" id="tabbar">
-    <button type="button" class="tab" data-tab="inicio" id="tab-inicio"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9V20a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1V9"/></svg><span id="tab-inicio-badge" class="notif-badge hidden">0</span></span><span class="tab-label">Inicio</span></button>
-    <button type="button" class="tab" data-tab="explorar" id="tab-explorar"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span><span class="tab-label">Explorar</span></button>
-    <button type="button" class="tab tab-plus" id="tab-plus" aria-label="Crear"><span class="tab-plus-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span class="tab-label">Crear</span></button>
-    <button type="button" class="tab" data-tab="despensa" id="tab-despensa"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg></span><span class="tab-label">Despensa</span></button>
-    <button type="button" class="tab" data-tab="perfil" id="tab-perfil"><span class="tab-ic"><span class="tab-avatar" id="tab-avatar"></span></span><span class="tab-label">Perfil</span></button>
+    <button type="button" class="tab" data-tab="inicio" data-key="1" id="tab-inicio"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9V20a1 1 0 0 0 1 1H10v-6h4v6h3.5a1 1 0 0 0 1-1V9"/></svg><span id="tab-inicio-badge" class="notif-badge hidden">0</span></span><span class="tab-label">Inicio</span><kbd class="tab-key">1</kbd></button>
+    <button type="button" class="tab" data-tab="explorar" data-key="2" id="tab-explorar"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span><span class="tab-label">Explorar</span><kbd class="tab-key">2</kbd></button>
+    <button type="button" class="tab tab-plus" id="tab-plus" aria-label="Crear"><span class="tab-plus-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span><span class="tab-label">Crear</span><kbd class="tab-key">N</kbd></button>
+    <button type="button" class="tab" data-tab="despensa" data-key="3" id="tab-despensa"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg></span><span class="tab-label">Despensa</span><kbd class="tab-key">3</kbd></button>
+    <button type="button" class="tab" data-tab="perfil" data-key="4" id="tab-perfil"><span class="tab-ic"><span class="tab-avatar" id="tab-avatar"></span></span><span class="tab-label">Perfil</span><kbd class="tab-key">4</kbd></button>
+    <span class="tab-sep" aria-hidden="true">Más</span>
+    <button type="button" class="tab tab-more" data-go="fitness" data-key="5" id="tab-go-fitness"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span><span class="tab-label">Fitness</span><kbd class="tab-key">5</kbd></button>
+    <button type="button" class="tab tab-more" data-go="social" data-key="6" id="tab-go-social"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5A8.5 8.5 0 0 1 21 11.5z"/></svg><span id="tab-social-badge" class="notif-badge hidden">0</span></span><span class="tab-label">Mensajes</span><kbd class="tab-key">6</kbd></button>
+    <button type="button" class="tab tab-more" data-go="actividad" data-key="7" id="tab-go-actividad"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span id="tab-act-badge" class="notif-badge hidden">0</span></span><span class="tab-label">Actividad</span><kbd class="tab-key">7</kbd></button>
+    <button type="button" class="tab tab-more" data-go="racha" data-key="8" id="tab-go-racha"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5c3.9 0 6.8-2.7 6.8-6.6 0-3.3-2.1-5.4-3.6-7.3-.4 1.7-1.4 2.7-2.6 3.1.3-3.4-1.2-6.3-3.9-8.2.1 3.2-1.3 5.2-2.8 7C4.7 11.1 5.2 13 5.2 14.9c0 3.9 2.9 6.6 6.8 6.6z"/></svg></span><span class="tab-label">Tu racha</span><b id="tab-streak-n" class="tab-count"></b><kbd class="tab-key">8</kbd></button>
+    <button type="button" class="tab tab-more" data-go="settings" data-key="9" id="tab-go-settings"><span class="tab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span><span class="tab-label">Configuración</span><kbd class="tab-key">9</kbd></button>
+    <button type="button" class="tab tab-help" id="tab-help"><span class="tab-label">Atajos de teclado</span><kbd class="tab-key">?</kbd></button>
   </nav>
+</div>
+
+<!-- ================= ATAJOS DE TECLADO (ordenador) ================= -->
+<div id="keys-modal" class="modal desc-modal-overlay hidden">
+  <div class="desc-modal-card keys-card">
+    <div class="sheet-kicker">Atajos de teclado</div>
+    <div class="keys-grid">
+      <kbd>1</kbd><span>Inicio</span><kbd>2</kbd><span>Explorar</span><kbd>3</kbd><span>Despensa</span><kbd>4</kbd><span>Perfil</span>
+      <kbd>5</kbd><span>Fitness</span><kbd>6</kbd><span>Mensajes</span><kbd>7</kbd><span>Actividad</span><kbd>8</kbd><span>Tu racha</span>
+      <kbd>9</kbd><span>Configuración</span><kbd>N</kbd><span>Crear</span><kbd>/</kbd><span>Buscar en esta pantalla</span>
+      <kbd>← →</kbd><span>Semana / día anterior y siguiente (Fitness)</span><kbd>Esc</kbd><span>Cerrar lo que esté abierto</span><kbd>?</kbd><span>Ver esta ayuda</span>
+    </div>
+    <div class="modal-actions"><button type="button" class="btn-primary" id="keys-close" style="flex:1; justify-content:center;">Entendido</button></div>
+  </div>
 </div>
 
 <!-- ================= DISH MODAL ================= -->
@@ -3189,7 +3344,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.08-1';
+const APP_VERSION = '2026.11.09-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -4194,6 +4349,21 @@ const NAV = {
 const TAB_ROOT = { inicio:'muro', explorar:'explorar', despensa:'despensa', perfil:'platos' };
 let currentSection = null;
 const scrollMem = {};
+/* Título de la barra de arriba. En el móvil sigue siendo "NutriFit" en las pantallas raíz;
+   en ordenador cada pantalla lleva su nombre (la marca ya está en la barra lateral). */
+const DESK_TITLES = { muro:'Inicio', explorar:'Explorar', despensa:'Nevera y carrito' };
+// Qué destino de la barra se ilumina. En ordenador las pantallas "hijas" tienen su propio
+// destino, así que su pestaña madre no se ilumina a la vez.
+function syncTabActive(section){
+  const nav = NAV[section] || {};
+  const own = !!nav.parent && isDesktopLayout();
+  $all('.tab[data-tab]').forEach(t=> t.classList.toggle('active', t.dataset.tab===nav.tab && !own));
+}
+function sectionTitle(section){
+  const nav = NAV[section] || {};
+  if(nav.parent) return nav.title;
+  return (isDesktopLayout() && DESK_TITLES[section]) || 'NutriFit';
+}
 function setSection(section, opts){
   opts = opts || {};
   if(section==='nevera' || section==='carrito'){
@@ -4211,8 +4381,9 @@ function setSection(section, opts){
   document.body.classList.toggle('sec-pager', !!PG[section]);
   document.documentElement.classList.toggle('sec-pager', !!PG[section]);
   document.body.classList.toggle('nav-child', !!nav.parent);
-  $('#ab-title').textContent = nav.parent ? nav.title : 'NutriFit';
-  $all('.tab[data-tab]').forEach(t=> t.classList.toggle('active', t.dataset.tab===nav.tab));
+  $('#ab-title').textContent = sectionTitle(section);
+  syncTabActive(section);
+  $all('.tab[data-go]').forEach(t=> t.classList.toggle('active', t.dataset.go===section));
   if(section==='settings' && PG.settings) PG.settings.idx = 0; // Ajustes siempre empieza en la lista
   if(section==='settings') requestAnimationFrame(()=>{ try{ updateBioCount(); }catch(e){} refreshEmailUI(); });
   $all('.app-section').forEach(s=> s.classList.remove('active'));
@@ -4243,12 +4414,12 @@ function navigate(section, opts){
   if(section==='muro') openWallSection();
   if(section==='despensa'){ renderNeveraSuggestions(); renderCartList(); }
   if(section==='social') loadChats();
-  if(section==='explorar') openExploreSection();
+  if(section==='explorar'){ openExploreSection(); if(isDesktopLayout()) renderFriendsList(); }
   if(section==='actividad') openActivity();
   if(section==='racha') renderRacha();
 }
 function goBack(){
-  if(currentSection==='settings' && PAGERS.settings.idx > 0){ setPagerPage('settings', 0, true); return; }
+  if(currentSection==='settings' && PAGERS.settings.idx > 0 && !isDesktopLayout()){ setPagerPage('settings', 0, true); return; }
   const nav = NAV[currentSection] || {};
   if(nav.parent) navigate(nav.parent, { anim:'back' });
 }
@@ -4273,6 +4444,49 @@ $('#ab-streak').onclick = ()=> navigate('racha', { anim:'fwd' });
 $('#ab-settings').onclick = ()=> navigate('settings', { anim:'fwd' });
 $('#ab-new-chat').onclick = ()=> openNewChat();
 $('#pf-fitness-link').onclick = ()=> navigate('fitness', { anim:'fwd' });
+/* ---------- Ordenador: barra lateral completa + atajos de teclado ---------- */
+$all('.tab[data-go]').forEach(t=> t.onclick = ()=> navigate(t.dataset.go));
+$('#tab-help').onclick = ()=> showModal($('#keys-modal'));
+$('#keys-close').onclick = ()=> hideModal($('#keys-modal'));
+$('#keys-modal').addEventListener('click', e=>{ if(e.target.id==='keys-modal') hideModal($('#keys-modal')); });
+// Cierra el pop-up que esté más arriba (misma salida que su botón de cerrar).
+function closeTopModal(){
+  const open = $all('.modal').filter(m=> !m.classList.contains('hidden') && !m.classList.contains('closing'));
+  if(!open.length) return false;
+  let top = open[0], tz = -1;
+  open.forEach(m=>{ const z = parseInt(getComputedStyle(m).zIndex, 10) || 0; if(z >= tz){ tz = z; top = m; } });
+  const btn = top.querySelector('.sheet-close-btn, [id$="-close"], [id$="-close-x"], [id$="-cancel"], [id$="-cancel-btn"], [id$="-done"], #fp-back-btn, .desc-modal-close');
+  if(btn) btn.click(); else hideModal(top);
+  return true;
+}
+document.addEventListener('keydown', e=>{
+  if(!isDesktopLayout() || !currentUser || $('#app-view').classList.contains('hidden')) return;
+  if(e.ctrlKey || e.metaKey || e.altKey) return;
+  if(e.key==='Escape'){
+    if(pvOpen || cookOpen) return; // el visor de fotos y el modo cocina tienen su propio Esc
+    if(closeTopModal()) e.preventDefault();
+    else { const a = document.activeElement; if(a && a.matches && a.matches('input, textarea, select') && a.blur) a.blur(); }
+    return;
+  }
+  const t = e.target;
+  if(t && t.matches && t.matches('input, textarea, select, [contenteditable="true"]')) return;
+  if(pvOpen || cookOpen || $all('.modal').some(m=> !m.classList.contains('hidden'))) return;
+  const k = e.key;
+  const dest = document.querySelector('.tab[data-key="'+k+'"]');
+  if(dest && /^[1-9]$/.test(k)){ if(dest.offsetParent){ e.preventDefault(); dest.click(); } return; }
+  if(k==='n' || k==='N'){ e.preventDefault(); $('#tab-plus').click(); return; }
+  if(k==='?'){ e.preventDefault(); showModal($('#keys-modal')); return; }
+  if(k==='/'){
+    const sec = document.querySelector('.app-section.active'); if(!sec) return;
+    const inp = Array.from(sec.querySelectorAll('input[type=search], input[type=text]')).find(i=> i.offsetParent && !i.disabled);
+    if(inp){ e.preventDefault(); inp.focus(); }
+    return;
+  }
+  if((k==='ArrowLeft' || k==='ArrowRight') && currentSection==='fitness'){
+    const b = $(k==='ArrowLeft' ? '#wk-prev' : '#wk-next');
+    if(b && b.offsetParent){ e.preventDefault(); b.click(); }
+  }
+}, true);
 // Escribiendo en un campo, la barra de abajo se aparta (en el iPhone subiría con el teclado).
 document.addEventListener('focusin', e=>{
   const t = e.target;
@@ -4290,6 +4504,17 @@ let drawerOverlayTimer = null;
 const DESKTOP_MQ = window.matchMedia('(min-width: 1024px)');
 function isDesktopLayout(){ return DESKTOP_MQ.matches; }
 function applyDesktopLayout(){
+  try{
+    if(currentSection){
+      $('#ab-title').textContent = sectionTitle(currentSection);
+      syncTabActive(currentSection);
+      syncAppbarHeight();
+      const k = currentPagerKey(); if(k) setPagerPage(k, PAGERS[k].idx, false);
+      if(isDesktopLayout() && currentSection==='explorar') renderFriendsList();
+      if(typeof updateNotifBadges==='function') updateNotifBadges();
+      const g = $('#gallery'); if(g && g._mnodes && !g.classList.contains('hidden')) distributeMasonry(g);
+    }
+  }catch(e){}
   if(isDesktopLayout()){
     $('#drawer').classList.add('open');
     const ov = $('#drawer-overlay'); ov.classList.add('hidden'); ov.classList.remove('closing');
@@ -4305,6 +4530,7 @@ function closeDrawer(){}
 
 function applyFitnessVisibility(){
   $('#pf-fitness-link').classList.toggle('hidden', !currentUser.show_fitness);
+  $('#tab-go-fitness').classList.toggle('hidden', !currentUser.show_fitness);
   if(!currentUser.show_fitness && $('#section-fitness').classList.contains('active')){ setSection('platos'); }
   // "Sugerir platos"/"Activar macros" solo tienen sentido con Fitness activo,
   // así que su tarjeta se oculta con él. Esto no depende de "dishes", así que
@@ -4437,7 +4663,7 @@ function layoutMasonry(container, htmlItems){
 }
 function distributeMasonry(container){
   const nodes = container._mnodes || [];
-  const colWidth = 150, gap = 12;
+  const colWidth = isDesktopLayout() ? 190 : 150, gap = 12;
   const availWidth = container.clientWidth || container.getBoundingClientRect().width || 320;
   // OJO: el número de columnas NO depende de cuántas tarjetas hay que
   // colocar, solo del ancho disponible (con una sola tarjeta no debe salir
@@ -7770,7 +7996,11 @@ function updateNotifBadges(){
   const bell = incomingRequests.length + sharedDishesReceived.length + (typeof activityUnseenCount==='function' ? activityUnseenCount() : 0);
   setBadge($('#ab-chats-badge'), chatUnreadTotal);
   setBadge($('#ab-bell-badge'), bell);
-  setBadge($('#tab-inicio-badge'), chatUnreadTotal + bell + wallUnreadCount);
+  // En ordenador mensajes y actividad tienen su propio aviso en la barra lateral:
+  // "Inicio" solo cuenta lo nuevo del muro.
+  setBadge($('#tab-inicio-badge'), isDesktopLayout() ? wallUnreadCount : chatUnreadTotal + bell + wallUnreadCount);
+  setBadge($('#tab-social-badge'), chatUnreadTotal);
+  setBadge($('#tab-act-badge'), bell);
   setBadge($('#menu-notif-badge'), socialCount + wallUnreadCount);
   // Número rojo sobre el icono de la app en la pantalla de inicio (iPhone con
   // la app instalada, iOS 16.4+; en otros navegadores simplemente no hace nada).
@@ -8809,6 +9039,7 @@ async function loadMyCooks(){
 function updateStreakUI(){
   const n = currentStreak(), today = cookedToday();
   $('#ab-streak-n').textContent = String(n);
+  const tsn = $('#tab-streak-n'); if(tsn) tsn.textContent = n ? String(n) : '';
   const b = $('#ab-streak');
   b.classList.toggle('on', today);
   b.classList.toggle('risk', !today && n > 0);
