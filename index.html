@@ -1100,11 +1100,6 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .prog{height:9px; border-radius:5px; background:var(--card2); overflow:hidden; margin:6px 0 10px;}
 .prog i{display:block; height:100%; border-radius:5px; background:var(--accent2);}
 .prog.over i{background:var(--bad);}
-.mac3{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:6px;}
-.mac3 .m{font-size:11.5px; color:var(--muted);}
-.mac3 .m b{color:var(--text); font-size:13px;}
-.mac3 .prog{height:5px; margin:3px 0 0;}
-.mac3 .m.p i{background:#4c8bf5;} .mac3 .m.c i{background:#f2a33a;} .mac3 .m.f i{background:#e0607e;}
 .wo-box{margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);}
 .wo-row, .it-row{display:flex; align-items:center; gap:8px;}
 .wo-row{padding:5px 0; font-size:13px;}
@@ -1148,6 +1143,8 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .donut-leg{font-size:13px; display:flex; flex-direction:column; gap:6px;}
 .donut-leg i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:6px;}
 .st-list{font-size:13px;} .st-list > div{display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--border);} .st-list > div:last-child{border-bottom:none;}
+.st-mac{font-size:13px;} .st-mac > div{display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr; gap:6px; padding:5px 0; border-bottom:1px solid var(--border);} .st-mac > div:last-child{border-bottom:none;}
+.st-mac > div > span:not(:first-child){text-align:right;} .st-mac .h{color:var(--muted); font-size:11.5px; font-weight:700;}
 .st-empty{color:var(--muted); font-size:13px; text-align:center; padding:18px 6px;}
 
 /* Vista de un día: como las otras (etiqueta + foto cuadrada en columna) y el texto al lado */
@@ -1194,13 +1191,19 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .deck-btn{display:flex; align-items:center; gap:7px; padding:10px 14px; border-radius:12px; background:var(--accent); color:#fff; font-weight:800; font-size:13.5px; box-shadow:0 2px 0 var(--accent-l);}
 .deck-btn:active{transform:translateY(2px); box-shadow:none;}
 .deck-btn svg{width:18px; height:18px;}
-.deck-btn.rolling svg{animation:nf-dice .5s ease;}
+.deck-btn.rolling svg{animation:nf-dice .4s ease;}
 @keyframes nf-dice{0%{transform:rotate(0) scale(1);}50%{transform:rotate(200deg) scale(1.25);}100%{transform:rotate(360deg) scale(1);}}
-.deck-ok:disabled{opacity:.4;}
-.deck-ok.deck-cart{display:flex; align-items:center; gap:6px;} .deck-cart svg{width:16px; height:16px;}
-.deck-ok.deck-mac.on{background:var(--accent); color:#fff;}
-.deck-ok{padding:10px 13px; border-radius:12px; background:var(--card); border:1.5px solid var(--accent); color:var(--accent); font-weight:800; font-size:13px;}
-.deck-hint{font-size:12px; color:var(--muted); line-height:1.35; flex:1;}
+.wk-tools{flex-direction:column; align-items:stretch; gap:8px;}
+.wk-tools-row{display:flex; gap:8px; align-items:center;}
+.deck-ok{padding:10px 14px; border-radius:12px; background:var(--card); border:1.5px solid var(--accent); color:var(--accent); font-weight:800; font-size:13.5px;}
+.deck-cart{margin-left:auto; display:flex; align-items:center; gap:5px; height:40px; min-width:44px; padding:0 11px; border-radius:12px; background:var(--card); border:1.5px solid var(--border); color:var(--text); justify-content:center;}
+.deck-cart svg{width:19px; height:19px;} .deck-cart b{font-size:13px; color:var(--accent);}
+.deck-cart:disabled{opacity:.4;}
+.deck-src{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted);}
+.deck-src button{padding:5px 11px; border-radius:999px; background:var(--card2); border:1px solid var(--border); font-size:12.5px; font-weight:700; color:var(--muted);}
+.deck-src button.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.deck-hint{font-size:12px; color:var(--muted); line-height:1.35;}
+.wk-legend{font-size:11px; color:var(--muted); text-align:center; margin:-4px 0 10px; line-height:1.4;}
 .wk-gridcard{padding:10px 6px 8px;}
 .wk-grid{display:grid; grid-template-columns:24px repeat(7,minmax(0,1fr)); gap:4px; align-items:center;}
 .wk-grid.n3, .wk-grid.n5{gap:6px;}
@@ -1227,8 +1230,8 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .wk-cell.sug{border:1.5px dashed var(--normal); background:var(--card2);}
 .wk-cell.sug .wk-cell-bg{opacity:.5;}
 .wk-cell.sug::before{content:'✦'; position:absolute; top:1px; left:3px; z-index:2; font-size:10px; color:var(--normal); text-shadow:0 0 3px var(--card);}
-.wk-cell.flip{animation:nf-flip .5s cubic-bezier(.32,.72,0,1) both; animation-delay:calc(var(--i,0) * 28ms);}
-@keyframes nf-flip{0%{transform:rotateY(90deg) scale(.8); opacity:0;}100%{transform:none; opacity:1;}}
+.wk-cell.flip{animation:nf-flip .28s cubic-bezier(.32,.72,0,1) both; animation-delay:calc(var(--i,0) * 12ms);}
+@keyframes nf-flip{0%{transform:scale(.82); opacity:0;}100%{transform:none; opacity:1;}}
 .wk-cell-k{position:absolute; left:0; right:0; bottom:0; padding:6px 1px 1px; font-size:9px; font-weight:800; color:#fff; text-align:center; background:linear-gradient(transparent, rgba(0,0,0,.62)); text-shadow:0 1px 2px rgba(0,0,0,.4);}
 .wk-cell-n{position:absolute; top:2px; right:2px; background:rgba(20,25,23,.7); color:#fff; font-size:8.5px; font-weight:800; padding:0 4px; border-radius:7px; line-height:13px;}
 .wk-cell-ok{position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center;}
@@ -2222,6 +2225,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <div class="wk-tools" id="wk-tools"></div>
         <div id="wk-grid-wrap">
           <div class="card wk-gridcard"><div class="wk-grid" id="wk-grid"></div></div>
+          <div class="wk-legend">✦ sugerencia · discontinuo = previsto · verde = comido</div>
           <div id="wk-week-sum" class="card wk-sum"></div>
         </div>
         <div id="wk-day-wrap" class="hidden">
@@ -3185,7 +3189,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.07-1';
+const APP_VERSION = '2026.11.08-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -11622,22 +11626,7 @@ function dayStats(date){
 
 /* ---------- Pantalla Semana ---------- */
 function dayShort(d){ return DAY_NAMES[isoWeekday(d)].charAt(0); }
-/* Las macros (proteína, hidratos, grasa) están escondidas: se ven al darle a "Macros". Se recuerda en este móvil. */
-let showMacros = false;
-try{ showMacros = localStorage.getItem('nutrifit_show_macros')==='1'; }catch(e){}
-function toggleMacros(){
-  showMacros = !showMacros;
-  try{ localStorage.setItem('nutrifit_show_macros', showMacros ? '1' : '0'); }catch(e){}
-}
-function entryMeta(e){
-  const parts = [`${fmtN(e.kcal)} kcal`];
-  if(showMacros){
-    if(e.protein_g!=null) parts.push(`P ${r1(e.protein_g)}`);
-    if(e.carbs_g!=null) parts.push(`H ${r1(e.carbs_g)}`);
-    if(e.fat_g!=null) parts.push(`G ${r1(e.fat_g)}`);
-  }
-  return parts.join(' · ');
-}
+function entryMeta(e){ return `${fmtN(e.kcal)} kcal`; } // las macros se ven en Estadísticas
 const ICON_SWAP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg>';
 const ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>';
 /* Bebidas: kcal y macros por unidad (valores aproximados). La fila "Bebidas" solo admite esto o "Otra bebida", no comida. */
@@ -11651,7 +11640,7 @@ const DRINKS = [
   { n:'Cubata', g:'🥃', k:250, c:20 }, { n:'Gin tonic', g:'🍸', k:180, c:12 }, { n:'Copa de licor', g:'🥃', k:90 }, { n:'Chupito', g:'🥃', k:100 },
 ];
 let fmDrinkMode = false;
-function dishOfEntry(e){ return e.dish_id ? dishes.find(d=> d.id===e.dish_id) : null; }
+function dishOfEntry(e){ return e.dish_id ? (dishes.find(d=> d.id===e.dish_id) || foreignDishes[e.dish_id] || null) : null; }
 function drinkGlyph(name){
   const n = stripAccents(String(name||'').toLowerCase());
   if(/cerve|cana de/.test(n)) return '🍺';
@@ -11694,14 +11683,9 @@ function workoutRowHtml(w){
     <button type="button" class="ic-b" data-act="wo-del" data-id="${w.id}" aria-label="Borrar entreno">${ICON_X}</button>
   </div>`;
 }
-function macroBarHtml(cls, label, val, goal){
-  const pct = goal ? Math.min(100, val/goal*100) : 0;
-  return `<div class="m ${cls}">${label} <b>${fmtN(val)}</b>${goal?` / ${fmtN(goal)} g`:' g'}<div class="prog"><i style="width:${pct}%"></i></div></div>`;
-}
 function dayCardHtml(date){
   const st = dayStats(date);
   const d = parseDate(date);
-  const goals = macroGoals(st.target);
   const isToday = date===todayStr();
   const title = `${['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'][isoWeekday(d)-1]} ${d.getDate()} ${MONTHS_S[d.getMonth()]}${isToday?' · hoy':''}`;
   const over = st.target && st.kcal > st.target*1.05;
@@ -11715,7 +11699,6 @@ function dayCardHtml(date){
   } else {
     h += `<div class="fit-hint">Configura tu objetivo en la pestaña <b>Objetivo</b> para ver tus kcal del día.</div>`;
   }
-  if(showMacros) h += `<div class="mac3">${macroBarHtml('p','Prot.',st.p,goals&&goals.p)}${macroBarHtml('c','Hidr.',st.c,goals&&goals.c)}${macroBarHtml('f','Grasa',st.f,goals&&goals.f)}</div>`;
   // Comidas: igual que en la semana (etiqueta · foto cuadrada) y el texto al lado
   h += `<div class="dm-list">`;
   SLOTS.forEach((m, mi)=>{
@@ -11726,7 +11709,7 @@ function dayCardHtml(date){
     h += s.items.map(dayItemHtml).join('');
     if(!s.items.length && m!=='extras'){
       const sg = sugFor(date, m);
-      if(sg) h += `<div class="dm-item sug"><div class="dm-nm">✦ ${escapeHtml(sg.name)}</div><div class="dm-sub">Sugerencia · ${fmtN(sg.calories)} kcal${showMacros && sg.protein_g!=null?` · P ${r1(sg.protein_g)}`:''}</div>
+      if(sg) h += `<div class="dm-item sug"><div class="dm-nm">✦ ${escapeHtml(sg.name)}</div><div class="dm-sub">Sugerencia · ${fmtN(sg.calories)} kcal</div>
         <div class="dm-btns"><button type="button" class="dm-pri" data-act="sug-add" data-date="${date}" data-meal="${m}" data-dish="${sg.id}">Usar</button><button type="button" class="dm-sec" data-act="sug-next" data-date="${date}" data-meal="${m}">Otra</button></div></div>`;
     }
     h += `<button type="button" class="add-link" data-act="add" data-date="${date}" data-meal="${m}">${s.items.length ? '+ Añadir otra cosa' : (m==='extras' ? '+ Añadir una bebida' : '+ Añadir')}</button>`;
@@ -11790,7 +11773,6 @@ function renderWkGrid(){
   const dates = wkWindowDates(), N = dates.length;
   const keys = dates.map(fmtDate);
   const stats = keys.map(dayStats);
-  const goals = stats.map(s=> macroGoals(s.target));
   const today = todayStr();
   let h = '<div></div>' + dates.map((d,i)=>{
     const wk = fitWorkouts.filter(w=> w.workout_date===keys[i]);
@@ -11803,40 +11785,37 @@ function renderWkGrid(){
   });
   h += `<div class="wk-sumrow-sep"></div>`;
   h += `<div class="wk-rl">kcal</div>` + stats.map(s=> wkSumCell(Math.round(s.kcal), s.target, 'k')).join('');
-  if(showMacros){
-    h += `<div class="wk-rl">P</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.p), goals[i] && Math.round(goals[i].p))).join('');
-    h += `<div class="wk-rl">H</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.c), goals[i] && Math.round(goals[i].c))).join('');
-    h += `<div class="wk-rl">G</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.f), goals[i] && Math.round(goals[i].f))).join('');
-  }
   const grid = $('#wk-grid');
-  grid.className = 'wk-grid n'+N;
-  grid.style.gridTemplateColumns = `24px repeat(${N}, minmax(0,1fr))`;
-  grid.innerHTML = h;
+  const sig = N + '|' + h;
+  if(grid._sig !== sig){ // si nada ha cambiado no se toca el DOM (así no parpadean las fotos)
+    grid._sig = sig;
+    grid.className = 'wk-grid n'+N;
+    grid.style.gridTemplateColumns = `24px repeat(${N}, minmax(0,1fr))`;
+    grid.innerHTML = h;
+  }
   deckAnim = false;
   renderWkTools(keys);
   // Totales de la semana
-  const tot = stats.reduce((a,s,i)=>({ k:a.k+s.kcal, t:a.t+(s.target||0), p:a.p+s.p, c:a.c+s.c, f:a.f+s.f, n:a.n+(s.counted?1:0),
-    gp:a.gp+(goals[i]?goals[i].p:0), gc:a.gc+(goals[i]?goals[i].c:0), gf:a.gf+(goals[i]?goals[i].f:0) }), {k:0,t:0,p:0,c:0,f:0,n:0,gp:0,gc:0,gf:0});
+  const tot = stats.reduce((a,s)=>({ k:a.k+s.kcal, t:a.t+(s.target||0), n:a.n+(s.counted?1:0) }), {k:0,t:0,n:0});
   const wo = fitWorkouts.filter(w=> workoutCounts(w, w.workout_date));
   const woMin = wo.reduce((s,w)=> s+(Number(w.minutes)||0), 0), woKcal = wo.reduce((s,w)=> s+(Number(w.kcal)||0), 0);
   const over = tot.t && tot.k > tot.t*1.05;
   $('#wk-week-sum').innerHTML = `<div class="row title"><span>${N===7?'Semana':(N===1?'Día':N+' días')}</span><span><span class="big">${fmtN(tot.k)}</span>${tot.t?` / ${fmtN(tot.t)}`:''} kcal</span></div>
     ${tot.t?`<div class="prog ${over?'over':''}"><i style="width:${Math.min(100, tot.k/tot.t*100)}%"></i></div>`:''}
-    ${showMacros ? `<div class="mac3">${macroBarHtml('p','Prot.',tot.p,tot.t&&tot.gp)}${macroBarHtml('c','Hidr.',tot.c,tot.t&&tot.gc)}${macroBarHtml('f','Grasa',tot.f,tot.t&&tot.gf)}</div>` : ''}
     <div class="row" style="color:var(--muted);margin-top:6px;"><span>${tot.n?`Media ${fmtN(tot.k/tot.n)} kcal/día`:'Aún no hay nada apuntado'}</span><span>${wo.length?`${wo.length} entreno${wo.length>1?'s':''} · ${woMin} min · ${fmtN(woKcal)} kcal`:'Sin entrenos'}</span></div>`;
 }
 const ICON_CART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg>';
-// Barra de herramientas de Semana (sirve en 1, 3, 5 y 7 días): mazo, aceptar, todo al carrito y macros.
+// Barra de herramientas de Semana (1, 3, 5 y 7 días): mazo, de dónde sugerir, aceptar y todo al carrito.
 function renderWkTools(keys){
-  const ghost = ghostCells(keys);
-  const tools = $('#wk-tools');
+  const ghost = sugEnabled() ? ghostCells(keys) : [];
   const cartN = weekCartDishes(keys).length;
-  let h = `<button type="button" class="deck-btn" data-deck="roll">${ICON_DICE}Mazo aleatorio</button>`;
-  if(sugEnabled() && ghost.length) h += `<button type="button" class="deck-ok" data-deck="accept">Aceptar ${ghost.length} sugerencia${ghost.length>1?'s':''}</button>`;
-  h += `<button type="button" class="deck-ok deck-cart" data-deck="cart"${cartN?'':' disabled'}>${ICON_CART}Todo al carrito${cartN?` (${cartN})`:''}</button>`;
-  h += `<button type="button" class="deck-ok deck-mac ${showMacros?'on':''}" data-deck="macros" aria-pressed="${showMacros}">Macros</button>`;
-  if(!sugEnabled()) h += `<span class="deck-hint">${currentUser.suggest_meals ? 'Necesitas más de 10 platos con kcal y tus datos en Objetivo.' : 'Actívalo en Ajustes → Fitness → «Sugerir platos».'}</span>`;
-  tools.innerHTML = h;
+  let h = `<div class="wk-tools-row"><button type="button" class="deck-btn" data-deck="roll">${ICON_DICE}Mazo aleatorio</button>`
+    + (ghost.length ? `<button type="button" class="deck-ok" data-deck="accept">Aceptar ${ghost.length}</button>` : '')
+    + `<button type="button" class="deck-cart" data-deck="cart" aria-label="Añadir todo al carrito"${cartN?'':' disabled'}>${ICON_CART}${cartN?`<b>${cartN}</b>`:''}</button></div>`
+    + `<div class="deck-src" role="group" aria-label="Sugerir platos de"><span>Sugerir de</span><button type="button" data-src="mine" class="${deckSrc==='mine'?'on':''}">Mis platos</button><button type="button" data-src="all" class="${deckSrc==='all'?'on':''}">General</button></div>`;
+  if(!sugEnabled()) h += `<div class="deck-hint">${deckHint()}</div>`;
+  const tools = $('#wk-tools');
+  if(tools._sig !== h){ tools._sig = h; tools.innerHTML = h; }
 }
 // Platos de la ventana que se está viendo (de hoy en adelante), previstos o sugeridos, y sin comer todavía.
 function weekCartDishes(keys){
@@ -11939,7 +11918,7 @@ function renderCellSheet(){
       + `<button type="button" data-act="por" data-id="${only.id}">×${Number(only.portions)||1} ${meal==='extras'?'uds.':'raciones'}</button>`
       + (only.status==='planned' ? `<button type="button" data-act="swap" data-id="${only.id}">He comido otra cosa</button>` : '')
       + `<button type="button" class="bad" data-act="del" data-id="${only.id}">Quitar</button></div>`;
-    h += `<div class="cs-lbl" style="margin-top:8px;"><b>${fmtN(s.kcal)}</b> kcal${showMacros ? ' · ' + entryMeta(only).split(' · ').slice(1).join(' · ') : ''}${st.target && meal!=='extras' ? ` · te tocaban ~${fmtN(st.target*MEAL_SPLIT[meal])}` : ''}</div>`;
+    h += `<div class="cs-lbl" style="margin-top:8px;"><b>${fmtN(s.kcal)}</b> kcal${st.target && meal!=='extras' ? ` · te tocaban ~${fmtN(st.target*MEAL_SPLIT[meal])}` : ''}</div>`;
   } else if(its.length){
     h += `<div class="cs-lbl"><b>${fmtN(s.kcal)}</b> kcal${st.target && meal!=='extras' ? ` · te tocaban ~${fmtN(st.target*MEAL_SPLIT[meal])}` : ''}</div>`;
     h += its.map(itemRowHtml).join('');
@@ -11959,16 +11938,15 @@ $('#wk-grid').addEventListener('click', (ev)=>{
   if(h){ fitAnchor = parseDate(h.dataset.gday); selDay = h.dataset.gday; wkDays = 1; renderFitness(); window.scrollTo(0, 0); }
 });
 $('#wk-tools').addEventListener('click', async (ev)=>{
-  const b = ev.target.closest('[data-deck]'); if(!b) return;
+  const b = ev.target.closest('[data-deck],[data-src]'); if(!b) return;
+  if(b.dataset.src){ await setDeckSrc(b.dataset.src); return; }
   if(b.dataset.deck==='roll'){
-    if(!sugEnabled()){ showToast(currentUser.suggest_meals ? 'Necesitas más de 10 platos con kcal y rellenar Objetivo' : 'Actívalo en Ajustes → Fitness → «Sugerir platos»'); return; }
+    if(!sugEnabled() && !(deckSrc==='all' && !pubDeck.at && currentUser.suggest_meals)){ showToast(deckHint()); return; }
     await deckRoll();
   } else if(b.dataset.deck==='accept'){
     await deckAccept();
   } else if(b.dataset.deck==='cart'){
     weekToCart();
-  } else if(b.dataset.deck==='macros'){
-    toggleMacros(); renderFitWeek();
   }
 });
 
@@ -11985,9 +11963,57 @@ const MOMENT_TAGS = ['Desayuno','Comida','Cena','Snack','Postre'];
 function hashStr(s){ let h = 0; for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; } return Math.abs(h); }
 function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function suggestibleDishes(){ return dishes.filter(d=> typeof d.calories==='number' && d.calories>0); }
-function sugEnabled(){ return !!(currentUser && currentUser.suggest_meals && fitnessProfile && fitnessProfile.target_calories && suggestibleDishes().length > 10); }
+/* El mazo puede sacar platos de tu repositorio («Mis platos») o de toda la app («General»:
+   platos de perfiles públicos que comparten en Explorar). Los generales se piden una vez
+   (5 consultas, una por tipo de comida) y se guardan 15 min. */
+let deckSrc = 'mine';
+try{ deckSrc = localStorage.getItem('nutrifit_deck_src')==='all' ? 'all' : 'mine'; }catch(e){}
+const pubDeck = { list:[], at:0, loading:false, failed:false, promise:null };
+const foreignDishes = {};            // platos de otras personas que salen en tu plan (id → plato)
+const foreignTried = new Set();
+const DECK_TAGS = ['Desayuno','Comida','Snack','Postre','Cena'];
+function loadPubDeck(force){
+  if(pubDeck.loading) return pubDeck.promise;
+  if(!force && pubDeck.at && Date.now()-pubDeck.at < 15*60*1000) return Promise.resolve();
+  pubDeck.loading = true;
+  pubDeck.promise = (async ()=>{
+    try{
+      const res = await Promise.all(DECK_TAGS.map(t=> sb.rpc('explore_public_dishes', { p_terms: [], p_tags: [t] })));
+      const seen = new Map();
+      res.forEach(r=> (r.data||[]).forEach(d=>{ const k = dishOriginKey(d); if(d.calories>0 && k && !seen.has(k)) seen.set(k, d); }));
+      const have = new Set(dishes.map(dishOriginKey));
+      pubDeck.list = [...seen.values()].filter(d=> !have.has(dishOriginKey(d)));
+      pubDeck.list.forEach(d=>{ foreignDishes[d.id] = d; });
+      pubDeck.failed = res.every(r=> r.error);
+      pubDeck.at = Date.now();
+    }catch(e){ pubDeck.failed = true; }
+    pubDeck.loading = false;
+  })();
+  return pubDeck.promise;
+}
+function deckPool(){ return deckSrc==='all' ? pubDeck.list : suggestibleDishes(); }
+function deckDishById(id){ return dishes.find(d=> d.id===id) || foreignDishes[id] || pubDeck.list.find(d=> d.id===id) || null; }
+function deckSig(){ return deckSrc==='all' ? 'all:'+pubDeck.at+':'+pubDeck.list.length : 'mine:'+dishes.length; }
+function sugEnabled(){ return !!(currentUser && currentUser.suggest_meals && fitnessProfile && fitnessProfile.target_calories && deckPool().length > (deckSrc==='all' ? 5 : 10)); }
+function deckHint(){
+  if(!currentUser.suggest_meals) return 'Actívalo en Ajustes → Fitness → «Sugerir platos».';
+  if(!fitnessProfile || !fitnessProfile.target_calories) return 'Rellena tus datos en Objetivo para poder sugerirte platos.';
+  if(deckSrc==='all') return pubDeck.loading ? 'Buscando platos de la comunidad…' : (pubDeck.failed ? 'No se han podido cargar los platos de la comunidad ahora mismo.' : 'Todavía no hay suficientes platos públicos con calorías.');
+  return 'Necesitas más de 10 platos con kcal en tu repositorio (o usa «General»).';
+}
+async function setDeckSrc(src){
+  if(src===deckSrc) return;
+  deckSrc = src;
+  try{ localStorage.setItem('nutrifit_deck_src', src); }catch(e){}
+  sugReroll();
+  renderFitWeek();
+  if(src==='all' && (!pubDeck.at || Date.now()-pubDeck.at > 15*60*1000)){
+    await loadPubDeck();
+    if(deckSrc==='all'){ sugReroll(); renderFitWeek(); }
+  }
+}
 function sugScored(date, m, used, prevId){
-  const pool = suggestibleDishes();
+  const pool = deckPool();
   const healthy = pool.filter(d=> d.quality!=='malo');
   let base = healthy.length >= 8 ? healthy : pool;
   // Cada casilla solo con platos de su tipo: en el desayuno nada que no sea de desayuno.
@@ -11999,11 +12025,19 @@ function sugScored(date, m, used, prevId){
   const target = (dayTarget(date) || Number(fitnessProfile.target_calories)) * MEAL_SPLIT[m];
   return base.map(d=>{
     let sc = Math.abs(d.calories - target) / target;
-    sc += (used[d.id]||0) * 0.35;
+    sc += (used[d.id]||0) * 0.9;
     if(prevId===d.id) sc += 1;
     if(d.protein_g!=null) sc -= Math.min(0.15, (Number(d.protein_g)*4 / d.calories) * 0.3);
     return { d, sc };
   }).sort((a,b)=> a.sc - b.sc);
+}
+// Elige al azar entre los que mejor encajan, con más probabilidad cuanto mejor encajan (así hay variedad de verdad).
+function pickWeighted(sc, rnd, span){
+  const cands = sc.filter(x=> x.sc <= sc[0].sc + span).slice(0, 14);
+  const w = cands.map(x=> Math.exp(-(x.sc - sc[0].sc) * 3));
+  let r = rnd() * w.reduce((a,b)=> a+b, 0);
+  for(let i=0;i<cands.length;i++){ r -= w[i]; if(r<=0) return cands[i].d; }
+  return cands[cands.length-1].d;
 }
 function buildDeck(ws, dates, seed){
   const rnd = mulberry32(hashStr(ws) + seed*7919 + 1);
@@ -12016,13 +12050,12 @@ function buildDeck(ws, dates, seed){
       const has = fitEntries.some(e=> e.entry_date===date && e.meal_type===m && e.status!=='skipped');
       if(has) return;
       const sc = sugScored(date, m, used, prev);
-      const top = sc.filter(x=> x.sc <= sc[0].sc + 0.25).slice(0, 5); // al azar, pero solo entre los que de verdad encajan
-      if(!top.length) return;
-      const pick = top[Math.floor(rnd()*top.length)].d;
+      if(!sc.length) return;
+      const pick = pickWeighted(sc, rnd, 0.6); // al azar, pero solo entre los que de verdad encajan
       map[`${date}|${m}`] = pick.id; used[pick.id] = (used[pick.id]||0)+1; prev = pick.id;
     });
   });
-  return { seed, n: dishes.length, map };
+  return { seed, sig: deckSig(), map };
 }
 function currentDeck(date){
   if(!sugEnabled()) return null;
@@ -12030,7 +12063,7 @@ function currentDeck(date){
   const ws = fmtDate(wsD);
   const dates = Array.from({length:7}, (_,i)=> fmtDate(fitAddDays(wsD,i)));
   let d = sugDecks[ws];
-  if(!d || d.n !== dishes.length) d = sugDecks[ws] = buildDeck(ws, dates, sugSeed);
+  if(!d || d.sig !== deckSig()) d = sugDecks[ws] = buildDeck(ws, dates, sugSeed);
   return d;
 }
 function sugFor(date, meal){
@@ -12038,7 +12071,7 @@ function sugFor(date, meal){
   if(fitEntries.some(e=> e.entry_date===date && e.meal_type===meal && e.status!=='skipped')) return null;
   const deck = currentDeck(date); if(!deck) return null;
   const id = deck.map[`${date}|${meal}`];
-  return id ? (dishes.find(d=> d.id===id) || null) : null;
+  return id ? deckDishById(id) : null;
 }
 function ghostCells(keys){
   const out = [];
@@ -12054,10 +12087,9 @@ function sugNext(date, meal){
   const used = {}; Object.values(deck.map).forEach(id=> used[id] = (used[id]||0)+1);
   const cur = deck.map[`${date}|${meal}`];
   const sc = sugScored(date, meal, used, null).filter(x=> x.d.id!==cur);
-  const cands = sc.filter(x=> x.sc <= sc[0].sc + 0.3).slice(0, 8);
-  if(!cands.length) return;
+  if(!sc.length) return;
   const rnd = mulberry32(hashStr(date+meal) + (++sugSeed)*104729);
-  deck.map[`${date}|${meal}`] = cands[Math.floor(rnd()*cands.length)].d.id;
+  deck.map[`${date}|${meal}`] = pickWeighted(sc, rnd, 0.8).id;
 }
 /* Entradas que vienen del mazo (aceptadas) y siguen sin tocar: se pueden volver a barajar.
    Se marcan con la columna `suggested` (actualizar_fitness_mazo.sql); sin ella, solo durante esta sesión. */
@@ -12076,6 +12108,7 @@ async function insertSuggested(rows){
 function sugRow(date, meal, dish){ return { user_id: currentUser.id, entry_date: date, meal_type: meal, status:'planned', ...entryFromDish(dish, 1) }; }
 // Aceptar: las sugerencias (casillas fantasma) se guardan como previstas.
 async function deckAccept(){
+  await deckSync;
   const rows = ghostCells(wkWindowDates().map(fmtDate)).map(g=> sugRow(g.date, g.meal, g.dish));
   if(!rows.length) return;
   const { data, error } = await insertSuggested(rows);
@@ -12086,26 +12119,39 @@ async function deckAccept(){
 }
 // Mazo aleatorio: baraja de nuevo lo sugerido. Las casillas vacías vuelven a salir como sugerencia
 // y lo que ya habías aceptado del mazo (y no has tocado ni comido) se cambia por otros platos.
+// Se ve al instante; el guardado va por detrás (deckSync) y, si falla, se vuelve a cargar.
+let deckSync = Promise.resolve();
 async function deckRoll(){
+  if(deckSrc==='all' && !pubDeck.at){ await loadPubDeck(); if(!sugEnabled()){ renderFitWeek(); showToast(deckHint()); return; } }
   const keys = wkWindowDates().map(fmtDate), today = todayStr();
-  const old = fitEntries.filter(e=> keys.includes(e.entry_date) && e.entry_date>=today && e.status==='planned' && isSugEntry(e));
+  const old = fitEntries.filter(e=> keys.includes(e.entry_date) && e.entry_date>=today && e.status==='planned' && isSugEntry(e) && !String(e.id).startsWith('tmp-'));
   const oldIds = old.map(e=> e.id);
   fitEntries = fitEntries.filter(e=> !oldIds.includes(e.id));
   sugReroll(keys);
+  let rows = [], temps = [];
   if(old.length){
     const slots = [...new Set(old.map(e=> e.entry_date+'|'+e.meal_type))];
-    const rows = slots.map(k=>{ const [d,m] = k.split('|'); const dish = sugFor(d, m); return dish ? sugRow(d, m, dish) : null; }).filter(Boolean);
+    rows = slots.map(k=>{ const [d,m] = k.split('|'); const dish = sugFor(d, m); return dish ? sugRow(d, m, dish) : null; }).filter(Boolean);
+    temps = rows.map(r=> ({ ...r, id:'tmp-'+uuid(), suggested:true }));
+    fitEntries.push(...temps);
+  }
+  deckAnim = true; renderFitWeek();
+  const ic = document.querySelector('#wk-tools .deck-btn'); if(ic){ ic.classList.add('rolling'); setTimeout(()=> ic.classList.remove('rolling'), 420); }
+  if(!old.length) return;
+  const job = deckSync.then(async ()=>{
     const del = await sb.from('meal_entries').delete().in('id', oldIds);
     if(del.error){ fitFail(del.error); fitRangeKey=''; await renderFitness(); return; }
     old.forEach(e=> deckSaved.delete(e.id));
+    let data = [];
     if(rows.length){
-      const { data, error } = await insertSuggested(rows);
-      if(error){ fitFail(error); fitRangeKey=''; await renderFitness(); return; }
-      fitEntries.push(...(data||[]));
+      const r = await insertSuggested(rows);
+      if(r.error){ fitFail(r.error); fitEntries = fitEntries.filter(e=> !temps.includes(e)); fitRangeKey=''; await renderFitness(); return; }
+      data = r.data||[];
     }
-  }
-  deckAnim = true; renderFitWeek();
-  const ic = document.querySelector('#wk-tools .deck-btn'); if(ic){ ic.classList.add('rolling'); setTimeout(()=> ic.classList.remove('rolling'), 520); }
+    fitEntries = fitEntries.filter(e=> !temps.includes(e)).concat(data);
+    renderFitWeek();
+  }).catch(()=>{});
+  deckSync = job;
 }
 
 /* ---------- Acciones sobre comidas y entrenos ---------- */
@@ -12145,7 +12191,9 @@ function entryFromDish(d, portions){
   return { name: d.name || 'Plato', dish_id: d.id, portions, kcal: Math.round((Number(k)||0)*portions), protein_g: sc(p), carbs_g: sc(c), fat_g: sc(f), fiber_g: sc(fi) };
 }
 async function onWeekAction(btn){
-  const act = btn.dataset.act, id = btn.dataset.id;
+  const act = btn.dataset.act;
+  if(String(btn.dataset.id||'').startsWith('tmp-') || (act==='add' || act==='sug-add' || act==='cs-change')) await deckSync;
+  const id = btn.dataset.id;
   if(act==='toggle'){
     const e = entryById(id); if(!e) return;
     deckSaved.delete(id);
@@ -12161,7 +12209,9 @@ async function onWeekAction(btn){
     deckSaved.delete(id);
     await updateEntry(id, withoutSug(scaleEntry(e, next)));
   } else if(act==='cs-info'){
-    const dish = dishes.find(x=> x.id===btn.dataset.dish); if(dish) openDishModal(dish);
+    const dish = dishes.find(x=> x.id===btn.dataset.dish);
+    if(dish) openDishModal(dish);
+    else { const f = foreignDishes[btn.dataset.dish]; if(f){ const c = exploreCreator({ dish:f, from:null }); const from = c ? c.username : null; openDishPreview(f, { fromUsername: from, onAdd: ()=> addFriendDishToRepo(f, from) }); } }
     return;
   } else if(act==='cs-change'){
     const date = btn.dataset.date, meal = btn.dataset.meal;
@@ -12360,6 +12410,16 @@ $('#wo-save').onclick = async ()=>{
 $('#wo-close').onclick = ()=> hideModal($('#wo-modal'));
 attachSwipeToCloseSheet(document.querySelector('#wo-modal .modal-sheet'), ()=> hideModal($('#wo-modal')));
 
+// Platos de otras personas que están en tu plan (del mazo «General»): se piden por su id para poder abrir su ficha y llevar sus ingredientes al carrito.
+async function loadForeignForEntries(){
+  const miss = [...new Set(fitEntries.filter(e=> e.dish_id && !dishes.some(d=> d.id===e.dish_id) && !foreignDishes[e.dish_id] && !foreignTried.has(e.dish_id)).map(e=> e.dish_id))];
+  if(!miss.length) return;
+  miss.forEach(i=> foreignTried.add(i));
+  const { data } = await sb.from('dishes').select('*').in('id', miss);
+  if(!data || !data.length) return;
+  data.forEach(d=>{ foreignDishes[d.id] = d; });
+  if(fitTab==='week' && currentSection==='fitness') renderFitWeek();
+}
 /* ---------- Pantalla Estadísticas ---------- */
 function renderFitStats(){
   const ws = fitWeekStart();
@@ -12395,6 +12455,10 @@ function renderFitStats(){
   h += `<div class="card" style="margin-top:14px;"><div class="card-title">Reparto de macros</div><div class="donut-row">
     <div class="donut" style="background:conic-gradient(#4c8bf5 0 ${pctOf(kP)}%, #f2a33a ${pctOf(kP)}% ${pctOf(kP)+pctOf(kC)}%, #e0607e ${pctOf(kP)+pctOf(kC)}% 100%);"></div>
     <div class="donut-leg"><span><i style="background:#4c8bf5"></i>Proteína ${pctOf(kP)}%</span><span><i style="background:#f2a33a"></i>Hidratos ${pctOf(kC)}%</span><span><i style="background:#e0607e"></i>Grasa ${pctOf(kF)}%</span></div></div></div>`;
+  // Macros por día (solo en la vista de la semana)
+  if(n===7){
+    h += `<div class="card"><div class="card-title">Macros por día</div><div class="st-mac"><div class="h"><span></span><span>Prot.</span><span>Hidr.</span><span>Grasa</span></div>${stats.map((s,i)=> s.counted ? `<div><span>${DAY_NAMES[isoWeekday(parseDate(days[i]))]} ${parseDate(days[i]).getDate()}</span><span>${fmtN(s.p)} g</span><span>${fmtN(s.c)} g</span><span>${fmtN(s.f)} g</span></div>` : '').join('')}</div></div>`;
+  }
   // Barras por día
   const maxV = Math.max(...stats.map(s=> Math.max(s.kcal, s.target||0)), 1) * 1.1;
   const tl = avgT ? `<div class="tl" style="bottom:${avgT/maxV*100}%"></div>` : '';
@@ -12569,7 +12633,11 @@ async function renderFitness(){
       $('#wk-day').innerHTML = ''; $('#wk-strip').innerHTML = ''; $('#wk-week-sum').innerHTML = ''; $('#st-body').innerHTML = '';
       return;
     }
-    if(fitTab==='week') renderFitWeek(); else renderFitStats();
+    if(fitTab==='week'){
+      renderFitWeek();
+      if(deckSrc==='all' && (!pubDeck.at || Date.now()-pubDeck.at > 15*60*1000)) loadPubDeck().then(()=>{ if(fitTab==='week' && currentSection==='fitness'){ renderFitWeek(); } });
+      loadForeignForEntries();
+    } else renderFitStats();
   } else {
     $('#fit-warn').classList.add('hidden');
     if(fitTab==='log') loadWeeklyLogs();
