@@ -1150,6 +1150,45 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .st-list{font-size:13px;} .st-list > div{display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid var(--border);} .st-list > div:last-child{border-bottom:none;}
 .st-empty{color:var(--muted); font-size:13px; text-align:center; padding:18px 6px;}
 
+/* Vista de un día: como las otras (etiqueta + foto cuadrada en columna) y el texto al lado */
+.dm-list{margin-top:4px;}
+.dm-row{display:grid; grid-template-columns:26px 96px minmax(0,1fr); gap:10px; align-items:center; padding:9px 0; border-top:1px solid var(--border);}
+.dm-row:first-child{border-top:none;}
+.dm-row .wk-rl{font-size:9px;}
+.dm-row .wk-cell{border-radius:14px;}
+.dm-row .wk-cell-k{text-align:left; padding:10px 7px 5px; font-size:12px;} .dm-row .wk-cell-k::after{content:' kcal'; font-weight:600; font-size:10px;}
+.dm-row .wk-cell.empty::after{font-size:30px;}
+.dm-row .wk-cell-ok{left:auto; right:6px; top:6px; width:20px; height:20px;} .dm-row .wk-cell-ok svg{width:12px; height:12px;}
+.dm-row .wk-cell-n{top:auto; bottom:6px; right:6px; font-size:10px; line-height:16px; padding:0 6px; border-radius:9px;}
+.dm-txt{min-width:0; display:flex; flex-direction:column; gap:7px;}
+.dm-head{font-size:11.5px; color:var(--muted);} .dm-head b{color:var(--text);}
+.dm-item .dm-nm{font-weight:700; font-size:14px; line-height:1.25; overflow-wrap:anywhere;}
+.dm-item.planned .dm-nm, .dm-item.sug .dm-nm{font-style:italic;}
+.dm-item.skipped .dm-nm{text-decoration:line-through; opacity:.5;}
+.dm-sub{font-size:11.5px; color:var(--muted); margin-top:1px;}
+.dm-btns{display:flex; gap:6px; margin-top:6px; align-items:center; flex-wrap:wrap;}
+.dm-btns .ic-b{width:28px; height:28px;} .dm-btns .ic-b svg{width:14px; height:14px;}
+.dm-pri, .dm-sec{padding:6px 12px; border-radius:9px; font-weight:800; font-size:12.5px; border:1px solid var(--border); background:var(--card2); color:var(--text);}
+.dm-pri{background:var(--accent); border-color:var(--accent); color:#fff;}
+.dm-txt .add-link{text-align:left; padding:2px 0; font-size:12.5px;}
+/* Casilla abierta: la carta grande con Info / Cambiar */
+.cs-hero{display:flex; gap:12px; align-items:center; margin-bottom:10px;}
+.cs-hero-img{width:92px; height:92px; border-radius:16px; overflow:hidden; background:var(--card2); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:28px; font-weight:800;}
+.cs-hero-img img{width:100%; height:100%; object-fit:cover; display:block;}
+.cs-hero-t{min-width:0;} .cs-hero-t b{display:block; font-size:16px; line-height:1.25; overflow-wrap:anywhere;} .cs-hero-t small{color:var(--muted); font-size:12.5px;}
+.cs-hero-btns{display:flex; gap:8px; margin-bottom:12px;}
+.cs-hero-btns button{flex:1; padding:11px; border-radius:12px; font-weight:800; font-size:14px; background:var(--card); border:1.5px solid var(--border); color:var(--text);}
+.cs-hero-btns .pri{background:var(--accent); border-color:var(--accent); color:#fff;}
+.cs-ctl{display:flex; flex-wrap:wrap; gap:8px;}
+.cs-ctl button{padding:9px 13px; border-radius:11px; font-weight:700; font-size:13px; background:var(--card2); border:1px solid var(--border); color:var(--text);}
+.cs-ctl button.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.cs-ctl button.bad{color:var(--bad);}
+/* Repositorio de platos por tipo de comida */
+#fm-modal > .modal-sheet{min-height:72vh;}
+.fm-cats{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 10px;}
+.fm-cat{flex:0 0 auto; padding:6px 11px; border-radius:999px; background:var(--card2); border:1px solid var(--border); font-size:13px; font-weight:700; color:var(--muted);}
+.fm-cat i{font-style:normal; opacity:.7; margin-left:5px; font-size:11px;}
+.fm-cat.on{background:var(--accent); border-color:var(--accent); color:#fff;}
 /* Semana en tabla: 7 días × 5 comidas, con fotos */
 .wk-tools{display:flex; gap:8px; margin-bottom:10px; align-items:center; flex-wrap:wrap;}
 .deck-btn{display:flex; align-items:center; gap:7px; padding:10px 14px; border-radius:12px; background:var(--accent); color:#fff; font-weight:800; font-size:13.5px; box-shadow:0 2px 0 var(--accent-l);}
@@ -1157,6 +1196,9 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .deck-btn svg{width:18px; height:18px;}
 .deck-btn.rolling svg{animation:nf-dice .5s ease;}
 @keyframes nf-dice{0%{transform:rotate(0) scale(1);}50%{transform:rotate(200deg) scale(1.25);}100%{transform:rotate(360deg) scale(1);}}
+.deck-ok:disabled{opacity:.4;}
+.deck-ok.deck-cart{display:flex; align-items:center; gap:6px;} .deck-cart svg{width:16px; height:16px;}
+.deck-ok.deck-mac.on{background:var(--accent); color:#fff;}
 .deck-ok{padding:10px 13px; border-radius:12px; background:var(--card); border:1.5px solid var(--accent); color:var(--accent); font-weight:800; font-size:13px;}
 .deck-hint{font-size:12px; color:var(--muted); line-height:1.35; flex:1;}
 .wk-gridcard{padding:10px 6px 8px;}
@@ -1393,7 +1435,30 @@ body.sec-platos .appbar #pf-bar{display:flex;}
 @media (min-width:1024px){
   body.sec-platos .appbar #pf-bar{margin:0 auto; max-width:560px;}
 }
-/* Perfil de otra persona */
+/* Perfil: zonas Repositorio / Publicaciones */
+.pf-zones{margin:0 0 14px;}
+.pf-posts-hint{font-size:12px; color:var(--muted); margin:-2px 0 6px;}
+.pf-posts{display:flex; flex-direction:column; gap:10px; padding-bottom:90px;}
+.pf-posts-month{font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:8px 2px -2px;}
+.pf-post{display:flex; gap:12px; align-items:center; width:100%; text-align:left; padding:10px; border-radius:14px; background:var(--card); border:1px solid var(--border); color:var(--text);}
+.pf-post:active{background:var(--card2);}
+.pf-post-img{width:72px; height:72px; border-radius:11px; overflow:hidden; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--muted);}
+.pf-post-img img{width:100%; height:100%; object-fit:cover; display:block;}
+.pf-post-img svg{width:26px; height:26px; opacity:.6;}
+.pf-post-t{flex:1; min-width:0; display:flex; flex-direction:column;}
+.pf-post-n{font-weight:700; font-size:14.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.pf-post-c{font-size:13px; color:var(--muted); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-top:2px;}
+.pf-post-d{font-size:11.5px; color:var(--muted); margin-top:4px;}
+/* Perfil de otra persona: pantalla completa */
+#friend-profile-modal{align-items:stretch; background:var(--bg2);}
+#friend-profile-modal > .modal-sheet.fp-full{height:100%; max-height:none; max-width:none; border-radius:0; padding:0; display:flex; flex-direction:column; overflow:hidden; will-change:auto;}
+.fp-topbar{display:flex; align-items:center; gap:6px; padding:calc(8px + env(safe-area-inset-top)) 10px 8px; border-bottom:1px solid var(--border); flex-shrink:0; background:var(--bg2);}
+.fp-topbar-back{width:38px; height:38px; border-radius:50%; background:none; color:var(--text); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.fp-topbar-back:active{background:var(--card2);}
+.fp-topbar-title{font-weight:800; font-size:16px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.fp-scroll{flex:1; min-height:0; overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding:16px 18px calc(28px + env(safe-area-inset-bottom));}
+.fp-scroll > .seg{max-width:560px;}
+.fp-scroll > *{max-width:640px; margin-left:auto; margin-right:auto;}
 #friend-profile-header{display:block; padding-bottom:16px;}
 .fp-top{display:flex; align-items:center; gap:14px;}
 .fp-avatar{width:78px; height:78px; border-radius:50%; overflow:hidden; flex-shrink:0; background:var(--card2); border:1px solid var(--border);
@@ -1976,8 +2041,13 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <button type="button" class="pf-pill hidden" id="pf-fitness-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-12 2 6h6"/></svg><span>Fitness</span><svg class="pf-pill-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
         </div>
       </div>
+      <div class="seg pf-zones" id="pf-zones" role="tablist">
+        <button type="button" class="seg-b active" data-pfz="repo" role="tab">Repositorio</button>
+        <button type="button" class="seg-b" data-pfz="posts" role="tab">Publicaciones</button>
+      </div>
+      <div id="pf-zone-repo">
       <div class="section-title-row">
-        <div class="section-title pf-subtitle">Platos y recetas</div>
+        <div class="section-title pf-subtitle">Mi repositorio</div>
         <div class="section-actions">
           <button id="pf-search-toggle" class="pf-search-toggle" type="button" aria-label="Buscar en tus platos"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
           <button id="new-folder-btn" class="btn-mini btn-mini-ghost" type="button">+ Carpeta</button>
@@ -2026,6 +2096,12 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
       <button type="button" class="drafts-banner hidden" id="drafts-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span id="drafts-banner-text"></span><b>Ver</b></button>
       <div class="gallery" id="gallery"></div>
+      </div>
+      <div id="pf-zone-posts" class="hidden">
+        <div class="section-title pf-subtitle">En el muro</div>
+        <div class="pf-posts-hint">De la más reciente a la más antigua.</div>
+        <div class="pf-posts" id="pf-posts-list"></div>
+      </div>
       <button class="fab" id="add-dish-btn" aria-label="Nuevo plato">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </button>
@@ -2143,8 +2219,8 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <button type="button" class="seg-b" data-wdays="5">5 días</button>
           <button type="button" class="seg-b" data-wdays="7">7 días</button>
         </div>
+        <div class="wk-tools" id="wk-tools"></div>
         <div id="wk-grid-wrap">
-          <div class="wk-tools" id="wk-tools"></div>
           <div class="card wk-gridcard"><div class="wk-grid" id="wk-grid"></div></div>
           <div id="wk-week-sum" class="card wk-sum"></div>
         </div>
@@ -2739,12 +2815,21 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 
 <!-- ================= PERFIL DE UN AMIGO (solo lectura) ================= -->
 <div id="friend-profile-modal" class="modal hidden">
-  <div class="modal-sheet folder-sheet sheet-with-close">
-    <button type="button" class="sheet-close-btn" id="friend-profile-close" aria-label="Cerrar">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <div class="friend-profile-header" id="friend-profile-header"></div>
-    <div id="friend-profile-body"></div>
+  <div class="modal-sheet fp-full">
+    <div class="fp-topbar">
+      <button type="button" class="fp-topbar-back" id="friend-profile-close" aria-label="Volver">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+      </button>
+      <span class="fp-topbar-title" id="fp-topbar-title"></span>
+    </div>
+    <div class="fp-scroll" id="fp-scroll">
+      <div class="friend-profile-header" id="friend-profile-header"></div>
+      <div class="seg pf-zones hidden" id="fp-zones" role="tablist">
+        <button type="button" class="seg-b active" data-fpz="repo" role="tab">Repositorio</button>
+        <button type="button" class="seg-b" data-fpz="posts" role="tab">Publicaciones</button>
+      </div>
+      <div id="friend-profile-body"></div>
+    </div>
   </div>
 </div>
 
@@ -2975,6 +3060,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     </div>
     <div id="fm-dish">
       <div class="por-step"><span id="fm-por-lbl">Raciones</span><button type="button" id="fm-por-minus" aria-label="Menos">−</button><b id="fm-por-val">1</b><button type="button" id="fm-por-plus" aria-label="Más">+</button></div>
+      <div class="fm-cats" id="fm-cats"></div>
       <input type="search" class="ep-input" id="fm-search" placeholder="Busca un plato" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
       <div id="fm-list" class="fm-grid"></div>
     </div>
@@ -3099,7 +3185,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.06-1';
+const APP_VERSION = '2026.11.07-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -7940,6 +8026,58 @@ function goToMyProfile(){
   requestAnimationFrame(()=> window.scrollTo(0, 0));
 }
 
+// ---------- Perfil: Repositorio / Publicaciones (en el Muro) ----------
+// Las publicaciones salen de la más reciente (arriba) a la más antigua (abajo), por meses.
+function postsGroupedHtml(posts, attr){
+  let h = '', last = '';
+  posts.forEach(p=>{
+    const dt = new Date(p.created_at);
+    const key = dt.toLocaleDateString('es-ES', { month:'long', year:'numeric' });
+    if(key!==last){ h += `<div class="pf-posts-month">${escapeHtml(key)}</div>`; last = key; }
+    const d = p.dish_snapshot || {};
+    const ph = dishPhotoList(d);
+    const when = dt.toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' }) + ' · ' + dt.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+    h += `<button type="button" class="pf-post" ${attr}="${p.id}"><span class="pf-post-img">${ph.length ? `<img ${pimg(ph[0], 't')} alt="" loading="lazy" decoding="async" draggable="false">` : ICON_PLATE}</span>`
+      + `<span class="pf-post-t"><span class="pf-post-n">${escapeHtml(d.name||'Receta')}${d.calories ? ` · ${d.calories} kcal` : ''}</span>${p.caption ? `<span class="pf-post-c">${escapeHtml(p.caption)}</span>` : ''}<span class="pf-post-d">${when}</span></span></button>`;
+  });
+  return h;
+}
+async function fetchUserPosts(id){
+  const { data, error } = await sb.from('wall_posts').select('id,user_id,caption,created_at,dish_snapshot').eq('user_id', id).order('created_at', { ascending:false }).limit(80);
+  if(error){ console.warn('publicaciones', error.message); return null; }
+  return (data||[]).slice().sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+}
+let pfZone = 'repo', myPosts = null;
+function setPfZone(z){
+  if(z!=='repo' && typeof galleryEditMode!=='undefined' && galleryEditMode) exitGalleryEditMode();
+  pfZone = z;
+  $all('#pf-zones .seg-b').forEach(b=> b.classList.toggle('active', b.dataset.pfz===z));
+  $('#pf-zone-repo').classList.toggle('hidden', z!=='repo');
+  $('#pf-zone-posts').classList.toggle('hidden', z!=='posts');
+  if(z==='repo'){ const g = $('#gallery'); requestAnimationFrame(()=> distributeMasonry(g)); }
+  else loadMyPosts();
+}
+async function loadMyPosts(){
+  if(!currentUser) return;
+  const box = $('#pf-posts-list');
+  if(!myPosts) box.innerHTML = '<div class="empty-hint">Cargando...</div>';
+  const list = await fetchUserPosts(currentUser.id);
+  if(list===null){ if(!myPosts) box.innerHTML = '<div class="empty-hint">No se han podido cargar.</div>'; return; }
+  myPosts = list;
+  renderMyPosts();
+}
+function renderMyPosts(){
+  const box = $('#pf-posts-list');
+  if(!myPosts || !myPosts.length){ box.innerHTML = '<div class="empty-hint">Todavía no has publicado nada en el Muro. Publica un plato desde su ficha.</div>'; return; }
+  box.innerHTML = postsGroupedHtml(myPosts, 'data-my-post');
+}
+$all('#pf-zones .seg-b').forEach(b=> b.onclick = ()=> setPfZone(b.dataset.pfz));
+$('#pf-posts-list').addEventListener('click', (ev)=>{
+  const b = ev.target.closest('[data-my-post]'); if(!b) return;
+  const p = (myPosts||[]).find(x=> x.id===b.dataset.myPost); if(!p) return;
+  openDishPreview(p.dish_snapshot || {}, {});
+});
+
 // ---------- Lista de seguidores / seguidos ----------
 let followListState = null; // { user, kind, rows }
 function openFollowList(user, kind){
@@ -8168,6 +8306,20 @@ let friendRepoDishes = [];
 let friendRepoFolders = [];
 let friendProfileFolderId = null; // null = raíz del repositorio; si no, dentro de esa carpeta
 let friendProfileChannel = null;
+let fpZone = 'repo', fpPosts = null;
+function setFpZone(z){
+  fpZone = z;
+  $all('#fp-zones .seg-b').forEach(b=> b.classList.toggle('active', b.dataset.fpz===z));
+  renderFriendProfileBody();
+}
+async function loadFpPosts(){
+  const id = friendProfile && friendProfile.id; if(!id) return;
+  const list = await fetchUserPosts(id);
+  if(!friendProfile || friendProfile.id!==id) return;
+  fpPosts = list || [];
+  if(fpZone==='posts') renderFriendProfileBody();
+}
+$all('#fp-zones .seg-b').forEach(b=> b.onclick = ()=> setFpZone(b.dataset.fpz));
 async function openFriendProfile(friend){
   if(!friend) return;
   if(currentUser && friend.id===currentUser.id){ goToMyProfile(); return; }
@@ -8179,8 +8331,11 @@ async function openFriendProfile(friend){
   friendProfileFolderId = null;
   friendRepoDishes = [];
   friendRepoFolders = [];
+  if(!same){ fpZone = 'repo'; fpPosts = null; $all('#fp-zones .seg-b').forEach(b=> b.classList.toggle('active', b.dataset.fpz==='repo')); }
+  $('#fp-zones').classList.add('hidden');
   renderProfileHeader();
   $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>';
+  try{ $('#fp-scroll').scrollTop = 0; }catch(e){}
   if(!wasOpen) lockBodyScroll();
   showModal($('#friend-profile-modal'));
   watchFriendProfile(friend.id);
@@ -8198,6 +8353,7 @@ function renderProfileHeader(){
   u._rel = relationKey(u.id);
   const r = followRelation(u.id);
   const st = u._stats;
+  $('#fp-topbar-title').textContent = '@' + (u.username||'');
   const n = (k)=> st ? fmtCount(st[k]) : '–';
   const av = u.avatar_url ? `<img src="${u.avatar_url}" alt="">` : escapeHtml((u.username||'?')[0].toUpperCase());
   $('#friend-profile-header').innerHTML = `
@@ -8317,6 +8473,7 @@ async function loadFriendRepo(){
   const r = followRelation(id);
   const canSee = friendProfile.is_public !== false || r.iFollow==='accepted' || isFriend(id);
   if(!canSee){
+    $('#fp-zones').classList.add('hidden');
     friendRepoDishes = []; friendRepoFolders = [];
     $('#friend-profile-body').innerHTML = `<div class="fp-locked">${ICON_LOCK}<b>Esta cuenta es privada</b>${r.iFollow==='pending'
       ? 'Solicitud enviada. Cuando @'+escapeHtml(friendProfile.username)+' te acepte verás sus platos.'
@@ -8336,6 +8493,19 @@ async function loadFriendRepo(){
   renderFriendProfileBody();
 }
 function renderFriendProfileBody(){
+  $('#fp-zones').classList.remove('hidden');
+  if(fpZone==='posts'){
+    if(fpPosts===null){ $('#friend-profile-body').innerHTML = '<div class="empty-hint">Cargando...</div>'; loadFpPosts(); return; }
+    const box = $('#friend-profile-body');
+    if(!fpPosts.length){ box.innerHTML = '<div class="empty-hint">Todavía no ha publicado nada en el Muro.</div>'; return; }
+    box.innerHTML = `<div class="pf-posts-hint">De la más reciente a la más antigua.</div><div class="pf-posts" id="fp-posts-list">${postsGroupedHtml(fpPosts, 'data-fp-post')}</div>`;
+    $all('#fp-posts-list [data-fp-post]').forEach(b=> b.onclick = ()=>{
+      const p = fpPosts.find(x=> x.id===b.dataset.fpPost); if(!p) return;
+      const from = friendProfile ? friendProfile.username : null;
+      openDishPreview(p.dish_snapshot || {}, { fromUsername: from, onAdd: ()=> addFriendDishToRepo(p.dish_snapshot || {}, from) });
+    });
+    return;
+  }
   if(friendProfileFolderId){
     const folder = friendRepoFolders.find(f=>f.id===friendProfileFolderId);
     const inside = friendRepoDishes.filter(d=>d.folder_id===friendProfileFolderId);
@@ -8528,6 +8698,7 @@ $('#wall-publish-confirm').onclick = async ()=>{
   publishSnapshot = null; publishDishId = null; publishFromPost = null;
   if(fromPost){ markTaggedDone(fromPost); renderWallFeed(); }
   alert('Publicado en el Muro.');
+  myPosts = null; if(pfZone==='posts') loadMyPosts();
   loadWallFeed();
 };
 
@@ -10207,6 +10378,7 @@ async function deleteWallPost(postId){
   wallPosts = wallPosts.filter(p=> p.id!==postId);
   wallLikes = wallLikes.filter(l=> l.post_id!==postId);
   wallComments = wallComments.filter(c=> c.post_id!==postId);
+  if(myPosts){ myPosts = myPosts.filter(p=> p.id!==postId); if(pfZone==='posts') renderMyPosts(); }
   renderWallFeed();
 }
 
@@ -11450,11 +11622,20 @@ function dayStats(date){
 
 /* ---------- Pantalla Semana ---------- */
 function dayShort(d){ return DAY_NAMES[isoWeekday(d)].charAt(0); }
+/* Las macros (proteína, hidratos, grasa) están escondidas: se ven al darle a "Macros". Se recuerda en este móvil. */
+let showMacros = false;
+try{ showMacros = localStorage.getItem('nutrifit_show_macros')==='1'; }catch(e){}
+function toggleMacros(){
+  showMacros = !showMacros;
+  try{ localStorage.setItem('nutrifit_show_macros', showMacros ? '1' : '0'); }catch(e){}
+}
 function entryMeta(e){
   const parts = [`${fmtN(e.kcal)} kcal`];
-  if(e.protein_g!=null) parts.push(`P ${r1(e.protein_g)}`);
-  if(e.carbs_g!=null) parts.push(`H ${r1(e.carbs_g)}`);
-  if(e.fat_g!=null) parts.push(`G ${r1(e.fat_g)}`);
+  if(showMacros){
+    if(e.protein_g!=null) parts.push(`P ${r1(e.protein_g)}`);
+    if(e.carbs_g!=null) parts.push(`H ${r1(e.carbs_g)}`);
+    if(e.fat_g!=null) parts.push(`G ${r1(e.fat_g)}`);
+  }
   return parts.join(' · ');
 }
 const ICON_SWAP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg>';
@@ -11532,9 +11713,26 @@ function dayCardHtml(date){
     h += `<div class="prog ${over?'over':''}"><i style="width:${pct}%"></i></div>`;
     if(st.burn>0) h += `<div class="fit-hint" style="margin:-4px 0 8px;">Incluye +${fmtN(st.burn*(fitnessProfile.eatback==null?0.5:Number(fitnessProfile.eatback)))} kcal por el entreno</div>`;
   } else {
-    h += `<div class="fit-hint">Configura tu objetivo en la pestaña <b>Objetivo</b> para ver tus kcal y macros del día.</div>`;
+    h += `<div class="fit-hint">Configura tu objetivo en la pestaña <b>Objetivo</b> para ver tus kcal del día.</div>`;
   }
-  h += `<div class="mac3">${macroBarHtml('p','Prot.',st.p,goals&&goals.p)}${macroBarHtml('c','Hidr.',st.c,goals&&goals.c)}${macroBarHtml('f','Grasa',st.f,goals&&goals.f)}</div>`;
+  if(showMacros) h += `<div class="mac3">${macroBarHtml('p','Prot.',st.p,goals&&goals.p)}${macroBarHtml('c','Hidr.',st.c,goals&&goals.c)}${macroBarHtml('f','Grasa',st.f,goals&&goals.f)}</div>`;
+  // Comidas: igual que en la semana (etiqueta · foto cuadrada) y el texto al lado
+  h += `<div class="dm-list">`;
+  SLOTS.forEach((m, mi)=>{
+    const s = st.slots[m];
+    const mealTarget = st.target && m!=='extras' ? Math.round(st.target * MEAL_SPLIT[m]) : null;
+    h += `<div class="dm-row" data-slot="${m}"><div class="wk-rl">${GRID_LABELS[m]}</div><div class="dm-cell">${wkCellHtml(date, m, st, mi)}</div><div class="dm-txt">`;
+    h += `<div class="dm-head"><b>${fmtN(s.kcal)}</b>${mealTarget?` / ~${fmtN(mealTarget)}`:''} kcal</div>`;
+    h += s.items.map(dayItemHtml).join('');
+    if(!s.items.length && m!=='extras'){
+      const sg = sugFor(date, m);
+      if(sg) h += `<div class="dm-item sug"><div class="dm-nm">✦ ${escapeHtml(sg.name)}</div><div class="dm-sub">Sugerencia · ${fmtN(sg.calories)} kcal${showMacros && sg.protein_g!=null?` · P ${r1(sg.protein_g)}`:''}</div>
+        <div class="dm-btns"><button type="button" class="dm-pri" data-act="sug-add" data-date="${date}" data-meal="${m}" data-dish="${sg.id}">Usar</button><button type="button" class="dm-sec" data-act="sug-next" data-date="${date}" data-meal="${m}">Otra</button></div></div>`;
+    }
+    h += `<button type="button" class="add-link" data-act="add" data-date="${date}" data-meal="${m}">${s.items.length ? '+ Añadir otra cosa' : (m==='extras' ? '+ Añadir una bebida' : '+ Añadir')}</button>`;
+    h += `</div></div>`;
+  });
+  h += `</div>`;
   // Entrenos
   const wks = fitWorkouts.filter(w=> w.workout_date===date);
   const trainDay = fitnessProfile && (fitnessProfile.training_days||[]).includes(isoWeekday(d));
@@ -11542,21 +11740,21 @@ function dayCardHtml(date){
   h += wks.map(workoutRowHtml).join('');
   if(!wks.length) h += `<div class="fit-hint" style="margin:0;">${trainDay?'Hoy tenías entreno previsto. ':''}Sin entreno este día.</div>`;
   h += `</div>`;
-  // Comidas
-  SLOTS.forEach(m=>{
-    const s = st.slots[m];
-    const mealTarget = st.target && m!=='extras' ? Math.round(st.target * MEAL_SPLIT[m]) : null;
-    h += `<div class="slot" data-slot="${m}"><div class="slot-h"><span class="sn">${SLOT_LABELS[m]}</span><span class="sk"><b>${fmtN(s.kcal)}</b>${mealTarget?` / ~${fmtN(mealTarget)}`:''} kcal</span></div>`;
-    h += s.items.map(itemRowHtml).join('');
-    if(!s.items.length && m!=='extras'){
-      const sg = sugFor(date, m);
-      if(sg) h += `<div class="cs-sug"><span class="it-thumb">${sg.image_url ? `<img ${pimg(sg.image_url, 't')} alt="" loading="lazy" decoding="async" draggable="false">` : ICON_PLATE}</span>
-        <div class="cs-sug-t">✦ ${escapeHtml(sg.name)}<small>Sugerencia · ${fmtN(sg.calories)} kcal</small></div>
-        <div class="cs-sug-b"><button type="button" class="pri" data-act="sug-add" data-date="${date}" data-meal="${m}" data-dish="${sg.id}">Usar</button><button type="button" data-act="sug-next" data-date="${date}" data-meal="${m}">Otra</button></div></div>`;
-    }
-    h += `<button type="button" class="add-link" data-act="add" data-date="${date}" data-meal="${m}">+ Añadir ${m==='extras'?'una bebida':'a '+SLOT_LABELS[m].toLowerCase()}</button></div>`;
-  });
   return h + `</div>`;
+}
+// Una comida apuntada, en la vista de un día: nombre, kcal y sus botones.
+function dayItemHtml(e){
+  const st = e.status;
+  const circle = st==='skipped'
+    ? `<button type="button" class="ic-b" data-act="restore" data-id="${e.id}" aria-label="Volver a previsto">↺</button>`
+    : `<button type="button" class="ic-b ${st==='eaten'?'ok':''}" data-act="toggle" data-id="${e.id}" aria-label="${st==='eaten'?'Marcar como no comido':'Marcar como comido'}">${st==='eaten'?ICON_CHECK:''}</button>`;
+  const por = st==='skipped' ? '' : `<button type="button" class="it-por" data-act="por" data-id="${e.id}" aria-label="Cambiar raciones">×${Number(e.portions)||1}</button>`;
+  const swap = st==='planned' ? `<button type="button" class="ic-b" data-act="swap" data-id="${e.id}" aria-label="He comido otra cosa">${ICON_SWAP}</button>` : '';
+  return `<div class="dm-item ${st}" data-entry="${e.id}">
+    <div class="dm-nm">${escapeHtml(e.name)}</div>
+    <div class="dm-sub">${st==='skipped'?'No lo comí · ':(st==='planned'?'Previsto · ':'')}${entryMeta(e)}</div>
+    <div class="dm-btns">${circle}${por}${swap}<button type="button" class="ic-b" data-act="del" data-id="${e.id}" aria-label="Borrar">${ICON_X}</button></div>
+  </div>`;
 }
 /* ---------- Semana en tabla (7 días × 5 comidas) ---------- */
 let csCtx = null;             // casilla abierta {date, meal}
@@ -11605,23 +11803,17 @@ function renderWkGrid(){
   });
   h += `<div class="wk-sumrow-sep"></div>`;
   h += `<div class="wk-rl">kcal</div>` + stats.map(s=> wkSumCell(Math.round(s.kcal), s.target, 'k')).join('');
-  h += `<div class="wk-rl">P</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.p), goals[i] && Math.round(goals[i].p))).join('');
-  h += `<div class="wk-rl">H</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.c), goals[i] && Math.round(goals[i].c))).join('');
-  h += `<div class="wk-rl">G</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.f), goals[i] && Math.round(goals[i].f))).join('');
+  if(showMacros){
+    h += `<div class="wk-rl">P</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.p), goals[i] && Math.round(goals[i].p))).join('');
+    h += `<div class="wk-rl">H</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.c), goals[i] && Math.round(goals[i].c))).join('');
+    h += `<div class="wk-rl">G</div>` + stats.map((s,i)=> wkSumCell(Math.round(s.f), goals[i] && Math.round(goals[i].f))).join('');
+  }
   const grid = $('#wk-grid');
   grid.className = 'wk-grid n'+N;
   grid.style.gridTemplateColumns = `24px repeat(${N}, minmax(0,1fr))`;
   grid.innerHTML = h;
   deckAnim = false;
-  // Mazo aleatorio / aceptar
-  const ghost = ghostCells(keys);
-  const tools = $('#wk-tools');
-  if(sugEnabled()){
-    tools.innerHTML = `<button type="button" class="deck-btn" data-deck="roll">${ICON_DICE}Mazo aleatorio</button>` +
-      (ghost.length ? `<button type="button" class="deck-ok" data-deck="accept">Aceptar ${ghost.length} sugerencia${ghost.length>1?'s':''}</button>` : '');
-  } else {
-    tools.innerHTML = `<button type="button" class="deck-btn" data-deck="roll">${ICON_DICE}Mazo aleatorio</button><span class="deck-hint">${currentUser.suggest_meals ? 'Necesitas más de 10 platos con kcal y tus datos en Objetivo.' : 'Actívalo en Ajustes → Fitness → «Sugerir platos».'}</span>`;
-  }
+  renderWkTools(keys);
   // Totales de la semana
   const tot = stats.reduce((a,s,i)=>({ k:a.k+s.kcal, t:a.t+(s.target||0), p:a.p+s.p, c:a.c+s.c, f:a.f+s.f, n:a.n+(s.counted?1:0),
     gp:a.gp+(goals[i]?goals[i].p:0), gc:a.gc+(goals[i]?goals[i].c:0), gf:a.gf+(goals[i]?goals[i].f:0) }), {k:0,t:0,p:0,c:0,f:0,n:0,gp:0,gc:0,gf:0});
@@ -11630,8 +11822,52 @@ function renderWkGrid(){
   const over = tot.t && tot.k > tot.t*1.05;
   $('#wk-week-sum').innerHTML = `<div class="row title"><span>${N===7?'Semana':(N===1?'Día':N+' días')}</span><span><span class="big">${fmtN(tot.k)}</span>${tot.t?` / ${fmtN(tot.t)}`:''} kcal</span></div>
     ${tot.t?`<div class="prog ${over?'over':''}"><i style="width:${Math.min(100, tot.k/tot.t*100)}%"></i></div>`:''}
-    <div class="mac3">${macroBarHtml('p','Prot.',tot.p,tot.t&&tot.gp)}${macroBarHtml('c','Hidr.',tot.c,tot.t&&tot.gc)}${macroBarHtml('f','Grasa',tot.f,tot.t&&tot.gf)}</div>
+    ${showMacros ? `<div class="mac3">${macroBarHtml('p','Prot.',tot.p,tot.t&&tot.gp)}${macroBarHtml('c','Hidr.',tot.c,tot.t&&tot.gc)}${macroBarHtml('f','Grasa',tot.f,tot.t&&tot.gf)}</div>` : ''}
     <div class="row" style="color:var(--muted);margin-top:6px;"><span>${tot.n?`Media ${fmtN(tot.k/tot.n)} kcal/día`:'Aún no hay nada apuntado'}</span><span>${wo.length?`${wo.length} entreno${wo.length>1?'s':''} · ${woMin} min · ${fmtN(woKcal)} kcal`:'Sin entrenos'}</span></div>`;
+}
+const ICON_CART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1 1 0 0 0 1 .8h9.4a1 1 0 0 0 1-.8L21 7H6"/></svg>';
+// Barra de herramientas de Semana (sirve en 1, 3, 5 y 7 días): mazo, aceptar, todo al carrito y macros.
+function renderWkTools(keys){
+  const ghost = ghostCells(keys);
+  const tools = $('#wk-tools');
+  const cartN = weekCartDishes(keys).length;
+  let h = `<button type="button" class="deck-btn" data-deck="roll">${ICON_DICE}Mazo aleatorio</button>`;
+  if(sugEnabled() && ghost.length) h += `<button type="button" class="deck-ok" data-deck="accept">Aceptar ${ghost.length} sugerencia${ghost.length>1?'s':''}</button>`;
+  h += `<button type="button" class="deck-ok deck-cart" data-deck="cart"${cartN?'':' disabled'}>${ICON_CART}Todo al carrito${cartN?` (${cartN})`:''}</button>`;
+  h += `<button type="button" class="deck-ok deck-mac ${showMacros?'on':''}" data-deck="macros" aria-pressed="${showMacros}">Macros</button>`;
+  if(!sugEnabled()) h += `<span class="deck-hint">${currentUser.suggest_meals ? 'Necesitas más de 10 platos con kcal y tus datos en Objetivo.' : 'Actívalo en Ajustes → Fitness → «Sugerir platos».'}</span>`;
+  tools.innerHTML = h;
+}
+// Platos de la ventana que se está viendo (de hoy en adelante), previstos o sugeridos, y sin comer todavía.
+function weekCartDishes(keys){
+  const today = todayStr(), out = [];
+  (keys || wkWindowDates().map(fmtDate)).forEach(date=>{
+    if(date < today) return;
+    ['desayuno','comida','merienda','cena'].forEach(m=>{
+      const live = fitEntries.filter(e=> e.entry_date===date && e.meal_type===m && e.status!=='skipped');
+      if(live.length){
+        live.forEach(e=>{ if(e.status!=='planned') return; const dish = dishOfEntry(e); if(dish) out.push({ dish, portions: Number(e.portions)||1 }); });
+      } else {
+        const sg = sugFor(date, m); if(sg) out.push({ dish: sg, portions: 1 });
+      }
+    });
+  });
+  return out;
+}
+function scaledDishForCart(dish, portions){
+  const f = (Number(portions)||1) / (Number(dish.servings_base)||1);
+  if(f===1) return dish;
+  return { ...dish, ingredients: (dish.ingredients||[]).map(it=>{
+    const q = it && it.quantity;
+    return (q!=null && q!=='' && !isNaN(Number(q))) ? { ...it, quantity: Math.round(Number(q)*f*100)/100 } : it;
+  }) };
+}
+function weekToCart(){
+  const list = weekCartDishes();
+  if(!list.length){ showToast('No hay platos previstos para añadir'); return; }
+  const used = {}; let added = 0, have = 0;
+  list.forEach(x=>{ const r = addDishToCart(scaledDishForCart(x.dish, x.portions), { used, source: x.dish.name || null }); added += r.added; have += r.have; });
+  showToast(added ? `Al carrito: ${added} ingrediente${added>1?'s':''} de ${list.length} plato${list.length>1?'s':''}${have?` (${have} ya en la Nevera)`:''}` : 'Ya lo tienes todo en la Nevera');
 }
 function renderWkDay(){
   const ws = fitWeekStart();
@@ -11648,6 +11884,7 @@ function renderWkDay(){
       ${hasWo?'<span class="dot"></span>':''}<span class="dn">${dayShort(d)}</span><span class="dd">${d.getDate()}</span><span class="bar"><i style="width:${pct}%"></i></span></button>`;
   }).join('');
   $('#wk-day').innerHTML = dayCardHtml(selDay);
+  renderWkTools([selDay]);
 }
 function renderFitWeek(){
   weekDates = wkWindowDates();
@@ -11672,6 +11909,14 @@ function openCell(date, meal){
   renderCellSheet();
   showModal($('#cs-modal'));
 }
+// La "carta" de una casilla: lo apuntado (lo comido primero) o, si no hay nada, la sugerencia del mazo.
+function csPrimary(date, meal){
+  const live = fitEntries.filter(e=> e.entry_date===date && e.meal_type===meal && e.status!=='skipped');
+  const e = live.find(i=> i.status==='eaten') || live[0] || null;
+  if(e) return { entry:e, dish: dishOfEntry(e), name:e.name, kcal:Math.round(Number(e.kcal)||0), sug:false };
+  const sg = meal!=='extras' ? sugFor(date, meal) : null;
+  return sg ? { entry:null, dish:sg, name:sg.name, kcal:Math.round(Number(sg.calories)||0), sug:true } : null;
+}
 function renderCellSheet(){
   if(!csCtx) return;
   const { date, meal } = csCtx;
@@ -11679,17 +11924,29 @@ function renderCellSheet(){
   $('#cs-title').textContent = `${SLOT_LABELS[meal]} · ${DAY_NAMES[isoWeekday(d)]} ${d.getDate()} ${MONTHS_S[d.getMonth()]}`;
   const its = fitEntries.filter(e=> e.entry_date===date && e.meal_type===meal);
   const st = dayStats(date); const s = st.slots[meal];
+  const prim = csPrimary(date, meal);
   let h = '';
-  if(its.length){
+  if(prim){
+    const img = prim.dish && prim.dish.image_url ? `<img ${pimg(prim.dish.image_url, 'm')} alt="" decoding="async" draggable="false">` : (prim.entry ? entryThumbHtml(prim.entry) : ICON_PLATE);
+    const state = prim.sug ? 'Sugerencia' : (prim.entry.status==='eaten' ? 'Comido' : 'Previsto');
+    h += `<div class="cs-hero"><div class="cs-hero-img">${img}</div><div class="cs-hero-t"><b>${prim.sug?'✦ ':''}${escapeHtml(prim.name)}</b><small>${state} · ${fmtN(prim.kcal)} kcal</small></div></div>`;
+    h += `<div class="cs-hero-btns">${prim.dish && prim.dish.id ? `<button type="button" class="pri" data-act="cs-info" data-dish="${prim.dish.id}">Info</button>` : ''}<button type="button" data-act="cs-change" data-date="${date}" data-meal="${meal}">Cambiar</button></div>`;
+  }
+  const only = its.length===1 && prim && prim.entry && prim.entry.status!=='skipped' ? its[0] : null;
+  if(only){ // una sola cosa apuntada: la carta ya la enseña, aquí solo sus botones
+    const eaten = only.status==='eaten';
+    h += `<div class="cs-ctl"><button type="button" class="${eaten?'on':''}" data-act="toggle" data-id="${only.id}">${eaten?'✓ Comido':'Marcar como comido'}</button>`
+      + `<button type="button" data-act="por" data-id="${only.id}">×${Number(only.portions)||1} ${meal==='extras'?'uds.':'raciones'}</button>`
+      + (only.status==='planned' ? `<button type="button" data-act="swap" data-id="${only.id}">He comido otra cosa</button>` : '')
+      + `<button type="button" class="bad" data-act="del" data-id="${only.id}">Quitar</button></div>`;
+    h += `<div class="cs-lbl" style="margin-top:8px;"><b>${fmtN(s.kcal)}</b> kcal${showMacros ? ' · ' + entryMeta(only).split(' · ').slice(1).join(' · ') : ''}${st.target && meal!=='extras' ? ` · te tocaban ~${fmtN(st.target*MEAL_SPLIT[meal])}` : ''}</div>`;
+  } else if(its.length){
     h += `<div class="cs-lbl"><b>${fmtN(s.kcal)}</b> kcal${st.target && meal!=='extras' ? ` · te tocaban ~${fmtN(st.target*MEAL_SPLIT[meal])}` : ''}</div>`;
     h += its.map(itemRowHtml).join('');
-  } else {
-    const sg = sugFor(date, meal);
-    if(sg) h += `<div class="cs-sug"><span class="it-thumb">${sg.image_url ? `<img ${pimg(sg.image_url, 't')} alt="" decoding="async" draggable="false">` : ICON_PLATE}</span>
-      <div class="cs-sug-t">✦ ${escapeHtml(sg.name)}<small>Sugerencia · ${fmtN(sg.calories)} kcal${sg.protein_g!=null?` · P ${r1(sg.protein_g)}`:''}</small></div>
-      <div class="cs-sug-b"><button type="button" class="pri" data-act="sug-add" data-date="${date}" data-meal="${meal}" data-dish="${sg.id}">Usar</button><button type="button" data-act="sug-next" data-date="${date}" data-meal="${meal}">Otra</button></div></div>`;
+  } else if(prim && prim.sug){
+    h += `<div class="cs-ctl"><button type="button" class="on" data-act="sug-add" data-date="${date}" data-meal="${meal}" data-dish="${prim.dish.id}">Usar esta</button><button type="button" data-act="sug-next" data-date="${date}" data-meal="${meal}">Otra sugerencia</button></div>`;
   }
-  h += `<button type="button" class="btn-secondary" style="width:100%;margin-top:10px;" data-act="add" data-date="${date}" data-meal="${meal}">${its.length?'+ Añadir otra cosa':'Elegir yo'}</button>`;
+  if(!(prim && prim.sug)) h += `<button type="button" class="btn-secondary" style="width:100%;margin-top:10px;" data-act="add" data-date="${date}" data-meal="${meal}">${its.length?'+ Añadir otra cosa':'Elegir yo'}</button>`;
   $('#cs-body').innerHTML = h;
 }
 $('#cs-body').addEventListener('click', (ev)=>{ const b = ev.target.closest('[data-act]'); if(b) onWeekAction(b); });
@@ -11708,6 +11965,10 @@ $('#wk-tools').addEventListener('click', async (ev)=>{
     await deckRoll();
   } else if(b.dataset.deck==='accept'){
     await deckAccept();
+  } else if(b.dataset.deck==='cart'){
+    weekToCart();
+  } else if(b.dataset.deck==='macros'){
+    toggleMacros(); renderFitWeek();
   }
 });
 
@@ -11719,7 +11980,7 @@ $('#wk-tools').addEventListener('click', async (ev)=>{
    para que no cambie sola al repintar; "Mazo aleatorio" la baraja de nuevo. */
 let sugSeed = 0;
 const sugDecks = {};
-const SLOT_TAGS = { desayuno:['Desayuno'], comida:['Comida'], merienda:['Snack','Postre','Desayuno'], cena:['Cena'] };
+const SLOT_TAGS = { desayuno:['Desayuno'], comida:['Comida'], merienda:['Snack','Postre'], cena:['Cena'] };
 const MOMENT_TAGS = ['Desayuno','Comida','Cena','Snack','Postre'];
 function hashStr(s){ let h = 0; for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; } return Math.abs(h); }
 function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -11728,16 +11989,18 @@ function sugEnabled(){ return !!(currentUser && currentUser.suggest_meals && fit
 function sugScored(date, m, used, prevId){
   const pool = suggestibleDishes();
   const healthy = pool.filter(d=> d.quality!=='malo');
-  const base = healthy.length >= 8 ? healthy : pool;
+  let base = healthy.length >= 8 ? healthy : pool;
+  // Cada casilla solo con platos de su tipo: en el desayuno nada que no sea de desayuno.
+  // Solo si no tienes ninguno etiquetado para esa comida se tira de los que no tienen etiqueta de momento.
+  const fits = (d)=> (d.tags||[]).some(t=> SLOT_TAGS[m].includes(t));
+  const noMoment = (d)=> !(d.tags||[]).some(t=> MOMENT_TAGS.includes(t));
+  const tagged = base.filter(fits);
+  base = tagged.length ? tagged : base.filter(noMoment);
   const target = (dayTarget(date) || Number(fitnessProfile.target_calories)) * MEAL_SPLIT[m];
   return base.map(d=>{
     let sc = Math.abs(d.calories - target) / target;
     sc += (used[d.id]||0) * 0.35;
     if(prevId===d.id) sc += 1;
-    const tg = d.tags || [];
-    const moments = tg.filter(t=> MOMENT_TAGS.includes(t));
-    if(moments.length && !moments.some(t=> SLOT_TAGS[m].includes(t))) sc += 0.5;
-    if(moments.length && moments.some(t=> SLOT_TAGS[m].includes(t))) sc -= 0.12;
     if(d.protein_g!=null) sc -= Math.min(0.15, (Number(d.protein_g)*4 / d.calories) * 0.3);
     return { d, sc };
   }).sort((a,b)=> a.sc - b.sc);
@@ -11897,6 +12160,14 @@ async function onWeekAction(btn){
     const next = PORTION_STEPS[(PORTION_STEPS.indexOf(cur)+1) % PORTION_STEPS.length] ?? 1;
     deckSaved.delete(id);
     await updateEntry(id, withoutSug(scaleEntry(e, next)));
+  } else if(act==='cs-info'){
+    const dish = dishes.find(x=> x.id===btn.dataset.dish); if(dish) openDishModal(dish);
+    return;
+  } else if(act==='cs-change'){
+    const date = btn.dataset.date, meal = btn.dataset.meal;
+    const prim = csPrimary(date, meal);
+    openFitAdd(date, meal, null, { replaceId: prim && prim.entry ? prim.entry.id : null, ghost: !!(prim && prim.sug) });
+    return;
   } else if(act==='swap'){
     const e = entryById(id); if(!e) return;
     openFitAdd(e.entry_date, e.meal_type, e.id); return;
@@ -11923,7 +12194,11 @@ async function onWeekAction(btn){
   }
   renderFitWeek();
 }
-$('#wk-day').addEventListener('click', (ev)=>{ const b = ev.target.closest('[data-act]'); if(b) onWeekAction(b); });
+$('#wk-day').addEventListener('click', (ev)=>{
+  const c = ev.target.closest('[data-cell]');
+  if(c){ const [date, meal] = c.dataset.cell.split('|'); openCell(date, meal); return; }
+  const b = ev.target.closest('[data-act]'); if(b) onWeekAction(b);
+});
 $('#wk-strip').addEventListener('click', (ev)=>{ const b = ev.target.closest('[data-day]'); if(!b) return; fitAnchor = parseDate(b.dataset.day); selDay = b.dataset.day; renderFitWeek(); });
 function fitStep(){ return fitTab==='week' ? wkDays : 7; }
 $('#wk-prev').onclick = ()=>{ fitAnchor = fitAddDays(fitAnchor, -fitStep()); selDay = null; renderFitness(); };
@@ -11939,14 +12214,44 @@ function setFmTab(t){
   $('#fm-free').classList.toggle('hidden', t!=='free');
 }
 function setFmUnits(v){ fmPortions = v; $('#fm-por-val').textContent = v; }
-function openFitAdd(date, meal, swapId){
-  fmCtx = { date, meal, swapId: swapId||null };
+/* Repositorio de platos por tipo de comida (el "repositorio de cartas"): al elegir plato salen
+   primero los de esa comida; "Todos" los muestra todos. */
+const REPO_CATS = [
+  { k:'desayuno', label:'Desayunos', tags:['Desayuno'] },
+  { k:'comida', label:'Comidas', tags:['Comida'] },
+  { k:'merienda', label:'Meriendas', tags:['Snack','Postre'] },
+  { k:'cena', label:'Cenas', tags:['Cena'] },
+  { k:'all', label:'Todos', tags:null }
+];
+let fmCat = 'all';
+function dishInRepoCat(d, k){
+  if(k==='all') return true;
+  const c = REPO_CATS.find(x=> x.k===k);
+  return !!c && (d.tags||[]).some(t=> c.tags.includes(t));
+}
+function renderFmCats(){
+  $('#fm-cats').innerHTML = REPO_CATS.map(c=> `<button type="button" class="fm-cat ${c.k===fmCat?'on':''}" data-fmcat="${c.k}">${c.label}<i>${dishes.filter(d=> dishInRepoCat(d, c.k)).length}</i></button>`).join('');
+}
+$('#fm-cats').addEventListener('click', (ev)=>{
+  const b = ev.target.closest('[data-fmcat]'); if(!b) return;
+  fmCat = b.dataset.fmcat; renderFmCats(); renderFitPick();
+});
+function openFitAdd(date, meal, swapId, opts){
+  opts = opts || {};
+  const replacing = !!(opts.replaceId || opts.ghost);
+  fmCtx = { date, meal, swapId: swapId||null, replaceId: opts.replaceId||null, ghost: !!opts.ghost };
   fmDrinkMode = meal==='extras';
-  setFmUnits(1);
-  $('#fm-title').textContent = fmDrinkMode ? (swapId ? '¿Qué has bebido en su lugar?' : 'Añadir una bebida') : (swapId ? '¿Qué has comido en su lugar?' : `Añadir a ${SLOT_LABELS[meal].toLowerCase()}`);
-  setFmState(swapId || date<=todayStr() ? 'eaten' : 'planned');
+  const cur = opts.replaceId ? entryById(opts.replaceId) : null;
+  setFmUnits(cur ? (Number(cur.portions)||1) : 1);
+  fmCat = REPO_CATS.some(c=> c.k===meal) && dishes.some(d=> dishInRepoCat(d, meal)) ? meal : 'all';
+  $('#fm-cats').classList.toggle('hidden', fmDrinkMode);
+  renderFmCats();
+  $('#fm-title').textContent = replacing
+    ? (fmDrinkMode ? 'Cambiar bebida' : `Cambiar · ${SLOT_LABELS[meal].toLowerCase()}`)
+    : (fmDrinkMode ? (swapId ? '¿Qué has bebido en su lugar?' : 'Añadir una bebida') : (swapId ? '¿Qué has comido en su lugar?' : `Añadir a ${SLOT_LABELS[meal].toLowerCase()}`));
+  setFmState(swapId || (!replacing && date<=todayStr()) ? 'eaten' : 'planned');
   $('#fm-state button[data-state="eaten"]').textContent = fmDrinkMode ? 'Ya la he bebido' : 'Ya lo he comido';
-  $('#fm-state').classList.toggle('hidden', !!swapId);
+  $('#fm-state').classList.toggle('hidden', !!swapId || replacing);
   const tabs = $all('#fm-tabs .seg-b');
   tabs[0].textContent = fmDrinkMode ? 'Bebidas' : 'Mis platos';
   tabs[1].textContent = fmDrinkMode ? 'Otra bebida' : 'Libre';
@@ -11971,9 +12276,14 @@ function renderFitPick(){
     </button>`).join('');
     return;
   }
-  let list = dishes.filter(d=> !q || pfNorm(d.name).includes(q));
+  // Buscando se mira en todos los platos; si no, solo los de la categoría elegida.
+  let list = dishes.filter(d=> q ? pfNorm(d.name).includes(q) : dishInRepoCat(d, fmCat));
   if(!dishes.length){ box.innerHTML = '<div class="empty-hint">Todavía no tienes platos. Usa la pestaña “Libre”.</div>'; return; }
-  if(!list.length){ box.innerHTML = '<div class="empty-hint">Ningún plato se llama así.</div>'; return; }
+  if(!list.length){
+    const c = REPO_CATS.find(x=> x.k===fmCat);
+    box.innerHTML = q ? '<div class="empty-hint">Ningún plato se llama así.</div>' : `<div class="empty-hint">No tienes platos de ${c ? c.label.toLowerCase() : 'este tipo'}. Mira «Todos» o ponles la etiqueta <b>${c && c.tags ? c.tags[0] : ''}</b> en su ficha.</div>`;
+    return;
+  }
   if(fmCtx && fitnessProfile && fitnessProfile.target_calories){ // los más cercanos a lo que toca en esa comida, primero
     const t = fitnessProfile.target_calories * MEAL_SPLIT[fmCtx.meal];
     list = list.slice().sort((a,b)=> (a.calories? Math.abs(a.calories-t) : 1e9) - (b.calories? Math.abs(b.calories-t) : 1e9));
@@ -11989,8 +12299,14 @@ function entryFromDrink(d, units){
 }
 async function fitAddFromModal(row){
   const ctx = fmCtx; if(!ctx) return;
-  const status = ctx.swapId ? 'eaten' : fmState();
   hideModal($('#fm-modal'));
+  if(ctx.replaceId || ctx.ghost){ csCtx = null; hideModal($('#cs-modal')); }
+  if(ctx.replaceId){ // cambiar el plato de una casilla: se queda como estaba (prevista o comida)
+    deckSaved.delete(ctx.replaceId);
+    await updateEntry(ctx.replaceId, withoutSug({ ...row }));
+    selDay = ctx.date; renderFitWeek(); return;
+  }
+  const status = ctx.swapId ? 'eaten' : (ctx.ghost ? 'planned' : fmState());
   if(ctx.swapId) await updateEntry(ctx.swapId, { status:'skipped' });
   await insertEntry({ entry_date: ctx.date, meal_type: ctx.meal, status, ...row });
   selDay = ctx.date;
