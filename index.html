@@ -1219,17 +1219,14 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .wk-dh .ent.done{opacity:1; color:var(--accent); } .wk-dh .ent.done svg{stroke-width:3.6;}
 .wk-cell{position:relative; width:100%; aspect-ratio:1/1; border-radius:10px; overflow:hidden; background:var(--card2); border:1.5px solid transparent; padding:0; color:var(--text); touch-action:manipulation; -webkit-tap-highlight-color:transparent; transition:transform .1s;}
 .wk-cell:active{transform:scale(.94);}
-.wk-cell.empty{background:none; border:1.5px dashed var(--border-strong); color:var(--muted);}
-.wk-cell.empty::after{content:'+'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:400; opacity:.6;}
+.wk-cell.empty{background:var(--card2); color:var(--muted);}
+.wk-cell.empty::after{content:'+'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:400; opacity:.4;}
 .wk-cell-bg{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:var(--muted);}
 .wk-cell-bg img{width:100%; height:100%; object-fit:cover; display:block;}
 .wk-cell-bg svg{width:22px; height:22px; opacity:.6;}
-.wk-cell.planned{border:1.5px dashed var(--accent);}
-.wk-cell.planned .wk-cell-bg{opacity:.78;}
 .wk-cell.eaten{border-color:var(--accent);}
-.wk-cell.sug{border:1.5px dashed var(--normal); background:var(--card2);}
-.wk-cell.sug .wk-cell-bg{opacity:.5;}
-.wk-cell.sug::before{content:'✦'; position:absolute; top:1px; left:3px; z-index:2; font-size:10px; color:var(--normal); text-shadow:0 0 3px var(--card);}
+.wk-cell.sug{background:var(--card2);}
+.wk-cell.sug::before{content:'✦'; position:absolute; top:1px; left:3px; z-index:2; font-size:10px; color:var(--normal); text-shadow:0 0 2px var(--card), 0 0 4px var(--card);}
 .wk-cell.flip{animation:nf-flip .28s cubic-bezier(.32,.72,0,1) both; animation-delay:calc(var(--i,0) * 12ms);}
 @keyframes nf-flip{0%{transform:scale(.82); opacity:0;}100%{transform:none; opacity:1;}}
 .wk-cell-k{position:absolute; left:0; right:0; bottom:0; padding:6px 1px 1px; font-size:9px; font-weight:800; color:#fff; text-align:center; background:linear-gradient(transparent, rgba(0,0,0,.62)); text-shadow:0 1px 2px rgba(0,0,0,.4);}
@@ -2359,7 +2356,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
         <div class="wk-tools" id="wk-tools"></div>
         <div id="wk-grid-wrap">
           <div class="card wk-gridcard"><div class="wk-grid" id="wk-grid"></div></div>
-          <div class="wk-legend">✦ sugerencia · discontinuo = previsto · verde = comido</div>
+          <div class="wk-legend">✦ sugerencia · toca una casilla para cambiarla · verde = comido</div>
           <div id="wk-week-sum" class="card wk-sum"></div>
         </div>
         <div id="wk-day-wrap" class="hidden">
@@ -3344,7 +3341,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.09-1';
+const APP_VERSION = '2026.11.10-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -4538,32 +4535,12 @@ function applyFitnessVisibility(){
   $('#fitness-extra-options').classList.toggle('hidden', !currentUser.show_fitness);
   $('#toggle-macros-btn').classList.toggle('on', currentUser.show_macros);
 }
-// "Sugerir platos" necesita además un mínimo de repositorio para poder
-// proponer algo con sentido. OJO: esto SÍ depende de "dishes", así que no se
-// puede llamar en el arranque antes de que loadDishes() lo haya rellenado (lo
-// apagaría, y lo persistiría, aunque el usuario tenga de sobra) — se llama en
-// su lugar dentro de renderGallery() (cada vez que la lista de platos cambia,
-// dishes ya está actualizado en ese punto) y tras tocar los interruptores.
+// "Sugerir platos": sin mínimo de repositorio (el mazo puede tirar de Explorar). Solo refleja el interruptor.
 function updateFitnessSettingsExtras(){
-  const eligible = dishes.filter(d=> typeof d.calories==='number' && d.calories>0).length;
-  const hint = $('#suggest-meals-hint');
+  $('#suggest-meals-hint').textContent = '';
   const suggestBtn = $('#toggle-suggest-btn');
-  if(eligible > 10){
-    hint.textContent = '';
-    suggestBtn.classList.remove('switch-disabled');
-    suggestBtn.classList.toggle('on', currentUser.suggest_meals);
-  } else {
-    hint.textContent = 'Necesitas más de 10 platos con kcal.';
-    suggestBtn.classList.add('switch-disabled');
-    suggestBtn.classList.remove('on');
-    // Si estaba activado y el repositorio se ha quedado corto (p.ej. borraste
-    // platos), se apaga solo — no tiene sentido dejarlo "encendido" sin poder
-    // funcionar, y así la próxima vez que suba de 10 vuelve a partir de cero.
-    if(currentUser.suggest_meals){
-      currentUser.suggest_meals = false;
-      sb.from('profiles').update({ suggest_meals: false }).eq('id', currentUser.id);
-    }
-  }
+  suggestBtn.classList.remove('switch-disabled');
+  suggestBtn.classList.toggle('on', !!currentUser.suggest_meals);
 }
 
 /* ===================== PLATOS: GALERÍA (con carpetas) ===================== */
@@ -11757,9 +11734,9 @@ function fitAddDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); retu
 function todayStr(){ return fmtDate(new Date()); }
 function fitWeekStart(){ return getMonday(fitAnchor); }
 function fitIsCurrentWeek(){ return getMonday(fitAnchor).getTime() === getMonday(new Date()).getTime(); }
-// Los días que se ven en la pestaña Semana: 7 = la semana de lunes a domingo; 1/3/5 = desde el día de referencia.
+// Los días que se ven en la pestaña Semana: siempre desde el día de referencia (hoy al abrir), así el primero
+// de la izquierda es hoy y no hay días pasados en gris. (Estadísticas sigue yendo de lunes a domingo.)
 function wkWindowDates(){
-  if(wkDays===7){ const ws = fitWeekStart(); return Array.from({length:7}, (_,i)=> fitAddDays(ws,i)); }
   return Array.from({length:wkDays}, (_,i)=> fitAddDays(fitAnchor,i));
 }
 function normWeekStart(str){ const d = parseDate(str); return d.getDay()===0 ? fmtDate(fitAddDays(d,1)) : str; } // filas antiguas: guardadas en UTC (domingo)
@@ -11776,7 +11753,7 @@ function fitRange(){
 function fitTitle(){
   const dateTxt = (a, b)=> a.getMonth()===b.getMonth() ? `${a.getDate()} – ${b.getDate()} ${MONTHS_S[b.getMonth()]}` : `${a.getDate()} ${MONTHS_S[a.getMonth()]} – ${b.getDate()} ${MONTHS_S[b.getMonth()]}`;
   const today = todayStr();
-  if(fitTab==='week' && wkDays<7){
+  if(fitTab==='week'){
     const w = wkWindowDates(), first = fmtDate(w[0]);
     if(wkDays===1){ const d = w[0]; return `${first===today?'Hoy · ':''}${DAY_NAMES[isoWeekday(d)]} ${d.getDate()} ${MONTHS_S[d.getMonth()]}`; }
     return `${first===today?'Desde hoy · ':''}${dateTxt(w[0], w[w.length-1])}`;
@@ -11985,12 +11962,12 @@ function wkCellHtml(date, m, st, idx){
     const prim = live.find(i=> i.status==='eaten') || live[0];
     const eaten = live.some(i=> i.status==='eaten');
     return `<button type="button" class="wk-cell ${eaten?'eaten':'planned'}" data-cell="${date}|${m}" aria-label="${SLOT_LABELS[m]}: ${escapeHtml(prim.name)}">
-      <span class="wk-cell-bg">${entryThumbHtml(prim)}</span><span class="wk-cell-t">${escapeHtml(prim.name)}</span>${eaten?`<span class="wk-cell-ok">${ICON_CHECK}</span>`:''}${live.length>1?`<span class="wk-cell-n">+${live.length-1}</span>`:''}<span class="wk-cell-k">${fmtN(s.kcal)}</span></button>`;
+      <span class="wk-cell-bg">${entryThumbHtml(prim)}</span><span class="wk-cell-t">${escapeHtml(prim.name)}</span>${eaten?`<span class="wk-cell-ok">${ICON_CHECK}</span>`:''}${live.length>1?`<span class="wk-cell-n">+${live.length-1}</span>`:''}</button>`;
   }
   const sg = m!=='extras' ? sugFor(date, m) : null;
   if(sg){
     return `<button type="button" class="wk-cell sug ${deckAnim?'flip':''}" style="--i:${idx}" data-cell="${date}|${m}" aria-label="Sugerencia: ${escapeHtml(sg.name)}">
-      <span class="wk-cell-bg">${sg.image_url ? `<img ${pimg(sg.image_url, 't')} alt="" loading="lazy" decoding="async" draggable="false">` : ICON_PLATE}</span><span class="wk-cell-t">${escapeHtml(sg.name)}</span><span class="wk-cell-k">${fmtN(sg.calories)}</span></button>`;
+      <span class="wk-cell-bg">${sg.image_url ? `<img ${pimg(sg.image_url, 't')} alt="" loading="lazy" decoding="async" draggable="false">` : ICON_PLATE}</span><span class="wk-cell-t">${escapeHtml(sg.name)}</span></button>`;
   }
   return `<button type="button" class="wk-cell empty" data-cell="${date}|${m}" aria-label="Añadir a ${SLOT_LABELS[m].toLowerCase()}"></button>`;
 }
@@ -12031,7 +12008,7 @@ function renderWkGrid(){
   const wo = fitWorkouts.filter(w=> workoutCounts(w, w.workout_date));
   const woMin = wo.reduce((s,w)=> s+(Number(w.minutes)||0), 0), woKcal = wo.reduce((s,w)=> s+(Number(w.kcal)||0), 0);
   const over = tot.t && tot.k > tot.t*1.05;
-  $('#wk-week-sum').innerHTML = `<div class="row title"><span>${N===7?'Semana':(N===1?'Día':N+' días')}</span><span><span class="big">${fmtN(tot.k)}</span>${tot.t?` / ${fmtN(tot.t)}`:''} kcal</span></div>
+  $('#wk-week-sum').innerHTML = `<div class="row title"><span>${N===1?'Día':N+' días'}</span><span><span class="big">${fmtN(tot.k)}</span>${tot.t?` / ${fmtN(tot.t)}`:''} kcal</span></div>
     ${tot.t?`<div class="prog ${over?'over':''}"><i style="width:${Math.min(100, tot.k/tot.t*100)}%"></i></div>`:''}
     <div class="row" style="color:var(--muted);margin-top:6px;"><span>${tot.n?`Media ${fmtN(tot.k/tot.n)} kcal/día`:'Aún no hay nada apuntado'}</span><span>${wo.length?`${wo.length} entreno${wo.length>1?'s':''} · ${woMin} min · ${fmtN(woKcal)} kcal`:'Sin entrenos'}</span></div>`;
 }
@@ -12043,7 +12020,7 @@ function renderWkTools(keys){
   let h = `<div class="wk-tools-row"><button type="button" class="deck-btn" data-deck="roll">${ICON_DICE}Mazo aleatorio</button>`
     + (ghost.length ? `<button type="button" class="deck-ok" data-deck="accept">Aceptar ${ghost.length}</button>` : '')
     + `<button type="button" class="deck-cart" data-deck="cart" aria-label="Añadir todo al carrito"${cartN?'':' disabled'}>${ICON_CART}${cartN?`<b>${cartN}</b>`:''}</button></div>`
-    + `<div class="deck-src" role="group" aria-label="Sugerir platos de"><span>Sugerir de</span><button type="button" data-src="mine" class="${deckSrc==='mine'?'on':''}">Mis platos</button><button type="button" data-src="all" class="${deckSrc==='all'?'on':''}">General</button></div>`;
+    + (deckHasChoice() ? `<div class="deck-src" role="group" aria-label="Sugerir platos de"><span>Sugerir de</span><button type="button" data-src="mine" class="${deckSrc==='mine'?'on':''}">Mis platos</button><button type="button" data-src="all" class="${deckSrc==='all'?'on':''}">General</button></div>` : '');
   if(!sugEnabled()) h += `<div class="deck-hint">${deckHint()}</div>`;
   const tools = $('#wk-tools');
   if(tools._sig !== h){ tools._sig = h; tools.innerHTML = h; }
@@ -12136,11 +12113,13 @@ function renderCellSheet(){
   const st = dayStats(date); const s = st.slots[meal];
   const prim = csPrimary(date, meal);
   let h = '';
+  const only0 = its.length===1 && prim && prim.entry && prim.entry.status==='planned' ? its[0] : null;
+  const canOther = meal!=='extras' && sugEnabled() && prim && (prim.sug || only0);
   if(prim){
     const img = prim.dish && prim.dish.image_url ? `<img ${pimg(prim.dish.image_url, 'm')} alt="" decoding="async" draggable="false">` : (prim.entry ? entryThumbHtml(prim.entry) : ICON_PLATE);
     const state = prim.sug ? 'Sugerencia' : (prim.entry.status==='eaten' ? 'Comido' : 'Previsto');
     h += `<div class="cs-hero"><div class="cs-hero-img">${img}</div><div class="cs-hero-t"><b>${prim.sug?'✦ ':''}${escapeHtml(prim.name)}</b><small>${state} · ${fmtN(prim.kcal)} kcal</small></div></div>`;
-    h += `<div class="cs-hero-btns">${prim.dish && prim.dish.id ? `<button type="button" class="pri" data-act="cs-info" data-dish="${prim.dish.id}">Info</button>` : ''}<button type="button" data-act="cs-change" data-date="${date}" data-meal="${meal}">Cambiar</button></div>`;
+    h += `<div class="cs-hero-btns">${prim.dish && prim.dish.id ? `<button type="button" class="pri" data-act="cs-info" data-dish="${prim.dish.id}">Info</button>` : ''}${canOther ? (prim.sug ? `<button type="button" data-act="sug-next" data-date="${date}" data-meal="${meal}">Otra</button>` : `<button type="button" data-act="sug-swap" data-id="${only0.id}">Otra</button>`) : ''}<button type="button" data-act="cs-change" data-date="${date}" data-meal="${meal}">Cambiar</button></div>`;
   }
   const only = its.length===1 && prim && prim.entry && prim.entry.status!=='skipped' ? its[0] : null;
   if(only){ // una sola cosa apuntada: la carta ya la enseña, aquí solo sus botones
@@ -12154,7 +12133,7 @@ function renderCellSheet(){
     h += `<div class="cs-lbl"><b>${fmtN(s.kcal)}</b> kcal${st.target && meal!=='extras' ? ` · te tocaban ~${fmtN(st.target*MEAL_SPLIT[meal])}` : ''}</div>`;
     h += its.map(itemRowHtml).join('');
   } else if(prim && prim.sug){
-    h += `<div class="cs-ctl"><button type="button" class="on" data-act="sug-add" data-date="${date}" data-meal="${meal}" data-dish="${prim.dish.id}">Usar esta</button><button type="button" data-act="sug-next" data-date="${date}" data-meal="${meal}">Otra sugerencia</button></div>`;
+    h += `<div class="cs-ctl"><button type="button" class="on" data-act="sug-add" data-date="${date}" data-meal="${meal}" data-dish="${prim.dish.id}" style="flex:1;">Usar esta</button></div>`;
   }
   if(!(prim && prim.sug)) h += `<button type="button" class="btn-secondary" style="width:100%;margin-top:10px;" data-act="add" data-date="${date}" data-meal="${meal}">${its.length?'+ Añadir otra cosa':'Elegir yo'}</button>`;
   $('#cs-body').innerHTML = h;
@@ -12172,7 +12151,7 @@ $('#wk-tools').addEventListener('click', async (ev)=>{
   const b = ev.target.closest('[data-deck],[data-src]'); if(!b) return;
   if(b.dataset.src){ await setDeckSrc(b.dataset.src); return; }
   if(b.dataset.deck==='roll'){
-    if(!sugEnabled() && !(deckSrc==='all' && !pubDeck.at && currentUser.suggest_meals)){ showToast(deckHint()); return; }
+    if(!sugEnabled() && !(deckMode()==='all' && !pubDeck.at && currentUser.suggest_meals)){ showToast(deckHint()); return; }
     await deckRoll();
   } else if(b.dataset.deck==='accept'){
     await deckAccept();
@@ -12197,16 +12176,19 @@ function suggestibleDishes(){ return dishes.filter(d=> typeof d.calories==='numb
 /* El mazo puede sacar platos de tu repositorio («Mis platos») o de toda la app («General»:
    platos de perfiles públicos que comparten en Explorar). Los generales se piden una vez
    (5 consultas, una por tipo de comida) y se guardan 15 min. */
-let deckSrc = 'mine';
-try{ deckSrc = localStorage.getItem('nutrifit_deck_src')==='all' ? 'all' : 'mine'; }catch(e){}
-const pubDeck = { list:[], at:0, loading:false, failed:false, promise:null };
+let deckSrc = 'all';   // por defecto, los platos de Explorar
+try{ deckSrc = localStorage.getItem('nutrifit_deck_src')==='mine' ? 'mine' : 'all'; }catch(e){}
+// Solo se puede elegir si tienes varios platos tuyos; si no, el mazo usa Explorar y ya.
+function deckHasChoice(){ return suggestibleDishes().length >= 3; }
+function deckMode(){ return deckHasChoice() ? deckSrc : 'all'; }
+const pubDeck = { list:[], at:0, tried:0, loading:false, failed:false, promise:null };
 const foreignDishes = {};            // platos de otras personas que salen en tu plan (id → plato)
 const foreignTried = new Set();
 const DECK_TAGS = ['Desayuno','Comida','Snack','Postre','Cena'];
 function loadPubDeck(force){
   if(pubDeck.loading) return pubDeck.promise;
   if(!force && pubDeck.at && Date.now()-pubDeck.at < 15*60*1000) return Promise.resolve();
-  pubDeck.loading = true;
+  pubDeck.loading = true; pubDeck.tried = Date.now();
   pubDeck.promise = (async ()=>{
     try{
       const res = await Promise.all(DECK_TAGS.map(t=> sb.rpc('explore_public_dishes', { p_terms: [], p_tags: [t] })));
@@ -12222,15 +12204,15 @@ function loadPubDeck(force){
   })();
   return pubDeck.promise;
 }
-function deckPool(){ return deckSrc==='all' ? pubDeck.list : suggestibleDishes(); }
+function deckPool(){ return deckMode()==='all' ? pubDeck.list : suggestibleDishes(); }
 function deckDishById(id){ return dishes.find(d=> d.id===id) || foreignDishes[id] || pubDeck.list.find(d=> d.id===id) || null; }
-function deckSig(){ return deckSrc==='all' ? 'all:'+pubDeck.at+':'+pubDeck.list.length : 'mine:'+dishes.length; }
-function sugEnabled(){ return !!(currentUser && currentUser.suggest_meals && fitnessProfile && fitnessProfile.target_calories && deckPool().length > (deckSrc==='all' ? 5 : 10)); }
+function deckSig(){ return deckMode()==='all' ? 'all:'+pubDeck.at+':'+pubDeck.list.length : 'mine:'+dishes.length; }
+function sugEnabled(){ return !!(currentUser && currentUser.suggest_meals && fitnessProfile && fitnessProfile.target_calories && deckPool().length > 0); }
 function deckHint(){
   if(!currentUser.suggest_meals) return 'Actívalo en Ajustes → Fitness → «Sugerir platos».';
   if(!fitnessProfile || !fitnessProfile.target_calories) return 'Rellena tus datos en Objetivo para poder sugerirte platos.';
-  if(deckSrc==='all') return pubDeck.loading ? 'Buscando platos de la comunidad…' : (pubDeck.failed ? 'No se han podido cargar los platos de la comunidad ahora mismo.' : 'Todavía no hay suficientes platos públicos con calorías.');
-  return 'Necesitas más de 10 platos con kcal en tu repositorio (o usa «General»).';
+  if(deckMode()==='all') return pubDeck.loading ? 'Buscando platos en Explorar…' : (pubDeck.failed ? 'No se han podido cargar los platos de Explorar ahora mismo.' : 'Todavía no hay platos con calorías en Explorar.');
+  return 'Añade platos con kcal a tu repositorio para poder sugerirlos.';
 }
 async function setDeckSrc(src){
   if(src===deckSrc) return;
@@ -12238,9 +12220,9 @@ async function setDeckSrc(src){
   try{ localStorage.setItem('nutrifit_deck_src', src); }catch(e){}
   sugReroll();
   renderFitWeek();
-  if(src==='all' && (!pubDeck.at || Date.now()-pubDeck.at > 15*60*1000)){
+  if(deckMode()==='all' && (!pubDeck.at || Date.now()-pubDeck.at > 15*60*1000)){
     await loadPubDeck();
-    if(deckSrc==='all'){ sugReroll(); renderFitWeek(); }
+    if(deckMode()==='all'){ sugReroll(); renderFitWeek(); }
   }
 }
 function sugScored(date, m, used, prevId){
@@ -12353,7 +12335,7 @@ async function deckAccept(){
 // Se ve al instante; el guardado va por detrás (deckSync) y, si falla, se vuelve a cargar.
 let deckSync = Promise.resolve();
 async function deckRoll(){
-  if(deckSrc==='all' && !pubDeck.at){ await loadPubDeck(); if(!sugEnabled()){ renderFitWeek(); showToast(deckHint()); return; } }
+  if(deckMode()==='all' && !pubDeck.at){ await loadPubDeck(); if(!sugEnabled()){ renderFitWeek(); showToast(deckHint()); return; } }
   const keys = wkWindowDates().map(fmtDate), today = todayStr();
   const old = fitEntries.filter(e=> keys.includes(e.entry_date) && e.entry_date>=today && e.status==='planned' && isSugEntry(e) && !String(e.id).startsWith('tmp-'));
   const oldIds = old.map(e=> e.id);
@@ -12455,10 +12437,18 @@ async function onWeekAction(btn){
   } else if(act==='add'){
     openFitAdd(btn.dataset.date || selDay, btn.dataset.meal, null); return;
   } else if(act==='sug-add'){
-    const d = dishes.find(x=> x.id===btn.dataset.dish); if(!d) return;
+    const d = deckDishById(btn.dataset.dish); if(!d) return;
     const r = await insertSuggested([sugRow(btn.dataset.date || selDay, btn.dataset.meal, d)]);
     if(r.error){ fitFail(r.error); return; }
     fitEntries.push(...(r.data||[]));
+  } else if(act==='sug-swap'){
+    const e = entryById(id); if(!e || e.status!=='planned' || !sugEnabled()) return;
+    const used = {}; fitEntries.forEach(x=>{ if(x.dish_id && x.status!=='skipped' && x.id!==id) used[x.dish_id] = (used[x.dish_id]||0)+1; });
+    const sc = sugScored(e.entry_date, e.meal_type, used, e.dish_id).filter(x=> x.d.id!==e.dish_id);
+    if(!sc.length){ showToast('No hay más sugerencias para esta comida'); return; }
+    const dish = pickWeighted(sc, mulberry32(hashStr(e.entry_date+e.meal_type) + (++sugSeed)*104729), 0.8);
+    const r = await updateEntry(id, { ...entryFromDish(dish, 1), ...(fitSugCol===true ? { suggested:true } : {}) });
+    if(r) deckSaved.add(id);
   } else if(act==='sug-next'){
     sugNext(btn.dataset.date || selDay, btn.dataset.meal);
   } else if(act==='wo-add'){
@@ -12866,7 +12856,7 @@ async function renderFitness(){
     }
     if(fitTab==='week'){
       renderFitWeek();
-      if(deckSrc==='all' && (!pubDeck.at || Date.now()-pubDeck.at > 15*60*1000)) loadPubDeck().then(()=>{ if(fitTab==='week' && currentSection==='fitness'){ renderFitWeek(); } });
+      if(deckMode()==='all' && currentUser.suggest_meals && fitnessProfile && (!pubDeck.at || Date.now()-pubDeck.at > 15*60*1000) && Date.now()-pubDeck.tried > 60000) loadPubDeck().then(()=>{ if(fitTab==='week' && currentSection==='fitness'){ renderFitWeek(); } });
       loadForeignForEntries();
     } else renderFitStats();
   } else {
