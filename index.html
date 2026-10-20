@@ -1078,18 +1078,18 @@ input[type=search]::-webkit-search-cancel-button, input[type=search]::-webkit-se
 .wk-nav{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
 .wk-arrow{width:38px; height:38px; border-radius:50%; background:var(--card); border:1px solid var(--border); font-size:22px; line-height:1; color:var(--text);}
 .wk-title{flex:1; padding:9px; border-radius:12px; background:var(--card); border:1px solid var(--border); font-weight:700; font-size:14px; color:var(--text);}
-.wk-strip{display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:12px;}
-.wk-chip{position:relative; padding:7px 0 6px; border-radius:12px; background:var(--card); border:1px solid var(--border); text-align:center; color:var(--text);}
-.wk-chip .dn{display:block; font-size:10.5px; color:var(--muted); font-weight:600;}
-.wk-chip .dd{display:block; font-size:15px; font-weight:700; margin:1px 0 3px;}
-.wk-chip .bar{display:block; height:4px; border-radius:2px; background:var(--card2); margin:0 7px; overflow:hidden;}
-.wk-chip .bar i{display:block; height:100%; background:var(--accent2); border-radius:2px;}
-.wk-chip.over .bar i{background:var(--bad);}
-.wk-chip.today .dd{color:var(--accent);}
-.wk-chip.sel{background:var(--accent); border-color:var(--accent); color:#fff;}
-.wk-chip.sel .dn, .wk-chip.sel .dd{color:#fff;}
-.wk-chip.sel .bar{background:rgba(255,255,255,.3);} .wk-chip.sel .bar i{background:#fff;}
-.wk-chip .dot{position:absolute; top:4px; right:5px; width:6px; height:6px; border-radius:50%; background:var(--accent2);}
+.wk-cal{position:relative; display:flex; overflow-x:auto; overflow-y:hidden; margin:0 0 10px; padding:0; scrollbar-width:none; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scroll-snap-type:x proximity;}
+.wk-cal::-webkit-scrollbar{display:none;}
+.wk-cc{flex:0 0 46px; padding:5px 0 3px; background:none; color:var(--text); text-align:center; scroll-snap-align:start; position:relative;}
+.wk-cc .dw{display:block; font-size:10.5px; font-weight:700; color:var(--muted);}
+.wk-cc .dn{display:flex; align-items:center; justify-content:center; width:30px; height:30px; margin:2px auto 0; border-radius:50%; font-size:15px; font-weight:800;}
+.wk-cc .dm{display:block; height:11px; line-height:11px; font-size:9px; font-weight:800; text-transform:uppercase; color:var(--muted);}
+.wk-cc.has .dm:empty::before{content:''; display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--accent2); vertical-align:middle;}
+.wk-cc.past{opacity:.5;}
+.wk-cc.in{background:rgba(18,135,94,.12); opacity:1;}
+.wk-cc.in.st{border-radius:14px 0 0 14px;} .wk-cc.in.en{border-radius:0 14px 14px 0;} .wk-cc.in.st.en{border-radius:14px;}
+.wk-cc.in .dn{color:var(--accent);}
+.wk-cc.today .dn{background:var(--accent); color:#fff;}
 .wk-sum{padding:12px 14px; font-size:13px;}
 .wk-sum .row{display:flex; justify-content:space-between; gap:8px;}
 .wk-sum .row b{font-size:15px;}
@@ -2353,6 +2353,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <button type="button" class="seg-b" data-wdays="5">5 días</button>
           <button type="button" class="seg-b" data-wdays="7">7 días</button>
         </div>
+        <div class="wk-cal" id="wk-cal" role="group" aria-label="Calendario: elige desde qué día"></div>
         <div class="wk-tools" id="wk-tools"></div>
         <div id="wk-grid-wrap">
           <div class="card wk-gridcard"><div class="wk-grid" id="wk-grid"></div></div>
@@ -2360,7 +2361,6 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
           <div id="wk-week-sum" class="card wk-sum"></div>
         </div>
         <div id="wk-day-wrap" class="hidden">
-          <div class="wk-strip" id="wk-strip"></div>
           <div id="wk-day"></div>
         </div>
       </div>
@@ -3215,7 +3215,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button type="button" class="seg-b" data-ftab="free">Libre</button>
     </div>
     <div id="fm-dish">
-      <div class="por-step"><span id="fm-por-lbl">Raciones</span><button type="button" id="fm-por-minus" aria-label="Menos">−</button><b id="fm-por-val">1</b><button type="button" id="fm-por-plus" aria-label="Más">+</button></div>
+      <div class="por-step" id="fm-por-step"><span id="fm-por-lbl">Raciones</span><button type="button" id="fm-por-minus" aria-label="Menos">−</button><b id="fm-por-val">1</b><button type="button" id="fm-por-plus" aria-label="Más">+</button></div>
       <div class="fm-cats" id="fm-cats"></div>
       <input type="search" class="ep-input" id="fm-search" placeholder="Busca un plato" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
       <div id="fm-list" class="fm-grid"></div>
@@ -3341,7 +3341,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.10-1';
+const APP_VERSION = '2026.11.11-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -11059,7 +11059,7 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); const k = currentPag
     if(anyModalOpen()) return 'none';
     const t = g.target;
     if(t.closest && t.closest('.tabbar, .photo-track, .week-board, input[type=range], .ingredient-suggest')) return 'none';
-    const strip = t.closest && t.closest('.menu-strip');
+    const strip = t.closest && t.closest('.menu-strip, .wk-cal');
     if(strip && !(dx > 0 && strip.scrollLeft <= 0)) return 'none'; // la tira de platos se mueve sola
     // Un campo de texto solo "se queda" el gesto si estás escribiendo en él.
     const fld = t.closest && t.closest('input, textarea, select');
@@ -11746,9 +11746,9 @@ function fitRange(){
     if(statsRange==='4w') return { from: fmtDate(fitAddDays(ws,-21)), to: fmtDate(fitAddDays(ws,6)) };
     return { from: fmtDate(ws), to: fmtDate(fitAddDays(ws,6)) };
   }
-  if(wkDays===1){ const ws = fitWeekStart(); return { from: fmtDate(ws), to: fmtDate(fitAddDays(ws,6)) }; } // 1 día: se carga la semana para la tira de días
-  const w = wkWindowDates();
-  return { from: fmtDate(w[0]), to: fmtDate(w[w.length-1]) };
+  // Semana: se cargan desde la semana anterior hasta ~8 semanas por delante, para poder moverse por el calendario
+  const m = getMonday(fitAnchor);
+  return { from: fmtDate(fitAddDays(m,-7)), to: fmtDate(fitAddDays(m, 8*7-1)) };
 }
 function fitTitle(){
   const dateTxt = (a, b)=> a.getMonth()===b.getMonth() ? `${a.getDate()} – ${b.getDate()} ${MONTHS_S[b.getMonth()]}` : `${a.getDate()} ${MONTHS_S[a.getMonth()]} – ${b.getDate()} ${MONTHS_S[b.getMonth()]}`;
@@ -11873,7 +11873,7 @@ function itemRowHtml(e){
   const circle = st==='skipped'
     ? `<button type="button" class="ic-b" data-act="restore" data-id="${e.id}" aria-label="Volver a previsto">↺</button>`
     : `<button type="button" class="ic-b ${st==='eaten'?'ok':''}" data-act="toggle" data-id="${e.id}" aria-label="${st==='eaten'?'Marcar como no comido':'Marcar como comido'}">${st==='eaten'?ICON_CHECK:''}</button>`;
-  const por = `<button type="button" class="it-por" data-act="por" data-id="${e.id}" aria-label="Cambiar raciones">×${Number(e.portions)||1}</button>`;
+  const por = e.meal_type==='extras' ? `<button type="button" class="it-por" data-act="por" data-id="${e.id}" aria-label="Cambiar unidades">×${Number(e.portions)||1}</button>` : '';
   const swap = st==='planned' ? `<button type="button" class="ic-b" data-act="swap" data-id="${e.id}" aria-label="He comido otra cosa">${ICON_SWAP}</button>` : '';
   return `<div class="it-row ${st}" data-entry="${e.id}">
     ${circle}
@@ -11939,7 +11939,7 @@ function dayItemHtml(e){
   const circle = st==='skipped'
     ? `<button type="button" class="ic-b" data-act="restore" data-id="${e.id}" aria-label="Volver a previsto">↺</button>`
     : `<button type="button" class="ic-b ${st==='eaten'?'ok':''}" data-act="toggle" data-id="${e.id}" aria-label="${st==='eaten'?'Marcar como no comido':'Marcar como comido'}">${st==='eaten'?ICON_CHECK:''}</button>`;
-  const por = st==='skipped' ? '' : `<button type="button" class="it-por" data-act="por" data-id="${e.id}" aria-label="Cambiar raciones">×${Number(e.portions)||1}</button>`;
+  const por = st==='skipped' || e.meal_type!=='extras' ? '' : `<button type="button" class="it-por" data-act="por" data-id="${e.id}" aria-label="Cambiar unidades">×${Number(e.portions)||1}</button>`;
   const swap = st==='planned' ? `<button type="button" class="ic-b" data-act="swap" data-id="${e.id}" aria-label="He comido otra cosa">${ICON_SWAP}</button>` : '';
   return `<div class="dm-item ${st}" data-entry="${e.id}">
     <div class="dm-nm">${escapeHtml(e.name)}</div>
@@ -12057,24 +12057,58 @@ function weekToCart(){
   showToast(added ? `Al carrito: ${added} ingrediente${added>1?'s':''} de ${list.length} plato${list.length>1?'s':''}${have?` (${have} ya en la Nevera)`:''}` : 'Ya lo tienes todo en la Nevera');
 }
 function renderWkDay(){
-  const ws = fitWeekStart();
-  const dates = Array.from({length:7}, (_,i)=> fitAddDays(ws,i));
-  const keys = dates.map(fmtDate);
   selDay = fmtDate(fitAnchor);
-  const stats = keys.map(dayStats);
-  $('#wk-strip').innerHTML = dates.map((d,i)=>{
-    const s = stats[i];
-    const pct = s.target ? Math.min(100, s.kcal/s.target*100) : (s.kcal?60:0);
-    const over = s.target && s.kcal > s.target*1.05;
-    const hasWo = fitWorkouts.some(w=> w.workout_date===keys[i]);
-    return `<button type="button" class="wk-chip ${keys[i]===selDay?'sel':''} ${keys[i]===todayStr()?'today':''} ${over?'over':''}" data-day="${keys[i]}">
-      ${hasWo?'<span class="dot"></span>':''}<span class="dn">${dayShort(d)}</span><span class="dd">${d.getDate()}</span><span class="bar"><i style="width:${pct}%"></i></span></button>`;
-  }).join('');
   $('#wk-day').innerHTML = dayCardHtml(selDay);
   renderWkTools([selDay]);
 }
+/* Calendario horizontal: todos los días seguidos (varias semanas), con lo que se está viendo marcado.
+   Tocar un día mueve la ventana a empezar ahí; se desliza para ir hacia delante o hacia atrás. */
+function renderWkCal(){
+  const wrap = $('#wk-cal'); if(!wrap) return;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const w = wkWindowDates();
+  let lo = fitAddDays(today, -21), hi = fitAddDays(today, 98);
+  const a = fitAddDays(fitAnchor, -7), b = fitAddDays(w[w.length-1], 14);
+  if(a < lo) lo = a; if(b > hi) hi = b;
+  const tStr = fmtDate(today), loStr = fmtDate(lo);
+  const key = loStr + '|' + fmtDate(hi) + '|' + tStr;
+  if(wrap._key !== key){
+    wrap._key = key;
+    let h = '';
+    for(let d = new Date(lo); d <= hi; d = fitAddDays(d, 1)){
+      const k = fmtDate(d);
+      h += `<button type="button" class="wk-cc" data-cal="${k}" aria-label="${DAY_NAMES[isoWeekday(d)]} ${d.getDate()} ${MONTHS_S[d.getMonth()]}"><span class="dw">${dayShort(d)}</span><span class="dn">${d.getDate()}</span><span class="dm">${(d.getDate()===1 || k===loStr) ? MONTHS_S[d.getMonth()] : ''}</span></button>`;
+    }
+    wrap.innerHTML = h;
+  }
+  const first = fmtDate(w[0]), last = fmtDate(w[w.length-1]);
+  const has = new Set(fitEntries.filter(e=> e.status!=='skipped').map(e=> e.entry_date));
+  wrap.querySelectorAll('.wk-cc').forEach(c=>{
+    const k = c.dataset.cal;
+    c.classList.toggle('in', k>=first && k<=last);
+    c.classList.toggle('st', k===first);
+    c.classList.toggle('en', k===last);
+    c.classList.toggle('today', k===tStr);
+    c.classList.toggle('past', k<tStr);
+    c.classList.toggle('has', has.has(k));
+  });
+  // Que el primer día marcado se vea (sin saltos si ya estaba a la vista)
+  const st = wrap.querySelector('.wk-cc.st');
+  if(st && wrap.clientWidth){
+    const left = st.offsetLeft, cw = wrap.clientWidth;
+    if(!wrap._init || left < wrap.scrollLeft || left + st.offsetWidth > wrap.scrollLeft + cw)
+      wrap.scrollTo({ left: Math.max(0, left - st.offsetWidth), behavior: wrap._init && !REDUCED_MOTION ? 'smooth' : 'auto' });
+    wrap._init = true;
+  } else if(!wrap.clientWidth) wrap._init = false;
+}
+$('#wk-cal').addEventListener('click', (ev)=>{
+  const b = ev.target.closest('[data-cal]'); if(!b) return;
+  fitAnchor = parseDate(b.dataset.cal); selDay = wkDays===1 ? b.dataset.cal : null;
+  renderFitness();
+});
 function renderFitWeek(){
   weekDates = wkWindowDates();
+  renderWkCal();
   $all('#wk-view .seg-b').forEach(b=> b.classList.toggle('active', Number(b.dataset.wdays)===wkDays));
   $('#wk-grid-wrap').classList.toggle('hidden', wkDays===1);
   $('#wk-day-wrap').classList.toggle('hidden', wkDays!==1);
@@ -12125,7 +12159,7 @@ function renderCellSheet(){
   if(only){ // una sola cosa apuntada: la carta ya la enseña, aquí solo sus botones
     const eaten = only.status==='eaten';
     h += `<div class="cs-ctl"><button type="button" class="${eaten?'on':''}" data-act="toggle" data-id="${only.id}">${eaten?'✓ Comido':'Marcar como comido'}</button>`
-      + `<button type="button" data-act="por" data-id="${only.id}">×${Number(only.portions)||1} ${meal==='extras'?'uds.':'raciones'}</button>`
+      + (meal==='extras' ? `<button type="button" data-act="por" data-id="${only.id}">×${Number(only.portions)||1} uds.</button>` : '')
       + (only.status==='planned' ? `<button type="button" data-act="swap" data-id="${only.id}">He comido otra cosa</button>` : '')
       + `<button type="button" class="bad" data-act="del" data-id="${only.id}">Quitar</button></div>`;
     h += `<div class="cs-lbl" style="margin-top:8px;"><b>${fmtN(s.kcal)}</b> kcal${st.target && meal!=='extras' ? ` · te tocaban ~${fmtN(st.target*MEAL_SPLIT[meal])}` : ''}</div>`;
@@ -12470,7 +12504,6 @@ $('#wk-day').addEventListener('click', (ev)=>{
   if(c){ const [date, meal] = c.dataset.cell.split('|'); openCell(date, meal); return; }
   const b = ev.target.closest('[data-act]'); if(b) onWeekAction(b);
 });
-$('#wk-strip').addEventListener('click', (ev)=>{ const b = ev.target.closest('[data-day]'); if(!b) return; fitAnchor = parseDate(b.dataset.day); selDay = b.dataset.day; renderFitWeek(); });
 function fitStep(){ return fitTab==='week' ? wkDays : 7; }
 $('#wk-prev').onclick = ()=>{ fitAnchor = fitAddDays(fitAnchor, -fitStep()); selDay = null; renderFitness(); };
 $('#wk-next').onclick = ()=>{ fitAnchor = fitAddDays(fitAnchor, fitStep()); selDay = null; renderFitness(); };
@@ -12513,7 +12546,7 @@ function openFitAdd(date, meal, swapId, opts){
   fmCtx = { date, meal, swapId: swapId||null, replaceId: opts.replaceId||null, ghost: !!opts.ghost };
   fmDrinkMode = meal==='extras';
   const cur = opts.replaceId ? entryById(opts.replaceId) : null;
-  setFmUnits(cur ? (Number(cur.portions)||1) : 1);
+  setFmUnits(cur && fmDrinkMode ? (Number(cur.portions)||1) : 1);
   fmCat = REPO_CATS.some(c=> c.k===meal) && dishes.some(d=> dishInRepoCat(d, meal)) ? meal : 'all';
   $('#fm-cats').classList.toggle('hidden', fmDrinkMode);
   renderFmCats();
@@ -12526,7 +12559,8 @@ function openFitAdd(date, meal, swapId, opts){
   const tabs = $all('#fm-tabs .seg-b');
   tabs[0].textContent = fmDrinkMode ? 'Bebidas' : 'Mis platos';
   tabs[1].textContent = fmDrinkMode ? 'Otra bebida' : 'Libre';
-  $('#fm-por-lbl').textContent = fmDrinkMode ? 'Unidades' : 'Raciones';
+  $('#fm-por-lbl').textContent = 'Unidades';
+  $('#fm-por-step').classList.toggle('hidden', !fmDrinkMode); // los platos van siempre a 1 ración; solo las bebidas piden unidades
   $('#fm-search').placeholder = fmDrinkMode ? 'Busca una bebida' : 'Busca un plato';
   $('#fm-name').placeholder = fmDrinkMode ? 'Ej: Sidra, mosto…' : 'Ej: Bocadillo, tostada…';
   $('#fm-free-add').textContent = 'Añadir';
@@ -12842,7 +12876,7 @@ async function renderFitness(){
   const seq = ++fitRenderSeq;
   const nav = fitTab==='week' || fitTab==='stats';
   $('#wk-nav').classList.toggle('hidden', !nav);
-  $('#wk-title').textContent = fitTitle();
+  $('#wk-title').textContent = fitTitle() + (fitTab==='week' && fmtDate(fitAnchor)!==todayStr() ? ' · volver a hoy' : '');
   if(nav){
     const { from, to } = fitRange();
     const ok = await ensureFitRange(from, to);
@@ -12851,7 +12885,7 @@ async function renderFitness(){
     warn.classList.toggle('hidden', ok);
     if(!ok){
       warn.innerHTML = 'Falta un paso: ejecuta <b>actualizar_fitness_semana.sql</b> en Supabase (SQL Editor → Run) para activar la previsión semanal, los entrenos y las estadísticas.';
-      $('#wk-day').innerHTML = ''; $('#wk-strip').innerHTML = ''; $('#wk-week-sum').innerHTML = ''; $('#st-body').innerHTML = '';
+      $('#wk-day').innerHTML = ''; $('#wk-week-sum').innerHTML = ''; $('#st-body').innerHTML = '';
       return;
     }
     if(fitTab==='week'){
