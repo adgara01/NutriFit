@@ -2299,6 +2299,17 @@ html[data-theme="dark"] .modal-sheet{box-shadow:none;}
 html[data-theme="dark"] .tabbar{box-shadow:0 0 0 .5px var(--hair), var(--glass-shadow);}
 html[data-theme="dark"] .appbar{box-shadow:0 .5px 0 var(--hair);}
 html[data-theme="dark"] .wk-cc.today .dn, html[data-theme="dark"] .wk-dh.today .dd{color:#1a0e05;}
+
+/* 2026.11.14: sin nombres en 5 y 7 días (solo la foto o el icono); el nombre solo en 3 días */
+.wk-grid.n5 .wk-cell-t, .wk-grid.n7 .wk-cell-t{display:none !important;}
+.wk-grid.n5 .wk-cell:not(:has(img)) .wk-cell-bg svg, .wk-grid.n7 .wk-cell:not(:has(img)) .wk-cell-bg svg{display:block;}
+/* Ficha del plato: la barra de botones (Cocinar, Editar, Guardar...) se queda fija abajo
+   mientras se hace scroll por el resto de la ficha. */
+#dish-modal .modal-actions{position:sticky; bottom:calc(-18px - env(safe-area-inset-bottom)); z-index:4;
+  margin:10px -18px calc(-18px - env(safe-area-inset-bottom)); padding:12px 18px calc(14px + env(safe-area-inset-bottom));
+  background:var(--sheet-glass); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); box-shadow:0 -.5px 0 var(--hair);}
+#dish-modal .modal-actions:not(:has(> :not(.hidden))){display:none;}
+@media (min-width:1024px){ #dish-modal .modal-actions{bottom:-18px; margin-bottom:-18px; padding-bottom:16px;} }
 </style>
 </head>
 <body>
@@ -3661,7 +3672,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.13-2';
+const APP_VERSION = '2026.11.14-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -7694,14 +7705,24 @@ async function backfillAvatar(){
 /* Etiquetas: una sola sección, por grupos. La primera fila es el tipo
    (Healthy / Normal / Cheat meal, solo uno: se guarda en dishes.quality
    porque Fitness lo usa); el resto se guardan en dishes.tags. */
+// Solo siete etiquetas (Adri, nov 2026): Desayuno, Comida y Cena mandan en el mazo
+// aleatorio; Carne, Pescado, Vegano y Repostería sirven para Explorar. Nada de Snack.
 const TAG_GROUPS = [
-  { title:'Momento', tags:['Desayuno','Comida','Cena','Snack','Postre'] },
-  { title:'Principal', tags:['Carne','Pescado','Vegano','Vegetariano'] },
-  { title:'Dieta', tags:['Sin gluten','Sin lactosa','Alto en proteína','Ligero'] },
-  { title:'Estilo', tags:['Tupper','Rápido','Picante'] },
-  { title:'Cocina', tags:['Mediterráneo','Italiano','Asiático','Chino','Japonés','Indio','Mexicano','Árabe','Americano'] },
+  { title:'Momento', tags:['Desayuno','Comida','Cena'] },
+  { title:'Tipo', tags:['Carne','Pescado','Vegano','Repostería'] },
 ];
 const DISH_TAGS = TAG_GROUPS.flatMap(g=> g.tags);
+const TAG_ALIASES = { 'postre':'Repostería', 'reposteria':'Repostería', 'dulce':'Repostería', 'desayuno':'Desayuno', 'comida':'Comida', 'almuerzo':'Comida', 'cena':'Cena', 'carne':'Carne', 'pescado':'Pescado', 'vegano':'Vegano' };
+// Deja solo las etiquetas válidas (las antiguas se traducen o se quitan).
+function cleanTags(tags){
+  const out = [];
+  (tags||[]).forEach(t=>{
+    const k = stripAccents(String(t||'').toLowerCase()).trim();
+    const v = TAG_ALIASES[k] || DISH_TAGS.find(x=> stripAccents(x.toLowerCase())===k);
+    if(v && !out.includes(v)) out.push(v);
+  });
+  return out;
+}
 let dishTags = [];
 function allKnownTags(extra){
   const set = new Set(DISH_TAGS);
@@ -7715,19 +7736,18 @@ const ICON_TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 function renderDishTags(){
   const editable = !dishPreview && !dishFieldsLocked();
   const box = $('#dish-tags');
-  const any = dishTags.length || cleanQuality(selectedQuality);
+  dishTags = cleanTags(dishTags);
+  const any = dishTags.length;
   box.classList.toggle('hidden', !editable && !any);
   $('#dish-tags-toggle').classList.toggle('hidden', !editable);
   $('#dish-tags-toggle').textContent = any ? 'Cambiar' : '+ Añadir';
-  $('#dish-tags-list').innerHTML = qualityChipHtml(selectedQuality) + tagChipsHtml(dishTags, 'tag-static');
+  $('#dish-tags-list').innerHTML = tagChipsHtml(dishTags, 'tag-static');
 }
 // Pop-up con todas las etiquetas ordenadas por grupos (rectángulos de dos en dos).
 function tagsModalHtml(){
   const tile = (attrs, label, on, cls)=> `<button type="button" class="tag-tile ${cls||''} ${on ? 'on' : ''}" ${attrs}><span>${escapeHtml(label)}</span><span class="tag-tick">${ICON_TICK}</span></button>`;
-  const own = allKnownTags(dishTags).filter(t=> !DISH_TAGS.includes(t));
-  return `<div class="tag-group-title">Tipo</div><div class="tags-grid">${Object.keys(QUALITY_LABELS).map(q=> tile(`data-qual="${q}"`, QUALITY_LABELS[q], selectedQuality===q, 'q-'+q)).join('')}</div>`
-    + TAG_GROUPS.map(g=> `<div class="tag-group-title">${g.title}</div><div class="tags-grid">${g.tags.map(t=> tile(`data-tag="${escapeHtml(t)}"`, t, dishTags.includes(t))).join('')}</div>`).join('')
-    + `<div class="tag-group-title">Otras</div><div class="tags-grid">${own.map(t=> tile(`data-tag="${escapeHtml(t)}"`, t, dishTags.includes(t))).join('')}<button type="button" class="tag-tile tag-add" id="dish-tag-new">+ Otra</button></div>`;
+  dishTags = cleanTags(dishTags);
+  return TAG_GROUPS.map(g=> `<div class="tag-group-title">${g.title}</div><div class="tags-grid">${g.tags.map(t=> tile(`data-tag="${escapeHtml(t)}"`, t, dishTags.includes(t))).join('')}</div>`).join('');
 }
 function buildTagsModal(){
   const body = $('#tags-body'), sc = body.scrollTop;
@@ -7743,7 +7763,7 @@ function buildTagsModal(){
     b.classList.toggle('on', dishTags.includes(t));
     renderDishTags(); scheduleDishAutosave(true);
   });
-  $('#dish-tag-new').onclick = ()=>{
+  if($('#dish-tag-new')) $('#dish-tag-new').onclick = ()=>{
     const t = (prompt('Nueva etiqueta:') || '').trim().replace(/\s+/g, ' ').slice(0, 24);
     if(!t) return;
     const nice = t[0].toUpperCase() + t.slice(1);
@@ -11256,7 +11276,7 @@ const EXPLORE_CATS = [
   { k:'vegano', label:'Vegano', color:'#2f9e44', tags:['Vegano'], icon:'<path d="M5 19C5 10.5 10 5 20 4c-.7 10-6.5 15-15 15z"/><path d="M5 19 13.5 10.5"/>' },
   { k:'carne', label:'Carne', color:'#c92a2a', tags:['Carne'], words:MEAT_WORDS, not:['Vegano','Vegetariano'], icon:'<ellipse cx="15" cy="9" rx="6" ry="4.8" transform="rotate(-45 15 9)"/><path d="M11 13 6.6 17.4"/><circle cx="5" cy="17.2" r="1.6"/><circle cx="6.8" cy="19" r="1.6"/>' },
   { k:'pescado', label:'Pescado', color:'#1c7ed6', tags:['Pescado'], words:FISH_WORDS, not:['Vegano','Vegetariano'], icon:'<path d="M6.5 12c2.5-3.5 5.5-5 8.5-5 2.8 0 5 2 6.5 5-1.5 3-3.7 5-6.5 5-3 0-6-1.5-8.5-5z"/><path d="M6.5 12 2.5 8.5v7z"/><circle cx="17" cy="11" r=".6"/>' },
-  { k:'postres', label:'Postres', color:'#d6336c', tags:['Postre'], icon:'<path d="M5 12h14l-2 8H7z"/><path d="M10 12l.5 8M14 12l-.5 8"/><path d="M5 12a3 3 0 0 1 1.6-5.4 5.5 5.5 0 0 1 10.8 0A3 3 0 0 1 19 12"/><path d="M12 2.8v1.4"/>' },
+  { k:'postres', label:'Repostería', color:'#d6336c', tags:['Repostería','Postre'], icon:'<path d="M5 12h14l-2 8H7z"/><path d="M10 12l.5 8M14 12l-.5 8"/><path d="M5 12a3 3 0 0 1 1.6-5.4 5.5 5.5 0 0 1 10.8 0A3 3 0 0 1 19 12"/><path d="M12 2.8v1.4"/>' },
 ];
 let exploreCat = null; // clave de la categoría elegida (o null)
 function exploreCatDef(){ return EXPLORE_CATS.find(c=> c.k===exploreCat) || null; }
@@ -12388,7 +12408,7 @@ function dayItemHtml(e){
 /* ---------- Semana en tabla (7 días × 5 comidas) ---------- */
 let csCtx = null;             // casilla abierta {date, meal}
 let deckAnim = false;
-const GRID_MEALS = SLOTS;     // desayuno, comida, merienda, cena, extras (bebidas)
+const GRID_MEALS = ['desayuno','comida','cena','extras'];   // el plan: las 3 comidas principales + bebidas
 const GRID_LABELS = { desayuno:'Des', comida:'Com', merienda:'Mer', cena:'Cen', extras:'Beb' };
 const ICON_DUMBBELL = '<svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg>';
 const ICON_DICE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="1.1" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/></svg>';
@@ -12646,8 +12666,11 @@ $('#wk-tools').addEventListener('click', async (ev)=>{
    para que no cambie sola al repintar; "Mazo aleatorio" la baraja de nuevo. */
 let sugSeed = 0;
 const sugDecks = {};
-const SLOT_TAGS = { desayuno:['Desayuno'], comida:['Comida'], merienda:['Snack','Postre'], cena:['Cena'] };
-const MOMENT_TAGS = ['Desayuno','Comida','Cena','Snack','Postre'];
+const SLOT_TAGS = { desayuno:['Desayuno'], comida:['Comida'], cena:['Cena'] };
+const DECK_MEALS = ['desayuno','comida','cena'];
+const MOMENT_TAGS = ['Desayuno','Comida','Cena'];
+// Por si alguien etiqueta mal: nada de dulces en comida o cena aunque digan "Comida".
+const SWEET_WORDS = /(^| )(tarta|pastel|bizcocho|galleta|magdalena|muffin|brownie|cookie|helado|flan|natillas|arroz con leche|mousse|cheesecake|tiramisu|crepe|tortita|donut|dulce|postre|chocolate|bombon|turron|churro|gofre|mermelada)/;
 function hashStr(s){ let h = 0; for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; } return Math.abs(h); }
 function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function suggestibleDishes(){ return dishes.filter(d=> (d.name||'').trim()); }
@@ -12663,7 +12686,7 @@ function deckMode(){ return deckHasChoice() ? deckSrc : 'all'; }
 const pubDeck = { list:[], at:0, tried:0, loading:false, failed:false, promise:null };
 const foreignDishes = {};            // platos de otras personas que salen en tu plan (id → plato)
 const foreignTried = new Set();
-const DECK_TAGS = ['Desayuno','Comida','Snack','Postre','Cena'];
+const DECK_TAGS = ['Desayuno','Comida','Cena'];
 function loadPubDeck(force){
   if(pubDeck.loading) return pubDeck.promise;
   if(!force && pubDeck.at && Date.now()-pubDeck.at < 15*60*1000) return Promise.resolve();
@@ -12708,10 +12731,10 @@ function sugScored(date, m, used, prevId){
   let base = healthy.length >= 8 ? healthy : pool;
   // Cada casilla solo con platos de su tipo: en el desayuno nada que no sea de desayuno.
   // Solo si no tienes ninguno etiquetado para esa comida se tira de los que no tienen etiqueta de momento.
-  const fits = (d)=> (d.tags||[]).some(t=> SLOT_TAGS[m].includes(t));
-  const noMoment = (d)=> !(d.tags||[]).some(t=> MOMENT_TAGS.includes(t));
-  const tagged = base.filter(fits);
-  base = tagged.length ? tagged : base.filter(noMoment);
+  // Solo platos etiquetados con ese momento (sin plan B con platos sin etiqueta), nunca
+  // repostería, y en comida/cena tampoco nada que por el nombre parezca un dulce.
+  const sweet = (d)=> cleanTags(d.tags).includes('Repostería') || (m!=='desayuno' && SWEET_WORDS.test(stripAccents(String(d.name||'').toLowerCase())));
+  base = base.filter(d=> cleanTags(d.tags).some(t=> SLOT_TAGS[m].includes(t)) && !sweet(d));
   // Sin calorías: solo variedad (no repetir en la semana ni dos seguidos) y un poco de azar.
   return base.map(d=>{
     let sc = Math.random() * 0.3;
@@ -12735,7 +12758,7 @@ function buildDeck(ws, dates, seed){
   dates.forEach(date=>{
     if(date < today) return;
     let prev = null;
-    ['desayuno','comida','merienda','cena'].forEach(m=>{
+    DECK_MEALS.forEach(m=>{
       const has = fitEntries.some(e=> e.entry_date===date && e.meal_type===m && e.status!=='skipped');
       if(has) return;
       const sc = sugScored(date, m, used, prev);
@@ -12756,7 +12779,7 @@ function currentDeck(date){
   return d;
 }
 function sugFor(date, meal){
-  if(!deckOn || meal==='extras' || date < todayStr()) return null;
+  if(!deckOn || !SLOT_TAGS[meal] || date < todayStr()) return null;
   if(fitEntries.some(e=> e.entry_date===date && e.meal_type===meal && e.status!=='skipped')) return null;
   const deck = currentDeck(date); if(!deck) return null;
   const id = deck.map[`${date}|${meal}`];
@@ -12764,7 +12787,7 @@ function sugFor(date, meal){
 }
 function ghostCells(keys){
   const out = [];
-  keys.forEach(date=> ['desayuno','comida','merienda','cena'].forEach(meal=>{ const dish = sugFor(date, meal); if(dish) out.push({ date, meal, dish }); }));
+  keys.forEach(date=> DECK_MEALS.forEach(meal=>{ const dish = sugFor(date, meal); if(dish) out.push({ date, meal, dish }); }));
   return out;
 }
 function sugReroll(keys){
@@ -12971,7 +12994,6 @@ function setFmUnits(v){ fmPortions = v; $('#fm-por-val').textContent = v; }
 const REPO_CATS = [
   { k:'desayuno', label:'Desayunos', tags:['Desayuno'] },
   { k:'comida', label:'Comidas', tags:['Comida'] },
-  { k:'merienda', label:'Meriendas', tags:['Snack','Postre'] },
   { k:'cena', label:'Cenas', tags:['Cena'] },
   { k:'all', label:'Todos', tags:null }
 ];
