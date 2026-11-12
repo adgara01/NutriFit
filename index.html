@@ -2774,6 +2774,24 @@ button:focus:not(:focus-visible){outline:none;}
   .pf-grid .dish-card{height:100%;}
   .pf-grid .dish-card .dish-name, .pf-grid .dish-card-name{display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;}
 }
+
+/* Nevera → Sugerencia de platos: filas compactas con «tienes X/Y» */
+.nv-sug{display:flex; align-items:center; gap:12px; width:100%; padding:8px 4px; background:none; border:none; border-bottom:1px solid var(--border); text-align:left; color:var(--text); cursor:pointer;}
+.nv-sug:last-child{border-bottom:none;}
+.nv-sug-img{width:44px; height:44px; border-radius:12px; object-fit:cover; flex-shrink:0; background:var(--card2); display:flex; align-items:center; justify-content:center; color:var(--muted);}
+.nv-sug-img svg{width:20px; height:20px;}
+.nv-sug-name{flex:1; min-width:0; font-weight:600; font-size:14.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.nv-sug-count{flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:4px; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums;}
+.nv-sug-count b{color:var(--text); font-size:15px;}
+.nv-sug-count i{display:block; width:56px; height:4px; border-radius:2px; background:linear-gradient(90deg, var(--accent) var(--p), var(--card2) var(--p));}
+.nv-sug.full .nv-sug-count b{color:var(--accent);}
+@media (hover:hover) and (pointer:fine){ .nv-sug:hover{background:var(--card2); border-radius:12px;} }
+/* Carrito en ordenador: la lista a varias columnas */
+@media (min-width:1024px){
+  #cart-list{display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); column-gap:18px;}
+  #cart-list > .empty-hint{grid-column:1 / -1;}
+  #cart-list .cart-row{border-bottom:1px solid var(--border);}
+}
 </style>
 </head>
 <body>
@@ -4149,7 +4167,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.18-4';
+const APP_VERSION = '2026.11.18-5';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -11842,36 +11860,19 @@ function renderNeveraSuggestions(){
   if(!fridgeItems.length){ box.innerHTML = '<div class="empty-hint">Añade cosas a la nevera para ver sugerencias.</div>'; return; }
   const results = computeDishSuggestionsFromFridge();
   if(!results.length){ box.innerHTML = '<div class="empty-hint">Ninguno de tus platos coincide.</div>'; return; }
+  // Una línea por plato: foto, nombre y «tienes X de Y». Al tocarlo se abre su ficha
+  // (desde ahí se añade al carrito lo que falta).
   box.innerHTML = results.map(r=>{
-    const d = r.dish;
-    const full = r.have===r.total;
-    // Lo que falta sale como chips con su botón de carrito (verde = ya está).
-    const missingHtml = full ? '' : `<div class="missing-label">Te falta:</div><div class="missing-chips">${
-      r.missing.map((m, idx)=>{
-        const inCart = isInCart(m.name);
-        return `<button type="button" class="missing-chip ${inCart?'in-cart':''}" data-dish="${d.id}" data-missing="${idx}">${escapeHtml(m.name)}${inCart?ICON_CART_CHECK:ICON_CART_PLUS}</button>`;
-      }).join('')}</div>`;
-    return `<div class="shared-dish-row" data-open-dish="${d.id}">
-      ${d.image_url ? `<img class="shared-dish-thumb" ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : `<div class="shared-dish-thumb">${ICON_PLATE}</div>`}
-      <div class="shared-dish-info">
-        <span class="name">${escapeHtml(d.name)}</span>
-        ${full ? '<span class="from" style="color:var(--good);">Ya lo puedes hacer</span>' : missingHtml}
-      </div>
-    </div>`;
+    const d = r.dish, full = r.have===r.total;
+    const pct = r.total ? Math.round(r.have / r.total * 100) : 0;
+    return `<button type="button" class="nv-sug${full ? ' full' : ''}" data-open-dish="${d.id}">
+      ${d.image_url ? `<img class="nv-sug-img" ${pimg(d.image_url, 't')} alt="" loading="lazy" decoding="async">` : `<span class="nv-sug-img">${ICON_PLATE}</span>`}
+      <span class="nv-sug-name">${escapeHtml(d.name)}</span>
+      <span class="nv-sug-count"><span><b>${r.have}</b>/${r.total}</span><i style="--p:${pct}%"></i></span>
+    </button>`;
   }).join('');
   $all('#nevera-suggestions [data-open-dish]').forEach(row=>{
-    row.onclick = e=>{
-      if(e.target.closest('.missing-chip')) return;
-      const dish = dishes.find(d=> d.id===row.dataset.openDish); if(dish) openDishModal(dish);
-    };
-  });
-  $all('#nevera-suggestions .missing-chip').forEach(chip=>{
-    chip.onclick = e=>{
-      e.stopPropagation();
-      const r = results.find(x=> x.dish.id===chip.dataset.dish);
-      const m = r && r.missing[Number(chip.dataset.missing)];
-      if(m) toggleCartItem({ ...m, source_dish_name: r.dish.name });
-    };
+    row.onclick = ()=>{ const dish = dishes.find(d=> d.id===row.dataset.openDish); if(dish) openDishModal(dish); };
   });
 }
 
