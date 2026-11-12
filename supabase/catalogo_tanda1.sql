@@ -183,10 +183,12 @@ begin
    }
   ],
   "description": "1. Si los frutos rojos están congelados, déjalos fuera unos minutos o caliéntalos 30 segundos en el microondas.\n\n2. Pon el yogur en un bol o un vaso ancho.\n\n3. Cubre con la granola y los frutos rojos, y termina con un hilo de miel.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3217/2704159113_8a10bf5756_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3217/2704159113_8a10bf5756_b.jpg"
+  ],
+  "photo_credit": "dailyfood · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/28970677@N04/2704159113"
  },
  {
   "name": "Huevos revueltos con espinacas",
@@ -246,10 +248,12 @@ begin
    }
   ],
   "description": "1. Saltea las espinacas en una sartén con el aceite hasta que se reduzcan, unos 2 minutos.\n\n2. Bate los huevos con sal y pimienta.\n\n3. Baja el fuego, añade los huevos y remueve despacio con una espátula hasta que cuajen pero sigan jugosos.\n\n4. Sirve enseguida con el pan tostado.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8465/8121597563_c5752dbd2d_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8465/8121597563_c5752dbd2d_b.jpg"
+  ],
+  "photo_credit": "ultrakml · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/34948727@N00/8121597563"
  },
  {
   "name": "Tostada de aguacate y huevo",
@@ -372,10 +376,12 @@ begin
    }
   ],
   "description": "1. Tritura los plátanos, los huevos, la avena y una pizca de canela hasta tener una masa espesa.\n\n2. Calienta una sartén antiadherente a fuego medio y úntala con unas gotas de aceite.\n\n3. Echa una cucharada grande de masa por tortita y cocina hasta que salgan burbujas en la superficie, unos 2 minutos.\n\n4. Dales la vuelta, cocina un minuto más y sirve con miel o fruta.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://images.rawpixel.com/editor_1024/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvZmYzOTY1LWltYWdlLWt3eXQ0aDdlLmpwZw.jpg",
+  "image_urls": [
+   "https://images.rawpixel.com/editor_1024/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvZmYzOTY1LWltYWdlLWt3eXQ0aDdlLmpwZw.jpg"
+  ],
+  "photo_credit": "rawpixel · CC0",
+  "photo_source": "https://www.rawpixel.com/image/5974754/photo-image-public-domain-food-banana"
  },
  {
   "name": "Bocadillo de jamón con tomate",
@@ -422,10 +428,12 @@ begin
    }
   ],
   "description": "1. Abre el pan por la mitad; si quieres, tuéstalo un minuto.\n\n2. Ralla el tomate y repártelo por la miga.\n\n3. Añade un hilo de aceite y las lonchas de jamón, cierra y listo.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/6065/6060474539_39476fbbf0_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/6065/6060474539_39476fbbf0_b.jpg"
+  ],
+  "photo_credit": "travelwayoflife · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/61664791@N05/6060474539"
  },
  {
   "name": "Batido de plátano y crema de cacahuete",
@@ -864,10 +872,12 @@ begin
    }
   ],
   "description": "1. Enjuaga los garbanzos y escúrrelos.\n\n2. Fríe en el aceite los ajos laminados y el pan en trozos hasta que se doren; sácalos y macháchalos en un mortero con el vinagre.\n\n3. En el mismo aceite saltea las espinacas hasta que se reduzcan.\n\n4. Añade una cucharadita de pimentón y otra de comino, remueve y echa enseguida los garbanzos y un vaso de agua.\n\n5. Incorpora el majado, cocina 10 minutos a fuego suave y prueba de sal.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/7068/6891484449_4e91987db2.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/7068/6891484449_4e91987db2.jpg"
+  ],
+  "photo_credit": "onnoth · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/50403002@N00/6891484449"
  },
  {
   "name": "Paella de pollo y verduras",
@@ -965,10 +975,12 @@ begin
    }
   ],
   "description": "1. Sala el pollo troceado y dóralo bien en la paellera con el aceite, unos 10 minutos.\n\n2. Añade las judías y el pimiento en tiras y rehoga 5 minutos.\n\n3. Haz un hueco en el centro, sofríe el ajo picado, luego el tomate, y cocina hasta que pierda el agua.\n\n4. Echa una cucharadita de pimentón, remueve y vierte el caldo caliente con el azafrán. Prueba de sal.\n\n5. Cuando hierva, reparte el arroz en forma de cruz y extiéndelo. A partir de aquí no se remueve.\n\n6. Cocina 10 minutos a fuego fuerte y 8 más a fuego suave.\n\n7. Deja reposar 5 minutos tapada con un paño antes de servir.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8208/8197006381_472eeab3e7_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8208/8197006381_472eeab3e7_b.jpg"
+  ],
+  "photo_credit": "Gabriel GM · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/25382620@N03/8197006381"
  },
  {
   "name": "Macarrones con tomate y chorizo",
@@ -1296,10 +1308,12 @@ begin
    }
   ],
   "description": "1. Enjuaga las alubias y escúrrelas.\n\n2. Pocha el puerro, la zanahoria, el pimiento y el ajo, todo picado, en el aceite durante 10 minutos.\n\n3. Añade una cucharadita de pimentón, remueve y vierte el caldo.\n\n4. Incorpora las alubias y cocina 10 minutos a fuego suave.\n\n5. Aplasta unas cuantas alubias contra la cazuela para que espese el caldo y prueba de sal.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/1593/25990272306_7736c06d9d.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/1593/25990272306_7736c06d9d.jpg"
+  ],
+  "photo_credit": "orionpozo · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/65168863@N00/25990272306"
  },
  {
   "name": "Solomillo de cerdo al horno con patatas",
@@ -1379,10 +1393,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 200 °C.\n\n2. Corta las patatas en rodajas finas y la cebolla en tiras; colócalas en una bandeja con sal, la mitad del aceite y los ajos aplastados. Hornea 20 minutos.\n\n3. Salpimienta el solomillo, frótalo con romero y márcalo en una sartén caliente con el resto del aceite.\n\n4. Ponlo sobre las patatas, riega con el vino y hornea 15 o 18 minutos.\n\n5. Déjalo reposar 5 minutos antes de cortarlo en medallones.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2116/1879100405_e8bdf561f9_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2116/1879100405_e8bdf561f9_b.jpg"
+  ],
+  "photo_credit": "WordRidden · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/97844767@N00/1879100405"
  },
  {
   "name": "Espaguetis a la boloñesa",
@@ -1472,10 +1488,12 @@ begin
    }
   ],
   "description": "1. Pica muy fino la cebolla, la zanahoria y el ajo, y póchalos en el aceite 10 minutos.\n\n2. Sube el fuego, añade la carne y deshazla con una cuchara hasta que se dore.\n\n3. Echa el vino y deja que se evapore.\n\n4. Incorpora el tomate, el orégano y sal, y cocina tapado a fuego suave 20 minutos.\n\n5. Cuece la pasta, escúrrela y mézclala con la salsa. Sirve con parmesano.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3737/11267498676_b8fc88abed_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3737/11267498676_b8fc88abed_b.jpg"
+  ],
+  "photo_credit": "matsuyuki · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/12173213@N00/11267498676"
  },
  {
   "name": "Tortilla de patatas con cebolla",
@@ -1707,10 +1725,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 200 °C.\n\n2. Corta las verduras en trozos parecidos, mézclalas con la mitad del aceite y sal, y hornéalas 15 minutos.\n\n3. Salpimienta el salmón, ponlo sobre las verduras con unas rodajas de limón y riega con el resto del aceite.\n\n4. Hornea 10 o 12 minutos más, hasta que el salmón se separe en láminas.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3266/2910954294_b6b4b54eb1.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3266/2910954294_b6b4b54eb1.jpg"
+  ],
+  "photo_credit": "TheBusyBrain · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/26176646@N04/2910954294"
  },
  {
   "name": "Crema de calabacín",
@@ -1855,10 +1875,12 @@ begin
    }
   ],
   "description": "1. Enjuaga los garbanzos y escúrrelos bien.\n\n2. Corta los tomates por la mitad y el pepino, la cebolla y el pimiento en daditos.\n\n3. Mezcla todo con las aceitunas en un bol.\n\n4. Aliña con aceite, vinagre y sal, y deja reposar 10 minutos en la nevera antes de servir.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/4113/4985882841_3bb689104b_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/4113/4985882841_3bb689104b_b.jpg"
+  ],
+  "photo_credit": "avlxyz · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/10559879@N00/4985882841"
  },
  {
   "name": "Pechuga de pollo a la plancha con ensalada",
@@ -2067,10 +2089,12 @@ begin
    }
   ],
   "description": "1. Pon el caldo a calentar con la zanahoria en rodajas y el puerro picado.\n\n2. Cuando hierva, añade la pechuga entera y cuécela 12 minutos.\n\n3. Saca el pollo, desmígalo con dos tenedores y devuélvelo a la olla.\n\n4. Echa los fideos y cocina el tiempo del paquete. Prueba de sal y sirve con perejil picado.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3162/3079682439_351f008b11_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3162/3079682439_351f008b11_b.jpg"
+  ],
+  "photo_credit": "bobjudge · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/8286199@N08/3079682439"
  },
  {
   "name": "Pisto con huevo",
