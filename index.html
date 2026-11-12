@@ -2727,6 +2727,16 @@ button:focus:not(:focus-visible){outline:none;}
 @media (min-width:1024px){ #dish-modal .dish-left > .dish-photo-wrap{aspect-ratio:4 / 3 !important; max-height:min(48vh, 420px);} }
 
 @media (min-width:1024px){ #dish-modal .dish-left .photo-slide img{object-fit:cover !important; width:100%; height:100%;} }
+
+/* Ficha en ordenador: la columna izquierda siempre cabe. La foto se encoge lo que haga falta
+   para que nombre (aunque ocupe dos líneas), raciones y etiquetas se vean enteros. */
+@media (min-width:1024px){
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo) > .dish-left,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-left{display:flex !important; flex-direction:column; overflow:hidden !important; min-height:0;}
+  #dish-modal .dish-left > *{flex-shrink:0;}
+  #dish-modal .dish-left > .dish-photo-wrap{flex:1 1 auto !important; min-height:140px; max-height:420px !important; height:auto; aspect-ratio:auto !important;}
+  #dish-modal .dish-left > #dish-tags-view-slot .dish-tags{margin-bottom:6px;}
+}
 </style>
 </head>
 <body>
@@ -4097,7 +4107,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.18-1';
+const APP_VERSION = '2026.11.18-2';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -11932,22 +11942,22 @@ function addExploreTerm(raw){
 let exploreList = [];
 function dishOriginKey(d){ return (d && (d.origin_dish_id || d.id)) || null; }
 function isCopyDish(d){ return !!(d && (d.origin_dish_id || d.shared_from_username || d.is_copy)); }
-function exploreMerge(friendRes, publicRes){
-  const mineOwn = new Set(dishes.filter(d=> !isCopyDish(d)).map(d=> d.id));
+function exploreMerge(friendRes, publicRes, ownRes){
   const mineHave = new Set(dishes.map(dishOriginKey));
   const groups = new Map(), order = [];
   const take = (r, src)=>{
     const k = dishOriginKey(r.dish);
-    if(!k || mineOwn.has(k)) return; // es tuya
+    if(!k) return;
     const orig = !isCopyDish(r.dish);
     const g = groups.get(k);
     if(!g){ const ng = { ...r, src, orig, key:k, have: mineHave.has(k) }; groups.set(k, ng); order.push(k); return; }
     if(orig && !g.orig) Object.assign(g, r, { orig:true, src: g.src, from: g.from || r.from }); // se queda la original, en su sitio (y con tu amigo si venía de él)
   };
+  (ownRes||[]).forEach(r=> take(r, 'tuyos')); // los tuyos también salen (antes se quitaban)
   friendRes.forEach(r=> take(r, 'amigos'));
   (publicRes||[]).forEach(r=> take(r, 'publico'));
   const all = order.map(k=> groups.get(k));
-  return all.filter(g=> g.src==='amigos').concat(all.filter(g=> g.src==='publico'));
+  return all.filter(g=> g.src==='amigos').concat(all.filter(g=> g.src==='tuyos'), all.filter(g=> g.src==='publico'));
 }
 async function runExploreSearch(){
   const box = $('#explore-results');
@@ -11967,7 +11977,12 @@ async function runExploreSearch(){
     .map(d=> ({ dish:d, matched: dishMatchCount(d, regs), from: byId[d.user_id] }))
     .filter(r=> r.matched>0 || !regs.length)
     .sort((a,b)=> b.matched - a.matched || (isCopyDish(a.dish) - isCopyDish(b.dish)));
-  exploreList = exploreMerge(friendRes, null);
+  // Tus platos (los originales tuyos; tus copias ya salen con su receta original)
+  const ownRes = dishes.filter(d=> !isCopyDish(d))
+    .filter(hasTags)
+    .map(d=> ({ dish:d, matched: dishMatchCount(d, regs), from: currentUser ? { id: currentUser.id, username: currentUser.username } : null }))
+    .filter(r=> r.matched>0 || !regs.length);
+  exploreList = exploreMerge(friendRes, null, ownRes);
   renderExploreList(box, total, true);
   // La comunidad (base de datos)
   // A la base de datos se le piden todos los de cualquiera de las categorías; el filtro fino se hace aquí.
@@ -11980,7 +11995,7 @@ async function runExploreSearch(){
   if(seq!==exploreSeq) return; // llegó otra búsqueda más nueva mientras tanto
   if(error){ console.error(error); renderExploreList(box, total, false, true); return; }
   const publicRes = (data||[]).filter(hasTags).map(d=> ({ dish:d, matched: d.matched, from: null }));
-  exploreList = exploreMerge(friendRes, publicRes);
+  exploreList = exploreMerge(friendRes, publicRes, ownRes);
   renderExploreList(box, total, false);
 }
 function renderExploreList(box, total, loadingPublic, publicError){
@@ -11997,7 +12012,7 @@ function renderExploreList(box, total, loadingPublic, publicError){
   };
   // Una sola cuadrícula para todos (amigos primero, luego el resto), sin secciones aparte.
   let html = '';
-  const all = friendsPart.concat(pubPart);
+  const all = list; // amigos, tuyos y el resto, en ese orden
   if(all.length) html += `<div class="ex-grid">${all.map(tile).join('')}</div>`;
   if(loadingPublic) html += '<div class="empty-hint">Buscando en la comunidad…</div>';
   else if(publicError) html += '<div class="empty-hint">No se ha podido buscar en la comunidad ahora mismo.</div>';
@@ -12011,6 +12026,11 @@ function renderExploreList(box, total, loadingPublic, publicError){
 let previewingExplore = null;
 function openExploreDishPreview(r){
   if(!r) return;
+  // Un plato tuyo se abre con tu ficha de siempre (Editar, Cocinar...)
+  if(r.src==='tuyos' || (r.dish && currentUser && r.dish.user_id===currentUser.id)){
+    const mine = dishes.find(x=> x.id===r.dish.id);
+    if(mine){ openDishModal(mine); return; }
+  }
   const c = exploreCreator(r);
   const from = c ? c.username : null;
   openDishPreview(r.dish, { fromUsername: from, onAdd: r.have ? null : ()=> addFriendDishToRepo(r.dish, from) });
