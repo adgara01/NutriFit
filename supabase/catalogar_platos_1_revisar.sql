@@ -44,6 +44,11 @@ begin
   if nf_has(p_name, 'tapa|pincho|pintxo|montadito|croqueta|brava|patatas bravas|aperitivo|canape|nacho|hummus|guacamole|gilda|banderilla|tosta|empanadilla|alita|chopito|torrezno|tabla de|calamares a la romana') then return 'Tapas'; end if;
   if meat > 0 or fish > 0 then return case when fish >= meat then 'Pescado' else 'Carne' end; end if;
   if nf_has(p_name, 'ensalada|crema|sopa|caldo|gazpacho|salmorejo|pure|bowl|poke|verduras al vapor|carpaccio|tartar|consome') then return 'Ligero'; end if;
+  if not exists (select 1 from jsonb_array_elements(case when jsonb_typeof(p_ings)='array' then p_ings else '[]'::jsonb end) e
+                  where coalesce(nf_norm(case when jsonb_typeof(e)='string' then e #>> '{}' else e->>'name' end),'') <> '')
+     and not nf_has(p_name, 'desayuno|tostada|yogur|yogurt|avena|porridge|granola|tortita|pancake|batido|smoothie|cereal|muesli|huevos revueltos|croissant|magdalena|bol de fruta|pudin de chia|crepe|bocadillo|sandwich|zumo|cafe') and not nf_has(p_name, 'arroz|paella|lenteja|garbanzo|alubia|judion|fabada|cocido|potaje|guiso|estofado|pasta|macarron|espagueti|spaghetti|lasana|canelon|fideua|risotto|curry|carbonara|bolonesa') then
+    return 'Sin catalogar';
+  end if;
   return 'Vegetariano';
 end $$;
 
@@ -73,6 +78,7 @@ begin
       when 'postre' then 'Repostería'
       when 'postres' then 'Repostería'
       when 'dulce' then 'Repostería'
+      when 'sin catalogar' then 'Sin catalogar'
       else null end;
     if v in ('Desayuno','Comida','Cena') then
       if not v = any(moms) then moms := moms || v; end if;
@@ -84,7 +90,7 @@ begin
                else coalesce(old_tipo, guess) end;
   if cardinality(moms) = 0 then
     if nf_has(p_name, 'desayuno|tostada|yogur|yogurt|avena|porridge|granola|tortita|pancake|batido|smoothie|cereal|muesli|huevos revueltos|croissant|magdalena|bol de fruta|pudin de chia|crepe|bocadillo|sandwich|zumo|cafe') then moms := array['Desayuno'];
-    elsif tipo = 'Repostería' then moms := '{}';
+    elsif tipo in ('Repostería','Sin catalogar') then moms := '{}';
     elsif tipo in ('Ligero','Tapas') then moms := array['Cena'];
     elsif nf_has(p_name, 'arroz|paella|lenteja|garbanzo|alubia|judion|fabada|cocido|potaje|guiso|estofado|pasta|macarron|espagueti|spaghetti|lasana|canelon|fideua|risotto|curry|carbonara|bolonesa') then moms := array['Comida'];
     else moms := array['Comida','Cena'];

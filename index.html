@@ -2792,6 +2792,19 @@ button:focus:not(:focus-visible){outline:none;}
   #cart-list > .empty-hint{grid-column:1 / -1;}
   #cart-list .cart-row{border-bottom:1px solid var(--border);}
 }
+
+.ex-filters{gap:20px !important;}
+.ex-fgroup{display:flex; gap:8px; flex:0 0 auto;}
+.ex-fgroup + .ex-fgroup{padding-left:20px; border-left:1px solid var(--border-strong);}
+
+/* La columna izquierda ocupa todo el alto de la ficha: así la foto crece hasta su tamaño y no se queda en una franja */
+@media (min-width:1024px){
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo) > .dish-left,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-left{align-self:stretch !important; height:100%;}
+  #dish-modal .dish-left > .dish-photo-wrap{flex:1 1 0 !important; max-height:460px !important;}
+}
+
+@media (min-width:1024px){ .ex-filters{flex-wrap:wrap; overflow:visible !important; row-gap:10px !important;} .ex-fgroup{flex-wrap:wrap;} }
 </style>
 </head>
 <body>
@@ -4167,7 +4180,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.18-5';
+const APP_VERSION = '2026.11.18-6';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -8292,7 +8305,7 @@ function cleanTags(tags){
    nombre; y si no, Vegetariano. */
 /*CATS-START*/
 /* Momento + Tipo — GENERADO por datos/reglas_categorias.py (las mismas reglas que el SQL). No editar a mano. */
-const CAT_ALIASES = {"desayuno": "Desayuno", "comida": "Comida", "almuerzo": "Comida", "cena": "Cena", "carne": "Carne", "pescado": "Pescado", "pescado y marisco": "Pescado", "marisco": "Pescado", "vegano": "Vegetariano", "vegetariano": "Vegetariano", "ligero": "Ligero", "tapas": "Tapas", "tapa": "Tapas", "tapas y aperitivos": "Tapas", "aperitivo": "Tapas", "reposteria": "Repostería", "postre": "Repostería", "postres": "Repostería", "dulce": "Repostería"};
+const CAT_ALIASES = {"desayuno": "Desayuno", "comida": "Comida", "almuerzo": "Comida", "cena": "Cena", "carne": "Carne", "pescado": "Pescado", "pescado y marisco": "Pescado", "marisco": "Pescado", "vegano": "Vegetariano", "vegetariano": "Vegetariano", "ligero": "Ligero", "tapas": "Tapas", "tapa": "Tapas", "tapas y aperitivos": "Tapas", "aperitivo": "Tapas", "reposteria": "Repostería", "postre": "Repostería", "postres": "Repostería", "dulce": "Repostería", "sin catalogar": "Sin catalogar"};
 const CAT_RE = {
   meat: new RegExp('(^| )(carne|pollo|pavo|ternera|vaca|buey|cerdo|lomo|solomillo|chuleta|chuleton|costilla|jamon|york|bacon|beicon|panceta|pancetta|tocino|lardon|guanciale|prosciutto|speck|salami|chorizo|chistorra|salchichon|salchicha|longaniza|butifarra|morcilla|cordero|lechazo|ternasco|cochinillo|cabrito|conejo|pato|magret|hamburguesa|albondiga|entrecot|secreto iberico|presa iberica|pluma iberica|pechuga|muslo|contramuslo|alita|fuet|sobrasada|codillo|rabo|oreja|manita|higado|jabali|ciervo|gallina|perdiz|faisan|codorniz|pepperoni|mortadela|kebab|carrillera|carrillada|magro|picada|cecina|lacon|callos|pastrami|nugget|carbonara|bolonesa|ragu)(e?s)?( |$)'),
   fish: new RegExp('(^| )(pescado|merluza|pescadilla|salmon|atun|bonito|bacalao|dorada|lubina|sardina|boqueron|anchoa|caballa|rape|rodaballo|trucha|lenguado|emperador|pez espada|gallo|palometa|jurel|salmonete|besugo|mero|abadejo|perca|panga|tilapia|marrajo|anguila|bacaladilla|pescadito|chanquete|gamba|langostino|carabinero|cigala|bogavante|langosta|cangrejo|necora|centolla|percebe|mejillon|almeja|chirla|berberecho|navaja|vieira|zamburina|ostra|calamar|chipiron|sepia|pulpo|pota|erizo|surimi|gula|huevas|marisco)(e?s)?( |$)'),
@@ -8319,6 +8332,8 @@ function guessTipo(d){
   if(CAT_RE.tapas.test(name)) return 'Tapas';
   if(meat || fish) return fish >= meat ? 'Pescado' : 'Carne';
   if(CAT_RE.light.test(name)) return 'Ligero';
+  const hasIngs = ((d && d.ingredients) || []).some(x=> catNorm(typeof x==='string' ? x : (x && x.name)));
+  if(!hasIngs && !CAT_RE.breakfast.test(name) && !CAT_RE.heavy.test(name)) return 'Sin catalogar';
   return 'Vegetariano';
 }
 // Etiquetas finales de un plato: sus momentos (o adivinados si no tiene) + un Tipo.
@@ -8335,7 +8350,7 @@ function catNewTags(d){
   if(!moms.length){
     const name = catNorm(d && d.name);
     if(CAT_RE.breakfast.test(name)) moms.push('Desayuno');
-    else if(tipo==='Repostería'){}
+    else if(tipo==='Repostería' || tipo==='Sin catalogar'){}
     else if(tipo==='Ligero' || tipo==='Tapas') moms.push('Cena');
     else if(CAT_RE.heavy.test(name)) moms.push('Comida');
     else moms.push('Comida', 'Cena');
@@ -11897,6 +11912,7 @@ const EXPLORE_CATS = [
   { k:'vegetariano', label:'Vegetariano', tipo:'Vegetariano', tags:['Vegetariano','Vegano'], icon:'<path d="M5 19C5 10.5 10 5 20 4c-.7 10-6.5 15-15 15z"/><path d="M5 19 13.5 10.5"/>' },
   { k:'ligero', label:'Ligero', tipo:'Ligero', tags:['Ligero'], words:['ensalada','crema','sopa','gazpacho','salmorejo','bowl','poke'], icon:'<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M8 11c0-3 2-5 4-6M12 11c0-2.5 1.5-4.5 4-5"/>' },
   { k:'tapas', label:'Tapas y aperitivos', tipo:'Tapas', tags:['Tapas','Aperitivo','Snack'], words:['tapa','pincho','croqueta','bravas','montadito','aperitivo','gilda'], icon:'<path d="M5 19 19 5"/><circle cx="14" cy="10" r="2.2"/><circle cx="10" cy="14" r="2.2"/><path d="M17 4.5 19.5 7"/>' },
+  { k:'sincat', label:'Sin catalogar', tipo:'Sin catalogar', tags:['Sin catalogar'], icon:'<circle cx="12" cy="12" r="8"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.4M12 16.5v.1"/>' },
   { k:'postres', label:'Repostería', tipo:'Repostería', tags:['Repostería','Postre'], icon:'<path d="M5 12h14l-2 8H7z"/><path d="M10 12l.5 8M14 12l-.5 8"/><path d="M5 12a3 3 0 0 1 1.6-5.4 5.5 5.5 0 0 1 10.8 0A3 3 0 0 1 19 12"/><path d="M12 2.8v1.4"/>' },
 ];
 let exploreSel = new Set(); // categorías elegidas (pueden ser varias)
@@ -11923,7 +11939,7 @@ function dishInCat(d, cat){
 }
 function renderExploreCats(){
   const box = $('#explore-cats');
-  box.innerHTML = EXPLORE_CATS.map(c=> `<button type="button" class="ex-cat" style="--cat:${c.color}" data-ex-cat="${c.k}">${c.label}<svg viewBox="0 0 24 24" aria-hidden="true">${c.icon}</svg></button>`).join('');
+  box.innerHTML = EXPLORE_CATS.filter(c=> c.k!=='sincat').map(c=> `<button type="button" class="ex-cat" style="--cat:${c.color}" data-ex-cat="${c.k}">${c.label}<svg viewBox="0 0 24 24" aria-hidden="true">${c.icon}</svg></button>`).join('');
   box.querySelectorAll('[data-ex-cat]').forEach(b=> b.onclick = ()=>{
     exploreSel = new Set([b.dataset.exCat]);
     renderExploreChips(); runExploreSearch();
@@ -11974,11 +11990,19 @@ function exploreCreator(r){
 }
 function renderExploreChips(){
   // Filtros por tipo: siempre a la vista; tocar uno lo ilumina, volver a tocarlo lo quita.
-  $('#explore-filters').innerHTML = EXPLORE_CATS.map(c=>{ const on = exploreSel.has(c.k);
-    return `<button type="button" class="ex-filter${on?' on':''}" data-ex-filter="${c.k}" aria-pressed="${on}">${on ? ICON_TICK : ''}<span>${c.label}</span></button>`; }).join('');
+  // Dos grupos (cuándo / qué), separados; en cada grupo se elige uno (tocar otro lo cambia, tocar el mismo lo quita).
+  const chip = (c)=>{ const on = exploreSel.has(c.k);
+    return `<button type="button" class="ex-filter${on?' on':''}" data-ex-filter="${c.k}" aria-pressed="${on}">${on ? ICON_TICK : ''}<span>${c.label}</span></button>`; };
+  const order = (c)=> c.k==='sincat' ? 1 : 0;
+  $('#explore-filters').innerHTML = `<div class="ex-fgroup">${EXPLORE_CATS.filter(c=> !c.tipo).map(chip).join('')}</div>`
+    + `<div class="ex-fgroup">${EXPLORE_CATS.filter(c=> c.tipo).sort((a,b)=> order(a)-order(b)).map(chip).join('')}</div>`;
   $all('[data-ex-filter]').forEach(b=> b.onclick = ()=>{
-    const k = b.dataset.exFilter;
-    if(exploreSel.has(k)) exploreSel.delete(k); else exploreSel.add(k);
+    const k = b.dataset.exFilter, def = EXPLORE_CATS.find(c=> c.k===k);
+    if(exploreSel.has(k)) exploreSel.delete(k);
+    else {
+      EXPLORE_CATS.filter(c=> !!c.tipo===!!def.tipo).forEach(c=> exploreSel.delete(c.k)); // uno por grupo
+      exploreSel.add(k);
+    }
     renderExploreChips(); runExploreSearch();
   });
   $('#explore-chips').innerHTML = exploreTerms.map((t, i)=>

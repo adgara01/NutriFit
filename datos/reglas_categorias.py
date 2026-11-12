@@ -33,7 +33,7 @@ HEAVY = ['arroz','paella','lenteja','garbanzo','alubia','judion','fabada','cocid
 ALIASES = {'desayuno':'Desayuno','comida':'Comida','almuerzo':'Comida','cena':'Cena','carne':'Carne','pescado':'Pescado',
   'pescado y marisco':'Pescado','marisco':'Pescado','vegano':'Vegetariano','vegetariano':'Vegetariano','ligero':'Ligero',
   'tapas':'Tapas','tapa':'Tapas','tapas y aperitivos':'Tapas','aperitivo':'Tapas','reposteria':'Repostería','postre':'Repostería',
-  'postres':'Repostería','dulce':'Repostería'}
+  'postres':'Repostería','dulce':'Repostería','sin catalogar':'Sin catalogar'}
 
 alt = lambda ws: '|'.join(ws)
 
@@ -66,6 +66,8 @@ function guessTipo(d){
   if(CAT_RE.tapas.test(name)) return 'Tapas';
   if(meat || fish) return fish >= meat ? 'Pescado' : 'Carne';
   if(CAT_RE.light.test(name)) return 'Ligero';
+  const hasIngs = ((d && d.ingredients) || []).some(x=> catNorm(typeof x==='string' ? x : (x && x.name)));
+  if(!hasIngs && !CAT_RE.breakfast.test(name) && !CAT_RE.heavy.test(name)) return 'Sin catalogar';
   return 'Vegetariano';
 }
 // Etiquetas finales de un plato: sus momentos (o adivinados si no tiene) + un Tipo.
@@ -82,7 +84,7 @@ function catNewTags(d){
   if(!moms.length){
     const name = catNorm(d && d.name);
     if(CAT_RE.breakfast.test(name)) moms.push('Desayuno');
-    else if(tipo==='Repostería'){}
+    else if(tipo==='Repostería' || tipo==='Sin catalogar'){}
     else if(tipo==='Ligero' || tipo==='Tapas') moms.push('Cena');
     else if(CAT_RE.heavy.test(name)) moms.push('Comida');
     else moms.push('Comida', 'Cena');
@@ -150,6 +152,11 @@ begin
   if nf_has(p_name, '{alt(TAPAS)}') then return 'Tapas'; end if;
   if meat > 0 or fish > 0 then return case when fish >= meat then 'Pescado' else 'Carne' end; end if;
   if nf_has(p_name, '{alt(LIGHT)}') then return 'Ligero'; end if;
+  if not exists (select 1 from jsonb_array_elements(case when jsonb_typeof(p_ings)='array' then p_ings else '[]'::jsonb end) e
+                  where coalesce(nf_norm(case when jsonb_typeof(e)='string' then e #>> '{{}}' else e->>'name' end),'') <> '')
+     and not nf_has(p_name, '{alt(BREAKFAST)}') and not nf_has(p_name, '{alt(HEAVY)}') then
+    return 'Sin catalogar';
+  end if;
   return 'Vegetariano';
 end $$;
 
@@ -172,7 +179,7 @@ begin
                else coalesce(old_tipo, guess) end;
   if cardinality(moms) = 0 then
     if nf_has(p_name, '{alt(BREAKFAST)}') then moms := array['Desayuno'];
-    elsif tipo = 'Repostería' then moms := '{{}}';
+    elsif tipo in ('Repostería','Sin catalogar') then moms := '{{}}';
     elsif tipo in ('Ligero','Tapas') then moms := array['Cena'];
     elsif nf_has(p_name, '{alt(HEAVY)}') then moms := array['Comida'];
     else moms := array['Comida','Cena'];

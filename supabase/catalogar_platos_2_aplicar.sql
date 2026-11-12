@@ -23,5 +23,5 @@ end $$;
 select t.tipo, count(*) as platos
   from public.dishes d,
        lateral (select x as tipo from jsonb_array_elements_text(to_jsonb(d.tags)) x
-                 where x in ('Carne','Pescado','Vegetariano','Ligero','Tapas','Repostería') limit 1) t
+                 where x in ('Carne','Pescado','Vegetariano','Ligero','Tapas','Repostería','Sin catalogar') limit 1) t
  group by t.tipo order by platos desc;
