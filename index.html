@@ -2697,6 +2697,36 @@ button:focus:not(:focus-visible){outline:none;}
   #dish-modal .dish-left > .dish-photo-wrap{position:relative; aspect-ratio:1 / 1; margin:0 0 18px; border-radius:22px;}
   #dish-modal .dish-right > .steps-card{grid-row:auto !important;}
 }
+
+/* − y + de las raciones: dibujados (los caracteres de texto no quedan centrados) */
+#servings-scale-minus, #servings-scale-plus{position:relative; font-size:0 !important; padding:0 !important; line-height:0;}
+#servings-scale-minus::before, #servings-scale-plus::before, #servings-scale-plus::after{content:""; position:absolute; left:50%; top:50%;
+  width:11px; height:1.7px; margin:-.85px 0 0 -5.5px; border-radius:1px; background:currentColor;}
+#servings-scale-plus::after{width:1.7px; height:11px; margin:-5.5px 0 0 -.85px;}
+/* Título «Ingredientes» con más peso */
+#dish-modal .dish-ings .ing-label-row{margin:2px 2px 6px;}
+#dish-modal .dish-ings .ing-label-row label{font-size:16px !important; font-weight:700 !important; color:var(--text) !important; letter-spacing:-.01em;}
+/* Ordenador: marco de la ficha fijo; si algo tiene que hacer scroll, que sea la lista de ingredientes */
+@media (min-width:1024px){
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo),
+  #dish-modal:not(.dish-view-locked) > .modal-sheet{height:min(86vh, 820px) !important; overflow:hidden !important;
+    grid-template-rows:minmax(0,1fr) auto !important; align-content:stretch !important; padding-bottom:0 !important;}
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo) > .dish-left,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-left{position:static; overflow-y:auto; min-height:0; scrollbar-width:none;}
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo) > .dish-right,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-right{display:flex !important; flex-direction:column; min-height:0; overflow:hidden;}
+  #dish-modal .dish-right > .dish-ings{flex:0 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin;}
+  #dish-modal .dish-right > .steps-card, #dish-modal .dish-right > .dish-details{flex-shrink:0;}
+  /* editando, «Más detalles» puede crecer: ahí hace scroll toda la columna derecha */
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-right{overflow-y:auto;}
+  #dish-modal:not(.dish-view-locked) .dish-right > .dish-ings{overflow:visible; flex-shrink:0;}
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo) > .modal-actions,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .modal-actions{position:static !important; margin:12px -28px 0 !important; padding:14px 28px 18px !important;}
+}
+
+@media (min-width:1024px){ #dish-modal .dish-left > .dish-photo-wrap{aspect-ratio:4 / 3 !important; max-height:min(48vh, 420px);} }
+
+@media (min-width:1024px){ #dish-modal .dish-left .photo-slide img{object-fit:cover !important; width:100%; height:100%;} }
 </style>
 </head>
 <body>
@@ -4067,7 +4097,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.17-2';
+const APP_VERSION = '2026.11.17-3';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
