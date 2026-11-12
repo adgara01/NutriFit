@@ -2310,6 +2310,17 @@ html[data-theme="dark"] .wk-cc.today .dn, html[data-theme="dark"] .wk-dh.today .
   background:var(--sheet-glass); -webkit-backdrop-filter:var(--blur); backdrop-filter:var(--blur); box-shadow:0 -.5px 0 var(--hair);}
 #dish-modal .modal-actions:not(:has(> :not(.hidden))){display:none;}
 @media (min-width:1024px){ #dish-modal .modal-actions{bottom:-18px; margin-bottom:-18px; padding-bottom:16px;} }
+
+/* Catálogo: crédito de la foto, título en varias líneas en la vista, unidades sin cortar */
+.photo-credit{position:absolute; left:8px; bottom:8px; z-index:3; max-width:70%; font-size:10.5px; font-weight:600; color:#fff; text-decoration:none;
+  background:rgba(20,20,20,.5); padding:3px 9px; border-radius:999px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);}
+.photo-credit:not([href]){pointer-events:none;}
+.dish-photo-wrap:not(.has-photo) .photo-credit{display:none;}
+.dish-name-view{display:none; font-size:22px; font-weight:700; letter-spacing:-.01em; line-height:1.2; padding:2px 2px 4px; word-break:break-word;}
+.dish-view-locked .dish-name-view{display:block;}
+.dish-view-locked #dish-name{display:none;}
+.ingredient-unit-badge{flex:0 0 54px; width:54px;}
 </style>
 </head>
 <body>
@@ -3074,12 +3085,14 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
       <div class="photo-spinner" id="dish-photo-spinner"></div>
       <span class="shared-watermark hidden" id="dish-photo-watermark"></span>
+      <a class="photo-credit hidden" id="dish-photo-credit" target="_blank" rel="noopener"></a>
     </div>
     <input type="file" id="dish-photo-input" accept="image/*" multiple class="visually-hidden">
 
     <div class="dish-title-row">
       <input type="text" id="dish-name" class="dish-name-input"
         autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" required>
+      <div class="dish-name-view" id="dish-name-view"></div>
     </div>
 
     <div class="dish-summary" id="dish-summary">
@@ -3672,7 +3685,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.14-2';
+const APP_VERSION = '2026.11.15-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -5601,6 +5614,11 @@ function openDishModal(dish, preview, draft){
   else { wm.textContent = ''; delete wm.dataset.profileUser; wm.classList.add('hidden'); }
 
   $('#dish-name').value = src ? src.name : '';
+  // Crédito de la foto (recetas del catálogo con foto de licencia libre: CC BY…)
+  const cr = $('#dish-photo-credit'), credit = src && src.photo_credit;
+  cr.textContent = credit ? 'Foto: ' + credit : '';
+  if(credit && src.photo_source && /^https:\/\//.test(src.photo_source)) cr.href = src.photo_source; else cr.removeAttribute('href');
+  cr.classList.toggle('hidden', !credit);
   $('#dish-desc').value = src ? (src.description||'') : '';
   dishSteps = draft && !dish ? draftStepsOf(draft) : stepsFromDish(dish);
   updateDescPreview();
@@ -5773,6 +5791,7 @@ function applyDishFieldsLock(){
   // tocar: readOnly (no `disabled`, que en iOS difumina el texto).
   $('#dish-desc').readOnly = locked;
   ['#macro-protein','#macro-carbs','#macro-fat','#macro-fiber'].forEach(sel=> $(sel).readOnly = locked);
+  $('#dish-name-view').textContent = $('#dish-name').value;
   // Las etiquetas: en vista, bajo la línea de resumen; editando, en "Más detalles".
   const tags = $('#dish-tags');
   if(locked){ if(tags.parentNode!==$('#dish-tags-view-slot')) $('#dish-tags-view-slot').appendChild(tags); }
@@ -9199,12 +9218,17 @@ async function insertDishSafe(row, src){
   // Si lo que copias ya era una copia, el nombre que se queda es el del creador original.
   if(src.shared_from_username) row.shared_from_username = src.shared_from_username;
   if(row.origin_dish_id===undefined) delete row.origin_dish_id;
+  if(src.photo_credit && !row.photo_credit){ row.photo_credit = src.photo_credit; row.photo_source = src.photo_source || null; }
   const full = { ...row, tags: Array.isArray(src.tags) ? src.tags : [],
     kcal_manual: src.kcal_manual!==undefined ? !!src.kcal_manual : src.calories!=null,
     macros_manual: src.macros_manual!==undefined ? !!src.macros_manual : [src.protein_g, src.carbs_g, src.fat_g, src.fiber_g].some(v=> v!=null) };
   let res = await sb.from('dishes').insert(full);
   if(res.error && /origin_dish_id/.test(res.error.message||'')){ // aún sin el SQL de originales
     delete full.origin_dish_id; delete row.origin_dish_id;
+    res = await sb.from('dishes').insert(full);
+  }
+  if(res.error && /photo_credit|photo_source/.test(res.error.message||'')){ // aún sin el SQL del catálogo
+    delete full.photo_credit; delete full.photo_source; delete row.photo_credit; delete row.photo_source;
     res = await sb.from('dishes').insert(full);
   }
   if(res.error && /tags|kcal_manual|macros_manual/.test(res.error.message||'')) res = await sb.from('dishes').insert(row);

@@ -1,0 +1,712 @@
+tomate	ud
+tomate cherry	g
+tomate pera	ud
+tomate rama	ud
+tomate raf	ud
+cebolla	ud
+cebolla morada	ud
+cebolleta	ud
+chalota	ud
+puerro	ud
+ajo	diente
+ajo tierno	ud
+ajo negro	diente
+pimiento rojo	ud
+pimiento verde	ud
+pimiento amarillo	ud
+pimiento italiano	ud
+pimiento del piquillo	ud
+pimientos asados	g
+pimiento de padrón	g
+guindilla	ud
+jalapeño	ud
+calabacín	ud
+berenjena	ud
+zanahoria	ud
+patata	ud
+patata nueva	g
+boniato	ud
+calabaza	g
+pepino	ud
+lechuga	ud
+lechuga iceberg	ud
+lechuga romana	ud
+cogollo	ud
+canónigos	g
+rúcula	g
+espinacas	g
+espinacas baby	g
+acelgas	g
+kale	g
+col rizada	g
+brócoli	g
+coliflor	g
+romanesco	g
+col lombarda	g
+repollo	ud
+col	ud
+coles de bruselas	g
+apio	ud
+hinojo	ud
+alcachofa	ud
+espárrago	ud
+espárrago verde	ud
+espárrago blanco	ud
+judía verde	g
+guisantes	g
+habas	g
+tirabeques	g
+maíz	g
+mazorca de maíz	ud
+remolacha	ud
+rábano	ud
+nabo	ud
+chirivía	ud
+yuca	g
+champiñón	g
+champiñones	g
+seta	g
+setas variadas	g
+shiitake	g
+boletus	g
+níscalos	g
+portobello	ud
+trufa	g
+cebollino	g
+perejil fresco	g
+cilantro fresco	g
+albahaca fresca	g
+menta fresca	g
+hierbabuena	g
+eneldo fresco	g
+romero fresco	rama
+tomillo fresco	rama
+jengibre	g
+cúrcuma fresca	g
+hierba limón	ud
+brotes de soja	g
+germinados	g
+endivia	ud
+escarola	g
+berros	g
+pak choi	ud
+edamame	g
+okra	g
+alcaparras	g
+pepinillos	g
+aceitunas	g
+aceitunas negras	g
+aceitunas verdes	g
+aceitunas rellenas	g
+cardo	g
+borraja	g
+grelos	g
+cebolla frita	g
+alga nori	ud
+alga wakame	g
+alga kombu	g
+verduras congeladas	g
+menestra	g
+salteado de verduras	g
+pisto	g
+ensalada de bolsa	g
+manzana	ud
+manzana verde	ud
+plátano	ud
+naranja	ud
+limón	ud
+lima	ud
+pomelo	ud
+mandarina	ud
+clementina	ud
+fresa	g
+fresón	g
+frambuesa	g
+arándano	g
+mora	g
+grosella	g
+cereza	g
+picota	g
+uva	g
+pera	ud
+melocotón	ud
+nectarina	ud
+albaricoque	ud
+ciruela	ud
+paraguayo	ud
+higo	ud
+breva	ud
+kiwi	ud
+mango	ud
+papaya	ud
+piña	ud
+coco	ud
+coco rallado	g
+sandía	g
+melón	g
+granada	ud
+caqui	ud
+chirimoya	ud
+maracuyá	ud
+lichi	ud
+pitaya	ud
+aguacate	ud
+membrillo	g
+dátil	g
+dátiles medjool	ud
+orejones	g
+ciruelas pasas	g
+pasas	g
+arándanos deshidratados	g
+higos secos	g
+compota de manzana	g
+frutos rojos congelados	g
+fruta congelada	g
+macedonia	g
+piña en almíbar	g
+melocotón en almíbar	g
+zumo de naranja	ml
+zumo de limón	ml
+zumo de lima	ml
+ralladura de limón	g
+ralladura de naranja	g
+pollo	g
+pechuga de pollo	g
+muslo de pollo	g
+contramuslo de pollo	g
+alitas de pollo	g
+pollo entero	ud
+pollo picado	g
+pollo asado	g
+pavo	g
+pechuga de pavo	g
+pavo picado	g
+ternera	g
+filete de ternera	g
+solomillo de ternera	g
+entrecot	g
+chuletón	g
+carne picada	g
+carne picada mixta	g
+carne picada de ternera	g
+carne para guisar	g
+carrillada	g
+rabo de toro	g
+cerdo	g
+lomo de cerdo	g
+solomillo de cerdo	g
+secreto ibérico	g
+presa ibérica	g
+pluma ibérica	g
+costillas	g
+costilla de cerdo	g
+panceta	g
+bacon	g
+cordero	g
+pierna de cordero	g
+chuletas de cordero	g
+conejo	g
+codorniz	ud
+pato	g
+magret de pato	g
+hígado	g
+callos	g
+morcilla	ud
+chorizo	g
+chistorra	g
+salchichón	g
+fuet	ud
+lomo embuchado	g
+sobrasada	g
+jamón serrano	g
+jamón ibérico	g
+jamón cocido	g
+fiambre de pavo	g
+pechuga de pavo en lonchas	g
+mortadela	g
+cecina	g
+lacón	g
+butifarra	ud
+salchicha	ud
+salchicha fresca	ud
+hamburguesa	ud
+hamburguesa de pollo	ud
+albóndigas	ud
+nuggets	ud
+salmón	g
+salmón ahumado	g
+atún	g
+atún en lata	g
+atún al natural	g
+bonito	g
+bonito del norte	g
+merluza	g
+pescadilla	g
+bacalao	g
+bacalao desalado	g
+lubina	ud
+dorada	ud
+rape	g
+rodaballo	g
+lenguado	ud
+gallo	ud
+sardina	ud
+sardinas en lata	g
+boquerón	g
+anchoas	g
+caballa	g
+jurel	g
+trucha	ud
+emperador	g
+pez espada	g
+mero	g
+besugo	ud
+pescado blanco	g
+varitas de merluza	ud
+sepia	g
+calamar	g
+chipirones	g
+pulpo	g
+gamba	g
+langostino	g
+cigala	ud
+bogavante	ud
+cangrejo	ud
+mejillón	g
+mejillones en escabeche	g
+almeja	g
+berberecho	g
+navaja	g
+vieira	ud
+ostra	ud
+surimi	g
+gulas	g
+huevas	g
+tinta de calamar	g
+leche	ml
+leche entera	ml
+leche semidesnatada	ml
+leche desnatada	ml
+leche sin lactosa	ml
+leche en polvo	g
+leche evaporada	ml
+leche condensada	g
+nata	ml
+nata para montar	ml
+nata para cocinar	ml
+crema agria	g
+mantequilla	g
+mantequilla sin sal	g
+margarina	g
+yogur	ud
+yogur natural	ud
+yogur griego	ud
+yogur desnatado	ud
+yogur proteico	ud
+kéfir	ml
+skyr	g
+queso	g
+queso fresco	g
+queso fresco batido	g
+requesón	g
+queso cottage	g
+queso crema	g
+queso de untar	g
+mascarpone	g
+ricotta	g
+mozzarella	g
+burrata	ud
+queso feta	g
+queso de cabra	g
+queso manchego	g
+queso curado	g
+queso semicurado	g
+queso tierno	g
+parmesano	g
+grana padano	g
+queso gouda	g
+queso edam	g
+queso emmental	g
+queso gruyère	g
+queso cheddar	g
+queso azul	g
+roquefort	g
+gorgonzola	g
+queso brie	g
+camembert	g
+queso en lonchas	g
+queso rallado	g
+huevo	ud
+huevo de codorniz	ud
+claras de huevo	ml
+yema de huevo	ud
+arroz	g
+arroz blanco	g
+arroz integral	g
+arroz basmati	g
+arroz jazmín	g
+arroz bomba	g
+arroz redondo	g
+arroz vaporizado	g
+arroz salvaje	g
+arroz para sushi	g
+arroz inflado	g
+pasta	g
+espagueti	g
+macarrones	g
+tallarines	g
+fideos	g
+fideos finos	g
+placas de lasaña	ud
+canelones	ud
+ravioli	g
+tortellini	g
+ñoquis	g
+penne	g
+fusilli	g
+lazos	g
+pasta integral	g
+pasta fresca	g
+fideos de arroz	g
+noodles	g
+fideos udon	g
+cuscús	g
+bulgur	g
+quinoa	g
+mijo	g
+trigo sarraceno	g
+espelta	g
+cebada	g
+amaranto	g
+polenta	g
+sémola	g
+avena	g
+copos de avena	g
+harina de avena	g
+salvado de avena	g
+crema de arroz	g
+cereales	g
+cereales integrales	g
+copos de maíz	g
+muesli	g
+granola	g
+cereales de chocolate	g
+pan	g
+pan integral	g
+pan de molde	ud
+pan de molde integral	ud
+pan de hamburguesa	ud
+pan de perrito	ud
+pan de pita	ud
+pan naan	ud
+baguette	ud
+barra de pan	ud
+chapata	ud
+pan de centeno	g
+pan sin gluten	g
+biscotes	ud
+picos	g
+tostadas	ud
+pan rallado	g
+panko	g
+tortilla de trigo	ud
+tortilla de maíz	ud
+nachos	g
+tortitas de arroz	ud
+tortitas de maíz	ud
+masa de pizza	ud
+base de pizza	ud
+obleas de empanadilla	ud
+papel de arroz	ud
+palomitas	g
+lenteja	g
+lentejas rojas	g
+lentejas cocidas	g
+garbanzo	g
+garbanzos cocidos	g
+alubia	g
+alubia roja	g
+alubias cocidas	g
+judía blanca	g
+judía pinta	g
+frijoles negros	g
+frijoles refritos	g
+soja	g
+soja texturizada	g
+hummus	g
+falafel	ud
+tofu	g
+tempeh	g
+seitán	g
+altramuces	g
+nueces	g
+almendras	g
+almendra molida	g
+almendra laminada	g
+avellanas	g
+anacardos	g
+pistachos	g
+cacahuetes	g
+piñones	g
+nueces de macadamia	g
+nueces de pecán	g
+castañas	g
+pipas	g
+pipas de calabaza	g
+semillas de chía	g
+semillas de lino	g
+semillas de sésamo	g
+semillas de girasol	g
+semillas de amapola	g
+semillas de cáñamo	g
+frutos secos variados	g
+mantequilla de cacahuete	g
+crema de cacahuete	g
+crema de almendras	g
+tahini	g
+harina	g
+harina de trigo	g
+harina integral	g
+harina de fuerza	g
+harina de repostería	g
+harina de maíz	g
+maicena	g
+harina de arroz	g
+harina de garbanzo	g
+harina de espelta	g
+harina de centeno	g
+harina sin gluten	g
+harina de coco	g
+harina de almendra	g
+azúcar	g
+azúcar moreno	g
+azúcar glas	g
+azúcar avainillado	g
+azúcar de coco	g
+azúcar perlado	g
+panela	g
+edulcorante	g
+eritritol	g
+stevia	g
+miel	g
+sirope de arce	ml
+sirope de agave	ml
+melaza	g
+levadura	g
+levadura química	g
+levadura fresca	g
+levadura de panadería	g
+levadura nutricional	g
+bicarbonato	g
+cremor tártaro	g
+gelatina	g
+gelatina en polvo	g
+hojas de gelatina	ud
+agar agar	g
+cacao en polvo	g
+cacao puro	g
+cacao soluble	g
+chocolate	g
+chocolate negro	g
+chocolate con leche	g
+chocolate blanco	g
+chocolate de cobertura	g
+pepitas de chocolate	g
+fideos de chocolate	g
+virutas de colores	g
+crema de cacao	g
+vainilla	g
+esencia de vainilla	ml
+vaina de vainilla	ud
+extracto de almendra	ml
+agua de azahar	ml
+colorante alimentario	ml
+fondant	g
+mazapán	g
+merengue	g
+crema pastelera	g
+dulce de leche	g
+caramelo líquido	ml
+almíbar	ml
+glaseado	g
+mermelada	g
+mermelada de fresa	g
+mermelada de melocotón	g
+mermelada de naranja	g
+cabello de ángel	g
+frutas confitadas	g
+guindas	g
+masa de hojaldre	ud
+masa quebrada	ud
+masa brisa	ud
+pasta filo	ud
+bizcocho	g
+bizcochos de soletilla	ud
+galletas	ud
+galletas maría	ud
+galletas digestive	ud
+barquillos	ud
+nata vegetal	ml
+crema de coco	ml
+leche de coco	ml
+sal	pizca
+sal gruesa	g
+sal marina	pizca
+sal rosa	pizca
+sal en escamas	pizca
+pimienta	pizca
+pimienta negra	pizca
+pimienta blanca	pizca
+pimienta de cayena	pizca
+pimienta rosa	pizca
+pimentón	pizca
+pimentón dulce	pizca
+pimentón picante	pizca
+pimentón de la vera	pizca
+orégano	pizca
+albahaca	pizca
+tomillo	pizca
+romero	pizca
+perejil	pizca
+laurel	ud
+comino	pizca
+canela	pizca
+canela en rama	rama
+curry	pizca
+cúrcuma	pizca
+jengibre en polvo	pizca
+ajo en polvo	pizca
+cebolla en polvo	pizca
+nuez moscada	pizca
+clavo	ud
+anís estrellado	ud
+cardamomo	ud
+azafrán	pizca
+hierbas provenzales	pizca
+eneldo	pizca
+estragón	pizca
+salvia	pizca
+mejorana	pizca
+cilantro molido	pizca
+garam masala	pizca
+ras el hanout	pizca
+chile en polvo	pizca
+chile en copos	pizca
+guindilla seca	ud
+mostaza en grano	g
+pastilla de caldo	ud
+aceite de oliva	ml
+aceite de oliva virgen extra	ml
+aceite de girasol	ml
+aceite de coco	ml
+aceite de sésamo	ml
+aceite en spray	ml
+vinagre	ml
+vinagre de manzana	ml
+vinagre balsámico	ml
+vinagre de jerez	ml
+vinagre de arroz	ml
+salsa de soja	ml
+salsa teriyaki	ml
+salsa de ostras	ml
+salsa worcestershire	ml
+salsa hoisin	ml
+salsa de pescado	ml
+mirin	ml
+tabasco	ml
+salsa picante	ml
+sriracha	ml
+salsa barbacoa	ml
+salsa rosa	g
+salsa brava	g
+alioli	g
+ketchup	g
+mayonesa	g
+mayonesa light	g
+mostaza	g
+mostaza de dijon	g
+mostaza antigua	g
+pesto	g
+salsa de tomate	ml
+tomate frito	ml
+tomate triturado	g
+tomate concentrado	g
+bechamel	ml
+salsa de yogur	g
+salsa de queso	g
+guacamole	g
+pico de gallo	g
+pasta de curry	g
+miso	g
+wasabi	g
+jengibre encurtido	g
+kimchi	g
+chipotle	g
+caldo	ml
+caldo de verduras	ml
+caldo de pollo	ml
+caldo de carne	ml
+caldo de pescado	ml
+fumet	ml
+agua	ml
+agua con gas	ml
+vino blanco	ml
+vino tinto	ml
+cava	ml
+cerveza	ml
+sidra	ml
+brandy	ml
+coñac	ml
+ron	ml
+whisky	ml
+vodka	ml
+licor de café	ml
+oporto	ml
+jerez	ml
+vermut	ml
+sake	ml
+café	ml
+café soluble	g
+té	ud
+té matcha	g
+infusión	ud
+leche de avena	ml
+bebida de avena	ml
+bebida de soja	ml
+leche de soja	ml
+bebida de almendra	ml
+leche de almendras	ml
+bebida de arroz	ml
+zumo de manzana	ml
+zumo de piña	ml
+refresco de cola	ml
+tónica	ml
+bebida isotónica	ml
+horchata	ml
+proteína en polvo	g
+proteína whey	g
+proteína vegana	g
+caseína	g
+creatina	g
+barrita de proteínas	ud
+gel energético	ud
+patatas fritas congeladas	g
+patatas chips	g
+pizza congelada	ud
+empanadillas	ud
+croquetas	ud
+gyozas	ud
+rollitos de primavera	ud
+tortilla de patatas	ud
+gazpacho	ml
+salmorejo	ml
+puré de patatas	g
+copos de puré de patata	g
+helado	g
+natillas	ud
+flan	ud
+croissant	ud
+magdalenas	ud
+churros	ud
+turrón	g
+polvorones	ud

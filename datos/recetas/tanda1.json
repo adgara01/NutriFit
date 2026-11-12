@@ -1,0 +1,1657 @@
+[
+ {
+  "name": "Tostadas con tomate y aceite",
+  "tags": [
+   "Desayuno",
+   "Vegano"
+  ],
+  "servings_base": 2,
+  "duration_min": 10,
+  "ingredients": [
+   {
+    "name": "pan",
+    "quantity": 160,
+    "unit": "g"
+   },
+   {
+    "name": "tomate",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 1,
+    "unit": "diente"
+   },
+   {
+    "name": "aceite de oliva virgen extra",
+    "quantity": 20,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Tuesta el pan hasta que esté crujiente por fuera.",
+   "Si te gusta, frota el diente de ajo pelado sobre el pan caliente.",
+   "Ralla los tomates por la parte gruesa del rallador, dejando la piel fuera.",
+   "Reparte el tomate por encima, añade un hilo de aceite y una pizca de sal, y sirve al momento."
+  ],
+  "photo_query": "pan con tomate"
+ },
+ {
+  "name": "Porridge de avena con plátano y canela",
+  "tags": [
+   "Desayuno"
+  ],
+  "servings_base": 1,
+  "duration_min": 10,
+  "ingredients": [
+   {
+    "name": "copos de avena",
+    "quantity": 50,
+    "unit": "g"
+   },
+   {
+    "name": "leche",
+    "quantity": 250,
+    "unit": "ml"
+   },
+   {
+    "name": "plátano",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "canela",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "miel",
+    "quantity": 10,
+    "unit": "g"
+   }
+  ],
+  "steps": [
+   "Pon la avena y la leche en un cazo a fuego medio.",
+   "Remueve de vez en cuando durante 5 o 6 minutos, hasta que espese y quede cremosa.",
+   "Aplasta la mitad del plátano con un tenedor e incorpóralo al final para endulzar.",
+   "Sirve en un bol con el resto del plátano en rodajas, canela espolvoreada y un poco de miel."
+  ],
+  "photo_query": "porridge oatmeal banana"
+ },
+ {
+  "name": "Yogur griego con granola y frutos rojos",
+  "tags": [
+   "Desayuno"
+  ],
+  "servings_base": 1,
+  "duration_min": 5,
+  "ingredients": [
+   {
+    "name": "yogur griego",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "granola",
+    "quantity": 40,
+    "unit": "g"
+   },
+   {
+    "name": "frutos rojos congelados",
+    "quantity": 80,
+    "unit": "g"
+   },
+   {
+    "name": "miel",
+    "quantity": 10,
+    "unit": "g"
+   }
+  ],
+  "steps": [
+   "Si los frutos rojos están congelados, déjalos fuera unos minutos o caliéntalos 30 segundos en el microondas.",
+   "Pon el yogur en un bol o un vaso ancho.",
+   "Cubre con la granola y los frutos rojos, y termina con un hilo de miel."
+  ],
+  "photo_query": "yogurt granola berries"
+ },
+ {
+  "name": "Huevos revueltos con espinacas",
+  "tags": [
+   "Desayuno"
+  ],
+  "servings_base": 1,
+  "duration_min": 10,
+  "ingredients": [
+   {
+    "name": "huevo",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "espinacas",
+    "quantity": 60,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 10,
+    "unit": "ml"
+   },
+   {
+    "name": "pan integral",
+    "quantity": 60,
+    "unit": "g"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "pimienta negra",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Saltea las espinacas en una sartén con el aceite hasta que se reduzcan, unos 2 minutos.",
+   "Bate los huevos con sal y pimienta.",
+   "Baja el fuego, añade los huevos y remueve despacio con una espátula hasta que cuajen pero sigan jugosos.",
+   "Sirve enseguida con el pan tostado."
+  ],
+  "photo_query": "scrambled eggs spinach"
+ },
+ {
+  "name": "Tostada de aguacate y huevo",
+  "tags": [
+   "Desayuno"
+  ],
+  "servings_base": 1,
+  "duration_min": 10,
+  "ingredients": [
+   {
+    "name": "pan integral",
+    "quantity": 60,
+    "unit": "g"
+   },
+   {
+    "name": "aguacate",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "huevo",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "limón",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "pimienta negra",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Cuece el huevo 7 minutos en agua hirviendo para que la yema quede melosa, y enfríalo en agua fría.",
+   "Tuesta el pan.",
+   "Machaca el aguacate con unas gotas de limón, sal y pimienta.",
+   "Unta el aguacate en la tostada y pon encima el huevo pelado y abierto por la mitad."
+  ],
+  "photo_query": "avocado toast egg"
+ },
+ {
+  "name": "Tortitas de avena y plátano",
+  "tags": [
+   "Desayuno"
+  ],
+  "servings_base": 2,
+  "duration_min": 20,
+  "ingredients": [
+   {
+    "name": "plátano",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "huevo",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "copos de avena",
+    "quantity": 80,
+    "unit": "g"
+   },
+   {
+    "name": "canela",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 5,
+    "unit": "ml"
+   },
+   {
+    "name": "miel",
+    "quantity": 15,
+    "unit": "g"
+   }
+  ],
+  "steps": [
+   "Tritura los plátanos, los huevos, la avena y una pizca de canela hasta tener una masa espesa.",
+   "Calienta una sartén antiadherente a fuego medio y úntala con unas gotas de aceite.",
+   "Echa una cucharada grande de masa por tortita y cocina hasta que salgan burbujas en la superficie, unos 2 minutos.",
+   "Dales la vuelta, cocina un minuto más y sirve con miel o fruta."
+  ],
+  "photo_query": "banana oat pancakes"
+ },
+ {
+  "name": "Bocadillo de jamón con tomate",
+  "tags": [
+   "Desayuno",
+   "Carne"
+  ],
+  "servings_base": 1,
+  "duration_min": 5,
+  "ingredients": [
+   {
+    "name": "barra de pan",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "tomate",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "jamón serrano",
+    "quantity": 50,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva virgen extra",
+    "quantity": 10,
+    "unit": "ml"
+   }
+  ],
+  "steps": [
+   "Abre el pan por la mitad; si quieres, tuéstalo un minuto.",
+   "Ralla el tomate y repártelo por la miga.",
+   "Añade un hilo de aceite y las lonchas de jamón, cierra y listo."
+  ],
+  "photo_query": "bocadillo jamon"
+ },
+ {
+  "name": "Batido de plátano y crema de cacahuete",
+  "tags": [
+   "Desayuno",
+   "Vegano"
+  ],
+  "servings_base": 1,
+  "duration_min": 5,
+  "ingredients": [
+   {
+    "name": "plátano",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "bebida de avena",
+    "quantity": 250,
+    "unit": "ml"
+   },
+   {
+    "name": "mantequilla de cacahuete",
+    "quantity": 20,
+    "unit": "g"
+   },
+   {
+    "name": "copos de avena",
+    "quantity": 20,
+    "unit": "g"
+   },
+   {
+    "name": "canela",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Pon todos los ingredientes en el vaso de la batidora.",
+   "Tritura hasta que quede liso; si lo quieres más frío, añade un par de cubitos de hielo.",
+   "Sirve enseguida."
+  ],
+  "photo_query": "banana smoothie"
+ },
+ {
+  "name": "Tortilla francesa con queso",
+  "tags": [
+   "Desayuno"
+  ],
+  "servings_base": 1,
+  "duration_min": 8,
+  "ingredients": [
+   {
+    "name": "huevo",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "queso rallado",
+    "quantity": 30,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 5,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Bate los huevos con una pizca de sal.",
+   "Calienta el aceite en una sartén pequeña a fuego medio y vierte el huevo.",
+   "Cuando empiece a cuajar por abajo, reparte el queso en el centro.",
+   "Dobla la tortilla en tres, deja un minuto más para que se funda el queso y sirve."
+  ],
+  "photo_query": "french omelette cheese"
+ },
+ {
+  "name": "Pudin de chía con mango",
+  "tags": [
+   "Desayuno",
+   "Vegano"
+  ],
+  "servings_base": 1,
+  "duration_min": 5,
+  "ingredients": [
+   {
+    "name": "semillas de chía",
+    "quantity": 30,
+    "unit": "g"
+   },
+   {
+    "name": "bebida de avena",
+    "quantity": 200,
+    "unit": "ml"
+   },
+   {
+    "name": "mango",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "sirope de agave",
+    "quantity": 10,
+    "unit": "ml"
+   }
+  ],
+  "steps": [
+   "Mezcla la chía con la bebida de avena y el sirope en un tarro, y remueve bien para que no se formen grumos.",
+   "Vuelve a remover a los 10 minutos y guárdalo en la nevera al menos 4 horas, o toda la noche.",
+   "Antes de comer, cubre con el mango en dados."
+  ],
+  "photo_query": "chia pudding mango"
+ },
+ {
+  "name": "Lentejas estofadas con verduras",
+  "tags": [
+   "Comida",
+   "Vegano"
+  ],
+  "servings_base": 4,
+  "duration_min": 50,
+  "ingredients": [
+   {
+    "name": "lenteja",
+    "quantity": 300,
+    "unit": "g"
+   },
+   {
+    "name": "patata",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "zanahoria",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "pimiento verde",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 2,
+    "unit": "diente"
+   },
+   {
+    "name": "tomate triturado",
+    "quantity": 150,
+    "unit": "g"
+   },
+   {
+    "name": "pimentón dulce",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "laurel",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 40,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Lava las lentejas en un colador con agua fría. Las pardinas no necesitan remojo.",
+   "Pica la cebolla, el pimiento y el ajo bien pequeños y póchalos en una olla con el aceite a fuego medio unos 8 minutos.",
+   "Añade el tomate triturado y deja que se haga 5 minutos, removiendo de vez en cuando.",
+   "Aparta la olla del fuego, echa una cucharadita de pimentón, remueve rápido para que no se queme y vuelve al fuego.",
+   "Incorpora las lentejas, la zanahoria en rodajas, el laurel y agua fría hasta cubrir dos dedos por encima.",
+   "Cuando hierva, baja el fuego y deja 20 minutos. Añade la patata en trozos medianos, cascándolos con el cuchillo para que suelten almidón.",
+   "Cocina 20 minutos más, hasta que lentejas y patata estén tiernas. Prueba de sal y deja reposar 5 minutos antes de servir."
+  ],
+  "photo_query": "lentejas"
+ },
+ {
+  "name": "Pollo al curry con arroz",
+  "tags": [
+   "Comida",
+   "Carne"
+  ],
+  "servings_base": 4,
+  "duration_min": 35,
+  "ingredients": [
+   {
+    "name": "contramuslo de pollo",
+    "quantity": 600,
+    "unit": "g"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 2,
+    "unit": "diente"
+   },
+   {
+    "name": "jengibre",
+    "quantity": 10,
+    "unit": "g"
+   },
+   {
+    "name": "curry",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "tomate triturado",
+    "quantity": 200,
+    "unit": "g"
+   },
+   {
+    "name": "leche de coco",
+    "quantity": 400,
+    "unit": "ml"
+   },
+   {
+    "name": "arroz basmati",
+    "quantity": 300,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 30,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Corta el pollo en dados y sálalo ligeramente.",
+   "Sofríe la cebolla picada en el aceite 6 minutos; añade el ajo y el jengibre rallados y cocina uno más.",
+   "Incorpora dos cucharadas de curry y remueve 30 segundos para que suelte el aroma.",
+   "Añade el pollo y marca 4 o 5 minutos hasta que pierda el color crudo.",
+   "Echa el tomate y la leche de coco, baja el fuego y deja 15 minutos, hasta que la salsa espese.",
+   "Mientras, cuece el arroz en agua con sal según el paquete y escúrrelo.",
+   "Sirve el pollo con su salsa junto al arroz."
+  ],
+  "photo_query": "chicken curry"
+ },
+ {
+  "name": "Garbanzos con espinacas",
+  "tags": [
+   "Comida",
+   "Vegano"
+  ],
+  "servings_base": 4,
+  "duration_min": 25,
+  "ingredients": [
+   {
+    "name": "garbanzos cocidos",
+    "quantity": 800,
+    "unit": "g"
+   },
+   {
+    "name": "espinacas",
+    "quantity": 300,
+    "unit": "g"
+   },
+   {
+    "name": "ajo",
+    "quantity": 3,
+    "unit": "diente"
+   },
+   {
+    "name": "pan",
+    "quantity": 40,
+    "unit": "g"
+   },
+   {
+    "name": "pimentón dulce",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "comino",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "vinagre de jerez",
+    "quantity": 10,
+    "unit": "ml"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 50,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Enjuaga los garbanzos y escúrrelos.",
+   "Fríe en el aceite los ajos laminados y el pan en trozos hasta que se doren; sácalos y macháchalos en un mortero con el vinagre.",
+   "En el mismo aceite saltea las espinacas hasta que se reduzcan.",
+   "Añade una cucharadita de pimentón y otra de comino, remueve y echa enseguida los garbanzos y un vaso de agua.",
+   "Incorpora el majado, cocina 10 minutos a fuego suave y prueba de sal."
+  ],
+  "photo_query": "garbanzos espinacas"
+ },
+ {
+  "name": "Paella de pollo y verduras",
+  "tags": [
+   "Comida",
+   "Carne"
+  ],
+  "servings_base": 4,
+  "duration_min": 50,
+  "ingredients": [
+   {
+    "name": "muslo de pollo",
+    "quantity": 500,
+    "unit": "g"
+   },
+   {
+    "name": "arroz bomba",
+    "quantity": 320,
+    "unit": "g"
+   },
+   {
+    "name": "judía verde",
+    "quantity": 150,
+    "unit": "g"
+   },
+   {
+    "name": "pimiento rojo",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "tomate triturado",
+    "quantity": 100,
+    "unit": "g"
+   },
+   {
+    "name": "ajo",
+    "quantity": 2,
+    "unit": "diente"
+   },
+   {
+    "name": "pimentón dulce",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "azafrán",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "caldo de pollo",
+    "quantity": 1000,
+    "unit": "ml"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 50,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Sala el pollo troceado y dóralo bien en la paellera con el aceite, unos 10 minutos.",
+   "Añade las judías y el pimiento en tiras y rehoga 5 minutos.",
+   "Haz un hueco en el centro, sofríe el ajo picado, luego el tomate, y cocina hasta que pierda el agua.",
+   "Echa una cucharadita de pimentón, remueve y vierte el caldo caliente con el azafrán. Prueba de sal.",
+   "Cuando hierva, reparte el arroz en forma de cruz y extiéndelo. A partir de aquí no se remueve.",
+   "Cocina 10 minutos a fuego fuerte y 8 más a fuego suave.",
+   "Deja reposar 5 minutos tapada con un paño antes de servir."
+  ],
+  "photo_query": "paella pollo"
+ },
+ {
+  "name": "Macarrones con tomate y chorizo",
+  "tags": [
+   "Comida",
+   "Carne"
+  ],
+  "servings_base": 4,
+  "duration_min": 25,
+  "ingredients": [
+   {
+    "name": "macarrones",
+    "quantity": 400,
+    "unit": "g"
+   },
+   {
+    "name": "chorizo",
+    "quantity": 120,
+    "unit": "g"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "tomate frito",
+    "quantity": 400,
+    "unit": "ml"
+   },
+   {
+    "name": "queso rallado",
+    "quantity": 60,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 20,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Cuece los macarrones en agua con sal el tiempo del paquete y escúrrelos.",
+   "Mientras, sofríe la cebolla picada en el aceite 6 minutos.",
+   "Añade el chorizo en daditos y cocina 3 minutos para que suelte su grasa.",
+   "Incorpora el tomate frito, deja 5 minutos y mezcla con la pasta.",
+   "Sirve con queso rallado por encima o gratina unos minutos en el horno."
+  ],
+  "photo_query": "macarrones chorizo"
+ },
+ {
+  "name": "Albóndigas en salsa de tomate",
+  "tags": [
+   "Comida",
+   "Carne"
+  ],
+  "servings_base": 4,
+  "duration_min": 45,
+  "ingredients": [
+   {
+    "name": "carne picada mixta",
+    "quantity": 500,
+    "unit": "g"
+   },
+   {
+    "name": "huevo",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "pan rallado",
+    "quantity": 40,
+    "unit": "g"
+   },
+   {
+    "name": "ajo",
+    "quantity": 2,
+    "unit": "diente"
+   },
+   {
+    "name": "perejil fresco",
+    "quantity": 10,
+    "unit": "g"
+   },
+   {
+    "name": "harina",
+    "quantity": 30,
+    "unit": "g"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "tomate triturado",
+    "quantity": 400,
+    "unit": "g"
+   },
+   {
+    "name": "vino blanco",
+    "quantity": 100,
+    "unit": "ml"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 60,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Mezcla la carne con el huevo, el pan rallado, un ajo picado, el perejil y sal.",
+   "Forma bolas del tamaño de una nuez y pásalas por harina.",
+   "Dóralas en el aceite por tandas y resérvalas.",
+   "En el mismo aceite pocha la cebolla y el otro ajo picados, 8 minutos.",
+   "Añade el vino, deja que se evapore y echa el tomate. Cocina 10 minutos.",
+   "Vuelve a meter las albóndigas y deja 10 minutos más a fuego suave."
+  ],
+  "photo_query": "albondigas tomate"
+ },
+ {
+  "name": "Tofu salteado con brócoli y arroz",
+  "tags": [
+   "Comida",
+   "Vegano"
+  ],
+  "servings_base": 2,
+  "duration_min": 25,
+  "ingredients": [
+   {
+    "name": "tofu",
+    "quantity": 250,
+    "unit": "g"
+   },
+   {
+    "name": "brócoli",
+    "quantity": 250,
+    "unit": "g"
+   },
+   {
+    "name": "zanahoria",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 1,
+    "unit": "diente"
+   },
+   {
+    "name": "jengibre",
+    "quantity": 5,
+    "unit": "g"
+   },
+   {
+    "name": "salsa de soja",
+    "quantity": 30,
+    "unit": "ml"
+   },
+   {
+    "name": "arroz basmati",
+    "quantity": 150,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 20,
+    "unit": "ml"
+   }
+  ],
+  "steps": [
+   "Cuece el arroz según el paquete.",
+   "Seca bien el tofu con papel de cocina, córtalo en dados y dóralo en una sartén con la mitad del aceite. Resérvalo.",
+   "Saltea a fuego fuerte el brócoli en ramitos y la zanahoria en tiras con el resto del aceite, 5 minutos.",
+   "Añade el ajo y el jengibre rallados, vuelve a echar el tofu y riega con la soja.",
+   "Remueve un minuto y sirve sobre el arroz."
+  ],
+  "photo_query": "tofu broccoli stir fry"
+ },
+ {
+  "name": "Alubias blancas con verduras",
+  "tags": [
+   "Comida",
+   "Vegano"
+  ],
+  "servings_base": 4,
+  "duration_min": 30,
+  "ingredients": [
+   {
+    "name": "alubias cocidas",
+    "quantity": 800,
+    "unit": "g"
+   },
+   {
+    "name": "puerro",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "zanahoria",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "pimiento rojo",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 2,
+    "unit": "diente"
+   },
+   {
+    "name": "pimentón dulce",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "caldo de verduras",
+    "quantity": 500,
+    "unit": "ml"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 40,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Enjuaga las alubias y escúrrelas.",
+   "Pocha el puerro, la zanahoria, el pimiento y el ajo, todo picado, en el aceite durante 10 minutos.",
+   "Añade una cucharadita de pimentón, remueve y vierte el caldo.",
+   "Incorpora las alubias y cocina 10 minutos a fuego suave.",
+   "Aplasta unas cuantas alubias contra la cazuela para que espese el caldo y prueba de sal."
+  ],
+  "photo_query": "white bean stew"
+ },
+ {
+  "name": "Solomillo de cerdo al horno con patatas",
+  "tags": [
+   "Comida",
+   "Carne"
+  ],
+  "servings_base": 4,
+  "duration_min": 50,
+  "ingredients": [
+   {
+    "name": "solomillo de cerdo",
+    "quantity": 600,
+    "unit": "g"
+   },
+   {
+    "name": "patata",
+    "quantity": 4,
+    "unit": "ud"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 3,
+    "unit": "diente"
+   },
+   {
+    "name": "vino blanco",
+    "quantity": 100,
+    "unit": "ml"
+   },
+   {
+    "name": "romero",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 40,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "pimienta negra",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Precalienta el horno a 200 °C.",
+   "Corta las patatas en rodajas finas y la cebolla en tiras; colócalas en una bandeja con sal, la mitad del aceite y los ajos aplastados. Hornea 20 minutos.",
+   "Salpimienta el solomillo, frótalo con romero y márcalo en una sartén caliente con el resto del aceite.",
+   "Ponlo sobre las patatas, riega con el vino y hornea 15 o 18 minutos.",
+   "Déjalo reposar 5 minutos antes de cortarlo en medallones."
+  ],
+  "photo_query": "pork tenderloin potatoes"
+ },
+ {
+  "name": "Espaguetis a la boloñesa",
+  "tags": [
+   "Comida",
+   "Carne"
+  ],
+  "servings_base": 4,
+  "duration_min": 40,
+  "ingredients": [
+   {
+    "name": "espagueti",
+    "quantity": 400,
+    "unit": "g"
+   },
+   {
+    "name": "carne picada mixta",
+    "quantity": 400,
+    "unit": "g"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "zanahoria",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 2,
+    "unit": "diente"
+   },
+   {
+    "name": "tomate triturado",
+    "quantity": 400,
+    "unit": "g"
+   },
+   {
+    "name": "vino tinto",
+    "quantity": 100,
+    "unit": "ml"
+   },
+   {
+    "name": "orégano",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "parmesano",
+    "quantity": 40,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 30,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Pica muy fino la cebolla, la zanahoria y el ajo, y póchalos en el aceite 10 minutos.",
+   "Sube el fuego, añade la carne y deshazla con una cuchara hasta que se dore.",
+   "Echa el vino y deja que se evapore.",
+   "Incorpora el tomate, el orégano y sal, y cocina tapado a fuego suave 20 minutos.",
+   "Cuece la pasta, escúrrela y mézclala con la salsa. Sirve con parmesano."
+  ],
+  "photo_query": "spaghetti bolognese"
+ },
+ {
+  "name": "Tortilla de patatas con cebolla",
+  "tags": [
+   "Cena"
+  ],
+  "servings_base": 4,
+  "duration_min": 40,
+  "ingredients": [
+   {
+    "name": "patata",
+    "quantity": 4,
+    "unit": "ud"
+   },
+   {
+    "name": "huevo",
+    "quantity": 6,
+    "unit": "ud"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 250,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Pela las patatas y córtalas en láminas finas. Pica la cebolla en tiras.",
+   "Calienta el aceite a fuego medio y confita patata y cebolla con un poco de sal unos 20 minutos, hasta que estén blandas pero sin dorarse mucho.",
+   "Escúrrelas bien y guarda el aceite para otras veces.",
+   "Bate los huevos con una pizca de sal, mezcla con la patata y deja que repose 5 minutos.",
+   "En una sartén con una cucharada de aceite a fuego medio-alto, vierte la mezcla y cuaja 2 o 3 minutos moviendo la sartén.",
+   "Dale la vuelta con un plato y cuaja 1 o 2 minutos más, según la quieras de jugosa."
+  ],
+  "photo_query": "tortilla de patatas"
+ },
+ {
+  "name": "Merluza en salsa verde con guisantes",
+  "tags": [
+   "Cena",
+   "Pescado"
+  ],
+  "servings_base": 2,
+  "duration_min": 25,
+  "ingredients": [
+   {
+    "name": "merluza",
+    "quantity": 400,
+    "unit": "g"
+   },
+   {
+    "name": "guisantes",
+    "quantity": 100,
+    "unit": "g"
+   },
+   {
+    "name": "ajo",
+    "quantity": 3,
+    "unit": "diente"
+   },
+   {
+    "name": "perejil fresco",
+    "quantity": 15,
+    "unit": "g"
+   },
+   {
+    "name": "harina",
+    "quantity": 10,
+    "unit": "g"
+   },
+   {
+    "name": "caldo de pescado",
+    "quantity": 250,
+    "unit": "ml"
+   },
+   {
+    "name": "vino blanco",
+    "quantity": 50,
+    "unit": "ml"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 40,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Sala la merluza en trozos o lomos y resérvala.",
+   "En una cazuela baja, dora a fuego suave el ajo laminado en el aceite sin que llegue a tostarse.",
+   "Añade la harina, remueve un minuto y echa el vino. Deja que se evapore el alcohol.",
+   "Vierte el caldo poco a poco sin dejar de mover hasta tener una salsa ligera.",
+   "Agrega los guisantes y la mitad del perejil picado, y cocina 3 minutos.",
+   "Coloca la merluza con la piel hacia arriba y cocina 4 o 5 minutos meneando la cazuela para que la salsa ligue.",
+   "Termina con el resto del perejil y sirve en cuanto el pescado esté hecho por dentro."
+  ],
+  "photo_query": "merluza"
+ },
+ {
+  "name": "Salmón al horno con verduras",
+  "tags": [
+   "Cena",
+   "Pescado"
+  ],
+  "servings_base": 2,
+  "duration_min": 30,
+  "ingredients": [
+   {
+    "name": "salmón",
+    "quantity": 350,
+    "unit": "g"
+   },
+   {
+    "name": "calabacín",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "pimiento rojo",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "cebolla morada",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "limón",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 30,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "pimienta negra",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Precalienta el horno a 200 °C.",
+   "Corta las verduras en trozos parecidos, mézclalas con la mitad del aceite y sal, y hornéalas 15 minutos.",
+   "Salpimienta el salmón, ponlo sobre las verduras con unas rodajas de limón y riega con el resto del aceite.",
+   "Hornea 10 o 12 minutos más, hasta que el salmón se separe en láminas."
+  ],
+  "photo_query": "baked salmon vegetables"
+ },
+ {
+  "name": "Crema de calabacín",
+  "tags": [
+   "Cena",
+   "Vegano"
+  ],
+  "servings_base": 4,
+  "duration_min": 30,
+  "ingredients": [
+   {
+    "name": "calabacín",
+    "quantity": 3,
+    "unit": "ud"
+   },
+   {
+    "name": "patata",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "puerro",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "caldo de verduras",
+    "quantity": 600,
+    "unit": "ml"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 30,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "pimienta negra",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Pocha el puerro en rodajas en el aceite 5 minutos.",
+   "Añade el calabacín en trozos (con piel) y la patata pelada y troceada, y rehoga 3 minutos.",
+   "Cubre con el caldo, sala y cuece 15 minutos.",
+   "Tritura hasta que quede muy fina, ajusta de sal y pimienta y sirve caliente."
+  ],
+  "photo_query": "zucchini soup"
+ },
+ {
+  "name": "Ensalada de garbanzos",
+  "tags": [
+   "Cena",
+   "Vegano"
+  ],
+  "servings_base": 2,
+  "duration_min": 15,
+  "ingredients": [
+   {
+    "name": "garbanzos cocidos",
+    "quantity": 400,
+    "unit": "g"
+   },
+   {
+    "name": "tomate cherry",
+    "quantity": 150,
+    "unit": "g"
+   },
+   {
+    "name": "pepino",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "cebolla morada",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "pimiento verde",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "aceitunas negras",
+    "quantity": 40,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva virgen extra",
+    "quantity": 30,
+    "unit": "ml"
+   },
+   {
+    "name": "vinagre de jerez",
+    "quantity": 15,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Enjuaga los garbanzos y escúrrelos bien.",
+   "Corta los tomates por la mitad y el pepino, la cebolla y el pimiento en daditos.",
+   "Mezcla todo con las aceitunas en un bol.",
+   "Aliña con aceite, vinagre y sal, y deja reposar 10 minutos en la nevera antes de servir."
+  ],
+  "photo_query": "chickpea salad"
+ },
+ {
+  "name": "Pechuga de pollo a la plancha con ensalada",
+  "tags": [
+   "Cena",
+   "Carne"
+  ],
+  "servings_base": 2,
+  "duration_min": 20,
+  "ingredients": [
+   {
+    "name": "pechuga de pollo",
+    "quantity": 350,
+    "unit": "g"
+   },
+   {
+    "name": "lechuga",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "tomate",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "zanahoria",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "limón",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 30,
+    "unit": "ml"
+   },
+   {
+    "name": "orégano",
+    "quantity": null,
+    "unit": "pizca"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Abre las pechugas en filetes finos y aliña con sal, orégano, unas gotas de limón y un poco de aceite.",
+   "Cocínalas en una plancha bien caliente 3 minutos por cada lado.",
+   "Mientras, prepara la ensalada con la lechuga, el tomate en gajos y la zanahoria rallada.",
+   "Aliña la ensalada y sirve junto al pollo cortado en tiras."
+  ],
+  "photo_query": "grilled chicken salad"
+ },
+ {
+  "name": "Revuelto de setas y gambas",
+  "tags": [
+   "Cena",
+   "Pescado"
+  ],
+  "servings_base": 2,
+  "duration_min": 15,
+  "ingredients": [
+   {
+    "name": "setas variadas",
+    "quantity": 250,
+    "unit": "g"
+   },
+   {
+    "name": "gamba",
+    "quantity": 150,
+    "unit": "g"
+   },
+   {
+    "name": "huevo",
+    "quantity": 4,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 2,
+    "unit": "diente"
+   },
+   {
+    "name": "perejil fresco",
+    "quantity": 5,
+    "unit": "g"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 30,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Limpia las setas y córtalas en trozos.",
+   "Dora el ajo laminado en el aceite, añade las setas y saltéalas a fuego fuerte 5 minutos.",
+   "Incorpora las gambas peladas y cocina un minuto, hasta que cambien de color.",
+   "Baja el fuego, echa los huevos batidos con sal y remueve suavemente hasta que cuajen jugosos. Termina con perejil."
+  ],
+  "photo_query": "revuelto setas"
+ },
+ {
+  "name": "Sopa de pollo con fideos",
+  "tags": [
+   "Cena",
+   "Carne"
+  ],
+  "servings_base": 4,
+  "duration_min": 30,
+  "ingredients": [
+   {
+    "name": "pechuga de pollo",
+    "quantity": 250,
+    "unit": "g"
+   },
+   {
+    "name": "zanahoria",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "puerro",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "caldo de pollo",
+    "quantity": 1500,
+    "unit": "ml"
+   },
+   {
+    "name": "fideos",
+    "quantity": 120,
+    "unit": "g"
+   },
+   {
+    "name": "perejil fresco",
+    "quantity": 5,
+    "unit": "g"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Pon el caldo a calentar con la zanahoria en rodajas y el puerro picado.",
+   "Cuando hierva, añade la pechuga entera y cuécela 12 minutos.",
+   "Saca el pollo, desmígalo con dos tenedores y devuélvelo a la olla.",
+   "Echa los fideos y cocina el tiempo del paquete. Prueba de sal y sirve con perejil picado."
+  ],
+  "photo_query": "chicken noodle soup"
+ },
+ {
+  "name": "Pisto con huevo",
+  "tags": [
+   "Cena"
+  ],
+  "servings_base": 2,
+  "duration_min": 40,
+  "ingredients": [
+   {
+    "name": "calabacín",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "pimiento rojo",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "pimiento verde",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "tomate triturado",
+    "quantity": 300,
+    "unit": "g"
+   },
+   {
+    "name": "huevo",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 40,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Pica la cebolla y los pimientos y póchalos en el aceite a fuego medio 10 minutos.",
+   "Añade el calabacín en daditos y cocina 10 minutos más.",
+   "Incorpora el tomate y sal, y deja a fuego suave 15 minutos, removiendo de vez en cuando.",
+   "Haz dos huecos en el pisto, casca los huevos dentro, tapa y deja hasta que la clara cuaje."
+  ],
+  "photo_query": "pisto huevo"
+ },
+ {
+  "name": "Dorada al horno con patatas",
+  "tags": [
+   "Cena",
+   "Pescado"
+  ],
+  "servings_base": 2,
+  "duration_min": 45,
+  "ingredients": [
+   {
+    "name": "dorada",
+    "quantity": 2,
+    "unit": "ud"
+   },
+   {
+    "name": "patata",
+    "quantity": 3,
+    "unit": "ud"
+   },
+   {
+    "name": "cebolla",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "limón",
+    "quantity": 1,
+    "unit": "ud"
+   },
+   {
+    "name": "ajo",
+    "quantity": 2,
+    "unit": "diente"
+   },
+   {
+    "name": "vino blanco",
+    "quantity": 80,
+    "unit": "ml"
+   },
+   {
+    "name": "aceite de oliva",
+    "quantity": 50,
+    "unit": "ml"
+   },
+   {
+    "name": "sal",
+    "quantity": null,
+    "unit": "pizca"
+   }
+  ],
+  "steps": [
+   "Precalienta el horno a 200 °C.",
+   "Coloca las patatas en rodajas y la cebolla en tiras en una bandeja con sal y la mitad del aceite, y hornea 20 minutos.",
+   "Haz dos cortes en el lomo de cada dorada, sálalas y pon dentro unas rodajas de limón.",
+   "Colócalas sobre las patatas, riega con el vino y el resto del aceite con el ajo picado, y hornea 15 o 18 minutos."
+  ],
+  "photo_query": "dorada horno"
+ }
+]
