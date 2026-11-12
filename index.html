@@ -10,8 +10,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="NutriFit">
-<meta name="theme-color" content="#f5f3f1">
-<script>try{if(localStorage.getItem('nutrifit_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');document.querySelector('meta[name="theme-color"]').setAttribute('content','#0d0f0f');}}catch(e){}</script>
+<meta name="theme-color" content="#f5f6f5">
+<script>try{if(localStorage.getItem('nutrifit_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');document.querySelector('meta[name="theme-color"]').setAttribute('content','#131314');}}catch(e){}</script>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://aqxccqmfmbduzznosyiz.supabase.co" crossorigin>
 <link rel="preconnect" href="https://aqxccqmfmbduzznosyiz.supabase.co">
@@ -2329,6 +2329,121 @@ html[data-theme="dark"] .wk-cc.today .dn, html[data-theme="dark"] .wk-dh.today .
   .ex-grid{grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:14px 12px;}
 }
 @media (min-width:1600px){ html{zoom:.9;} }
+
+/* =====================================================================
+   DISEÑO GOOGLE (2026.11.15) — como el diseño «Google» de Cuentas, con
+   acento verde suave y grises. Liso: sin cristal ni desenfoque (también
+   más rápido). Tarjetas blancas con sombra suave, cápsulas tonales para lo
+   seleccionado, campos con fondo gris y barra de pestañas fija abajo.
+   Va al final para mandar sobre las capas anteriores.
+   ===================================================================== */
+:root{
+  --bg:#F5F6F5; --bg2:#FFFFFF; --card:#FFFFFF; --card2:#EEF1EF;
+  --border:#E2E5E3; --border-strong:#C9CECB; --border-btn:#C9CECB; --text:#1F1F1F; --muted:#6F7471;
+  --accent:#3E7D58; --accent-l:#2F6646; --accent2:#7DB892; --accent-rgb:62,125,88;
+  --acc-bg:#DCEFE2; --on-acc:#FFFFFF; --cook:var(--accent);
+  --card-glass:#FFFFFF; --sheet-glass:#FFFFFF; --glass:#F5F6F5; --glass-strong:#FFFFFF; --glass-edge:transparent; --hair:#E2E5E3;
+  --lens:var(--acc-bg); --track:#EEF1EF;
+  --g-shadow:0 1px 2px rgba(60,64,67,.18), 0 2px 8px 2px rgba(60,64,67,.07);
+  --radius:24px;
+}
+html[data-theme="dark"]{
+  --bg:#131314; --bg2:#1E1F20; --card:#1E1F20; --card2:#282A2C;
+  --border:#37393B; --border-strong:#4A4D4F; --border-btn:#4A4D4F; --text:#E3E3E3; --muted:#8E918F;
+  --accent:#9FD3B0; --accent-l:#BFE3CB; --accent2:#9FD3B0; --accent-rgb:159,211,176;
+  --acc-bg:#22432F; --on-acc:#0B2A17;
+  --card-glass:#1E1F20; --sheet-glass:#1E1F20; --glass:#131314; --glass-strong:#282A2C; --hair:#37393B;
+  --lens:var(--acc-bg); --track:#282A2C;
+  --g-shadow:0 1px 3px rgba(0,0,0,.5), 0 4px 12px 2px rgba(0,0,0,.22);
+}
+body::before{display:none !important;}
+body{background:var(--bg);}
+.appbar, .tabbar, .modal-sheet, .nf-toast, .dish-more-menu, .sheet-close-btn, .sheet-more-btn, #dish-modal .modal-actions{-webkit-backdrop-filter:none !important; backdrop-filter:none !important;}
+.appbar{background:var(--bg); box-shadow:none;}
+.card, html[data-theme="dark"] .card{background:var(--card); border:none; box-shadow:var(--g-shadow); border-radius:var(--radius);}
+/* Botones */
+.btn-primary, html[data-theme="dark"] .btn-primary{background:var(--accent); color:var(--on-acc); border-radius:999px; font-weight:600;
+  box-shadow:0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.12);}
+html[data-theme="dark"] .btn-primary{box-shadow:none;}
+.btn-secondary, html[data-theme="dark"] .btn-secondary{background:var(--acc-bg); color:var(--text); border:none; box-shadow:none;}
+/* Segmentados y pestañas */
+.seg, .np-tabs, .subtabs, .deck-src{background:var(--card2); box-shadow:none;}
+.seg-b.active, .np-ink, .subtab.active, .deck-src button.on,
+html[data-theme="dark"] .seg-b.active, html[data-theme="dark"] .np-ink, html[data-theme="dark"] .subtab.active, html[data-theme="dark"] .deck-src button.on{
+  background:var(--acc-bg); color:var(--text); box-shadow:none;}
+.np-tab.active{color:var(--text);}
+/* Campos */
+.field input[type=text], .field input[type=email], .field input[type=search], .field input[type=number], .field input[type=password], .field textarea, .field select,
+.ep-input, .explore-input-wrap, .cart-search, .fridge-add-row .ingredient-name-wrap, .fridge-qty-input{
+  background:var(--card2) !important; border:2px solid transparent !important; border-radius:18px !important;}
+.field input:focus, .field textarea:focus, .field select:focus, .ep-input:focus, .explore-input-wrap:focus-within, .cart-search:focus-within{
+  border-color:var(--accent) !important; box-shadow:0 0 0 4px rgba(var(--accent-rgb),.14);}
+/* Hojas, menús y avisos */
+.modal{background:rgba(31,31,31,.36);}
+html[data-theme="dark"] .modal{background:rgba(0,0,0,.55);}
+.modal-sheet, html[data-theme="dark"] .modal-sheet{background:var(--bg2); border-radius:34px 34px 0 0; box-shadow:none;}
+.modal-sheet::before{background:var(--border-strong); opacity:1;}
+.sheet-close-btn, .sheet-more-btn{background:var(--card2); color:var(--text); box-shadow:none;}
+.dish-more-menu{background:var(--bg2); box-shadow:0 2px 6px rgba(60,64,67,.2), 0 8px 24px 4px rgba(60,64,67,.14); border-radius:16px;}
+.nf-toast{background:#303030; color:#F2F2F2; box-shadow:0 2px 6px rgba(0,0,0,.25);}
+html[data-theme="dark"] .nf-toast{background:#E3E3E3; color:#1F1F1F;}
+#dish-modal .modal-actions{background:var(--bg2); box-shadow:0 -1px 0 var(--border);}
+.steps-card, .dish-details{background:var(--card2);}
+.dish-details .meta-chip, html[data-theme="dark"] .dish-details .meta-chip{background:var(--bg2);}
+/* Barra de pestañas (móvil): fija abajo, esquinas de arriba redondeadas, cápsula tras el icono activo */
+@media (max-width:1023px){
+  :root{--tabbar-h:calc(74px + env(safe-area-inset-bottom));}
+  .tabbar, html[data-theme="dark"] .tabbar{left:0; right:0; bottom:0; height:var(--tabbar-h); padding:0 6px env(safe-area-inset-bottom); border-radius:28px 28px 0 0;
+    background:var(--bg2); box-shadow:0 -1px 0 var(--border), 0 -6px 24px rgba(60,64,67,.10);}
+  .tab::before{display:none !important;}
+  .tab{font-size:11px; font-weight:600; color:var(--muted);}
+  .tab.active{color:var(--text); font-weight:800;}
+  .tab-ic{width:56px; height:32px; border-radius:999px; transition:background-color .2s;}
+  .tab.active .tab-ic{background:var(--acc-bg); color:var(--text);}
+  .tab-plus-btn, html[data-theme="dark"] .tab-plus-btn{width:52px; height:36px; border-radius:18px; background:var(--accent); color:var(--on-acc);
+    box-shadow:0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.15);}
+}
+/* Barra lateral (ordenador) */
+@media (min-width:1024px){
+  .tabbar{background:var(--bg); box-shadow:none;}
+  .tab{border-radius:999px;}
+  .tab.active{background:var(--acc-bg); color:var(--text);}
+  .tab.active .tab-ic svg{color:var(--text);}
+  .modal > .modal-sheet{border-radius:28px;}
+}
+/* Plan */
+.pl-arrow, html[data-theme="dark"] .pl-arrow{background:var(--card2); box-shadow:none;}
+.deck-btn, html[data-theme="dark"] .deck-btn{background:var(--accent); color:var(--on-acc); box-shadow:0 1px 2px rgba(60,64,67,.3), 0 2px 6px 2px rgba(60,64,67,.12);}
+html[data-theme="dark"] .deck-btn{box-shadow:none;}
+.deck-ok{background:var(--acc-bg); color:var(--text); box-shadow:none;}
+.deck-x{background:var(--card2);}
+.wk-cell, .wk-cell.empty{background:var(--card2);}
+.wk-cc.in{background:var(--acc-bg);}
+.wk-cc.in .dn{color:var(--text);}
+.wk-cc.today .dn, .wk-dh.today .dd, html[data-theme="dark"] .wk-cc.today .dn, html[data-theme="dark"] .wk-dh.today .dd{background:var(--accent); color:var(--on-acc);}
+.cs-hero-btns button, html[data-theme="dark"] .cs-hero-btns button{background:var(--card2); box-shadow:none;}
+.cs-hero-btns .pri, html[data-theme="dark"] .cs-hero-btns .pri{background:var(--acc-bg); color:var(--text);}
+.cs-ctl button{background:var(--card2);}
+.cs-ctl button.on, html[data-theme="dark"] .cs-ctl button.on{background:var(--accent); color:var(--on-acc); box-shadow:none;}
+/* Explorar: categorías en gris con el icono en verde, y fila de filtros */
+.ex-cat{background:var(--card); color:var(--text); box-shadow:var(--g-shadow);}
+.ex-cat::before{display:none;}
+.ex-cat svg{stroke:var(--accent); opacity:.55;}
+.ex-filters{display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin:10px -2px 0; padding:0 2px 2px;}
+.ex-filters::-webkit-scrollbar{display:none;}
+.ex-filter{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:0 14px; border-radius:10px;
+  background:transparent; border:1px solid var(--border-strong); color:var(--text); font-size:14px; font-weight:500;
+  transition:background-color .15s, border-color .15s;}
+.ex-filter svg{width:16px; height:16px;}
+.ex-filter.on{background:var(--acc-bg); border-color:transparent; font-weight:600; padding-left:10px;}
+.ex-filter:active{transform:scale(.97);}
+@media (hover:hover) and (pointer:fine){ .ex-filter:hover{background:var(--card2);} .ex-filter.on:hover{background:var(--acc-bg);} }
+#explore-chips{margin-top:8px;}
+
+/* Los ingredientes de la ficha llevan su propia fila: sin el fondo gris de los campos */
+#ingredients-list input{background:none !important; border:none !important; border-radius:0 !important; box-shadow:none !important;}
+#ingredients-list .ingredient-qty{border-left:1px solid var(--border) !important;}
+.dish-view-locked #ingredients-list .ingredient-qty{border-left-color:transparent !important;}
 </style>
 </head>
 <body>
@@ -2654,6 +2769,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
             <div class="ingredient-suggest hidden" id="explore-suggest"></div>
           </div>
+          <div class="ex-filters" id="explore-filters" role="group" aria-label="Filtrar por tipo"></div>
           <div class="missing-chips" id="explore-chips"></div>
         </div>
       </div>
@@ -3693,7 +3809,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.15-3';
+const APP_VERSION = '2026.11.16-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -8383,7 +8499,7 @@ function applyTheme(dark){
   if(dark) document.documentElement.setAttribute('data-theme', 'dark');
   else document.documentElement.removeAttribute('data-theme');
   const m = document.querySelector('meta[name="theme-color"]');
-  if(m) m.setAttribute('content', dark ? '#0d0f0f' : '#f5f3f1');
+  if(m) m.setAttribute('content', dark ? '#131314' : '#f5f6f5');
   const b = $('#toggle-dark-btn'); if(b) b.classList.toggle('on', dark);
 }
 applyTheme(isDarkTheme());
@@ -11375,8 +11491,14 @@ function exploreCreator(r){
   return r.from || null;
 }
 function renderExploreChips(){
-  const cat = exploreCatDef();
-  $('#explore-chips').innerHTML = (cat ? `<button type="button" class="missing-chip cat-chip" style="--cat:${cat.color}" data-explore-cat-del>${cat.label}<span class="explore-chip-x">×</span></button>` : '') + exploreTerms.map((t, i)=>
+  // Filtros por tipo: siempre a la vista; tocar uno lo ilumina, volver a tocarlo lo quita.
+  $('#explore-filters').innerHTML = EXPLORE_CATS.map(c=>{ const on = c.k===exploreCat;
+    return `<button type="button" class="ex-filter${on?' on':''}" data-ex-filter="${c.k}" aria-pressed="${on}">${on ? ICON_TICK : ''}<span>${c.label}</span></button>`; }).join('');
+  $all('[data-ex-filter]').forEach(b=> b.onclick = ()=>{
+    exploreCat = exploreCat===b.dataset.exFilter ? null : b.dataset.exFilter;
+    renderExploreChips(); runExploreSearch();
+  });
+  $('#explore-chips').innerHTML = exploreTerms.map((t, i)=>
     `<button type="button" class="missing-chip in-cart" data-explore-del="${i}">${escapeHtml(t)}<span class="explore-chip-x">×</span></button>`).join('');
   $all('[data-explore-del]').forEach(b=> b.onclick = ()=>{ exploreTerms.splice(Number(b.dataset.exploreDel), 1); renderExploreChips(); runExploreSearch(); });
   $all('[data-explore-cat-del]').forEach(b=> b.onclick = ()=>{ exploreCat = null; renderExploreChips(); runExploreSearch(); });
