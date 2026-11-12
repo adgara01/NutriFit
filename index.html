@@ -2737,6 +2737,31 @@ button:focus:not(:focus-visible){outline:none;}
   #dish-modal .dish-left > .dish-photo-wrap{flex:1 1 auto !important; min-height:140px; max-height:420px !important; height:auto; aspect-ratio:auto !important;}
   #dish-modal .dish-left > #dish-tags-view-slot .dish-tags{margin-bottom:6px;}
 }
+
+/* ---------- Despensa en ordenador: dos pestañas ---------- */
+.desk-np-seg{display:none;}
+@media (min-width:1024px){
+  body.sec-despensa .appbar .desk-np-seg{display:flex !important; margin:0 0 0 24px; width:420px; max-width:50%;}
+  .desk-np-seg .seg-b{padding:9px 14px; font-size:14px;}
+  /* Nevera | Carrito, una al lado de la otra y a todo el alto */
+  #np-pager{grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important; grid-template-rows:minmax(0,1fr) !important; column-gap:28px !important;}
+  #section-nevera{grid-column:1 !important; grid-row:1 !important;}
+  #section-carrito{grid-column:2 !important; grid-row:1 !important;}
+  #section-plan{display:none !important;}
+  body.desk-plan #section-nevera, body.desk-plan #section-carrito{display:none !important;}
+  body.desk-plan #section-plan{display:block !important; grid-column:1 / -1 !important; grid-row:1 !important;}
+  #section-plan::before{content:none !important;}
+  /* Previsión semanal compacta: cabecera en una fila y casillas con el alto calculado */
+  #section-plan{overflow:hidden !important;}
+  #section-plan .pl-head{margin:0 0 8px;}
+  #section-plan .pl-seg{margin-bottom:8px;}
+  #section-plan .wk-cal{margin-bottom:8px;}
+  #section-plan .wk-tools{flex-direction:row !important; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  #section-plan .wk-gridcard{padding:8px 8px 6px; margin-bottom:10px;}
+  #section-plan .wk-grid{row-gap:8px;}
+  #section-plan .wk-grid .wk-cell{aspect-ratio:auto !important; height:var(--wk-row-h, 96px);}
+  #section-plan .pl-cart{margin:0;}
+}
 </style>
 </head>
 <body>
@@ -2838,6 +2863,10 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button type="button" class="pf-stat" data-pf-stat="dishes"><b id="pf-n-dishes">0</b><span>publicaciones</span></button>
       <button type="button" class="pf-stat" data-pf-stat="followers"><b id="pf-n-followers">0</b><span>seguidores</span></button>
       <button type="button" class="pf-stat" data-pf-stat="following"><b id="pf-n-following">0</b><span>seguidos</span></button>
+    </div>
+    <div class="seg desk-np-seg" id="desk-np-seg" role="tablist">
+      <button type="button" class="seg-b active" data-dnp="nevera" role="tab">Nevera y carrito</button>
+      <button type="button" class="seg-b" data-dnp="plan" role="tab">Previsión semanal</button>
     </div>
     <div class="np-tabs" id="np-tabs" role="tablist">
         <button type="button" class="np-tab active" data-np="0" role="tab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 13v3"/></svg><span>Nevera</span></button>
@@ -4107,7 +4136,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.18-2';
+const APP_VERSION = '2026.11.18-3';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -5179,7 +5208,7 @@ function setSection(section, opts){
 function navigate(section, opts){
   setSection(section, opts);
   if(section==='muro') openWallSection();
-  if(section==='despensa'){ renderNeveraSuggestions(); renderCartList(); if(isDesktopLayout() || PAGERS.despensa.idx===2) enterPlan(); }
+  if(section==='despensa'){ renderNeveraSuggestions(); renderCartList(); if(planVisible()){ enterPlan(); requestAnimationFrame(fitPlanRows); } }
   if(section==='social') loadChats();
   if(section==='explorar'){ openExploreSection(); if(isDesktopLayout()) renderFriendsList(); }
   if(section==='actividad') openActivity();
@@ -13166,6 +13195,7 @@ function renderFitWeek(){
   $('#wk-day-wrap').classList.toggle('hidden', wkDays!==1);
   if(wkDays===1) renderWkDay(); else renderWkGrid();
   if(csCtx) renderCellSheet();
+  if(isDesktopLayout()) requestAnimationFrame(fitPlanRows);
 }
 $all('#wk-view .seg-b').forEach(b=> b.onclick = ()=>{
   wkDays = Number(b.dataset.wdays);
@@ -13923,7 +13953,36 @@ function renderSetupSummary(p){
 
 /* ---------- Plan (Despensa → Plan) ----------
    Es la antigua «Semana» de Fitness: usa los mismos datos (meal_entries) con fitTab = 'week'. */
-function planVisible(){ return currentSection==='despensa' && (isDesktopLayout() || PAGERS.despensa.idx===2); }
+function planVisible(){ return currentSection==='despensa' && (isDesktopLayout() ? document.body.classList.contains('desk-plan') : PAGERS.despensa.idx===2); }
+/* Ordenador: Despensa en dos pestañas («Nevera y carrito» | «Previsión semanal»). */
+function setDeskDespensa(view, load){
+  const plan = view==='plan';
+  document.body.classList.toggle('desk-plan', plan);
+  $all('#desk-np-seg [data-dnp]').forEach(b=> b.classList.toggle('active', b.dataset.dnp===view));
+  try{ localStorage.setItem('nutrifit_desk_despensa', view); }catch(e){}
+  if(load===false || currentSection!=='despensa') return;
+  if(plan){ enterPlan(); requestAnimationFrame(fitPlanRows); } else { renderNeveraSuggestions(); renderCartList(); }
+}
+$all('#desk-np-seg [data-dnp]').forEach(b=> b.onclick = ()=> setDeskDespensa(b.dataset.dnp));
+try{ setDeskDespensa(localStorage.getItem('nutrifit_desk_despensa')==='plan' ? 'plan' : 'nevera', false); }catch(e){}
+/* Alto de las filas del plan en ordenador: que la semana entera quepa sin hacer scroll ni alejar la vista. */
+function fitPlanRows(){
+  const grid = $('#wk-grid');
+  if(!grid) return;
+  if(!isDesktopLayout() || !planVisible()){ grid.style.removeProperty('--wk-row-h'); return; }
+  const page = $('#section-plan'), btn = $('#pl-cart-btn');
+  const pr = page.getBoundingClientRect(), gr = grid.getBoundingClientRect();
+  if(!pr.height || !page.clientHeight) return;
+  const k = page.clientHeight / pr.height;                 // de px de pantalla a px de CSS (por el zoom)
+  const head = grid.querySelector('.wk-dh');
+  const headH = head ? head.getBoundingClientRect().height * k : 40;
+  const btnH = btn ? (btn.getBoundingClientRect().height * k + 22) : 0;
+  const rows = GRID_MEALS.length;
+  const avail = (pr.bottom - gr.top) * k - headH - btnH - 34 - (rows) * 8;
+  const h = Math.max(46, Math.min(160, Math.floor(avail / rows)));
+  grid.style.setProperty('--wk-row-h', h + 'px');
+}
+window.addEventListener('resize', ()=> requestAnimationFrame(fitPlanRows));
 function enterPlan(){
   if(!currentUser) return;
   fitTab = 'week';
