@@ -24,7 +24,7 @@ begin
   "name": "Tostadas con tomate y aceite",
   "tags": [
    "Desayuno",
-   "Vegano"
+   "Vegetariano"
   ],
   "servings_base": 2,
   "duration_min": 10,
@@ -84,7 +84,8 @@ begin
  {
   "name": "Porridge de avena con plátano y canela",
   "tags": [
-   "Desayuno"
+   "Desayuno",
+   "Vegetariano"
   ],
   "servings_base": 1,
   "duration_min": 10,
@@ -142,7 +143,8 @@ begin
  {
   "name": "Yogur griego con granola y frutos rojos",
   "tags": [
-   "Desayuno"
+   "Desayuno",
+   "Vegetariano"
   ],
   "servings_base": 1,
   "duration_min": 5,
@@ -193,7 +195,8 @@ begin
  {
   "name": "Huevos revueltos con espinacas",
   "tags": [
-   "Desayuno"
+   "Desayuno",
+   "Vegetariano"
   ],
   "servings_base": 1,
   "duration_min": 10,
@@ -258,7 +261,8 @@ begin
  {
   "name": "Tostada de aguacate y huevo",
   "tags": [
-   "Desayuno"
+   "Desayuno",
+   "Vegetariano"
   ],
   "servings_base": 1,
   "duration_min": 10,
@@ -321,7 +325,8 @@ begin
  {
   "name": "Tortitas de avena y plátano",
   "tags": [
-   "Desayuno"
+   "Desayuno",
+   "Vegetariano"
   ],
   "servings_base": 2,
   "duration_min": 20,
@@ -439,7 +444,7 @@ begin
   "name": "Batido de plátano y crema de cacahuete",
   "tags": [
    "Desayuno",
-   "Vegano"
+   "Vegetariano"
   ],
   "servings_base": 1,
   "duration_min": 5,
@@ -493,7 +498,8 @@ begin
  {
   "name": "Tortilla francesa con queso",
   "tags": [
-   "Desayuno"
+   "Desayuno",
+   "Vegetariano"
   ],
   "servings_base": 1,
   "duration_min": 8,
@@ -547,7 +553,7 @@ begin
   "name": "Pudin de chía con mango",
   "tags": [
    "Desayuno",
-   "Vegano"
+   "Vegetariano"
   ],
   "servings_base": 1,
   "duration_min": 5,
@@ -597,7 +603,7 @@ begin
   "name": "Lentejas estofadas con verduras",
   "tags": [
    "Comida",
-   "Vegano"
+   "Vegetariano"
   ],
   "servings_base": 4,
   "duration_min": 50,
@@ -798,7 +804,7 @@ begin
   "name": "Garbanzos con espinacas",
   "tags": [
    "Comida",
-   "Vegano"
+   "Vegetariano"
   ],
   "servings_base": 4,
   "duration_min": 25,
@@ -1156,7 +1162,7 @@ begin
   "name": "Tofu salteado con brócoli y arroz",
   "tags": [
    "Comida",
-   "Vegano"
+   "Vegetariano"
   ],
   "servings_base": 2,
   "duration_min": 25,
@@ -1234,7 +1240,7 @@ begin
   "name": "Alubias blancas con verduras",
   "tags": [
    "Comida",
-   "Vegano"
+   "Vegetariano"
   ],
   "servings_base": 4,
   "duration_min": 30,
@@ -1498,7 +1504,8 @@ begin
  {
   "name": "Tortilla de patatas con cebolla",
   "tags": [
-   "Cena"
+   "Cena",
+   "Vegetariano"
   ],
   "servings_base": 4,
   "duration_min": 40,
@@ -1736,7 +1743,7 @@ begin
   "name": "Crema de calabacín",
   "tags": [
    "Cena",
-   "Vegano"
+   "Ligero"
   ],
   "servings_base": 4,
   "duration_min": 30,
@@ -1805,7 +1812,7 @@ begin
   "name": "Ensalada de garbanzos",
   "tags": [
    "Cena",
-   "Vegano"
+   "Ligero"
   ],
   "servings_base": 2,
   "duration_min": 15,
@@ -2029,7 +2036,7 @@ begin
   "name": "Sopa de pollo con fideos",
   "tags": [
    "Cena",
-   "Carne"
+   "Ligero"
   ],
   "servings_base": 4,
   "duration_min": 30,
@@ -2099,7 +2106,8 @@ begin
  {
   "name": "Pisto con huevo",
   "tags": [
-   "Cena"
+   "Cena",
+   "Vegetariano"
   ],
   "servings_base": 2,
   "duration_min": 40,
