@@ -10,8 +10,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="NutriFit">
-<meta name="theme-color" content="#f5f6f5">
-<script>try{if(localStorage.getItem('nutrifit_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');document.querySelector('meta[name="theme-color"]').setAttribute('content','#131314');}}catch(e){}</script>
+<meta name="theme-color" content="#efeeea">
+<script>try{if(localStorage.getItem('nutrifit_theme')==='dark'){document.documentElement.setAttribute('data-theme','dark');document.querySelector('meta[name="theme-color"]').setAttribute('content','#111111');}}catch(e){}</script>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://aqxccqmfmbduzznosyiz.supabase.co" crossorigin>
 <link rel="preconnect" href="https://aqxccqmfmbduzznosyiz.supabase.co">
@@ -2444,6 +2444,116 @@ html[data-theme="dark"] .deck-btn{box-shadow:none;}
 #ingredients-list input{background:none !important; border:none !important; border-radius:0 !important; box-shadow:none !important;}
 #ingredients-list .ingredient-qty{border-left:1px solid var(--border) !important;}
 .dish-view-locked #ingredients-list .ingredient-qty{border-left-color:transparent !important;}
+
+/* =====================================================================
+   DISEÑO «NEUTRO» (2026.11.16-2) — inspirado en Apple y Meta.
+   - Colores por niveles: fondo neutro cálido < superficie < superficie
+     secundaria, en vez de blanco puro con manchas de color.
+   - Lo seleccionado es neutro (gris o casi negro); el verde suave solo en
+     la acción principal (Crear, Cocinar, Mazo...).
+   - Tarjetas lisas con una línea fina, sin sombras grandes.
+   - Ordenador: barra de menú horizontal arriba (marca · secciones · iconos · Crear).
+   ===================================================================== */
+:root{
+  --bg:#EFEEEA; --bg2:#F7F6F3; --card:#FBFAF8; --card2:#E7E5E0;
+  --border:#DDDAD4; --border-strong:#C8C4BC; --border-btn:#C8C4BC; --text:#1C1C1A; --muted:#6B6963;
+  --accent:#4E8B66; --accent-l:#3E7353; --accent2:#7FB394; --accent-rgb:78,139,102;
+  --acc-bg:#DDE8E0; --on-acc:#FFFFFF; --ink:#1C1C1A; --on-ink:#FFFFFF; --cook:var(--accent);
+  --card-glass:var(--card); --sheet-glass:var(--bg2); --glass:var(--bg); --glass-strong:var(--card); --hair:var(--border);
+  --lens:var(--card2); --track:var(--card2);
+  --g-shadow:0 0 0 1px var(--border);
+  --radius:20px;
+}
+html[data-theme="dark"]{
+  --bg:#111111; --bg2:#1A1A1A; --card:#1C1C1E; --card2:#2C2C2E;
+  --border:#2E2E30; --border-strong:#3F3F42; --border-btn:#3F3F42; --text:#F2F2F2; --muted:#98989D;
+  --accent:#7FBF97; --accent-l:#9DD0AF; --accent2:#7FBF97; --accent-rgb:127,191,151;
+  --acc-bg:#24382C; --on-acc:#0F2417; --ink:#F2F2F2; --on-ink:#111111;
+  --card-glass:var(--card); --sheet-glass:var(--bg2); --glass:var(--bg); --glass-strong:var(--card2); --hair:var(--border);
+  --lens:var(--card2); --track:var(--card2);
+  --g-shadow:0 0 0 1px var(--border);
+}
+body{background:var(--bg); color:var(--text);}
+.card, html[data-theme="dark"] .card{background:var(--card); border:none; box-shadow:0 0 0 1px var(--border); border-radius:var(--radius);}
+/* Selección neutra (como el control segmentado de Apple) */
+.seg, .np-tabs, .subtabs, .deck-src{background:var(--card2);}
+.seg-b.active, .np-ink, .subtab.active, .deck-src button.on,
+html[data-theme="dark"] .seg-b.active, html[data-theme="dark"] .np-ink, html[data-theme="dark"] .subtab.active, html[data-theme="dark"] .deck-src button.on{
+  background:var(--card); color:var(--text); box-shadow:0 1px 3px rgba(0,0,0,.12), 0 0 0 .5px rgba(0,0,0,.04);}
+html[data-theme="dark"] .seg-b.active, html[data-theme="dark"] .np-ink, html[data-theme="dark"] .subtab.active, html[data-theme="dark"] .deck-src button.on{background:#48484A;}
+.np-tab.active{color:var(--text);}
+.btn-secondary, html[data-theme="dark"] .btn-secondary{background:var(--card2); color:var(--text);}
+.btn-primary, html[data-theme="dark"] .btn-primary{box-shadow:none;}
+/* Etiquetas y chips en gris (sin manchas de color) */
+.tag-chip.tag-static{background:var(--card2); color:var(--muted); border-color:transparent;}
+.tag-chip.on{background:var(--ink); border-color:var(--ink); color:var(--on-ink);}
+.ex-filter{border-color:var(--border-strong); border-radius:999px;}
+.ex-filter.on{background:var(--ink); color:var(--on-ink); border-color:var(--ink);}
+.ex-filter.on svg{color:var(--on-ink);}
+@media (hover:hover) and (pointer:fine){ .ex-filter.on:hover{background:var(--ink);} }
+.ex-cat{background:var(--card); box-shadow:0 0 0 1px var(--border);}
+.ex-cat svg{stroke:var(--muted); opacity:.35;}
+.settings-link-icon{color:var(--muted);}
+.dish-details .meta-chip, html[data-theme="dark"] .dish-details .meta-chip{background:var(--card);}
+/* Plan: neutro; el verde solo en «hoy» y en la sugerencia */
+.wk-cc.in{background:var(--card2);}
+.deck-ok{background:var(--card2);}
+.cs-hero-btns .pri, html[data-theme="dark"] .cs-hero-btns .pri{background:var(--card2);}
+/* Móvil: barra de abajo con el icono activo en gris oscuro sobre cápsula neutra */
+@media (max-width:1023px){
+  .tabbar, html[data-theme="dark"] .tabbar{background:var(--bg2); box-shadow:0 -1px 0 var(--border);}
+  .tab.active .tab-ic{background:var(--card2);}
+}
+
+/* ---------- Ordenador: barra de menú horizontal arriba ---------- */
+@media (min-width:1024px){
+  :root{--side-w:0px; --nav-h:60px;}
+  .tabbar, html[data-theme="dark"] .tabbar{top:0 !important; left:0 !important; right:0 !important; bottom:auto !important; width:auto !important; height:var(--nav-h) !important;
+    flex-direction:row !important; align-items:center !important; gap:4px !important; overflow:visible !important;
+    padding:0 max(28px, calc((100% - 1240px) / 2)) !important; border:none !important; border-radius:0 !important;
+    background:color-mix(in srgb, var(--bg) 86%, transparent) !important; -webkit-backdrop-filter:saturate(180%) blur(20px) !important; backdrop-filter:saturate(180%) blur(20px) !important;
+    box-shadow:0 1px 0 var(--border) !important; z-index:30 !important;}
+  .tabbar::before{order:-3; flex:1 1 0; padding:0 !important; font-size:20px !important; font-weight:700 !important; letter-spacing:-.02em;}
+  .tab-sep{display:block !important; order:4; flex:1 1 0; visibility:hidden; height:1px;}
+  .tab-help, .tab-key{display:none !important;}
+  /* las cuatro secciones, en el centro, en cápsulas de texto */
+  .tab[data-tab]{order:1; flex:0 0 auto !important; width:auto !important; padding:8px 16px !important; gap:8px !important; border-radius:999px !important;
+    font-size:15px !important; font-weight:600 !important; color:var(--muted) !important; background:none !important;}
+  .tab[data-tab] .tab-ic{width:auto !important; height:auto !important; background:none !important;}
+  .tab[data-tab] .tab-ic svg{width:20px !important; height:20px !important;}
+  .tab[data-tab].active{color:var(--text) !important; background:var(--card2) !important;}
+  body.nav-child .tab[data-tab].active{background:none !important; color:var(--muted) !important;}
+  .tab[data-tab]:hover{color:var(--text) !important;}
+  .tab-avatar{width:22px; height:22px; font-size:10px;}
+  /* el resto: solo iconos redondos a la derecha */
+  .tab-more{order:5; flex:0 0 auto !important; width:40px !important; height:40px !important; padding:0 !important; justify-content:center !important;
+    border-radius:50% !important; color:var(--muted) !important; background:none !important;}
+  .tab-more .tab-label{position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;}
+  .tab-more .tab-ic svg{width:21px !important; height:21px !important;}
+  .tab-more.active{color:var(--text) !important; background:var(--card2) !important;}
+  .tab-more:hover{background:var(--card2) !important; color:var(--text) !important;}
+  .tab-more .notif-badge{left:auto !important; right:2px; top:2px !important;}
+  /* Crear: botón verde a la derecha del todo */
+  .tab-plus{order:6; flex:0 0 auto !important; width:auto !important; margin:0 0 0 8px !important; padding:0 16px 0 12px !important; height:38px !important;
+    border-radius:999px !important; background:var(--accent) !important; color:var(--on-acc) !important; gap:6px !important;}
+  .tab-plus .tab-plus-btn{background:none !important; box-shadow:none !important; width:20px !important; height:20px !important; color:var(--on-acc) !important;}
+  .tab-plus .tab-label{color:var(--on-acc) !important; font-size:14px; font-weight:600;}
+  /* el contenido empieza bajo la barra */
+  #app-view{padding-left:0 !important; padding-top:var(--nav-h);}
+  .appbar{top:var(--nav-h) !important; left:0 !important; background:var(--bg) !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+    padding-left:max(28px, calc((100% - 1240px) / 2)) !important; padding-right:max(28px, calc((100% - 1240px) / 2)) !important;}
+  html.sec-pager .appbar{top:var(--nav-h) !important; left:0 !important;}
+  .pager-section.active.active{left:0 !important; top:calc(var(--nav-h) + var(--appbar-h, 64px)) !important;}
+  .appbar .ab-title{font-size:28px !important; font-weight:700 !important; letter-spacing:-.02em;}
+  main{max-width:1240px; padding-left:28px; padding-right:28px;}
+}
+
+@media (min-width:1024px){
+  /* Pantallas con columnas (Explorar, Despensa, Configuración): la misma columna centrada que el título */
+  .pager-section.active.active{padding-left:max(28px, calc((100% - 1240px) / 2)) !important; padding-right:max(28px, calc((100% - 1240px) / 2)) !important; box-sizing:border-box;}
+  .pager-section .pager{max-width:none !important; padding:0 !important; margin:0 !important; width:100% !important;}
+  .pager-section .pager-top{max-width:none !important; padding:6px 0 0 !important; margin:0 !important; width:auto !important;}
+}
 </style>
 </head>
 <body>
@@ -3809,7 +3919,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.16-1';
+const APP_VERSION = '2026.11.16-2';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -8499,7 +8609,7 @@ function applyTheme(dark){
   if(dark) document.documentElement.setAttribute('data-theme', 'dark');
   else document.documentElement.removeAttribute('data-theme');
   const m = document.querySelector('meta[name="theme-color"]');
-  if(m) m.setAttribute('content', dark ? '#131314' : '#f5f6f5');
+  if(m) m.setAttribute('content', dark ? '#111111' : '#efeeea');
   const b = $('#toggle-dark-btn'); if(b) b.classList.toggle('on', dark);
 }
 applyTheme(isDarkTheme());
