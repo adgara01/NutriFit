@@ -3685,7 +3685,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.15-1';
+const APP_VERSION = '2026.11.15-2';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -11451,9 +11451,10 @@ function renderExploreList(box, total, loadingPublic, publicError){
       <span class="ex-tile-name">${escapeHtml(d.name||'Receta')}</span>
     </div>`;
   };
+  // Una sola cuadrícula para todos (amigos primero, luego el resto), sin secciones aparte.
   let html = '';
-  if(friendsPart.length) html += `<div class="explore-sep">De tus amigos</div><div class="ex-grid">${friendsPart.map(tile).join('')}</div>`;
-  if(pubPart.length) html += `<div class="explore-sep">De la comunidad</div><div class="ex-grid">${pubPart.map(tile).join('')}</div>`;
+  const all = friendsPart.concat(pubPart);
+  if(all.length) html += `<div class="ex-grid">${all.map(tile).join('')}</div>`;
   if(loadingPublic) html += '<div class="empty-hint">Buscando en la comunidad…</div>';
   else if(publicError) html += '<div class="empty-hint">No se ha podido buscar en la comunidad ahora mismo.</div>';
   if(!list.length && !loadingPublic) html = '<div class="empty-hint">No hay recetas con eso todavía.</div>' + html;
