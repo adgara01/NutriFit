@@ -2637,6 +2637,23 @@ button:focus:not(:focus-visible){outline:none;}
 }
 
 @media (min-width:1024px){ #dish-modal > .modal-sheet > .steps-card{grid-row:auto !important;} }
+
+/* Ordenador: el perfil de otra persona ocupa la zona de contenido (bajo el menú de arriba),
+   con el mismo ancho y el mismo panel que tu propio perfil. */
+@media (min-width:1024px){
+  #friend-profile-modal{top:var(--nav-h) !important; align-items:stretch !important; background:var(--bg) !important; z-index:25 !important;}
+  #friend-profile-modal > .modal-sheet.fp-full{max-width:none !important; width:100% !important; height:100% !important; max-height:none !important;
+    border-radius:0 !important; box-shadow:none !important; background:var(--bg) !important; animation:none !important;}
+  #friend-profile-modal .fp-topbar{background:var(--bg); border-bottom:none; padding:16px max(28px, calc((100% - 1520px) / 2)) 10px;}
+  #friend-profile-modal .fp-topbar-title{font-size:28px; font-weight:700; letter-spacing:-.02em;}
+  #friend-profile-modal .fp-scroll{padding:0 max(28px, calc((100% - 1520px) / 2)) 32px !important;}
+  #friend-profile-modal .fp-scroll > *{max-width:none !important;}
+  #friend-profile-modal .fp-scroll{background:none;}
+  #friend-profile-modal .fp-scroll::before{content:none;}
+  #fp-scroll{background:var(--panel); border-radius:28px; box-shadow:inset 0 0 0 1px var(--border); margin:0 max(28px, calc((100% - 1520px) / 2)) 28px; padding:24px !important;}
+}
+
+@media (min-width:1024px){ #friend-profile-modal #fp-scroll{padding:24px 28px 32px !important;} }
 </style>
 </head>
 <body>
@@ -4003,7 +4020,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.16-5';
+const APP_VERSION = '2026.11.16-6';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -5102,7 +5119,11 @@ function scrollCurrentToTop(){
   if(pk){ const page = $(PAGERS[pk].pager).children[PAGERS[pk].idx]; if(page) page.scrollTo({ top:0, behavior:'smooth' }); return; }
   window.scrollTo({ top:0, behavior:'smooth' });
 }
+function closeNavOverlays(){
+  if(!modalHidden($('#friend-profile-modal'))) closeFriendProfile();
+}
 $all('.tab[data-tab]').forEach(t=> t.onclick = ()=>{
+  closeNavOverlays();
   const tab = t.dataset.tab, nav = NAV[currentSection] || {};
   if(nav.tab===tab){
     if(nav.parent){ navigate(TAB_ROOT[tab], { anim:'back' }); return; } // desde Mensajes, Ajustes... a la raíz
@@ -5119,7 +5140,7 @@ $('#ab-settings').onclick = ()=> navigate('settings', { anim:'fwd' });
 $('#ab-new-chat').onclick = ()=> openNewChat();
 $('#pf-fitness-link').onclick = ()=> navigate('fitness', { anim:'fwd' });
 /* ---------- Ordenador: barra lateral completa + atajos de teclado ---------- */
-$all('.tab[data-go]').forEach(t=> t.onclick = ()=> navigate(t.dataset.go));
+$all('.tab[data-go]').forEach(t=> t.onclick = ()=>{ closeNavOverlays(); navigate(t.dataset.go); });
 $('#tab-help').onclick = ()=> showModal($('#keys-modal'));
 $('#keys-close').onclick = ()=> hideModal($('#keys-modal'));
 $('#keys-modal').addEventListener('click', e=>{ if(e.target.id==='keys-modal') hideModal($('#keys-modal')); });
