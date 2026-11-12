@@ -2654,6 +2654,49 @@ button:focus:not(:focus-visible){outline:none;}
 }
 
 @media (min-width:1024px){ #friend-profile-modal #fp-scroll{padding:24px 28px 32px !important;} }
+
+/* Ingredientes de la ficha sobre su propio panel («mantel»), en móvil y ordenador */
+#dish-modal .dish-ings{background:var(--panel); border-radius:20px; padding:12px 12px 8px; box-shadow:inset 0 0 0 1px var(--border); margin-bottom:14px;}
+#dish-modal .dish-ings .ing-label-row label{font-weight:600; color:var(--text); font-size:13px;}
+/* Ordenador: foto + nombre + minutos/raciones + etiquetas a la izquierda; ingredientes, pasos
+   y detalles a la derecha (los ingredientes ocupan desde arriba). */
+@media (min-width:1024px){
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo),
+  #dish-modal:not(.dish-view-locked) > .modal-sheet{grid-template-rows:auto auto auto auto 1fr auto auto auto;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .dish-photo-wrap,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-photo-wrap{grid-column:1; grid-row:1; position:relative; margin:0 0 18px;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .dish-title-row,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-title-row{grid-column:1; grid-row:2;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .dish-summary,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-summary{grid-column:1; grid-row:3;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > #dish-tags-view-slot,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > #dish-tags-view-slot{grid-column:1; grid-row:4;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .dish-ings,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-ings{grid-column:2; grid-row:1 / span 5; align-self:start;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .steps-card,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .steps-card{grid-column:2; grid-row:6 !important;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .dish-details,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-details{grid-column:2; grid-row:7;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .modal-actions,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .modal-actions{grid-column:1 / -1; grid-row:8;}
+  #dish-modal #dish-tags-view-slot .dish-tags{margin-top:2px;}
+}
+
+/* Ficha: dos contenedores (izquierda / derecha). En el móvil no existen a efectos de diseño. */
+.dish-left, .dish-right{display:contents;}
+@media (min-width:1024px){
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo),
+  #dish-modal:not(.dish-view-locked) > .modal-sheet{display:grid !important; grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+    grid-template-rows:auto auto !important; column-gap:32px; align-content:start;}
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo) > .dish-left,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-left{display:block; grid-column:1 !important; grid-row:1 !important; align-self:start; position:sticky; top:0; min-width:0;}
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo) > .dish-right,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-right{display:block; grid-column:2 !important; grid-row:1 !important; min-width:0;}
+  #dish-modal > .modal-sheet:has(.dish-photo-wrap.has-photo) > .modal-actions,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .modal-actions{grid-column:1 / -1 !important; grid-row:2 !important;}
+  #dish-modal .dish-left > .dish-photo-wrap{position:relative; aspect-ratio:1 / 1; margin:0 0 18px; border-radius:22px;}
+  #dish-modal .dish-right > .steps-card{grid-row:auto !important;}
+}
 </style>
 </head>
 <body>
@@ -3406,6 +3449,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       <button type="button" role="menuitem" data-more="delete" class="danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg><span>Eliminar</span></button>
     </div>
     <span class="autosave-status hidden" id="dish-autosave-status"></span>
+    <div class="dish-left">
     <div class="dish-photo-wrap" id="dish-photo-wrap">
       <div class="photo-track" id="dish-photo-track"></div>
       <div class="photo-dots" id="dish-photo-dots"></div>
@@ -3439,8 +3483,10 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </span>
     </div>
     <div id="dish-tags-view-slot"></div>
+    </div>
 
-    <div class="field">
+    <div class="dish-right">
+    <div class="field dish-ings">
       <div class="ing-label-row"><label style="margin:0;">Ingredientes</label><button type="button" class="dish-cart-all" id="dish-cart-all"><span id="dish-cart-all-label">Todo al carrito</span></button></div>
       <div id="ingredients-list"></div>
       <button type="button" id="add-ingredient-btn" class="add-ingredient-btn">+ Añadir ingrediente</button>
@@ -3488,6 +3534,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
       </div>
     </div>
 
+    </div>
   <button type="button" class="dish-cooked-btn hidden" id="dish-cooked-btn"><span>Lo he cocinado</span><small id="dish-cooked-count"></small></button>
   <div class="modal-actions">
       <button class="btn-secondary hidden" id="dish-cancel-btn" style="flex:1; justify-content:center;">Atrás</button>
@@ -4020,7 +4067,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.17-1';
+const APP_VERSION = '2026.11.17-2';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
