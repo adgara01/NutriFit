@@ -2805,6 +2805,46 @@ button:focus:not(:focus-visible){outline:none;}
 }
 
 @media (min-width:1024px){ .ex-filters{flex-wrap:wrap; overflow:visible !important; row-gap:10px !important;} .ex-fgroup{flex-wrap:wrap;} }
+
+/* =====================================================================
+   ACABADO «PRO» (2026.11.18-7): menos cápsulas redondas.
+   Controles con esquinas de 10 px, filtros tipo segmento, tarjetas de
+   plato más limpias (foto cuadrada, nombre en 2 líneas y una línea de
+   meta en gris). Los avatares y los botones de icono siguen redondos.
+   ===================================================================== */
+:root{ --r-ctl:10px; --r-chip:8px; }
+.btn-primary, .btn-secondary, .deck-btn, .deck-ok, .pl-cart, .cs-hero-btns button, .cs-ctl button,
+.pl-title, .ep-input, .field input, .field textarea, .field select, .explore-input-wrap, .cart-search{border-radius:var(--r-ctl) !important;}
+.seg, .np-tabs, .subtabs, .deck-src{border-radius:12px !important;}
+.seg-b, .np-tab, .np-ink, .subtab, .deck-src button, .seg-b.active{border-radius:9px !important;}
+.tag-chip, .missing-chip, .copy-badge, .quality-badge, .ex-filter{border-radius:var(--r-chip) !important;}
+@media (min-width:1024px){
+  .tab-track{border-radius:12px !important;}
+  .tab[data-tab].active::after{border-radius:9px !important;}
+  .tab-plus{border-radius:var(--r-ctl) !important;}
+  .tab-more{border-radius:10px !important;}
+}
+/* Filtros de Explorar: dos filas alineadas con su etiqueta */
+.ex-filters{display:flex !important; flex-direction:column; gap:8px !important; overflow:visible !important;}
+.ex-fgroup{display:flex; align-items:center; gap:6px; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding:0 !important; border:none !important;}
+.ex-fgroup::-webkit-scrollbar{display:none;}
+.ex-fgroup + .ex-fgroup{padding-left:0 !important; border-left:none !important;}
+.ex-flabel{flex:0 0 72px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);}
+.ex-filter{min-height:32px !important; padding:0 12px !important; font-size:13.5px !important; border:1px solid var(--border) !important; background:var(--card) !important; color:var(--text) !important;}
+.ex-filter.on{background:var(--ink) !important; color:var(--on-ink) !important; border-color:var(--ink) !important; padding-left:9px !important;}
+@media (max-width:1023px){ .ex-flabel{flex-basis:auto; margin-right:2px;} }
+@media (min-width:1024px){ .ex-fgroup{flex-wrap:wrap;} }
+/* Tarjetas de plato */
+.dish-card{border:none !important; box-shadow:0 0 0 1px var(--border); border-radius:14px !important; background:var(--card);}
+.dish-card .dish-thumb-wrap{overflow:hidden;}
+.dish-info{padding:10px 12px 12px !important;}
+.dish-info .name{font-size:14px; font-weight:600; line-height:1.3; margin-bottom:3px; display:-webkit-box !important; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;}
+.dish-meta{display:block; font-size:12px; color:var(--muted);}
+.dish-info .copy-badge{border:none; background:none; padding:0; margin:3px 0 0; font-weight:600;}
+.dish-card .shared-watermark{border-radius:6px;}
+@media (hover:hover) and (pointer:fine){ .dish-card:hover{box-shadow:0 0 0 1px var(--border-strong), 0 6px 18px rgba(0,0,0,.08);} }
+.ex-tile-img{border-radius:12px !important;}
+.ex-tile-name{font-weight:600; font-size:13px;}
 </style>
 </head>
 <body>
@@ -4180,7 +4220,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.18-6';
+const APP_VERSION = '2026.11.18-7';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -5437,7 +5477,7 @@ function dishCardHtml(d, eager){
       </div>
       <div class="dish-info">
         <span class="name">${escapeHtml(d.name)}</span>
-        ${cleanQuality(d.quality) ? `<span class="quality-badge quality-${d.quality}">${QUALITY_LABELS[d.quality]}</span>` : ''}${isCopyDish(d) ? `<span class="copy-badge" title="Receta copiada${d.shared_from_username ? ' de @'+escapeHtml(d.shared_from_username) : ''}">${ICON_COPY_SM}Copia</span>` : ''}
+        <span class="dish-meta">${escapeHtml([dishMomentos(d)[0], tagLabel(dishTipo(d))].filter(Boolean).join(' · '))}</span>${isCopyDish(d) ? `<span class="copy-badge" title="Receta copiada${d.shared_from_username ? ' de @'+escapeHtml(d.shared_from_username) : ''}">${ICON_COPY_SM}Copia</span>` : ''}
       </div>
     </div>`;
 }
@@ -11994,8 +12034,8 @@ function renderExploreChips(){
   const chip = (c)=>{ const on = exploreSel.has(c.k);
     return `<button type="button" class="ex-filter${on?' on':''}" data-ex-filter="${c.k}" aria-pressed="${on}">${on ? ICON_TICK : ''}<span>${c.label}</span></button>`; };
   const order = (c)=> c.k==='sincat' ? 1 : 0;
-  $('#explore-filters').innerHTML = `<div class="ex-fgroup">${EXPLORE_CATS.filter(c=> !c.tipo).map(chip).join('')}</div>`
-    + `<div class="ex-fgroup">${EXPLORE_CATS.filter(c=> c.tipo).sort((a,b)=> order(a)-order(b)).map(chip).join('')}</div>`;
+  $('#explore-filters').innerHTML = `<div class="ex-fgroup"><span class="ex-flabel">Momento</span>${EXPLORE_CATS.filter(c=> !c.tipo).map(chip).join('')}</div>`
+    + `<div class="ex-fgroup"><span class="ex-flabel">Tipo</span>${EXPLORE_CATS.filter(c=> c.tipo).sort((a,b)=> order(a)-order(b)).map(chip).join('')}</div>`;
   $all('[data-ex-filter]').forEach(b=> b.onclick = ()=>{
     const k = b.dataset.exFilter, def = EXPLORE_CATS.find(c=> c.k===k);
     if(exploreSel.has(k)) exploreSel.delete(k);
