@@ -2618,6 +2618,25 @@ button:focus:not(:focus-visible){outline:none;}
   .tab-track{display:block; position:absolute; top:50%; height:44px; margin-top:-22px; left:0; width:0; border-radius:999px; background:var(--card2); z-index:0; pointer-events:none;}
   .tab[data-tab], .tab[data-tab].active, body.nav-child .tab[data-tab].active{background:none !important; box-shadow:none !important; margin-left:0 !important; z-index:1;}
 }
+
+/* Ficha del plato en ordenador: más grande y a dos columnas (foto | nombre, ingredientes y pasos).
+   Si el plato no tiene foto (en la vista), se queda en una columna. */
+@media (min-width:1024px){
+  #dish-modal > .modal-sheet{max-width:1080px !important; padding:56px 28px 0 !important;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo),
+  #dish-modal:not(.dish-view-locked) > .modal-sheet{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:32px; align-content:start;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > *,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > *{grid-column:2; min-width:0;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .dish-photo-wrap,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .dish-photo-wrap{grid-column:1; grid-row:1 / span 40; align-self:start; position:sticky; top:0;
+    aspect-ratio:1 / 1; margin:0 0 24px; border-radius:22px;}
+  #dish-modal > .modal-sheet:has(> .dish-photo-wrap.has-photo) > .modal-actions,
+  #dish-modal:not(.dish-view-locked) > .modal-sheet > .modal-actions{grid-column:1 / -1;}
+  #dish-modal .dish-name-view{font-size:30px;}
+  #dish-modal .dish-summary{font-size:16px;}
+}
+
+@media (min-width:1024px){ #dish-modal > .modal-sheet > .steps-card{grid-row:auto !important;} }
 </style>
 </head>
 <body>
@@ -3984,7 +4003,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.16-4';
+const APP_VERSION = '2026.11.16-5';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
