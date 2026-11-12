@@ -2762,6 +2762,18 @@ button:focus:not(:focus-visible){outline:none;}
   #section-plan .wk-grid .wk-cell{aspect-ratio:auto !important; height:var(--wk-row-h, 96px);}
   #section-plan .pl-cart{margin:0;}
 }
+
+/* Perfil en ordenador: cabecera dentro del panel y platos en cuadrícula ordenada */
+@media (min-width:1024px){
+  #section-platos > #pf-bar{display:flex !important; gap:28px; margin:0 0 14px; padding:0 0 14px; border-bottom:1px solid var(--border);}
+  #section-platos > #pf-bar .pf-stat{transform:none;}
+  body.sec-platos .appbar{min-height:8px; padding-top:8px !important; padding-bottom:0 !important;}
+  .pf-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; align-items:start;}
+  .pf-grid > *{margin:0 !important; width:auto !important; height:100%;}
+  .pf-grid .dish-thumb, .pf-grid .dish-card img.dish-thumb{aspect-ratio:1 / 1 !important; object-fit:cover !important; width:100%; height:auto;}
+  .pf-grid .dish-card{height:100%;}
+  .pf-grid .dish-card .dish-name, .pf-grid .dish-card-name{display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;}
+}
 </style>
 </head>
 <body>
@@ -2858,6 +2870,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
     <button type="button" id="ab-streak" class="ab-btn ab-streak" aria-label="Tu racha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5c3.9 0 6.8-2.7 6.8-6.6 0-3.3-2.1-5.4-3.6-7.3-.4 1.7-1.4 2.7-2.6 3.1.3-3.4-1.2-6.3-3.9-8.2.1 3.2-1.3 5.2-2.8 7C4.7 11.1 5.2 13 5.2 14.9c0 3.9 2.9 6.6 6.8 6.6z"/></svg><b id="ab-streak-n">0</b></button>
     <div class="ab-title" id="ab-title">NutriFit</div>
     <span id="menu-notif-badge" class="notif-badge hidden" style="display:none">0</span>
+    <span id="pf-bar-home" hidden></span>
     <div class="pf-bar" id="pf-bar">
       <button type="button" class="pf-bar-avatar" id="pf-bar-avatar" aria-label="Tu foto"></button>
       <button type="button" class="pf-stat" data-pf-stat="dishes"><b id="pf-n-dishes">0</b><span>publicaciones</span></button>
@@ -4136,7 +4149,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.18-3';
+const APP_VERSION = '2026.11.18-4';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -5202,7 +5215,7 @@ function setSection(section, opts){
   }
   // Mosaico que se colocó estando oculto (sin medidas): se recoloca al verse.
   const g = $('#gallery');
-  if(section==='platos' && g && g._mhidden) requestAnimationFrame(()=> distributeMasonry(g));
+  if(section==='platos'){ placeProfileBar(); if(g && g._mhidden) requestAnimationFrame(()=> distributeMasonry(g)); }
 }
 // Ir a una pantalla y cargar lo suyo.
 function navigate(section, opts){
@@ -5453,8 +5466,25 @@ function layoutMasonry(container, htmlItems){
   container._mnodes = nodes;
   distributeMasonry(container);
 }
+function placeProfileBar(){
+  const bar = document.getElementById('pf-bar'); if(!bar) return;
+  const sec = document.getElementById('section-platos'), home = document.getElementById('pf-bar-home');
+  if(isDesktopLayout()){ if(bar.parentNode!==sec) sec.insertBefore(bar, sec.firstChild); }
+  else if(home && bar.parentNode!==home.parentNode){ home.parentNode.insertBefore(bar, home); }
+}
+window.addEventListener('resize', ()=> requestAnimationFrame(placeProfileBar));
 function distributeMasonry(container){
   const nodes = container._mnodes || [];
+  if(isDesktopLayout()){
+    let grid = container.firstElementChild;
+    if(!grid || !grid.classList.contains('pf-grid') || container.children.length!==1){
+      container.innerHTML = ''; grid = document.createElement('div'); grid.className = 'pf-grid'; container.appendChild(grid);
+    }
+    const f = document.createDocumentFragment(); nodes.forEach(n=> f.appendChild(n));
+    grid.textContent = ''; grid.appendChild(f);
+    container._mhidden = false;
+    return;
+  }
   const colWidth = isDesktopLayout() ? 190 : 150, gap = 12;
   const availWidth = container.clientWidth || container.getBoundingClientRect().width || 320;
   // OJO: el número de columnas NO depende de cuántas tarjetas hay que
