@@ -2321,6 +2321,14 @@ html[data-theme="dark"] .wk-cc.today .dn, html[data-theme="dark"] .wk-dh.today .
 .dish-view-locked .dish-name-view{display:block;}
 .dish-view-locked #dish-name{display:none;}
 .ingredient-unit-badge{flex:0 0 54px; width:54px;}
+
+/* Ordenador: todo un poco más pequeño para ver más de un vistazo (el móvil no cambia),
+   y Explorar con más platos por fila. */
+@media (min-width:1024px){
+  html{zoom:.85;}
+  .ex-grid{grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:14px 12px;}
+}
+@media (min-width:1600px){ html{zoom:.9;} }
 </style>
 </head>
 <body>
@@ -3685,7 +3693,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.15-2';
+const APP_VERSION = '2026.11.15-3';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
