@@ -88,9 +88,12 @@ self.addEventListener('push', (e) => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; }
   catch (err) { d = { body: e.data ? e.data.text() : '' }; }
-  const title = d.title || 'NutriFit';
+  // iOS ya pone "from NutriFit" debajo del título: si el título fuera "NutriFit" saldría
+  // repetido, así que en ese caso (o sin título) el propio texto pasa a ser el título.
+  let title = (d.title || '').trim(), body = d.body || '';
+  if(!title || title.toLowerCase()==='nutrifit'){ title = body || 'Aviso'; body = ''; }
   e.waitUntil(self.registration.showNotification(title, {
-    body: d.body || '',
+    body: body,
     icon: 'icon-192.png',
     badge: 'icon-192.png',
     tag: d.tag || undefined,
