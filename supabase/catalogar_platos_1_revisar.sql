@@ -1,5 +1,6 @@
 -- ============================================================
 -- NUTRIFIT — Catalogar TODOS los platos con Momento + Tipo · PASO 1: REVISAR
+-- GENERADO por datos/reglas_categorias.py (las mismas reglas que la app).
 -- Crea unas funciones de ayuda y ENSEÑA cómo quedarían las etiquetas de cada
 -- plato. NO cambia ningún plato. Después, si te parece bien, ejecuta el PASO 2.
 --   Momento (varios): Desayuno, Comida, Cena  -> lo usa el mazo aleatorio
@@ -7,36 +8,25 @@
 -- Pégalo entero en Supabase → SQL Editor → Run. Se puede repetir sin problema.
 -- ============================================================
 
--- Texto en minúsculas, sin tildes ni signos
 create or replace function public.nf_norm(t text)
 returns text language sql immutable as $$
   select btrim(regexp_replace(regexp_replace(
     translate(lower(coalesce(t,'')), 'áàäâéèëêíìïîóòöôúùüûñç', 'aaaaeeeeiiiioooouuuunc'),
     '[^a-z0-9 ]', ' ', 'g'), '\s+', ' ', 'g'))
 $$;
-
--- ¿Contiene alguna de estas palabras (singular o plural)?
 create or replace function public.nf_has(txt text, words text)
 returns boolean language sql immutable as $$
   select nf_norm(txt) ~ ('(^| )(' || words || ')(e?s)?( |$)')
 $$;
+create or replace function public.nf_meat_words() returns text language sql immutable as $$ select 'carne|pollo|pavo|ternera|vaca|buey|cerdo|lomo|solomillo|chuleta|chuleton|costilla|jamon|york|bacon|beicon|panceta|pancetta|tocino|lardon|guanciale|prosciutto|speck|salami|chorizo|chistorra|salchichon|salchicha|longaniza|butifarra|morcilla|cordero|lechazo|ternasco|cochinillo|cabrito|conejo|pato|magret|hamburguesa|albondiga|entrecot|secreto iberico|presa iberica|pluma iberica|pechuga|muslo|contramuslo|alita|fuet|sobrasada|codillo|rabo|oreja|manita|higado|jabali|ciervo|gallina|perdiz|faisan|codorniz|pepperoni|mortadela|kebab|carrillera|carrillada|magro|picada|cecina|lacon|callos|pastrami|nugget|carbonara|bolonesa|ragu' $$;
+create or replace function public.nf_fish_words() returns text language sql immutable as $$ select 'pescado|merluza|pescadilla|salmon|atun|bonito|bacalao|dorada|lubina|sardina|boqueron|anchoa|caballa|rape|rodaballo|trucha|lenguado|emperador|pez espada|gallo|palometa|jurel|salmonete|besugo|mero|abadejo|perca|panga|tilapia|marrajo|anguila|bacaladilla|pescadito|chanquete|gamba|langostino|carabinero|cigala|bogavante|langosta|cangrejo|necora|centolla|percebe|mejillon|almeja|chirla|berberecho|navaja|vieira|zamburina|ostra|calamar|chipiron|sepia|pulpo|pota|erizo|surimi|gula|huevas|marisco' $$;
 
-create or replace function public.nf_meat_words() returns text language sql immutable as $$
-  select 'carne|pollo|pavo|ternera|vaca|buey|cerdo|lomo|solomillo|chuleta|costilla|jamon|bacon|beicon|panceta|chorizo|salchichon|salchicha|longaniza|butifarra|morcilla|cordero|conejo|pato|hamburguesa|albondiga|entrecot|secreto iberico|pechuga|muslo|contramuslo|alita|fuet|sobrasada|codillo|rabo|higado|cabrito|jabali|ciervo|pepperoni|mortadela|kebab|carrillera|carrillada|magro|picada|cecina|lacon|presa|pluma|callos|codorniz|magret'
-$$;
-create or replace function public.nf_fish_words() returns text language sql immutable as $$
-  select 'pescado|merluza|salmon|atun|bacalao|dorada|lubina|sardina|boqueron|anchoa|caballa|rape|rodaballo|trucha|lenguado|emperador|pez espada|gamba|langostino|mejillon|almeja|calamar|sepia|pulpo|chipiron|berberecho|navaja|vieira|cigala|bogavante|langosta|cangrejo|surimi|marisco|gula|pota|perca|panga|tilapia|bonito|palometa|jurel|salmonete|besugo|mero|abadejo|carabinero|marrajo|zamburina|ostra|pescadito|chanquete|percebe|necora|centolla|erizo|anguila|bacaladilla|pescadilla|gallo|huevas'
-$$;
-
--- Tipo adivinado por nombre e ingredientes (lo que más pesa manda)
 create or replace function public.nf_guess_tipo(p_name text, p_ings jsonb)
 returns text language plpgsql immutable as $$
 declare
   it jsonb; n text; q numeric; u text; w numeric; meat numeric := 0; fish numeric := 0;
 begin
-  if nf_has(p_name, 'tarta|pastel|bizcocho|galleta|magdalena|muffin|brownie|cookie|helado|flan|natilla|arroz con leche|mousse|cheesecake|tiramisu|crepe|donut|postre|bombon|turron|churro|gofre|torrija|coulant|profiterol|bunuelo|rosquilla') then
-    return 'Repostería';
-  end if;
+  if nf_has(p_name, 'tarta|pastel|bizcocho|galleta|magdalena|muffin|brownie|cookie|helado|flan|natilla|arroz con leche|mousse|cheesecake|tiramisu|crepe|donut|postre|bombon|turron|churro|gofre|torrija|coulant|profiterol|bunuelo|rosquilla') then return 'Repostería'; end if;
   for it in select * from jsonb_array_elements(case when jsonb_typeof(p_ings)='array' then p_ings else '[]'::jsonb end) loop
     if jsonb_typeof(it) = 'string' then n := it #>> '{}'; q := null; u := '';
     else n := it->>'name'; u := lower(coalesce(it->>'unit',''));
@@ -51,13 +41,12 @@ begin
   if meat = 0 and fish = 0 then
     if nf_has(p_name, nf_fish_words()) then fish := 1; elsif nf_has(p_name, nf_meat_words()) then meat := 1; end if;
   end if;
-  if nf_has(p_name, 'tapa|pincho|pintxo|montadito|croqueta|bravas|aperitivo|canape|nacho|hummus|guacamole|gilda|banderilla|tosta|empanadilla|alita|chopito|torrezno|tabla de') then return 'Tapas'; end if;
+  if nf_has(p_name, 'tapa|pincho|pintxo|montadito|croqueta|brava|patatas bravas|aperitivo|canape|nacho|hummus|guacamole|gilda|banderilla|tosta|empanadilla|alita|chopito|torrezno|tabla de|calamares a la romana') then return 'Tapas'; end if;
   if meat > 0 or fish > 0 then return case when fish >= meat then 'Pescado' else 'Carne' end; end if;
   if nf_has(p_name, 'ensalada|crema|sopa|caldo|gazpacho|salmorejo|pure|bowl|poke|verduras al vapor|carpaccio|tartar|consome') then return 'Ligero'; end if;
   return 'Vegetariano';
 end $$;
 
--- Etiquetas nuevas de un plato (Momento + un Tipo)
 create or replace function public.nf_new_tags(p_name text, p_ings jsonb, p_tags jsonb)
 returns jsonb language plpgsql immutable as $$
 declare
@@ -65,11 +54,25 @@ declare
 begin
   for t in select jsonb_array_elements_text(case when jsonb_typeof(p_tags)='array' then p_tags else '[]'::jsonb end) loop
     v := case nf_norm(t)
-      when 'desayuno' then 'Desayuno' when 'comida' then 'Comida' when 'almuerzo' then 'Comida' when 'cena' then 'Cena'
-      when 'carne' then 'Carne' when 'pescado' then 'Pescado' when 'pescado y marisco' then 'Pescado' when 'marisco' then 'Pescado'
-      when 'vegano' then 'Vegetariano' when 'vegetariano' then 'Vegetariano' when 'ligero' then 'Ligero'
-      when 'tapas' then 'Tapas' when 'tapa' then 'Tapas' when 'tapas y aperitivos' then 'Tapas' when 'aperitivo' then 'Tapas' when 'snack' then 'Tapas'
-      when 'reposteria' then 'Repostería' when 'postre' then 'Repostería' when 'postres' then 'Repostería' when 'dulce' then 'Repostería'
+      when 'desayuno' then 'Desayuno'
+      when 'comida' then 'Comida'
+      when 'almuerzo' then 'Comida'
+      when 'cena' then 'Cena'
+      when 'carne' then 'Carne'
+      when 'pescado' then 'Pescado'
+      when 'pescado y marisco' then 'Pescado'
+      when 'marisco' then 'Pescado'
+      when 'vegano' then 'Vegetariano'
+      when 'vegetariano' then 'Vegetariano'
+      when 'ligero' then 'Ligero'
+      when 'tapas' then 'Tapas'
+      when 'tapa' then 'Tapas'
+      when 'tapas y aperitivos' then 'Tapas'
+      when 'aperitivo' then 'Tapas'
+      when 'reposteria' then 'Repostería'
+      when 'postre' then 'Repostería'
+      when 'postres' then 'Repostería'
+      when 'dulce' then 'Repostería'
       else null end;
     if v in ('Desayuno','Comida','Cena') then
       if not v = any(moms) then moms := moms || v; end if;
@@ -77,13 +80,13 @@ begin
     end if;
   end loop;
   guess := nf_guess_tipo(p_name, p_ings);
-  -- Carne o pescado por los ingredientes mandan; si no, se respeta el tipo que ya tuviera
-  tipo := case when guess in ('Carne','Pescado') then guess else coalesce(old_tipo, guess) end;
+  tipo := case when guess in ('Carne','Pescado') and (old_tipo is null or old_tipo in ('Vegetariano','Carne','Pescado')) then guess
+               else coalesce(old_tipo, guess) end;
   if cardinality(moms) = 0 then
-    if nf_has(p_name, 'desayuno|tostada|yogur|avena|porridge|granola|tortita|pancake|batido|smoothie|cereal|muesli|huevos revueltos|croissant|magdalena|bol de fruta|pudin de chia|crepe|bocadillo|sandwich|zumo|cafe') then moms := array['Desayuno'];
+    if nf_has(p_name, 'desayuno|tostada|yogur|yogurt|avena|porridge|granola|tortita|pancake|batido|smoothie|cereal|muesli|huevos revueltos|croissant|magdalena|bol de fruta|pudin de chia|crepe|bocadillo|sandwich|zumo|cafe') then moms := array['Desayuno'];
     elsif tipo = 'Repostería' then moms := '{}';
     elsif tipo in ('Ligero','Tapas') then moms := array['Cena'];
-    elsif nf_has(p_name, 'arroz|paella|lenteja|garbanzo|alubia|judion|fabada|cocido|potaje|guiso|estofado|pasta|macarron|espagueti|lasana|canelon|fideua|risotto|curry') then moms := array['Comida'];
+    elsif nf_has(p_name, 'arroz|paella|lenteja|garbanzo|alubia|judion|fabada|cocido|potaje|guiso|estofado|pasta|macarron|espagueti|spaghetti|lasana|canelon|fideua|risotto|curry|carbonara|bolonesa') then moms := array['Comida'];
     else moms := array['Comida','Cena'];
     end if;
   end if;

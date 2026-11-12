@@ -381,12 +381,10 @@ begin
    }
   ],
   "description": "1. Tritura los plátanos, los huevos, la avena y una pizca de canela hasta tener una masa espesa.\n\n2. Calienta una sartén antiadherente a fuego medio y úntala con unas gotas de aceite.\n\n3. Echa una cucharada grande de masa por tortita y cocina hasta que salgan burbujas en la superficie, unos 2 minutos.\n\n4. Dales la vuelta, cocina un minuto más y sirve con miel o fruta.",
-  "image_url": "https://images.rawpixel.com/editor_1024/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvZmYzOTY1LWltYWdlLWt3eXQ0aDdlLmpwZw.jpg",
-  "image_urls": [
-   "https://images.rawpixel.com/editor_1024/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvZmYzOTY1LWltYWdlLWt3eXQ0aDdlLmpwZw.jpg"
-  ],
-  "photo_credit": "rawpixel · CC0",
-  "photo_source": "https://www.rawpixel.com/image/5974754/photo-image-public-domain-food-banana"
+  "image_url": null,
+  "image_urls": [],
+  "photo_credit": null,
+  "photo_source": null
  },
  {
   "name": "Bocadillo de jamón con tomate",
@@ -1399,12 +1397,10 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 200 °C.\n\n2. Corta las patatas en rodajas finas y la cebolla en tiras; colócalas en una bandeja con sal, la mitad del aceite y los ajos aplastados. Hornea 20 minutos.\n\n3. Salpimienta el solomillo, frótalo con romero y márcalo en una sartén caliente con el resto del aceite.\n\n4. Ponlo sobre las patatas, riega con el vino y hornea 15 o 18 minutos.\n\n5. Déjalo reposar 5 minutos antes de cortarlo en medallones.",
-  "image_url": "https://live.staticflickr.com/2116/1879100405_e8bdf561f9_b.jpg",
-  "image_urls": [
-   "https://live.staticflickr.com/2116/1879100405_e8bdf561f9_b.jpg"
-  ],
-  "photo_credit": "WordRidden · CC BY 2.0",
-  "photo_source": "https://www.flickr.com/photos/97844767@N00/1879100405"
+  "image_url": null,
+  "image_urls": [],
+  "photo_credit": null,
+  "photo_source": null
  },
  {
   "name": "Espaguetis a la boloñesa",
@@ -1732,12 +1728,10 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 200 °C.\n\n2. Corta las verduras en trozos parecidos, mézclalas con la mitad del aceite y sal, y hornéalas 15 minutos.\n\n3. Salpimienta el salmón, ponlo sobre las verduras con unas rodajas de limón y riega con el resto del aceite.\n\n4. Hornea 10 o 12 minutos más, hasta que el salmón se separe en láminas.",
-  "image_url": "https://live.staticflickr.com/3266/2910954294_b6b4b54eb1.jpg",
-  "image_urls": [
-   "https://live.staticflickr.com/3266/2910954294_b6b4b54eb1.jpg"
-  ],
-  "photo_credit": "TheBusyBrain · CC BY 2.0",
-  "photo_source": "https://www.flickr.com/photos/26176646@N04/2910954294"
+  "image_url": null,
+  "image_urls": [],
+  "photo_credit": null,
+  "photo_source": null
  },
  {
   "name": "Crema de calabacín",

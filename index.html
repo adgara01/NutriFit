@@ -4097,7 +4097,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.17-3';
+const APP_VERSION = '2026.11.18-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -8187,7 +8187,7 @@ const TAG_ALIASES = { 'postre':'Repostería', 'postres':'Repostería', 'reposter
   'desayuno':'Desayuno', 'comida':'Comida', 'almuerzo':'Comida', 'cena':'Cena',
   'carne':'Carne', 'pescado':'Pescado', 'pescado y marisco':'Pescado', 'marisco':'Pescado',
   'vegano':'Vegetariano', 'vegetariano':'Vegetariano', 'ligero':'Ligero',
-  'tapas':'Tapas', 'tapa':'Tapas', 'tapas y aperitivos':'Tapas', 'aperitivo':'Tapas', 'snack':'Tapas' };
+  'tapas':'Tapas', 'tapa':'Tapas', 'tapas y aperitivos':'Tapas', 'aperitivo':'Tapas' };
 // Deja solo las etiquetas válidas (las antiguas se traducen o se quitan) y un único Tipo.
 function cleanTags(tags){
   const out = [];
@@ -8203,40 +8203,63 @@ function cleanTags(tags){
 /* Tipo adivinado: postre por el nombre; si lleva carne o pescado, el que más pese en la
    receta (unas zamburiñas con un poco de jamón son marisco); tapas y platos ligeros por el
    nombre; y si no, Vegetariano. */
-const GUESS_FISH_EXTRA = ['zamburina','ostra','marisco','pescadito','chanquete','boqueron','percebe','necora','centolla','erizo','anguila','bacaladilla','atun'];
-const GUESS_TAPAS_RE = /(^| )(tapa|tapas|pincho|pintxo|montadito|croqueta|bravas|aperitivo|canape|nachos|hummus|guacamole|gilda|banderilla|tosta|empanadilla|alitas|patatas bravas|calamares a la romana|chopitos|torrezno|tabla de)/;
-const GUESS_LIGHT_RE = /(^| )(ensalada|crema|sopa|caldo|gazpacho|salmorejo|pure|bowl|poke|verduras al vapor|carpaccio|tartar|consome)/;
-const GUESS_SWEET_RE = /(^| )(tarta|pastel|bizcocho|galleta|magdalena|muffin|brownie|cookie|helado|flan|natillas|arroz con leche|mousse|cheesecake|tiramisu|crepe|donut|postre|bombon|turron|churro|gofre|torrija|coulant|profiterol|bunuelo|rosquilla)/;
-let guessRegs = null;
+/*CATS-START*/
+/* Momento + Tipo — GENERADO por datos/reglas_categorias.py (las mismas reglas que el SQL). No editar a mano. */
+const CAT_ALIASES = {"desayuno": "Desayuno", "comida": "Comida", "almuerzo": "Comida", "cena": "Cena", "carne": "Carne", "pescado": "Pescado", "pescado y marisco": "Pescado", "marisco": "Pescado", "vegano": "Vegetariano", "vegetariano": "Vegetariano", "ligero": "Ligero", "tapas": "Tapas", "tapa": "Tapas", "tapas y aperitivos": "Tapas", "aperitivo": "Tapas", "reposteria": "Repostería", "postre": "Repostería", "postres": "Repostería", "dulce": "Repostería"};
+const CAT_RE = {
+  meat: new RegExp('(^| )(carne|pollo|pavo|ternera|vaca|buey|cerdo|lomo|solomillo|chuleta|chuleton|costilla|jamon|york|bacon|beicon|panceta|pancetta|tocino|lardon|guanciale|prosciutto|speck|salami|chorizo|chistorra|salchichon|salchicha|longaniza|butifarra|morcilla|cordero|lechazo|ternasco|cochinillo|cabrito|conejo|pato|magret|hamburguesa|albondiga|entrecot|secreto iberico|presa iberica|pluma iberica|pechuga|muslo|contramuslo|alita|fuet|sobrasada|codillo|rabo|oreja|manita|higado|jabali|ciervo|gallina|perdiz|faisan|codorniz|pepperoni|mortadela|kebab|carrillera|carrillada|magro|picada|cecina|lacon|callos|pastrami|nugget|carbonara|bolonesa|ragu)(e?s)?( |$)'),
+  fish: new RegExp('(^| )(pescado|merluza|pescadilla|salmon|atun|bonito|bacalao|dorada|lubina|sardina|boqueron|anchoa|caballa|rape|rodaballo|trucha|lenguado|emperador|pez espada|gallo|palometa|jurel|salmonete|besugo|mero|abadejo|perca|panga|tilapia|marrajo|anguila|bacaladilla|pescadito|chanquete|gamba|langostino|carabinero|cigala|bogavante|langosta|cangrejo|necora|centolla|percebe|mejillon|almeja|chirla|berberecho|navaja|vieira|zamburina|ostra|calamar|chipiron|sepia|pulpo|pota|erizo|surimi|gula|huevas|marisco)(e?s)?( |$)'),
+  sweet: new RegExp('(^| )(tarta|pastel|bizcocho|galleta|magdalena|muffin|brownie|cookie|helado|flan|natilla|arroz con leche|mousse|cheesecake|tiramisu|crepe|donut|postre|bombon|turron|churro|gofre|torrija|coulant|profiterol|bunuelo|rosquilla)(e?s)?( |$)'),
+  tapas: new RegExp('(^| )(tapa|pincho|pintxo|montadito|croqueta|brava|patatas bravas|aperitivo|canape|nacho|hummus|guacamole|gilda|banderilla|tosta|empanadilla|alita|chopito|torrezno|tabla de|calamares a la romana)(e?s)?( |$)'),
+  light: new RegExp('(^| )(ensalada|crema|sopa|caldo|gazpacho|salmorejo|pure|bowl|poke|verduras al vapor|carpaccio|tartar|consome)(e?s)?( |$)'),
+  breakfast: new RegExp('(^| )(desayuno|tostada|yogur|yogurt|avena|porridge|granola|tortita|pancake|batido|smoothie|cereal|muesli|huevos revueltos|croissant|magdalena|bol de fruta|pudin de chia|crepe|bocadillo|sandwich|zumo|cafe)(e?s)?( |$)'),
+  heavy: new RegExp('(^| )(arroz|paella|lenteja|garbanzo|alubia|judion|fabada|cocido|potaje|guiso|estofado|pasta|macarron|espagueti|spaghetti|lasana|canelon|fideua|risotto|curry|carbonara|bolonesa)(e?s)?( |$)'),
+};
+function catNorm(t){ return stripAccents(String(t||'').toLowerCase()).replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); }
+// Tipo adivinado: postre por el nombre; si lleva carne o pescado, lo que más pese; tapas y ligeros por el nombre; si no, Vegetariano.
 function guessTipo(d){
-  const norm = (t)=> stripAccents(String(t||'').toLowerCase()).replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
-  const name = norm(d && d.name);
-  if(GUESS_SWEET_RE.test(name)) return 'Repostería';
-  if(!guessRegs) guessRegs = { meat: MEAT_WORDS.map(exploreTermRegex).filter(Boolean), fish: FISH_WORDS.concat(GUESS_FISH_EXTRA).map(exploreTermRegex).filter(Boolean) };
+  const name = catNorm(d && d.name);
+  if(CAT_RE.sweet.test(name)) return 'Repostería';
   let meat = 0, fish = 0;
   ((d && d.ingredients) || []).forEach(raw=>{
-    const it = normalizeIngredientItem(raw), n = norm(it.name);
-    if(!n) return;
+    const it = typeof raw==='string' ? { name: raw } : (raw || {});
+    const n = catNorm(it.name); if(!n) return;
     const q = Number(it.quantity), u = String(it.unit||'').toLowerCase();
-    const w = !q ? 40 : (u==='g' || u==='ml') ? q : (u==='kg' || u==='l') ? q*1000 : (u==='ud' ? q*120 : 40);
-    if(guessRegs.fish.some(r=> r.test(n))) fish += w;
-    else if(guessRegs.meat.some(r=> r.test(n))) meat += w;
+    const w = !(q > 0) ? 40 : (u==='g' || u==='ml') ? q : (u==='kg' || u==='l') ? q*1000 : (u==='ud' ? q*120 : 40);
+    if(CAT_RE.fish.test(n)) fish += w; else if(CAT_RE.meat.test(n)) meat += w;
   });
-  if(!meat && !fish){
-    if(guessRegs.fish.some(r=> r.test(name))) fish = 1; else if(guessRegs.meat.some(r=> r.test(name))) meat = 1;
-  }
-  if(GUESS_TAPAS_RE.test(name)) return 'Tapas';
+  if(!meat && !fish){ if(CAT_RE.fish.test(name)) fish = 1; else if(CAT_RE.meat.test(name)) meat = 1; }
+  if(CAT_RE.tapas.test(name)) return 'Tapas';
   if(meat || fish) return fish >= meat ? 'Pescado' : 'Carne';
-  if(GUESS_LIGHT_RE.test(name)) return 'Ligero';
+  if(CAT_RE.light.test(name)) return 'Ligero';
   return 'Vegetariano';
 }
-function dishTipo(d){ return cleanTags(d && d.tags).find(t=> TIPO_TAGS.includes(t)) || guessTipo(d); }
-// Antes de guardar: si el plato no tiene Tipo, se le pone el adivinado (y se ve en la ficha).
-function ensureTipoTags(tags, d){
-  const t = cleanTags(tags);
-  if(!t.some(x=> TIPO_TAGS.includes(x))) t.push(guessTipo(d));
-  return t;
+// Etiquetas finales de un plato: sus momentos (o adivinados si no tiene) + un Tipo.
+// Si lleva carne o pescado claramente, eso manda sobre Vegetariano/Carne/Pescado; Ligero, Tapas y Repostería se respetan.
+function catNewTags(d){
+  const moms = []; let old = null;
+  ((d && d.tags) || []).forEach(t=>{
+    const v = CAT_ALIASES[catNorm(t)]; if(!v) return;
+    if(v==='Desayuno' || v==='Comida' || v==='Cena'){ if(!moms.includes(v)) moms.push(v); }
+    else if(!old) old = v;
+  });
+  const guess = guessTipo(d);
+  const tipo = ((guess==='Carne' || guess==='Pescado') && (!old || old==='Vegetariano' || old==='Carne' || old==='Pescado')) ? guess : (old || guess);
+  if(!moms.length){
+    const name = catNorm(d && d.name);
+    if(CAT_RE.breakfast.test(name)) moms.push('Desayuno');
+    else if(tipo==='Repostería'){}
+    else if(tipo==='Ligero' || tipo==='Tapas') moms.push('Cena');
+    else if(CAT_RE.heavy.test(name)) moms.push('Comida');
+    else moms.push('Comida', 'Cena');
+  }
+  return moms.concat(tipo);
 }
+function dishTipo(d){ const t = catNewTags(d); return t[t.length-1]; }
+function dishMomentos(d){ return catNewTags(d).filter(t=> t==='Desayuno' || t==='Comida' || t==='Cena'); }
+// Antes de guardar: el plato siempre queda con Momento(s) + un Tipo.
+function ensureTipoTags(tags, d){ return catNewTags({ ...(d||{}), tags }); }
+/*CATS-END*/
 let dishTags = [];
 function allKnownTags(extra){
   const set = new Set(DISH_TAGS);
@@ -11793,8 +11816,8 @@ let exploreTerms = [];
 /* Categorías grandes: al tocar una, salen los platos de ese tipo (primero
    de tus amigos y luego del resto). Cuenta la etiqueta del plato y, para
    carne y pescado, también si lleva un ingrediente de ese tipo. */
-const MEAT_WORDS = ['carne','pollo','pavo','ternera','vaca','buey','cerdo','lomo','solomillo','chuleta','costilla','jamon','bacon','beicon','panceta','chorizo','salchichon','salchicha','longaniza','butifarra','morcilla','cordero','conejo','pato','hamburguesa','albondiga','entrecot','secreto iberico','pechuga','muslo','alita','fuet','sobrasada','codillo','rabo','higado','cabrito','jabali','ciervo','pepperoni','mortadela','kebab','carrillera','magro','picada'];
-const FISH_WORDS = ['pescado','merluza','salmon','atun','bacalao','dorada','lubina','sardina','boqueron','anchoa','caballa','rape','rodaballo','trucha','lenguado','emperador','pez espada','gamba','langostino','mejillon','almeja','calamar','sepia','pulpo','chipiron','berberecho','navaja','vieira','cigala','bogavante','langosta','cangrejo','surimi','marisco','gula','pota','perca','panga','tilapia','bonito','palometa','jurel','salmonete','besugo','mero','abadejo','carabinero','marrajo'];
+const MEAT_WORDS = ["carne", "pollo", "pavo", "ternera", "vaca", "buey", "cerdo", "lomo", "solomillo", "chuleta", "chuleton", "costilla", "jamon", "york", "bacon", "beicon", "panceta", "pancetta", "tocino", "lardon", "guanciale", "prosciutto", "speck", "salami", "chorizo", "chistorra", "salchichon", "salchicha", "longaniza", "butifarra", "morcilla", "cordero", "lechazo", "ternasco", "cochinillo", "cabrito", "conejo", "pato", "magret", "hamburguesa", "albondiga", "entrecot", "secreto iberico", "presa iberica", "pluma iberica", "pechuga", "muslo", "contramuslo", "alita", "fuet", "sobrasada", "codillo", "rabo", "oreja", "manita", "higado", "jabali", "ciervo", "gallina", "perdiz", "faisan", "codorniz", "pepperoni", "mortadela", "kebab", "carrillera", "carrillada", "magro", "picada", "cecina", "lacon", "callos", "pastrami", "nugget", "carbonara", "bolonesa", "ragu"];
+const FISH_WORDS = ["pescado", "merluza", "pescadilla", "salmon", "atun", "bonito", "bacalao", "dorada", "lubina", "sardina", "boqueron", "anchoa", "caballa", "rape", "rodaballo", "trucha", "lenguado", "emperador", "pez espada", "gallo", "palometa", "jurel", "salmonete", "besugo", "mero", "abadejo", "perca", "panga", "tilapia", "marrajo", "anguila", "bacaladilla", "pescadito", "chanquete", "gamba", "langostino", "carabinero", "cigala", "bogavante", "langosta", "cangrejo", "necora", "centolla", "percebe", "mejillon", "almeja", "chirla", "berberecho", "navaja", "vieira", "zamburina", "ostra", "calamar", "chipiron", "sepia", "pulpo", "pota", "erizo", "surimi", "gula", "huevas", "marisco"];
 const EXPLORE_CATS = [
   { k:'desayuno', label:'Desayuno', color:'#e8930c', tags:['Desayuno'], icon:'<path d="M4 9.5h12v4.5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M16 11h1.6a2.4 2.4 0 0 1 0 4.8H16"/><path d="M8 3.5c-.7.9-.7 1.8 0 2.7M12 3.5c-.7.9-.7 1.8 0 2.7"/>' },
   { k:'comida', label:'Comida', color:'#e8590c', tags:['Comida'], icon:'<circle cx="12.5" cy="12" r="6"/><circle cx="12.5" cy="12" r="3.2"/><path d="M2.5 3v5.3a1.25 1.25 0 0 0 2.5 0V3M3.75 3v18"/><path d="M21.5 21V3c-1.6 1-2.2 3-2.2 6.2 0 2.2.9 3 2.2 3"/>' },
@@ -11806,8 +11829,16 @@ const EXPLORE_CATS = [
   { k:'tapas', label:'Tapas y aperitivos', tipo:'Tapas', tags:['Tapas','Aperitivo','Snack'], words:['tapa','pincho','croqueta','bravas','montadito','aperitivo','gilda'], icon:'<path d="M5 19 19 5"/><circle cx="14" cy="10" r="2.2"/><circle cx="10" cy="14" r="2.2"/><path d="M17 4.5 19.5 7"/>' },
   { k:'postres', label:'Repostería', tipo:'Repostería', tags:['Repostería','Postre'], icon:'<path d="M5 12h14l-2 8H7z"/><path d="M10 12l.5 8M14 12l-.5 8"/><path d="M5 12a3 3 0 0 1 1.6-5.4 5.5 5.5 0 0 1 10.8 0A3 3 0 0 1 19 12"/><path d="M12 2.8v1.4"/>' },
 ];
-let exploreCat = null; // clave de la categoría elegida (o null)
-function exploreCatDef(){ return EXPLORE_CATS.find(c=> c.k===exploreCat) || null; }
+let exploreSel = new Set(); // categorías elegidas (pueden ser varias)
+function exploreSelDefs(){ return EXPLORE_CATS.filter(c=> exploreSel.has(c.k)); }
+// Dentro de un mismo grupo vale cualquiera (Comida o Cena); entre grupos, todos (Cena y además Ligero).
+function dishInSel(d, defs){
+  if(!defs.length) return true;
+  const moms = defs.filter(c=> !c.tipo), tipos = defs.filter(c=> c.tipo);
+  const dm = dishMomentos(d), dt = dishTipo(d);
+  return (!moms.length || moms.some(c=> c.tags.some(t=> dm.includes(t)))) && (!tipos.length || tipos.some(c=> c.tipo===dt));
+}
+function exploreCatDef(){ const d = exploreSelDefs(); return d.length===1 ? d[0] : null; }
 const normTag = (t)=> stripAccents(String(t||'').toLowerCase()).trim();
 let catRegsCache = {};
 function dishInCat(d, cat){
@@ -11824,7 +11855,7 @@ function renderExploreCats(){
   const box = $('#explore-cats');
   box.innerHTML = EXPLORE_CATS.map(c=> `<button type="button" class="ex-cat" style="--cat:${c.color}" data-ex-cat="${c.k}">${c.label}<svg viewBox="0 0 24 24" aria-hidden="true">${c.icon}</svg></button>`).join('');
   box.querySelectorAll('[data-ex-cat]').forEach(b=> b.onclick = ()=>{
-    exploreCat = b.dataset.exCat;
+    exploreSel = new Set([b.dataset.exCat]);
     renderExploreChips(); runExploreSearch();
   });
 }
@@ -11873,16 +11904,17 @@ function exploreCreator(r){
 }
 function renderExploreChips(){
   // Filtros por tipo: siempre a la vista; tocar uno lo ilumina, volver a tocarlo lo quita.
-  $('#explore-filters').innerHTML = EXPLORE_CATS.map(c=>{ const on = c.k===exploreCat;
+  $('#explore-filters').innerHTML = EXPLORE_CATS.map(c=>{ const on = exploreSel.has(c.k);
     return `<button type="button" class="ex-filter${on?' on':''}" data-ex-filter="${c.k}" aria-pressed="${on}">${on ? ICON_TICK : ''}<span>${c.label}</span></button>`; }).join('');
   $all('[data-ex-filter]').forEach(b=> b.onclick = ()=>{
-    exploreCat = exploreCat===b.dataset.exFilter ? null : b.dataset.exFilter;
+    const k = b.dataset.exFilter;
+    if(exploreSel.has(k)) exploreSel.delete(k); else exploreSel.add(k);
     renderExploreChips(); runExploreSearch();
   });
   $('#explore-chips').innerHTML = exploreTerms.map((t, i)=>
     `<button type="button" class="missing-chip in-cart" data-explore-del="${i}">${escapeHtml(t)}<span class="explore-chip-x">×</span></button>`).join('');
   $all('[data-explore-del]').forEach(b=> b.onclick = ()=>{ exploreTerms.splice(Number(b.dataset.exploreDel), 1); renderExploreChips(); runExploreSearch(); });
-  $all('[data-explore-cat-del]').forEach(b=> b.onclick = ()=>{ exploreCat = null; renderExploreChips(); runExploreSearch(); });
+  $all('[data-explore-cat-del]').forEach(b=> b.onclick = ()=>{ exploreSel.clear(); renderExploreChips(); runExploreSearch(); });
 }
 function addExploreTerm(raw){
   const t = (raw||'').trim().toLowerCase();
@@ -11920,9 +11952,9 @@ function exploreMerge(friendRes, publicRes){
 async function runExploreSearch(){
   const box = $('#explore-results');
   const seq = ++exploreSeq;
-  const cat = exploreCatDef();
-  const hasTags = (d)=> dishInCat(d, cat);
-  const idle = !exploreTerms.length && !cat;
+  const defs = exploreSelDefs();
+  const hasTags = (d)=> dishInSel(d, defs);
+  const idle = !exploreTerms.length && !defs.length;
   $('#explore-cats').classList.toggle('hidden', !idle);
   $('#explore-results-card').classList.toggle('hidden', idle);
   if(idle){ exploreList = []; box.innerHTML = ''; return; }
@@ -11938,11 +11970,12 @@ async function runExploreSearch(){
   exploreList = exploreMerge(friendRes, null);
   renderExploreList(box, total, true);
   // La comunidad (base de datos)
-  const catArgs = cat ? { p_cat_tags: cat.tags, p_cat_words: cat.words || [], p_cat_not: cat.not || [] } : {};
+  // A la base de datos se le piden todos los de cualquiera de las categorías; el filtro fino se hace aquí.
+  const catArgs = defs.length ? { p_cat_tags: [...new Set(defs.flatMap(c=> c.tags))], p_cat_words: [...new Set(defs.flatMap(c=> c.words || []))], p_cat_not: [] } : {};
   let { data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms, p_tags: [], ...catArgs });
   if(error && /p_cat|function/.test(error.message||'')){
     // Por si aún no se ha ejecutado el SQL nuevo: solo por la etiqueta.
-    ({ data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms, p_tags: cat ? cat.tags.slice(0, 1) : [] }));
+    ({ data, error } = await sb.rpc('explore_public_dishes', { p_terms: exploreTerms, p_tags: defs.length ? defs[0].tags.slice(0, 1) : [] }));
   }
   if(seq!==exploreSeq) return; // llegó otra búsqueda más nueva mientras tanto
   if(error){ console.error(error); renderExploreList(box, total, false, true); return; }
