@@ -2884,6 +2884,18 @@ button:focus:not(:focus-visible){outline:none;}
 }
 
 @media (min-width:1024px){ #section-plan .wk-cell:not(:has(img)) .wk-cell-bg svg{display:none !important;} #section-plan .wk-cell:not(:has(img)) .wk-cell-t{font-size:14px !important; font-weight:600;} }
+
+/* Previsión semanal en PC: casillas grandes y casi cuadradas (4:3), no apaisadas.
+   La cuadrícula no pasa de ~270 px por día y se centra; la fila de bebidas es baja.
+   Si no cabe en alto, se desplaza solo el plan (la barra de arriba se queda). */
+@media (min-width:1024px){
+  body.desk-plan #section-plan{overflow-y:auto !important;}
+  #section-plan .wk-gridcard{max-width:calc(56px + var(--n, 7) * 280px); margin:0 auto !important;}
+  #section-plan .wk-grid .wk-cell{height:auto !important; aspect-ratio:4 / 3 !important;}
+  #section-plan .wk-grid .wk-cell[data-cell$="|extras"]{aspect-ratio:auto !important; height:64px !important;}
+  #section-plan .wk-grid .wk-cell-t{font-size:14px !important; -webkit-line-clamp:3 !important;}
+  #section-plan .pl-cart{max-width:calc(56px + var(--n, 7) * 280px); margin:0 auto !important;}
+}
 </style>
 </head>
 <body>
@@ -4259,7 +4271,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.19-1';
+const APP_VERSION = '2026.11.19-2';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -13211,6 +13223,7 @@ function renderWkGrid(){
     grid.className = 'wk-grid n'+N;
     grid.style.gridTemplateColumns = `24px repeat(${N}, minmax(0,1fr))`;
     grid.style.setProperty('--n', N);
+    const plSec = document.getElementById('section-plan'); if(plSec) plSec.style.setProperty('--n', N);
     grid.innerHTML = h;
   }
   deckAnim = false;
@@ -14119,6 +14132,7 @@ function fitPlanRows(){
   const avail = (pr.bottom - gr.top) * k - headH - btnH - 34 - (rows) * 8;
   const h = Math.max(46, Math.min(160, Math.floor(avail / rows)));
   grid.style.setProperty('--wk-row-h', h + 'px');
+  page.style.setProperty('--n', getComputedStyle(grid).getPropertyValue('--n') || 7);
 }
 window.addEventListener('resize', ()=> requestAnimationFrame(fitPlanRows));
 function enterPlan(){
