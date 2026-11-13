@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Ilustración propia de NutriFit: pollo al ajillo en cazuela de barro -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#f1e9dc"/><stop offset="1" stop-color="#d9cbb5"/></radialGradient>
+    <radialGradient id="clay" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#c8743f"/><stop offset="1" stop-color="#8f4a24"/></radialGradient>
+    <radialGradient id="sauce" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#e2b45c"/><stop offset="1" stop-color="#b98232"/></radialGradient>
+    <radialGradient id="meat" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#e9b26a"/><stop offset="1" stop-color="#a8622c"/></radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <path d="M0 480 Q200 450 400 480 T800 470 V600 H0Z" fill="#c9b79a" opacity=".5"/>
+  <ellipse cx="400" cy="330" rx="290" ry="190" fill="#000" opacity=".14"/>
+  <ellipse cx="400" cy="312" rx="290" ry="190" fill="url(#clay)"/>
+  <ellipse cx="400" cy="300" rx="245" ry="155" fill="url(#sauce)"/>
+  <!-- trozos de pollo -->
+  <g stroke="#8a4b20" stroke-width="3">
+    <path d="M250 300c-5-45 50-70 95-50 25 12 30 60 0 80-35 22-90 10-95-30z" fill="url(#meat)"/>
+    <path d="M370 250c10-40 75-45 100-15 22 26 5 70-35 75-45 5-75-25-65-60z" fill="url(#meat)"/>
+    <path d="M480 320c0-40 60-60 95-35 28 20 20 70-15 80-40 12-80-5-80-45z" fill="url(#meat)"/>
+    <path d="M330 360c15-30 80-30 95 0 12 25-15 50-50 50s-58-25-45-50z" fill="url(#meat)"/>
+  </g>
+  <!-- ajos enteros -->
+  <g fill="#f6efe2" stroke="#d9c9a8" stroke-width="2">
+    <ellipse cx="300" cy="255" rx="16" ry="11" transform="rotate(-20 300 255)"/>
+    <ellipse cx="455" cy="300" rx="16" ry="11" transform="rotate(25 455 300)"/>
+    <ellipse cx="540" cy="250" rx="15" ry="10" transform="rotate(-10 540 250)"/>
+    <ellipse cx="290" cy="360" rx="15" ry="10" transform="rotate(15 290 360)"/>
+    <ellipse cx="430" cy="395" rx="14" ry="10"/>
+    <ellipse cx="380" cy="215" rx="13" ry="9" transform="rotate(30 380 215)"/>
+  </g>
+  <!-- laurel -->
+  <path d="M500 380c40-30 90-25 110-10-35 25-80 30-110 10z" fill="#5f7d3a"/>
+  <path d="M500 380c40-12 80-12 110-10" stroke="#3f5a24" stroke-width="2" fill="none"/>
+  <!-- perejil -->
+  <g fill="#4f8a4a"><circle cx="330" cy="300" r="6"/><circle cx="420" cy="270" r="5"/><circle cx="510" cy="330" r="6"/><circle cx="380" cy="380" r="5"/><circle cx="270" cy="320" r="4"/></g>
+</svg>

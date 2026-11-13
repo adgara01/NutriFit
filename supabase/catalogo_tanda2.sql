@@ -74,10 +74,12 @@ begin
    }
   ],
   "description": "1. Pela las patatas y córtalas en dados irregulares de unos 3 cm. Lávalas y sécalas bien.\n\n2. Cuécelas 5 minutos en agua con sal y escúrrelas.\n\n3. Fríelas en abundante aceite caliente hasta que estén doradas y crujientes, unos 10 minutos.\n\n4. Escúrrelas en papel, sálalas y sírvelas con la salsa brava y el alioli por encima.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2793/4168435730_fb7e5c7964_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2793/4168435730_fb7e5c7964_b.jpg"
+  ],
+  "photo_credit": "Burger Baroness · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/66787975@N00/4168435730"
  },
  {
   "name": "Croquetas de jamón",
@@ -156,10 +158,12 @@ begin
    }
   ],
   "description": "1. Derrite la mantequilla, añade el jamón picado muy fino y rehógalo un minuto.\n\n2. Incorpora la harina y cocínala 2 minutos sin dejar de remover.\n\n3. Vierte la leche caliente poco a poco, sin parar de mover, hasta tener una bechamel espesa. Añade una pizca de nuez moscada.\n\n4. Cocina 10 minutos más a fuego suave, pásala a una fuente, tápala con film a piel y deja que enfríe en la nevera al menos 2 horas.\n\n5. Forma las croquetas, pásalas por huevo batido y pan rallado.\n\n6. Fríelas en aceite bien caliente por tandas hasta que estén doradas y escúrrelas en papel.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/7207/7068664101_5053d961e4_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/7207/7068664101_5053d961e4_b.jpg"
+  ],
+  "photo_credit": "PincasPhoto · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/43243154@N07/7068664101"
  },
  {
   "name": "Gambas al ajillo",
@@ -220,10 +224,12 @@ begin
    }
   ],
   "description": "1. Pela las gambas dejando la cola y sálalas.\n\n2. Calienta el aceite en una cazuela de barro con los ajos laminados y la guindilla a fuego suave.\n\n3. Cuando los ajos empiecen a dorarse, sube el fuego y echa las gambas.\n\n4. Cocínalas un minuto por cada lado, espolvorea perejil picado y sirve en la misma cazuela, con pan para mojar.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3535/3469398985_44333d1959_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3535/3469398985_44333d1959_b.jpg"
+  ],
+  "photo_credit": "goodiesfirst · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/49215102@N00/3469398985"
  },
  {
   "name": "Pimientos de Padrón",
@@ -265,10 +271,12 @@ begin
    }
   ],
   "description": "1. Lava los pimientos y sécalos muy bien.\n\n2. Fríelos en una sartén con el aceite caliente, moviéndolos, hasta que la piel se ampolle y se doren, unos 4 minutos.\n\n3. Escúrrelos y sírvelos al momento con sal gruesa por encima.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8460/8053208567_6c89f221b1_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8460/8053208567_6c89f221b1_b.jpg"
+  ],
+  "photo_credit": "WordRidden · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/97844767@N00/8053208567"
  },
  {
   "name": "Champiñones al ajillo",
@@ -329,10 +337,12 @@ begin
    }
   ],
   "description": "1. Limpia los champiñones con un paño y córtalos en cuartos.\n\n2. Dora el ajo laminado en el aceite a fuego medio.\n\n3. Añade los champiñones, sube el fuego y saltéalos 5 minutos hasta que suelten el agua y se doren.\n\n4. Echa el vino, deja que se evapore, sala y termina con perejil picado.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2522/4093374647_d1925f265f_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2522/4093374647_d1925f265f_b.jpg"
+  ],
+  "photo_credit": "Ewan-M · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/55935853@N00/4093374647"
  },
  {
   "name": "Hummus con crudités",
@@ -408,10 +418,12 @@ begin
    }
   ],
   "description": "1. Escurre los garbanzos y guarda un poco del líquido.\n\n2. Tritúralos con el tahini, el zumo del limón, el ajo, la mitad del aceite, una pizca de comino y sal hasta que quede muy fino; si está espeso, añade un poco del líquido.\n\n3. Sírvelo en un plato con un hilo de aceite y pimentón por encima.\n\n4. Acompáñalo con la zanahoria y el pepino cortados en bastones.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/7222/7239466188_f8950c73b1_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/7222/7239466188_f8950c73b1_b.jpg"
+  ],
+  "photo_credit": "Phil Denton · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/37475039@N04/7239466188"
  },
  {
   "name": "Tosta de salmón ahumado y queso fresco",
@@ -463,10 +475,12 @@ begin
    }
   ],
   "description": "1. Tuesta las rebanadas de pan.\n\n2. Úntalas con el queso crema.\n\n3. Coloca encima el salmón ahumado, unas gotas de limón y eneldo picado.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/211/489758881_8b09a801f2.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/211/489758881_8b09a801f2.jpg"
+  ],
+  "photo_credit": "avlxyz · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/10559879@N00/489758881"
  },
  {
   "name": "Ensaladilla rusa",
@@ -541,10 +555,12 @@ begin
    }
   ],
   "description": "1. Cuece las patatas y las zanahorias con piel en agua con sal hasta que estén tiernas, unos 25 minutos; añade los guisantes los últimos 5.\n\n2. Cuece los huevos 10 minutos y enfríalos.\n\n3. Pela patatas, zanahorias y huevos y córtalos en dados pequeños.\n\n4. Mézclalo todo con el atún escurrido y la mayonesa, y decora con las aceitunas.\n\n5. Déjala en la nevera al menos una hora antes de servir.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8454/8071915181_edb7bd9b56.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8454/8071915181_edb7bd9b56.jpg"
+  ],
+  "photo_credit": "onnoth · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/50403002@N00/8071915181"
  },
  {
   "name": "Mejillones al vapor con limón",
@@ -595,10 +611,12 @@ begin
    }
   ],
   "description": "1. Limpia los mejillones quitándoles las barbas y desecha los que estén abiertos.\n\n2. Ponlos en una olla con el vino y el laurel, tapa y cocina a fuego fuerte.\n\n3. En 4 o 5 minutos se abrirán; retira los que sigan cerrados.\n\n4. Sírvelos con gajos de limón.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3279/2720206237_c41976888d_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3279/2720206237_c41976888d_b.jpg"
+  ],
+  "photo_credit": "jlastras · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/22662305@N04/2720206237"
  },
  {
   "name": "Tortilla de espinacas",
@@ -650,10 +668,12 @@ begin
    }
   ],
   "description": "1. Saltea las espinacas con el ajo picado y la mitad del aceite hasta que se reduzcan; escúrrelas.\n\n2. Bate los huevos con sal y mézclalos con las espinacas.\n\n3. Cuaja la tortilla en una sartén pequeña con el resto del aceite, dándole la vuelta con un plato.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3494/3278835124_a94aef3b98_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3494/3278835124_a94aef3b98_b.jpg"
+  ],
+  "photo_credit": "mdid · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/58246614@N00/3278835124"
  },
  {
   "name": "Gazpacho andaluz",
@@ -724,10 +744,12 @@ begin
    }
   ],
   "description": "1. Trocea los tomates, el pimiento, el pepino pelado y el ajo.\n\n2. Tritúralo todo con el pan, el vinagre y sal hasta que quede muy fino.\n\n3. Añade el aceite poco a poco sin dejar de triturar para que emulsione.\n\n4. Pásalo por un colador si lo quieres más fino y déjalo en la nevera hasta que esté bien frío.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/4118/4812761687_7f7268fd76_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/4118/4812761687_7f7268fd76_b.jpg"
+  ],
+  "photo_credit": "tomatoes and friends · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/49845772@N03/4812761687"
  },
  {
   "name": "Salmorejo cordobés",
@@ -793,10 +815,12 @@ begin
    }
   ],
   "description": "1. Cuece los huevos 10 minutos y enfríalos.\n\n2. Tritura los tomates con el ajo y sal; añade el pan troceado y deja que se empape 5 minutos.\n\n3. Tritura de nuevo añadiendo el aceite en hilo hasta que quede una crema espesa.\n\n4. Sírvelo frío con el huevo picado y el jamón en tiras por encima.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/4017/4494091661_e6f7ff1081_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/4017/4494091661_e6f7ff1081_b.jpg"
+  ],
+  "photo_credit": "jlastras · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/22662305@N04/4494091661"
  },
  {
   "name": "Ensalada mediterránea",
@@ -867,10 +891,12 @@ begin
    }
   ],
   "description": "1. Lava y trocea la lechuga.\n\n2. Corta el tomate en gajos, el pepino en medias lunas y la cebolla en aros finos.\n\n3. Reparte todo en una fuente con las aceitunas y el queso feta en dados.\n\n4. Aliña con el aceite, sal y una pizca de orégano.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2685/5863586770_309bbfd5cb_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2685/5863586770_309bbfd5cb_b.jpg"
+  ],
+  "photo_credit": "ozmafan · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/35735307@N00/5863586770"
  },
  {
   "name": "Crema de calabaza",
@@ -936,10 +962,12 @@ begin
    }
   ],
   "description": "1. Pocha la cebolla picada en el aceite 5 minutos.\n\n2. Añade la calabaza y la zanahoria troceadas y rehoga 3 minutos.\n\n3. Cubre con el caldo y cuece 20 minutos, hasta que todo esté tierno.\n\n4. Tritura hasta que quede fina, ajusta de sal y añade una pizca de nuez moscada.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/106/313561882_5830e604fe_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/106/313561882_5830e604fe_b.jpg"
+  ],
+  "photo_credit": "stu_spivack · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/35034346243@N01/313561882"
  },
  {
   "name": "Ensalada de quinoa con verduras",
@@ -1010,10 +1038,12 @@ begin
    }
   ],
   "description": "1. Lava la quinoa y cuécela en el doble de agua con sal 12-15 minutos; escúrrela y deja que se enfríe.\n\n2. Corta los tomates por la mitad y el pepino, el pimiento y el aguacate en dados.\n\n3. Mezcla todo con la quinoa.\n\n4. Aliña con el zumo del limón, el aceite y sal.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/1272/901705743_ea93902785_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/1272/901705743_ea93902785_b.jpg"
+  ],
+  "photo_credit": "rusvaplauke · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/7440954@N05/901705743"
  },
  {
   "name": "Sopa de verduras",
@@ -1084,10 +1114,12 @@ begin
    }
   ],
   "description": "1. Corta todas las verduras en trozos pequeños.\n\n2. Rehoga el puerro en el aceite 5 minutos.\n\n3. Añade el resto de verduras y el caldo, y cuece a fuego suave 20 minutos.\n\n4. Ajusta de sal y sirve caliente.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3192/2759721625_937b3a1ffa_m.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3192/2759721625_937b3a1ffa_m.jpg"
+  ],
+  "photo_credit": "startcooking kathy & amandine · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/70893713@N00/2759721625"
  },
  {
   "name": "Poke bowl de salmón",
@@ -1162,10 +1194,12 @@ begin
    }
   ],
   "description": "1. Cuece el arroz según el paquete, alíñalo con el vinagre y deja que se temple.\n\n2. Corta el salmón (apto para comer crudo) en dados y mézclalo con la soja.\n\n3. Corta el aguacate y el pepino en láminas.\n\n4. Monta los boles con el arroz de base y encima el salmón, el aguacate, el pepino y el edamame.\n\n5. Termina con sésamo por encima.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/4094/5442182933_27e43612f2_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/4094/5442182933_27e43612f2_b.jpg"
+  ],
+  "photo_credit": "photoskate · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/44447572@N06/5442182933"
  },
  {
   "name": "Bacalao al horno con pimientos",
@@ -1226,10 +1260,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 190 °C.\n\n2. Corta los pimientos y la cebolla en tiras y ásalos 15 minutos en una bandeja con la mitad del aceite.\n\n3. Coloca encima los lomos de bacalao y riega con el resto del aceite con el ajo laminado.\n\n4. Hornea 10-12 minutos, hasta que el bacalao se separe en lascas.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2232/2262396498_7ac7ceb61c_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2232/2262396498_7ac7ceb61c_b.jpg"
+  ],
+  "photo_credit": "methTICALman · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/46614245@N00/2262396498"
  },
  {
   "name": "Lasaña de carne",
@@ -1309,10 +1345,12 @@ begin
    }
   ],
   "description": "1. Pocha la cebolla y la zanahoria picadas en el aceite 8 minutos; añade la carne y dórala.\n\n2. Echa el tomate y una pizca de orégano y cocina 15 minutos a fuego suave.\n\n3. Cuece las placas según el paquete (o hidrátalas si son precocidas).\n\n4. En una fuente, alterna capas de placas, carne y un poco de bechamel; termina con bechamel y queso rallado.\n\n5. Hornea a 200 °C unos 25 minutos, hasta que esté gratinada. Déjala reposar 10 minutos antes de cortar.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3686/11735294004_b733d44485_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3686/11735294004_b733d44485_b.jpg"
+  ],
+  "photo_credit": "jamesonf · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/24314126@N05/11735294004"
  },
  {
   "name": "Pollo al ajillo",
@@ -1382,9 +1420,11 @@ begin
    }
   ],
   "description": "1. Trocea el pollo y sálalo.\n\n2. Dóralo bien en el aceite por todos los lados, unos 10 minutos.\n\n3. Añade los ajos enteros chafados y el laurel y rehoga 2 minutos.\n\n4. Riega con el vino, tapa y cocina a fuego suave 20 minutos, removiendo de vez en cuando.\n\n5. Termina con perejil picado.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
+  "image_url": "https://adgara01.github.io/NutriFit/img/catalogo/pollo-al-ajillo.svg",
+  "image_urls": [
+   "https://adgara01.github.io/NutriFit/img/catalogo/pollo-al-ajillo.svg"
+  ],
+  "photo_credit": "NutriFit · ilustración",
   "photo_source": null
  },
  {
@@ -1461,10 +1501,12 @@ begin
    }
   ],
   "description": "1. Sofríe en el aceite la judía, el pimiento, el calabacín y las alcachofas troceadas, 8 minutos.\n\n2. Añade el tomate y cocina 3 minutos más.\n\n3. Echa el arroz, remueve un minuto y vierte el caldo caliente con el azafrán.\n\n4. Cocina 18 minutos sin remover y deja reposar 5 minutos.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8309/8038343404_d8bec3af36.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8309/8038343404_d8bec3af36.jpg"
+  ],
+  "photo_credit": "taskforsome · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/34149453@N07/8038343404"
  },
  {
   "name": "Fajitas de pollo",
@@ -1540,10 +1582,12 @@ begin
    }
   ],
   "description": "1. Corta el pollo, los pimientos y la cebolla en tiras.\n\n2. Saltea el pollo a fuego fuerte con el aceite, una pizca de comino, pimentón y sal; resérvalo.\n\n3. Saltea las verduras 5 minutos y vuelve a echar el pollo.\n\n4. Calienta las tortillas y rellénalas con el pollo y las verduras. Sirve con guacamole.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/4015/4589449172_eb046a7f2a_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/4015/4589449172_eb046a7f2a_b.jpg"
+  ],
+  "photo_credit": "Denis Dervisevic · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/23979265@N07/4589449172"
  },
  {
   "name": "Bizcocho de yogur",
@@ -1612,10 +1656,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 180 °C y engrasa un molde.\n\n2. Bate los huevos con el azúcar hasta que blanqueen.\n\n3. Añade el yogur, el aceite y la ralladura, y mezcla.\n\n4. Incorpora la harina tamizada con la levadura con movimientos envolventes.\n\n5. Vierte en el molde y hornea 35-40 minutos, hasta que al pinchar salga limpio.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8244/8611545120_1175969db1_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8244/8611545120_1175969db1_b.jpg"
+  ],
+  "photo_credit": "grongar · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/70757891@N00/8611545120"
  },
  {
   "name": "Flan de huevo",
@@ -1674,10 +1720,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 170 °C y cubre el fondo de las flaneras con caramelo.\n\n2. Bate los huevos con el azúcar y la vainilla, sin hacer espuma, y añade la leche templada.\n\n3. Reparte la mezcla en las flaneras.\n\n4. Hornea al baño maría 40 minutos, hasta que cuaje.\n\n5. Déjalo enfriar y guárdalo en la nevera al menos 3 horas antes de desmoldar.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/4149/4996853387_5d312db469_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/4149/4996853387_5d312db469_b.jpg"
+  ],
+  "photo_credit": "Vegan Feast Catering · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/25128194@N02/4996853387"
  },
  {
   "name": "Tarta de queso al horno",
@@ -1736,10 +1784,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 210 °C y forra un molde con papel de horno arrugado.\n\n2. Bate el queso con el azúcar hasta que quede cremoso.\n\n3. Añade los huevos de uno en uno, luego la nata y la harina tamizada.\n\n4. Vierte en el molde y hornea 40-45 minutos: la superficie debe quedar muy dorada y el centro temblón.\n\n5. Déjala enfriar del todo y luego en la nevera unas horas.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/203/513092634_4eeecc0097.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/203/513092634_4eeecc0097.jpg"
+  ],
+  "photo_credit": "c.j.b · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/62961837@N00/513092634"
  },
  {
   "name": "Torrijas",
@@ -1809,10 +1859,12 @@ begin
    }
   ],
   "description": "1. Calienta la leche con la canela en rama, la ralladura y la mitad del azúcar; deja que se temple.\n\n2. Corta el pan del día anterior en rebanadas de dos dedos y empápalas en la leche.\n\n3. Pásalas por huevo batido y fríelas en aceite caliente hasta que se doren por los dos lados.\n\n4. Escúrrelas y rebózalas en el resto del azúcar mezclado con canela.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2246/2327540982_cb08da9bf7_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2246/2327540982_cb08da9bf7_b.jpg"
+  ],
+  "photo_credit": "tnarik · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/80075387@N00/2327540982"
  },
  {
   "name": "Natillas caseras",
@@ -1877,10 +1929,12 @@ begin
    }
   ],
   "description": "1. Calienta la leche con la canela en rama, reservando un vaso.\n\n2. Mezcla en el vaso de leche fría las yemas, el azúcar y la maicena.\n\n3. Retira la canela, añade la mezcla a la leche caliente y cocina a fuego suave sin dejar de remover hasta que espese, sin que hierva.\n\n4. Reparte en cuencos con una galleta encima y canela en polvo. Enfría en la nevera.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3304/3583013233_bde547835e_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3304/3583013233_bde547835e_b.jpg"
+  ],
+  "photo_credit": "Danny / ixfd64 · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/64978778@N00/3583013233"
  },
  {
   "name": "Brownie de chocolate",
@@ -1944,10 +1998,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 180 °C y forra un molde cuadrado con papel.\n\n2. Funde el chocolate con la mantequilla al baño maría o en el microondas a golpes cortos.\n\n3. Bate los huevos con el azúcar, añade el chocolate fundido y luego la harina.\n\n4. Incorpora las nueces troceadas y vierte en el molde.\n\n5. Hornea 20-25 minutos: el centro debe quedar algo húmedo. Deja enfriar antes de cortar.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3262/2760563950_845fa0cfe6_m.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3262/2760563950_845fa0cfe6_m.jpg"
+  ],
+  "photo_credit": "startcooking kathy & amandine · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/70893713@N00/2760563950"
  }
 ]$json$::jsonb) loop
     d := jsonb_populate_record(null::public.dishes, r);
