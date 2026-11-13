@@ -135,10 +135,12 @@ begin
    }
   ],
   "description": "1. Pon la avena y la leche en un cazo a fuego medio.\n\n2. Remueve de vez en cuando durante 5 o 6 minutos, hasta que espese y quede cremosa.\n\n3. Aplasta la mitad del plátano con un tenedor e incorpóralo al final para endulzar.\n\n4. Sirve en un bol con el resto del plátano en rodajas, canela espolvoreada y un poco de miel.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8525/8673215959_aedcf110a2_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8525/8673215959_aedcf110a2_b.jpg"
+  ],
+  "photo_credit": "opacity · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/60258967@N00/8673215959"
  },
  {
   "name": "Yogur griego con granola y frutos rojos",
@@ -317,10 +319,12 @@ begin
    }
   ],
   "description": "1. Cuece el huevo 7 minutos en agua hirviendo para que la yema quede melosa, y enfríalo en agua fría.\n\n2. Tuesta el pan.\n\n3. Machaca el aguacate con unas gotas de limón, sal y pimienta.\n\n4. Unta el aguacate en la tostada y pon encima el huevo pelado y abierto por la mitad.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/4294/35555668790_ca5fb33447.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/4294/35555668790_ca5fb33447.jpg"
+  ],
+  "photo_credit": "megh28 · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/156883244@N04/35555668790"
  },
  {
   "name": "Tortitas de avena y plátano",
@@ -381,10 +385,12 @@ begin
    }
   ],
   "description": "1. Tritura los plátanos, los huevos, la avena y una pizca de canela hasta tener una masa espesa.\n\n2. Calienta una sartén antiadherente a fuego medio y úntala con unas gotas de aceite.\n\n3. Echa una cucharada grande de masa por tortita y cocina hasta que salgan burbujas en la superficie, unos 2 minutos.\n\n4. Dales la vuelta, cocina un minuto más y sirve con miel o fruta.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2670/3848803773_604c3c7218_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2670/3848803773_604c3c7218_b.jpg"
+  ],
+  "photo_credit": "jonolist · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/46635911@N00/3848803773"
  },
  {
   "name": "Bocadillo de jamón con tomate",
@@ -488,10 +494,12 @@ begin
    }
   ],
   "description": "1. Pon todos los ingredientes en el vaso de la batidora.\n\n2. Tritura hasta que quede liso; si lo quieres más frío, añade un par de cubitos de hielo.\n\n3. Sirve enseguida.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8039/29252705940_623246769d_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8039/29252705940_623246769d_b.jpg"
+  ],
+  "photo_credit": "RunningStats · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/143500187@N08/29252705940"
  },
  {
   "name": "Tortilla francesa con queso",
@@ -542,10 +550,12 @@ begin
    }
   ],
   "description": "1. Bate los huevos con una pizca de sal.\n\n2. Calienta el aceite en una sartén pequeña a fuego medio y vierte el huevo.\n\n3. Cuando empiece a cuajar por abajo, reparte el queso en el centro.\n\n4. Dobla la tortilla en tres, deja un minuto más para que se funda el queso y sirve.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3512/3227896436_42aa88cfdf_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3512/3227896436_42aa88cfdf_b.jpg"
+  ],
+  "photo_credit": "Kent Wang · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/27454212@N00/3227896436"
  },
  {
   "name": "Pudin de chía con mango",
@@ -592,10 +602,12 @@ begin
    }
   ],
   "description": "1. Mezcla la chía con la bebida de avena y el sirope en un tarro, y remueve bien para que no se formen grumos.\n\n2. Vuelve a remover a los 10 minutos y guárdalo en la nevera al menos 4 horas, o toda la noche.\n\n3. Antes de comer, cubre con el mango en dados.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/1685/25322778832_9179ed638d_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/1685/25322778832_9179ed638d_b.jpg"
+  ],
+  "photo_credit": "guillemcat · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/96056991@N08/25322778832"
  },
  {
   "name": "Lentejas estofadas con verduras",
@@ -1054,10 +1066,12 @@ begin
    }
   ],
   "description": "1. Cuece los macarrones en agua con sal el tiempo del paquete y escúrrelos.\n\n2. Mientras, sofríe la cebolla picada en el aceite 6 minutos.\n\n3. Añade el chorizo en daditos y cocina 3 minutos para que suelte su grasa.\n\n4. Incorpora el tomate frito, deja 5 minutos y mezcla con la pasta.\n\n5. Sirve con queso rallado por encima o gratina unos minutos en el horno.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/1347/3166048564_34ff27fa60_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/1347/3166048564_34ff27fa60_b.jpg"
+  ],
+  "photo_credit": "Craig Anderson · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/24236874@N00/3166048564"
  },
  {
   "name": "Albóndigas en salsa de tomate",
@@ -1151,10 +1165,12 @@ begin
    }
   ],
   "description": "1. Mezcla la carne con el huevo, el pan rallado, un ajo picado, el perejil y sal.\n\n2. Forma bolas del tamaño de una nuez y pásalas por harina.\n\n3. Dóralas en el aceite por tandas y resérvalas.\n\n4. En el mismo aceite pocha la cebolla y el otro ajo picados, 8 minutos.\n\n5. Añade el vino, deja que se evapore y echa el tomate. Cocina 10 minutos.\n\n6. Vuelve a meter las albóndigas y deja 10 minutos más a fuego suave.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2663/3716096437_fae41665b5_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2663/3716096437_fae41665b5_b.jpg"
+  ],
+  "photo_credit": "avlxyz · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/10559879@N00/3716096437"
  },
  {
   "name": "Tofu salteado con brócoli y arroz",
@@ -1229,10 +1245,12 @@ begin
    }
   ],
   "description": "1. Cuece el arroz según el paquete.\n\n2. Seca bien el tofu con papel de cocina, córtalo en dados y dóralo en una sartén con la mitad del aceite. Resérvalo.\n\n3. Saltea a fuego fuerte el brócoli en ramitos y la zanahoria en tiras con el resto del aceite, 5 minutos.\n\n4. Añade el ajo y el jengibre rallados, vuelve a echar el tofu y riega con la soja.\n\n5. Remueve un minuto y sirve sobre el arroz.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3673/19760470714_3a76755a78_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3673/19760470714_3a76755a78_b.jpg"
+  ],
+  "photo_credit": "goblinbox_(queen_of_ad_hoc_bento) · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/25977089@N00/19760470714"
  },
  {
   "name": "Alubias blancas con verduras",
@@ -1397,10 +1415,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 200 °C.\n\n2. Corta las patatas en rodajas finas y la cebolla en tiras; colócalas en una bandeja con sal, la mitad del aceite y los ajos aplastados. Hornea 20 minutos.\n\n3. Salpimienta el solomillo, frótalo con romero y márcalo en una sartén caliente con el resto del aceite.\n\n4. Ponlo sobre las patatas, riega con el vino y hornea 15 o 18 minutos.\n\n5. Déjalo reposar 5 minutos antes de cortarlo en medallones.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2487/4229627664_2da7541669_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2487/4229627664_2da7541669_b.jpg"
+  ],
+  "photo_credit": "@joefoodie · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/98178986@N00/4229627664"
  },
  {
   "name": "Espaguetis a la boloñesa",
@@ -1728,10 +1748,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 200 °C.\n\n2. Corta las verduras en trozos parecidos, mézclalas con la mitad del aceite y sal, y hornéalas 15 minutos.\n\n3. Salpimienta el salmón, ponlo sobre las verduras con unas rodajas de limón y riega con el resto del aceite.\n\n4. Hornea 10 o 12 minutos más, hasta que el salmón se separe en láminas.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/7744/17230996270_347065f1fa_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/7744/17230996270_347065f1fa_b.jpg"
+  ],
+  "photo_credit": "jules:stonesoup · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/58367355@N00/17230996270"
  },
  {
   "name": "Crema de calabacín",
@@ -1797,10 +1819,12 @@ begin
    }
   ],
   "description": "1. Pocha el puerro en rodajas en el aceite 5 minutos.\n\n2. Añade el calabacín en trozos (con piel) y la patata pelada y troceada, y rehoga 3 minutos.\n\n3. Cubre con el caldo, sala y cuece 15 minutos.\n\n4. Tritura hasta que quede muy fina, ajusta de sal y pimienta y sirve caliente.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/5133/5571107308_53788f38fd_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/5133/5571107308_53788f38fd_b.jpg"
+  ],
+  "photo_credit": "Lablascovegmenu · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/35022955@N06/5571107308"
  },
  {
   "name": "Ensalada de garbanzos",
@@ -1952,10 +1976,12 @@ begin
    }
   ],
   "description": "1. Abre las pechugas en filetes finos y aliña con sal, orégano, unas gotas de limón y un poco de aceite.\n\n2. Cocínalas en una plancha bien caliente 3 minutos por cada lado.\n\n3. Mientras, prepara la ensalada con la lechuga, el tomate en gajos y la zanahoria rallada.\n\n4. Aliña la ensalada y sirve junto al pollo cortado en tiras.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/2358/2258912267_0a977ec3cc_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/2358/2258912267_0a977ec3cc_b.jpg"
+  ],
+  "photo_credit": "Marco Cabazal · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/11845118@N00/2258912267"
  },
  {
   "name": "Revuelto de setas y gambas",
@@ -2021,9 +2047,11 @@ begin
    }
   ],
   "description": "1. Limpia las setas y córtalas en trozos.\n\n2. Dora el ajo laminado en el aceite, añade las setas y saltéalas a fuego fuerte 5 minutos.\n\n3. Incorpora las gambas peladas y cocina un minuto, hasta que cambien de color.\n\n4. Baja el fuego, echa los huevos batidos con sal y remueve suavemente hasta que cuajen jugosos. Termina con perejil.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
+  "image_url": "https://adgara01.github.io/NutriFit/img/catalogo/revuelto-setas-gambas.svg",
+  "image_urls": [
+   "https://adgara01.github.io/NutriFit/img/catalogo/revuelto-setas-gambas.svg"
+  ],
+  "photo_credit": "NutriFit · ilustración",
   "photo_source": null
  },
  {
@@ -2166,10 +2194,12 @@ begin
    }
   ],
   "description": "1. Pica la cebolla y los pimientos y póchalos en el aceite a fuego medio 10 minutos.\n\n2. Añade el calabacín en daditos y cocina 10 minutos más.\n\n3. Incorpora el tomate y sal, y deja a fuego suave 15 minutos, removiendo de vez en cuando.\n\n4. Haz dos huecos en el pisto, casca los huevos dentro, tapa y deja hasta que la clara cuaje.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/3232/4558942769_b00f02ebb6.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/3232/4558942769_b00f02ebb6.jpg"
+  ],
+  "photo_credit": "jasonlam · CC BY-SA 2.0",
+  "photo_source": "https://www.flickr.com/photos/93512023@N00/4558942769"
  },
  {
   "name": "Dorada al horno con patatas",
@@ -2240,10 +2270,12 @@ begin
    }
   ],
   "description": "1. Precalienta el horno a 200 °C.\n\n2. Coloca las patatas en rodajas y la cebolla en tiras en una bandeja con sal y la mitad del aceite, y hornea 20 minutos.\n\n3. Haz dos cortes en el lomo de cada dorada, sálalas y pon dentro unas rodajas de limón.\n\n4. Colócalas sobre las patatas, riega con el vino y el resto del aceite con el ajo picado, y hornea 15 o 18 minutos.",
-  "image_url": null,
-  "image_urls": [],
-  "photo_credit": null,
-  "photo_source": null
+  "image_url": "https://live.staticflickr.com/8038/7991609406_0f1511e838_b.jpg",
+  "image_urls": [
+   "https://live.staticflickr.com/8038/7991609406_0f1511e838_b.jpg"
+  ],
+  "photo_credit": "AndyRobertsPhotos · CC BY 2.0",
+  "photo_source": "https://www.flickr.com/photos/21372046@N00/7991609406"
  }
 ]$json$::jsonb) loop
     d := jsonb_populate_record(null::public.dishes, r);

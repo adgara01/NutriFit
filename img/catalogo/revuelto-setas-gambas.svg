@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Ilustración propia de NutriFit: revuelto de setas y gambas -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0" stop-color="#f1e9dc"/><stop offset="1" stop-color="#d9cbb5"/>
+    </radialGradient>
+    <radialGradient id="plate" cx="50%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#ffffff"/><stop offset=".85" stop-color="#f3f1ec"/><stop offset="1" stop-color="#ddd8cf"/>
+    </radialGradient>
+    <radialGradient id="egg" cx="45%" cy="40%" r="60%">
+      <stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#f2b84a"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <!-- mantel -->
+  <path d="M0 470 Q200 440 400 470 T800 460 V600 H0Z" fill="#c9b79a" opacity=".5"/>
+  <!-- plato -->
+  <ellipse cx="400" cy="318" rx="300" ry="215" fill="#000" opacity=".12"/>
+  <ellipse cx="400" cy="305" rx="300" ry="210" fill="url(#plate)"/>
+  <ellipse cx="400" cy="305" rx="230" ry="155" fill="none" stroke="#e6e1d8" stroke-width="4"/>
+  <!-- huevo revuelto -->
+  <g fill="url(#egg)" stroke="#e5a63a" stroke-width="2">
+    <path d="M250 300c-10-40 30-70 70-60 20-40 80-45 105-10 40-25 100 0 105 45 45 10 55 70 15 90-5 40-70 55-100 35-30 30-95 25-115-5-45 10-90-25-80-60-20-5-15-30 0-35z"/>
+  </g>
+  <g fill="#ffeaa0" opacity=".8">
+    <ellipse cx="330" cy="285" rx="28" ry="16"/><ellipse cx="430" cy="270" rx="34" ry="18"/>
+    <ellipse cx="480" cy="335" rx="30" ry="16"/><ellipse cx="370" cy="350" rx="26" ry="14"/>
+  </g>
+  <!-- setas -->
+  <g>
+    <g transform="translate(300 330) rotate(-15)"><path d="M-30 0a30 22 0 0 1 60 0z" fill="#8a5a3b"/><rect x="-8" y="-2" width="16" height="22" rx="6" fill="#e9dcc6"/></g>
+    <g transform="translate(455 300) rotate(12)"><path d="M-34 0a34 24 0 0 1 68 0z" fill="#7a4d31"/><rect x="-9" y="-2" width="18" height="24" rx="7" fill="#efe3cf"/></g>
+    <g transform="translate(395 360) rotate(-5)"><path d="M-26 0a26 19 0 0 1 52 0z" fill="#946446"/><rect x="-7" y="-2" width="14" height="19" rx="5" fill="#e9dcc6"/></g>
+    <g transform="translate(520 360) rotate(20)"><path d="M-24 0a24 17 0 0 1 48 0z" fill="#86573a"/><rect x="-6" y="-2" width="12" height="18" rx="5" fill="#efe3cf"/></g>
+  </g>
+  <!-- gambas -->
+  <g fill="none" stroke-linecap="round">
+    <g transform="translate(355 255) rotate(-20)">
+      <path d="M0 0c30-30 75-20 80 15 4 28-25 40-45 25" stroke="#f08a5d" stroke-width="22"/>
+      <path d="M8 -6c25-18 55-10 60 14" stroke="#ffb38a" stroke-width="6"/>
+    </g>
+    <g transform="translate(470 245) rotate(25)">
+      <path d="M0 0c28-28 70-18 74 14 4 26-23 37-42 23" stroke="#ec7f50" stroke-width="20"/>
+      <path d="M8 -6c23-16 50-9 55 13" stroke="#ffb38a" stroke-width="6"/>
+    </g>
+    <g transform="translate(260 300) rotate(-60)">
+      <path d="M0 0c26-26 64-17 68 13 3 24-21 34-38 21" stroke="#f08a5d" stroke-width="18"/>
+    </g>
+  </g>
+  <!-- perejil -->
+  <g fill="#4f8a4a">
+    <circle cx="340" cy="300" r="6"/><circle cx="420" cy="320" r="5"/><circle cx="500" cy="290" r="6"/>
+    <circle cx="380" cy="270" r="4"/><circle cx="460" cy="350" r="5"/><circle cx="300" cy="360" r="4"/>
+  </g>
+</svg>
