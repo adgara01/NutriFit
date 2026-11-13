@@ -2896,6 +2896,22 @@ button:focus:not(:focus-visible){outline:none;}
   #section-plan .wk-grid .wk-cell-t{font-size:14px !important; -webkit-line-clamp:3 !important;}
   #section-plan .pl-cart{max-width:calc(56px + var(--n, 7) * 280px); margin:0 auto !important;}
 }
+
+/* Previsión semanal en PC, sin scroll: casillas 4:3 tan grandes como quepan en alto y ancho,
+   bebidas en una franja fina y el botón del carrito en la barra de arriba. */
+@media (min-width:1024px){
+  body.desk-plan #section-plan{overflow:hidden !important;}
+  #section-plan .wk-tools{order:2;}
+  #section-plan .pl-cart{order:3; flex:0 0 auto !important; max-width:none !important; width:auto !important; min-height:36px !important;
+    padding:0 16px !important; font-size:14px !important; margin:0 !important;}
+  #section-plan .pl-cart svg{width:17px; height:17px;}
+  #section-plan #wk-grid-wrap, #section-plan #wk-day-wrap, #section-plan #pl-warn{order:4;}
+  #section-plan .wk-gridcard{max-width:none !important; width:fit-content; margin:0 auto !important;}
+  #section-plan .wk-grid{grid-template-columns:44px repeat(var(--n, 7), var(--wk-col-w, 200px)) !important;}
+  #section-plan .wk-grid .wk-cell{aspect-ratio:auto !important; height:var(--wk-row-h, 150px) !important;}
+  #section-plan .wk-grid .wk-cell[data-cell$="|extras"]{height:40px !important;}
+  #section-plan .wk-grid .wk-cell[data-cell$="|extras"] .wk-cell-t{-webkit-line-clamp:1 !important; padding:4px 8px !important; font-size:12px !important;}
+}
 </style>
 </head>
 <body>
@@ -4271,7 +4287,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.19-2';
+const APP_VERSION = '2026.11.19-3';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -14120,19 +14136,26 @@ try{ setDeskDespensa(localStorage.getItem('nutrifit_desk_despensa')==='plan' ? '
 function fitPlanRows(){
   const grid = $('#wk-grid');
   if(!grid) return;
-  if(!isDesktopLayout() || !planVisible()){ grid.style.removeProperty('--wk-row-h'); return; }
-  const page = $('#section-plan'), btn = $('#pl-cart-btn');
+  const page = $('#section-plan');
+  if(!isDesktopLayout() || !planVisible()){ grid.style.removeProperty('--wk-row-h'); if(page) page.style.removeProperty('--wk-col-w'); return; }
   const pr = page.getBoundingClientRect(), gr = grid.getBoundingClientRect();
   if(!pr.height || !page.clientHeight) return;
-  const k = page.clientHeight / pr.height;                 // de px de pantalla a px de CSS (por el zoom)
+  const k = page.clientHeight / pr.height;                 // px de pantalla -> px de CSS (por el zoom)
   const head = grid.querySelector('.wk-dh');
-  const headH = head ? head.getBoundingClientRect().height * k : 40;
-  const btnH = btn ? (btn.getBoundingClientRect().height * k + 22) : 0;
-  const rows = GRID_MEALS.length;
-  const avail = (pr.bottom - gr.top) * k - headH - btnH - 34 - (rows) * 8;
-  const h = Math.max(46, Math.min(160, Math.floor(avail / rows)));
+  const headH = head ? head.getBoundingClientRect().height * k : 30;
+  const N = Number(getComputedStyle(grid).getPropertyValue('--n')) || 7;
+  const gap = 10, extrasH = 40, labelW = 44;
+  // Alto: 3 filas grandes (desayuno, comida, cena) + la franja de bebidas, sin scroll.
+  const availH = (pr.bottom - gr.top) * k - headH - extrasH - 4 * gap - 34;
+  let h = Math.floor(availH / 3);
+  // Ancho: cada casilla 4:3; si no cabe a lo ancho, manda el ancho.
+  const card = grid.closest('.wk-gridcard') || grid;
+  const availW = (page.clientWidth - 2) - 24 - labelW - N * gap;
+  const maxH = Math.floor((availW / N) * 0.75);
+  h = Math.max(70, Math.min(h, maxH, 260));
   grid.style.setProperty('--wk-row-h', h + 'px');
-  page.style.setProperty('--n', getComputedStyle(grid).getPropertyValue('--n') || 7);
+  page.style.setProperty('--wk-col-w', Math.round(h * 4 / 3) + 'px');
+  page.style.setProperty('--n', N);
 }
 window.addEventListener('resize', ()=> requestAnimationFrame(fitPlanRows));
 function enterPlan(){
