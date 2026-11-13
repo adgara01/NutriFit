@@ -26,7 +26,7 @@ def main(cat_path, files):
             names.add(n.lower())
             tags = set(r.get("tags", []))
             if tags - TAGS: errors.append(f"{where}: etiquetas no válidas {sorted(tags - TAGS)}")
-            if not tags & MOMENTS: errors.append(f"{where}: le falta Desayuno, Comida o Cena")
+            if not tags & MOMENTS and "Repostería" not in tags: errors.append(f"{where}: le falta Desayuno, Comida o Cena")
             if len(tags & TIPOS) != 1: errors.append(f"{where}: necesita exactamente un Tipo")
             if "Repostería" in tags and tags & {"Comida", "Cena"}: errors.append(f"{where}: repostería en comida/cena")
             if not (1 <= r.get("servings_base", 0) <= 12): errors.append(f"{where}: raciones raras")
