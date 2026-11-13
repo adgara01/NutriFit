@@ -2912,6 +2912,26 @@ button:focus:not(:focus-visible){outline:none;}
   #section-plan .wk-grid .wk-cell[data-cell$="|extras"]{height:40px !important;}
   #section-plan .wk-grid .wk-cell[data-cell$="|extras"] .wk-cell-t{-webkit-line-clamp:1 !important; padding:4px 8px !important; font-size:12px !important;}
 }
+
+/* Previsión semanal en PC: calendario vertical a la izquierda (se desliza arriba y abajo).
+   Tocar un día mueve el inicio de la vista; la franja marcada es lo que se ve. */
+@media (min-width:1024px){
+  body.desk-plan #section-plan{position:relative;}
+  #section-plan .wk-cal{display:flex !important; flex-direction:column; position:absolute; left:20px; top:76px; bottom:20px; width:112px;
+    overflow-y:auto !important; overflow-x:hidden !important; scroll-snap-type:y proximity; margin:0 !important; padding:4px;
+    background:var(--card); border-radius:14px; box-shadow:0 0 0 1px var(--border); scrollbar-width:thin;}
+  #section-plan .wk-cc{flex:0 0 auto; width:100%; display:grid; grid-template-columns:22px 30px 1fr; align-items:center; gap:4px;
+    padding:3px 6px; text-align:left; border-radius:0 !important; scroll-snap-align:start;}
+  #section-plan .wk-cc .dw{font-size:10.5px;}
+  #section-plan .wk-cc .dn{width:28px; height:28px; margin:0; font-size:14px;}
+  #section-plan .wk-cc .dm{height:auto; line-height:1; font-size:9.5px; text-align:right;}
+  #section-plan .wk-cc.in{background:var(--card2);}
+  #section-plan .wk-cc.in.st{border-radius:10px 10px 0 0 !important;}
+  #section-plan .wk-cc.in.en{border-radius:0 0 10px 10px !important;}
+  #section-plan .wk-cc.in.st.en{border-radius:10px !important;}
+  #section-plan .wk-cc:hover{background:var(--card2);}
+  #section-plan #wk-grid-wrap, #section-plan #wk-day-wrap, #section-plan #pl-warn{flex:1 1 calc(100% - 132px) !important; margin-left:132px !important;}
+}
 </style>
 </head>
 <body>
@@ -4287,7 +4307,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.19-3';
+const APP_VERSION = '2026.11.19-4';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -13342,7 +13362,13 @@ function renderWkCal(){
   });
   // Que el primer día marcado se vea (sin saltos si ya estaba a la vista)
   const st = wrap.querySelector('.wk-cc.st');
-  if(st && wrap.clientWidth){
+  const vert = isDesktopLayout();
+  if(st && wrap.clientWidth && vert){
+    const top = st.offsetTop, ch = wrap.clientHeight;
+    if(!wrap._init || top < wrap.scrollTop || top + st.offsetHeight > wrap.scrollTop + ch)
+      wrap.scrollTo({ top: Math.max(0, top - st.offsetHeight * 2), behavior: wrap._init && !REDUCED_MOTION ? 'smooth' : 'auto' });
+    wrap._init = true;
+  } else if(st && wrap.clientWidth){
     const left = st.offsetLeft, cw = wrap.clientWidth;
     if(!wrap._init || left < wrap.scrollLeft || left + st.offsetWidth > wrap.scrollLeft + cw)
       wrap.scrollTo({ left: Math.max(0, left - st.offsetWidth), behavior: wrap._init && !REDUCED_MOTION ? 'smooth' : 'auto' });
@@ -14150,7 +14176,7 @@ function fitPlanRows(){
   let h = Math.floor(availH / 3);
   // Ancho: cada casilla 4:3; si no cabe a lo ancho, manda el ancho.
   const card = grid.closest('.wk-gridcard') || grid;
-  const availW = (page.clientWidth - 2) - 24 - labelW - N * gap;
+  const availW = (page.clientWidth - 2) - 24 - labelW - N * gap - 132;
   const maxH = Math.floor((availW / N) * 0.75);
   h = Math.max(70, Math.min(h, maxH, 260));
   grid.style.setProperty('--wk-row-h', h + 'px');
