@@ -2941,6 +2941,12 @@ html, body, input, select, textarea, button{font-family:'Inter', -apple-system, 
   -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; font-feature-settings:'cv11','ss01';}
 h1, h2, h3, .appbar .ab-title, .dish-name-view, .section-title, .card-title, .pl-title, .tabbar::before{letter-spacing:-.02em;}
 .ex-flabel{letter-spacing:.04em;}
+
+@media (min-width:1024px){
+  #section-plan .wk-cal{border-radius:var(--radius) !important; padding:8px 6px !important; background:var(--card) !important;
+    box-shadow:0 0 0 1px var(--border) !important; scrollbar-width:none;}
+  #section-plan .wk-cal::-webkit-scrollbar{display:none;}
+}
 </style>
 </head>
 <body>
@@ -4316,7 +4322,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.19-5';
+const APP_VERSION = '2026.11.19-6';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -14191,6 +14197,15 @@ function fitPlanRows(){
   grid.style.setProperty('--wk-row-h', h + 'px');
   page.style.setProperty('--wk-col-w', Math.round(h * 4 / 3) + 'px');
   page.style.setProperty('--n', N);
+  // El calendario vertical, a la misma altura que la tarjeta de la cuadrícula
+  requestAnimationFrame(()=>{
+    const cal = $('#wk-cal'), cardEl = grid.closest('.wk-gridcard');
+    if(!cal || !cardEl) return;
+    const p2 = page.getBoundingClientRect(), c2 = cardEl.getBoundingClientRect();
+    cal.style.top = Math.round((c2.top - p2.top) * k + page.scrollTop) + 'px';
+    cal.style.height = Math.round(c2.height * k) + 'px';
+    cal.style.bottom = 'auto';
+  });
 }
 window.addEventListener('resize', ()=> requestAnimationFrame(fitPlanRows));
 function enterPlan(){
