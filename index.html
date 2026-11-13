@@ -2845,6 +2845,45 @@ button:focus:not(:focus-visible){outline:none;}
 @media (hover:hover) and (pointer:fine){ .dish-card:hover{box-shadow:0 0 0 1px var(--border-strong), 0 6px 18px rgba(0,0,0,.08);} }
 .ex-tile-img{border-radius:12px !important;}
 .ex-tile-name{font-weight:600; font-size:13px;}
+
+/* Explorar en el móvil: cada fila de filtros se desliza de lado entera */
+@media (max-width:1023px){
+  .ex-fgroup{width:100%; min-width:0; overflow-x:auto !important; -webkit-overflow-scrolling:touch; touch-action:pan-x;}
+  .ex-fgroup > *{flex-shrink:0;}
+}
+/* ---------- Previsión semanal en ordenador: una barra compacta arriba y la cuadrícula manda ---------- */
+@media (min-width:1024px){
+  body.desk-plan #section-plan{display:flex !important; flex-wrap:wrap; align-items:center; align-content:flex-start; gap:10px 12px;}
+  body.desk-plan #section-plan > *{margin:0 !important;}
+  #section-plan .wk-cal{display:none !important;}          /* las flechas y «Hoy» ya mueven la semana */
+  #section-plan .pl-head{flex:0 0 auto; gap:6px;}
+  #section-plan .pl-arrow{width:36px; height:36px;}
+  #section-plan .pl-title{min-height:36px; font-size:15px; padding:0 10px; min-width:180px;}
+  #section-plan .pl-seg{flex:0 0 220px; margin:0 !important;}
+  #section-plan .pl-seg .seg-b{padding:7px 6px;}
+  #section-plan .wk-tools{flex:1 1 auto; display:flex !important; flex-direction:row !important; justify-content:flex-end; gap:8px; margin:0 !important;}
+  #section-plan .wk-tools-row{gap:6px;}
+  #section-plan .deck-btn, #section-plan .deck-ok{min-height:36px; padding:0 14px;}
+  #section-plan .deck-x{width:36px; height:36px;}
+  #section-plan .deck-src{align-self:center;}
+  #section-plan #pl-warn{flex:1 1 100%;}
+  #section-plan #wk-grid-wrap, #section-plan #wk-day-wrap{flex:1 1 100%;}
+  #section-plan .pl-cart{flex:1 1 100%; min-height:44px; font-size:15px;}
+  /* cuadrícula: cabecera de días fina, casillas grandes con el nombre siempre visible */
+  #section-plan .wk-gridcard{padding:10px 12px 12px !important; margin:0 !important;}
+  #section-plan .wk-grid{grid-template-columns:44px repeat(var(--n, 7), minmax(0,1fr)) !important; column-gap:10px !important; row-gap:10px !important;}
+  #section-plan .wk-dh{flex-direction:row; justify-content:center; gap:6px; padding:2px 0 4px;}
+  #section-plan .wk-dh .dn{font-size:12px; text-transform:uppercase; letter-spacing:.04em;}
+  #section-plan .wk-dh .dd{font-size:14px;}
+  #section-plan .wk-dh.today .dd{width:24px; height:24px; font-size:12.5px;}
+  #section-plan .wk-rl{font-size:10.5px; letter-spacing:.05em; text-align:left;}
+  #section-plan .wk-cell{border-radius:12px !important;}
+  #section-plan .wk-grid .wk-cell-t{display:-webkit-box !important; -webkit-box-orient:vertical; -webkit-line-clamp:2; font-size:13px !important; padding:8px 10px 18px !important; line-height:1.25;}
+  #section-plan .wk-cell:not(:has(img)) .wk-cell-t{padding:6px 10px !important;}
+  #section-plan .wk-cell.empty::after{font-size:22px;}
+}
+
+@media (min-width:1024px){ #section-plan .wk-cell:not(:has(img)) .wk-cell-bg svg{display:none !important;} #section-plan .wk-cell:not(:has(img)) .wk-cell-t{font-size:14px !important; font-weight:600;} }
 </style>
 </head>
 <body>
@@ -4220,7 +4259,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.18-8';
+const APP_VERSION = '2026.11.19-1';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -12232,7 +12271,7 @@ window.addEventListener('resize', ()=>{ syncAppbarHeight(); const k = currentPag
     if(anyModalOpen()) return 'none';
     const t = g.target;
     if(t.closest && t.closest('.tabbar, .photo-track, .week-board, input[type=range], .ingredient-suggest')) return 'none';
-    const strip = t.closest && t.closest('.menu-strip, .wk-cal');
+    const strip = t.closest && t.closest('.menu-strip, .wk-cal, .ex-fgroup');
     if(strip && !(dx > 0 && strip.scrollLeft <= 0)) return 'none'; // la tira de platos se mueve sola
     // Un campo de texto solo "se queda" el gesto si estás escribiendo en él.
     const fld = t.closest && t.closest('input, textarea, select');
@@ -13171,6 +13210,7 @@ function renderWkGrid(){
     grid._sig = sig;
     grid.className = 'wk-grid n'+N;
     grid.style.gridTemplateColumns = `24px repeat(${N}, minmax(0,1fr))`;
+    grid.style.setProperty('--n', N);
     grid.innerHTML = h;
   }
   deckAnim = false;
