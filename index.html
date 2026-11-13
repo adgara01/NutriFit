@@ -4220,7 +4220,7 @@ try{ for(var i=0;i<localStorage.length;i++){ if(/^sb-.*-auth-token$/.test(localS
 // Sustituye estos dos valores por los de tu proyecto Supabase (Settings → API)
 // Versión de la app: se sube en cada entrega. Al volver a la app, si en
 // GitHub hay una versión distinta, se recarga sola (ver checkForAppUpdate).
-const APP_VERSION = '2026.11.18-7';
+const APP_VERSION = '2026.11.18-8';
 // Slug real de la Edge Function "nf-auth" en Supabase (la URL acaba en /functions/v1/bright-worker)
 const NF_AUTH_FN = 'bright-worker';
 const SUPABASE_URL = 'https://aqxccqmfmbduzznosyiz.supabase.co';
@@ -6362,6 +6362,8 @@ function applyDishFieldsLock(){
   $('#dish-desc').readOnly = locked;
   ['#macro-protein','#macro-carbs','#macro-fat','#macro-fiber'].forEach(sel=> $(sel).readOnly = locked);
   $('#dish-name-view').textContent = $('#dish-name').value;
+  const noIngs = !$all('#ingredients-list .ingredient-input').some(i=> i.value.trim());
+  $('#dish-modal .dish-ings').classList.toggle('hidden', locked && noIngs);
   // Las etiquetas: en vista, bajo la línea de resumen; editando, en "Más detalles".
   const tags = $('#dish-tags');
   if(locked){ if(tags.parentNode!==$('#dish-tags-view-slot')) $('#dish-tags-view-slot').appendChild(tags); }
@@ -8386,7 +8388,8 @@ function catNewTags(d){
     else if(!old) old = v;
   });
   const guess = guessTipo(d);
-  const tipo = ((guess==='Carne' || guess==='Pescado') && (!old || old==='Vegetariano' || old==='Carne' || old==='Pescado')) ? guess : (old || guess);
+  let tipo = ((guess==='Carne' || guess==='Pescado') && (!old || old==='Vegetariano' || old==='Carne' || old==='Pescado')) ? guess : (old || guess);
+  if(guess==='Sin catalogar' && (!old || old==='Vegetariano' || old==='Sin catalogar')){ tipo = 'Sin catalogar'; moms.length = 0; }
   if(!moms.length){
     const name = catNorm(d && d.name);
     if(CAT_RE.breakfast.test(name)) moms.push('Desayuno');

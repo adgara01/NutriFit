@@ -86,9 +86,11 @@ begin
     end if;
   end loop;
   guess := nf_guess_tipo(p_name, p_ings);
-  tipo := case when guess in ('Carne','Pescado') and (old_tipo is null or old_tipo in ('Vegetariano','Carne','Pescado')) then guess
+  tipo := case when guess = 'Sin catalogar' and (old_tipo is null or old_tipo in ('Vegetariano','Sin catalogar')) then 'Sin catalogar'
+               when guess in ('Carne','Pescado') and (old_tipo is null or old_tipo in ('Vegetariano','Carne','Pescado')) then guess
                else coalesce(old_tipo, guess) end;
-  if cardinality(moms) = 0 then
+  if tipo = 'Sin catalogar' then moms := '{}'; end if;
+  if cardinality(moms) = 0 and tipo <> 'Sin catalogar' then
     if nf_has(p_name, 'desayuno|tostada|yogur|yogurt|avena|porridge|granola|tortita|pancake|batido|smoothie|cereal|muesli|huevos revueltos|croissant|magdalena|bol de fruta|pudin de chia|crepe|bocadillo|sandwich|zumo|cafe') then moms := array['Desayuno'];
     elsif tipo in ('Repostería','Sin catalogar') then moms := '{}';
     elsif tipo in ('Ligero','Tapas') then moms := array['Cena'];

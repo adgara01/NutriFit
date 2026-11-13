@@ -80,7 +80,8 @@ function catNewTags(d){
     else if(!old) old = v;
   });
   const guess = guessTipo(d);
-  const tipo = ((guess==='Carne' || guess==='Pescado') && (!old || old==='Vegetariano' || old==='Carne' || old==='Pescado')) ? guess : (old || guess);
+  let tipo = ((guess==='Carne' || guess==='Pescado') && (!old || old==='Vegetariano' || old==='Carne' || old==='Pescado')) ? guess : (old || guess);
+  if(guess==='Sin catalogar' && (!old || old==='Vegetariano' || old==='Sin catalogar')){ tipo = 'Sin catalogar'; moms.length = 0; }
   if(!moms.length){
     const name = catNorm(d && d.name);
     if(CAT_RE.breakfast.test(name)) moms.push('Desayuno');
@@ -175,9 +176,11 @@ begin
     end if;
   end loop;
   guess := nf_guess_tipo(p_name, p_ings);
-  tipo := case when guess in ('Carne','Pescado') and (old_tipo is null or old_tipo in ('Vegetariano','Carne','Pescado')) then guess
+  tipo := case when guess = 'Sin catalogar' and (old_tipo is null or old_tipo in ('Vegetariano','Sin catalogar')) then 'Sin catalogar'
+               when guess in ('Carne','Pescado') and (old_tipo is null or old_tipo in ('Vegetariano','Carne','Pescado')) then guess
                else coalesce(old_tipo, guess) end;
-  if cardinality(moms) = 0 then
+  if tipo = 'Sin catalogar' then moms := '{{}}'; end if;
+  if cardinality(moms) = 0 and tipo <> 'Sin catalogar' then
     if nf_has(p_name, '{alt(BREAKFAST)}') then moms := array['Desayuno'];
     elsif tipo in ('Repostería','Sin catalogar') then moms := '{{}}';
     elsif tipo in ('Ligero','Tapas') then moms := array['Cena'];
